@@ -119,7 +119,7 @@ class UserController extends Controller
         if (!Yii::$app->getUser()->isGuest) {
             return $this->goHome();
         }
-
+        $this->layout = '../../../../views/layouts/main-login';
         $model = new Login();
         if ($model->load(Yii::$app->getRequest()->post()) && $model->login()) {
             return $this->goBack();
