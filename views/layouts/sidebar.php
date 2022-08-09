@@ -40,9 +40,18 @@ use hail812\adminlte\widgets\Menu;
             <?php
             echo Menu::widget([
                 'items' => [
+                    ['label' => 'USER MANAGEMENT', 'header' => true],
+                    ['label' => 'Users',  'icon' => 'users', 'url' => ['/admin/user'], 'target' => '_blank'],
+                    ['label' => 'Create User', 'icon' => 'user-plus', 'url' => ['/admin/user/create'], 'target' => '_blank'],
+                    ['label' => 'AUTHORIZATION MANAGEMENT', 'header' => true],
+                    ['label' => 'Roles',  'icon' => 'user-tie', 'url' => ['/admin/role']],
+                    ['label' => 'Rules', 'icon' => 'truck', 'url' => ['/admin/rule']],
+                    ['label' => 'Routes',  'icon' => 'list-alt', 'url' => ['/admin/route']],
+                    ['label' => 'Permission', 'icon' => 'key', 'url' => ['/admin/permission']],
+                    ['label' => 'Assignment',  'icon' => 'check-double', 'url' => ['/admin/assignment']],
                     ['label' => 'SALES SETTINGS', 'header' => true],
-                    ['label' => 'Supplier Category',  'icon' => 'list-alt', 'url' => ['/gii'], 'target' => '_blank'],
-                    ['label' => 'Supplier', 'icon' => 'truck', 'url' => ['/debug'], 'target' => '_blank'],
+                    ['label' => 'Supplier Category',  'icon' => 'list-alt', 'url' => ['/gii']],
+                    ['label' => 'Supplier', 'icon' => 'truck', 'url' => ['/debug']],
                     [
                         'label' => 'Starter Pages',
                         'icon' => 'tachometer-alt',
