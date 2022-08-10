@@ -41,8 +41,8 @@ use hail812\adminlte\widgets\Menu;
             echo Menu::widget([
                 'items' => [
                     ['label' => 'USER MANAGEMENT', 'header' => true],
-                    ['label' => 'Users',  'icon' => 'users', 'url' => ['/admin/user'], 'target' => '_blank'],
-                    ['label' => 'Create User', 'icon' => 'user-plus', 'url' => ['/admin/user/create'], 'target' => '_blank'],
+                    ['label' => 'Users',  'icon' => 'users', 'url' => ['/admin/user']],
+                    ['label' => 'Create User', 'icon' => 'user-plus', 'url' => ['/admin/user/create']],
                     ['label' => 'AUTHORIZATION MANAGEMENT', 'header' => true],
                     ['label' => 'Roles',  'icon' => 'user-tie', 'url' => ['/admin/role']],
                     ['label' => 'Rules', 'icon' => 'truck', 'url' => ['/admin/rule']],
