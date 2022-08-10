@@ -16,7 +16,7 @@ class m220805_181839_create_supplier_category_table extends Migration
             'id' => $this->primaryKey(),
             'uid' => $this->string(36)->notNull()->unique(),
             'name' => $this->string(30)->notNull()->unique(),
-            'status' => $this->boolean()->notNull(),
+            'status' => $this->boolean()->notNull()->defaultValue(1),
             'createdBy' => $this->integer(11)->notNull(),
             'createdAt' => $this->integer()->notNull(),
             'updatedBy' => $this->integer()->null(),
