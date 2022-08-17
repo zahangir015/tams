@@ -71,7 +71,10 @@ $config = [
             //'downloadAction' => 'gridview/export/download',
             // 'i18n' => [],
              //'exportEncryptSalt' => 'tG85vd1',
-        ]
+        ],
+        'sale' => [
+            'class' => 'app\modules\sale\Module',
+        ],
     ],
     'as access' => [
         'class' => 'app\modules\admin\components\AccessControl',
