@@ -50,8 +50,8 @@ use hail812\adminlte\widgets\Menu;
                     ['label' => 'Permission', 'icon' => 'key', 'url' => ['/admin/permission']],
                     ['label' => 'Assignment',  'icon' => 'check-double', 'url' => ['/admin/assignment']],
                     ['label' => 'SALES SETTINGS', 'header' => true],
-                    ['label' => 'Supplier Category',  'icon' => 'list-alt', 'url' => ['/gii']],
-                    ['label' => 'Supplier', 'icon' => 'truck', 'url' => ['/debug']],
+                    ['label' => 'Supplier Category',  'icon' => 'list-alt', 'url' => ['/sale/supplier-category']],
+                    ['label' => 'Supplier', 'icon' => 'truck', 'url' => ['/sale/supplier']],
                     [
                         'label' => 'Starter Pages',
                         'icon' => 'tachometer-alt',

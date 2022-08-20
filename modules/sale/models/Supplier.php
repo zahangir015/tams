@@ -2,7 +2,7 @@
 
 namespace app\modules\sale\models;
 
-use TimestampTrait;
+use app\traits\TimestampTrait;
 use Yii;
 
 /**

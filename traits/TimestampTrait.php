@@ -1,7 +1,10 @@
 <?php
+namespace app\traits;
 
+use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\db\Expression;
 
 trait TimestampTrait
 {
@@ -33,7 +36,7 @@ trait TimestampTrait
     public function beforeSave($insert): bool
     {
         if ($this->isNewRecord && isset(Yii::$app->controller->action)) {
-            $this->uid = new yii\db\Expression('UUID()');
+            $this->uid = new Expression('UUID()');
         }
         return parent::beforeSave($insert);
     }

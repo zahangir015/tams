@@ -1,8 +1,9 @@
 <?php
 
+use kartik\grid\Module;
+
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
-
 $config = [
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
@@ -66,11 +67,11 @@ $config = [
             'class' => 'app\modules\admin\Module',
         ],
         'gridview' => [
-            'class' => \kartik\grid\Module::class,
-            //'bsVersion' => '3.x', // or '4.x'
-            //'downloadAction' => 'gridview/export/download',
-            // 'i18n' => [],
-             //'exportEncryptSalt' => 'tG85vd1',
+            'class' => Module::class,
+            'bsVersion' => '4.x',
+            'downloadAction' => 'gridview/export/download',
+            'i18n' => [],
+            'exportEncryptSalt' => 'tG85vd1',
         ],
         'sale' => [
             'class' => 'app\modules\sale\Module',

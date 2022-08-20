@@ -2,8 +2,9 @@
 
 namespace app\modules\sale\models;
 
-use TimestampTrait;
+use app\traits\TimestampTrait;
 use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%supplier_category}}".
@@ -17,7 +18,7 @@ use Yii;
  * @property int|null $updatedBy
  * @property int|null $updatedAt
  */
-class SupplierCategory extends \yii\db\ActiveRecord
+class SupplierCategory extends ActiveRecord
 {
     use TimestampTrait;
 
@@ -35,7 +36,7 @@ class SupplierCategory extends \yii\db\ActiveRecord
     public function rules(): array
     {
         return [
-            [['uid', 'name', 'createdBy', 'createdAt'], 'required'],
+            [['name', 'createdBy'], 'required'],
             [['status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['name'], 'string', 'max' => 30],

@@ -35,8 +35,7 @@ $animateIcon = ' <i class="glyphicon glyphicon-refresh glyphicon-refresh-animate
 
     <div class="row">
         <div class="col-sm-5">
-            <input class="form-control search" data-target="available"
-                   placeholder="<?=Yii::t('rbac-admin', 'Search for available');?>">
+            <input class="form-control search" data-target="available" placeholder="<?=Yii::t('rbac-admin', 'Search for available');?>">
             <select multiple size="20" class="form-control list" data-target="available">
             </select>
         </div>
@@ -54,8 +53,7 @@ $animateIcon = ' <i class="glyphicon glyphicon-refresh glyphicon-refresh-animate
 ]);?>
         </div>
         <div class="col-sm-5">
-            <input class="form-control search" data-target="assigned"
-                   placeholder="<?=Yii::t('rbac-admin', 'Search for assigned');?>">
+            <input class="form-control search" data-target="assigned" placeholder="<?=Yii::t('rbac-admin', 'Search for assigned');?>">
             <select multiple size="20" class="form-control list" data-target="assigned">
             </select>
         </div>

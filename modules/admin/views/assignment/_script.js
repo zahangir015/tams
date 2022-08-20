@@ -1,4 +1,4 @@
-$('i.glyphicon-refresh-animate').hide();
+$('i.glyphicon-refresh-animate').show();
 function updateItems(r) {
     _opts.items.available = r.available;
     _opts.items.assigned = r.assigned;
