@@ -2,11 +2,18 @@
 
 namespace app\modules\sale\controllers;
 
+use app\components\GlobalConstant;
+use app\components\Helper;
 use app\modules\sale\models\Supplier;
 use app\modules\sale\models\search\SupplierSearch;
 use app\controllers\ParentController;
+use app\modules\sale\models\SupplierCategory;
+use Yii;
+use yii\helpers\ArrayHelper;
+use yii\helpers\Json;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Response;
 
 /**
  * SupplierController implements the CRUD actions for Supplier model.
@@ -45,15 +52,21 @@ class SupplierController extends ParentController
     /**
      * Creates a new Supplier model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
+     * @return string|Response
      */
     public function actionCreate()
     {
         $model = new Supplier();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+            if ($model->load($this->request->post())) {
+                $model->categories = Json::encode($model->categories);
+                if ($model->save()){
+                    Yii::$app->session->setFlash('success', 'Supplier created successfully.');
+                    return $this->redirect(['view', 'uid' => $model->uid]);
+                }
+                dd($model->getErrors());
+                Yii::$app->session->setFlash('Error', Helper::processErrorMessages($model->getErrors()));
             }
         } else {
             $model->loadDefaultValues();
@@ -61,26 +74,34 @@ class SupplierController extends ParentController
 
         return $this->render('create', [
             'model' => $model,
+            'categories' => ArrayHelper::map(SupplierCategory::findAll(['status' => GlobalConstant::ACTIVE_STATUS]), 'name', 'name')
         ]);
     }
 
     /**
      * Updates an existing Supplier model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id ID
-     * @return string|\yii\web\Response
+     * @param string $uid UID
+     * @return string|Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionUpdate(string $uid)
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel($uid);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->load($this->request->post())) {
+            $model->categories = Json::encode($model->categories);
+            if ($model->save()){
+                Yii::$app->session->setFlash('success', 'Supplier created successfully.');
+                return $this->redirect(['view', 'uid' => $model->uid]);
+            }
+
+            Yii::$app->session->setFlash('Error', Helper::processErrorMessages($model->getErrors()));
         }
 
         return $this->render('update', [
             'model' => $model,
+            'categories' => ArrayHelper::map(SupplierCategory::findAll(['status' => GlobalConstant::ACTIVE_STATUS]), 'name', 'name')
         ]);
     }
 
@@ -88,26 +109,25 @@ class SupplierController extends ParentController
      * Deletes an existing Supplier model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
-     * @return \yii\web\Response
+     * @return Response
      * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionDelete($id)
+     *public function actionDelete($id)
     {
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
-    }
+    }*/
 
     /**
      * Finds the Supplier model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id ID
+     * @param string $uid ID
      * @return Supplier the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel(string $uid): Supplier
     {
-        if (($model = Supplier::findOne(['id' => $id])) !== null) {
+        if (($model = Supplier::findOne(['uid' => $uid])) !== null) {
             return $model;
         }
 

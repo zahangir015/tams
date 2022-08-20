@@ -931,6 +931,14 @@ class Helper
         return 'badge-danger';
     }
 
+    public static function LabelClass($value): string
+    {
+        if ($value) {
+            return 'badge-success';
+        }
+        return 'badge-danger';
+    }
+
     public static function getServiceName($invoiceDetailRefModel): string
     {
         $splittedRefModel = explode('\\', $invoiceDetailRefModel);

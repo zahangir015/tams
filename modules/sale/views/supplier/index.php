@@ -27,7 +27,17 @@ $this->params['breadcrumbs'][] = $this->title;
             'company',
             'address',
             'phone',
-            'type',
+            [
+                'class' => '\kartik\grid\DataColumn',
+                'attribute' => 'type',
+                'value' => function ($model) {
+                    $labelClass = Helper::statusLabelClass($model->status);
+                    $labelText = ($model->status) ? 'Active' : 'Inactive';
+                    return '<span class="right badge ' . $labelClass . '">' . $labelText . '</span>';
+                },
+                'filter' => GlobalConstant::DEFAULT_STATUS,
+                'format' => 'html',
+            ],
             'refundCharge',
             [
                 'class' => '\kartik\grid\DataColumn',

@@ -22,7 +22,8 @@
         "johnitvn/yii2-ajaxcrud": "^2.1",
         "hail812/yii2-adminlte3": "~1.1",
         "kartik-v/yii2-bootstrap4-dropdown": "v1.0.4",
-        "codemix/yii2-configloader": "^0.11.0"
+        "codemix/yii2-configloader": "^0.11.0",
+        "kartik-v/yii2-widget-select2": "v2.2.3"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

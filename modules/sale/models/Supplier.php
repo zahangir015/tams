@@ -17,6 +17,7 @@ use Yii;
  * @property string|null $phone
  * @property int $type
  * @property float $refundCharge
+ * @property float $categories 
  * @property int $status
  * @property int $createdBy
  * @property int $createdAt
@@ -40,13 +41,14 @@ class Supplier extends \yii\db\ActiveRecord
     public function rules(): array
     {
         return [
-            [['uid', 'name', 'email', 'company', 'type', 'createdBy', 'createdAt'], 'required'],
+            [['name', 'email', 'company', 'type', 'createdBy'], 'required'],
             [['type', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['refundCharge'], 'number'],
             [['uid'], 'string', 'max' => 36],
             [['name'], 'string', 'max' => 30],
             [['email'], 'string', 'max' => 100],
             [['company'], 'string', 'max' => 150],
+            [['categories'], 'safe'],
             [['address', 'phone'], 'string', 'max' => 255],
             [['uid'], 'unique'],
             [['name'], 'unique'],
@@ -69,6 +71,7 @@ class Supplier extends \yii\db\ActiveRecord
             'phone' => Yii::t('app', 'Phone'),
             'type' => Yii::t('app', 'Type'),
             'refundCharge' => Yii::t('app', 'Refund Charge'),
+            'categories' => Yii::t('app', 'Categories'),
             'status' => Yii::t('app', 'Status'),
             'createdBy' => Yii::t('app', 'Created By'),
             'createdAt' => Yii::t('app', 'Created At'),

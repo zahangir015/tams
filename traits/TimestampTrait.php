@@ -57,7 +57,7 @@ trait TimestampTrait
                 $this->updatedBy = $this->updatedBy ? ucfirst($this->updater['username']) : null;
             }
             if (isset($this->uid)) {
-                $this->uid = $this->uid ?: null;
+                $this->uid = $this->uid ? $this->uid : null;
             }
         }
         parent::afterSave($insert, $changedAttributes);
