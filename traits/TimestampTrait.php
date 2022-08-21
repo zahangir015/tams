@@ -36,7 +36,7 @@ trait TimestampTrait
     public function beforeSave($insert): bool
     {
         if ($this->isNewRecord && isset(Yii::$app->controller->action)) {
-            $this->uid = new Expression('UUID()');
+            $this->uid = Yii::$app->db->createCommand('select UUID()')->queryScalar();
         }
         return parent::beforeSave($insert);
     }
