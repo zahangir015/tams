@@ -2,9 +2,10 @@
 
 namespace app\modules\sale\models;
 
-use TimestampTrait;
+use app\traits\TimestampTrait;
 use Yii;
 use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%airline}}".
@@ -27,7 +28,7 @@ use yii\db\ActiveQuery;
  * @property AirlineHistory[] $airlineHistories
  * @property Supplier $supplier
  */
-class Airline extends \yii\db\ActiveRecord
+class Airline extends ActiveRecord
 {
     use TimestampTrait;
     /**
@@ -44,7 +45,7 @@ class Airline extends \yii\db\ActiveRecord
     public function rules(): array
     {
         return [
-            [['uid', 'supplierId', 'code', 'name', 'createdBy', 'createdAt'], 'required'],
+            [['supplierId', 'code', 'name', 'createdBy'], 'required'],
             [['supplierId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['commission', 'incentive', 'govTax', 'serviceCharge'], 'number'],
             [['uid'], 'string', 'max' => 36],
@@ -84,7 +85,7 @@ class Airline extends \yii\db\ActiveRecord
      *
      * @return ActiveQuery
      */
-    public function getAirlineHistories()
+    public function getAirlineHistories(): ActiveQuery
     {
         return $this->hasMany(AirlineHistory::className(), ['airlineId' => 'id']);
     }
@@ -94,7 +95,7 @@ class Airline extends \yii\db\ActiveRecord
      *
      * @return ActiveQuery
      */
-    public function getSupplier()
+    public function getSupplier(): ActiveQuery
     {
         return $this->hasOne(Supplier::className(), ['id' => 'supplierId']);
     }

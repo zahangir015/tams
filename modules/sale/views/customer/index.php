@@ -2,44 +2,50 @@
 
 use app\components\GlobalConstant;
 use app\components\Helper;
-use app\modules\sale\models\Supplier;
+use app\modules\sale\models\Customer;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use kartik\grid\ActionColumn;
 use kartik\grid\GridView;
 
 /* @var $this yii\web\View */
-/* @var $searchModel app\modules\sale\models\search\SupplierSearch */
+/* @var $searchModel app\modules\sale\models\search\CustomerSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Suppliers');
+$this->title = Yii::t('app', 'Customers');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="supplier-index">
+<div class="customer-index">
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'kartik\grid\SerialColumn'],
-
             'name',
-            'email:email',
             'company',
-            //'address',
-            'phone',
-            'refundCharge',
-            'categories',
+            'customerCode',
             [
                 'class' => '\kartik\grid\DataColumn',
-                'attribute' => 'type',
+                'attribute' => 'category',
                 'value' => function ($model) {
-                    $labelClass = Helper::typeLabelClass($model->status);
-                    return '<span class="right badge ' . $labelClass . '">' . GlobalConstant::SUPPLIER_TYPE[$model->type] . '</span>';
+                    return '<span class="right badge badge-default">' . $model->category . '</span>';
                 },
-                'filter' => GlobalConstant::SUPPLIER_TYPE,
+                'filter' => GlobalConstant::CUSTOMER_CATEGORY,
                 'format' => 'html',
             ],
-
+            'email:email',
+            'address',
+            'phone',
+            [
+                'class' => '\kartik\grid\DataColumn',
+                'attribute' => 'creditModality',
+                'value' => function ($model) {
+                    $labelClass = Helper::typeLabelClass($model->creditModality);
+                    return '<span class="right badge ' . $labelClass . '">' . GlobalConstant::YES_NO[$model->creditModality] . '</span>';
+                },
+                'filter' => GlobalConstant::YES_NO,
+                'format' => 'html',
+            ],
             [
                 'class' => '\kartik\grid\DataColumn',
                 'attribute' => 'status',
@@ -52,16 +58,16 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, Supplier $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'uid' => $model->uid]);
-                 }
+                'urlCreator' => function ($action, Customer $model, $key, $index, $column) {
+                    return Url::toRoute([$action, 'id' => $model->id]);
+                }
             ],
         ],
         'toolbar' => [
             [
                 'content' =>
-                    Html::a('<i class="fas fa-plus"></i>', ['/sale/supplier/create'], [
-                        'title' => Yii::t('app', 'Add Category'),
+                    Html::a('<i class="fas fa-plus"></i>', ['/sale/customer/create'], [
+                        'title' => Yii::t('app', 'Add Customer'),
                         'class' => 'btn btn-success'
                     ]) . ' ' .
                     Html::a('<i class="fas fa-redo"></i>', ['/sale/supplier/index'], [
@@ -79,10 +85,9 @@ $this->params['breadcrumbs'][] = $this->title;
         'responsive' => true,
         'hover' => true,
         'panel' => [
-            'heading'=> '<i class="fas fa-list-alt"></i> '.Html::encode($this->title),
+            'heading' => '<i class="fas fa-list-alt"></i> ' . Html::encode($this->title),
             'type' => GridView::TYPE_DARK
         ],
     ]); ?>
-
 
 </div>

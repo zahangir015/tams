@@ -51,7 +51,9 @@ use hail812\adminlte\widgets\Menu;
                     ['label' => 'Assignment',  'icon' => 'check-double', 'url' => ['/admin/assignment']],
                     ['label' => 'SALES SETTINGS', 'header' => true],
                     ['label' => 'Supplier Category',  'icon' => 'list-alt', 'url' => ['/sale/supplier-category']],
-                    ['label' => 'Supplier', 'icon' => 'truck', 'url' => ['/sale/supplier']],
+                    ['label' => 'Suppliers', 'icon' => 'truck', 'url' => ['/sale/supplier']],
+                    ['label' => 'Customers', 'icon' => 'users', 'url' => ['/sale/customer']],
+                    ['label' => 'Airlines', 'icon' => 'paper-plane', 'url' => ['/sale/airline']],
                     [
                         'label' => 'Starter Pages',
                         'icon' => 'tachometer-alt',

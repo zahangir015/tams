@@ -38,14 +38,14 @@ class SupplierController extends ParentController
 
     /**
      * Displays a single Supplier model.
-     * @param int $id ID
+     * @param string $uid ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id)
+    public function actionView(string $uid)
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $this->findModel($uid),
         ]);
     }
 

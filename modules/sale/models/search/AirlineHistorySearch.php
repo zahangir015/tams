@@ -4,28 +4,29 @@ namespace app\modules\sale\models\search;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\sale\models\SupplierCategory;
+use app\modules\sale\models\AirlineHistory;
 
 /**
- * SupplierCategorySearch represents the model behind the search form of `app\modules\sale\models\SupplierCategory`.
+ * AirlineHistorySearch represents the model behind the search form of `app\modules\sale\models\AirlineHistory`.
  */
-class SupplierCategorySearch extends SupplierCategory
+class AirlineHistorySearch extends AirlineHistory
 {
     /**
      * {@inheritdoc}
      */
-    public function rules(): array
+    public function rules()
     {
         return [
-            [['id', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
-            [['uid', 'name'], 'safe'],
+            [['id', 'airlineId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['uid'], 'safe'],
+            [['commission', 'incentive', 'govTax', 'serviceCharge'], 'number'],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function scenarios(): array
+    public function scenarios()
     {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
@@ -38,15 +39,14 @@ class SupplierCategorySearch extends SupplierCategory
      *
      * @return ActiveDataProvider
      */
-    public function search(array $params): ActiveDataProvider
+    public function search($params)
     {
-        $query = SupplierCategory::find();
+        $query = AirlineHistory::find();
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'sort'=> ['defaultOrder' => ['name' => SORT_ASC]],
         ]);
 
         $this->load($params);
@@ -60,6 +60,11 @@ class SupplierCategorySearch extends SupplierCategory
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
+            'airlineId' => $this->airlineId,
+            'commission' => $this->commission,
+            'incentive' => $this->incentive,
+            'govTax' => $this->govTax,
+            'serviceCharge' => $this->serviceCharge,
             'status' => $this->status,
             'createdBy' => $this->createdBy,
             'createdAt' => $this->createdAt,
@@ -67,8 +72,7 @@ class SupplierCategorySearch extends SupplierCategory
             'updatedAt' => $this->updatedAt,
         ]);
 
-        $query->andFilterWhere(['like', 'uid', $this->uid])
-            ->andFilterWhere(['like', 'name', $this->name]);
+        $query->andFilterWhere(['like', 'uid', $this->uid]);
 
         return $dataProvider;
     }

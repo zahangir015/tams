@@ -4,12 +4,12 @@ namespace app\modules\sale\models\search;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\sale\models\SupplierCategory;
+use app\modules\sale\models\Customer;
 
 /**
- * SupplierCategorySearch represents the model behind the search form of `app\modules\sale\models\SupplierCategory`.
+ * CustomerSearch represents the model behind the search form of `app\modules\sale\models\Customer`.
  */
-class SupplierCategorySearch extends SupplierCategory
+class CustomerSearch extends Customer
 {
     /**
      * {@inheritdoc}
@@ -17,8 +17,8 @@ class SupplierCategorySearch extends SupplierCategory
     public function rules(): array
     {
         return [
-            [['id', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
-            [['uid', 'name'], 'safe'],
+            [['id', 'creditModality', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['uid', 'name', 'company', 'customerCode', 'category', 'email', 'address', 'phone'], 'safe'],
         ];
     }
 
@@ -40,13 +40,13 @@ class SupplierCategorySearch extends SupplierCategory
      */
     public function search(array $params): ActiveDataProvider
     {
-        $query = SupplierCategory::find();
+        $query = Customer::find();
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'sort'=> ['defaultOrder' => ['name' => SORT_ASC]],
+            'sort'=> ['defaultOrder' => ['company' => SORT_ASC]],
         ]);
 
         $this->load($params);
@@ -60,6 +60,7 @@ class SupplierCategorySearch extends SupplierCategory
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
+            'creditModality' => $this->creditModality,
             'status' => $this->status,
             'createdBy' => $this->createdBy,
             'createdAt' => $this->createdAt,
@@ -68,7 +69,13 @@ class SupplierCategorySearch extends SupplierCategory
         ]);
 
         $query->andFilterWhere(['like', 'uid', $this->uid])
-            ->andFilterWhere(['like', 'name', $this->name]);
+            ->andFilterWhere(['like', 'name', $this->name])
+            ->andFilterWhere(['like', 'company', $this->company])
+            ->andFilterWhere(['like', 'customerCode', $this->customerCode])
+            ->andFilterWhere(['like', 'category', $this->category])
+            ->andFilterWhere(['like', 'email', $this->email])
+            ->andFilterWhere(['like', 'address', $this->address])
+            ->andFilterWhere(['like', 'phone', $this->phone]);
 
         return $dataProvider;
     }

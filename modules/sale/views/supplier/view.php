@@ -1,5 +1,7 @@
 <?php
 
+use app\components\GlobalConstant;
+use app\components\Helper;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -13,37 +15,49 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="supplier-view">
 
-    <h1><?= Html::encode($this->title) ?></h1>
-
     <p>
-        <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
-                'method' => 'post',
-            ],
-        ]) ?>
+        <?= Html::a(Yii::t('app', 'Update'), ['update', 'uid' => $model->uid], ['class' => 'btn btn-primary']) ?>
     </p>
+    <div class="card">
+        <div class="card-header bg-gray-dark">
+            <?= Html::encode($this->title) ?>
+        </div>
+        <div class="card-body">
+            <?= DetailView::widget([
+                'model' => $model,
+                'attributes' => [
+                    'id',
+                    'uid',
+                    'name',
+                    'email:email',
+                    'company',
+                    'address',
+                    'phone',
+                    'refundCharge',
+                    'categories',
+                    [
+                        'attribute' => 'type',
+                        'value' => function ($model) {
+                            $labelClass = Helper::typeLabelClass($model->status);
+                            return '<span class="right badge ' . $labelClass . '">' . GlobalConstant::SUPPLIER_TYPE[$model->type] . '</span>';
+                        },
+                        'format' => 'html',
+                    ],
 
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'id',
-            'uid',
-            'name',
-            'email:email',
-            'company',
-            'address',
-            'phone',
-            'type',
-            'refundCharge',
-            'status',
-            'createdBy',
-            'createdAt',
-            'updatedBy',
-            'updatedAt',
-        ],
-    ]) ?>
-
+                    [
+                        'attribute' => 'status',
+                        'value' => function ($model) {
+                            $labelClass = Helper::statusLabelClass($model->status);
+                            return '<span class="right badge ' . $labelClass . '">' . GlobalConstant::DEFAULT_STATUS[$model->status] . '</span>';
+                        },
+                        'format' => 'html',
+                    ],
+                    'createdBy',
+                    'createdAt',
+                    'updatedBy',
+                    'updatedAt',
+                ],
+            ]) ?>
+        </div>
+    </div>
 </div>

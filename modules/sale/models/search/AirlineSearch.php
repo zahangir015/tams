@@ -4,12 +4,12 @@ namespace app\modules\sale\models\search;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\sale\models\SupplierCategory;
+use app\modules\sale\models\Airline;
 
 /**
- * SupplierCategorySearch represents the model behind the search form of `app\modules\sale\models\SupplierCategory`.
+ * AirlineSearch represents the model behind the search form of `app\modules\sale\models\Airline`.
  */
-class SupplierCategorySearch extends SupplierCategory
+class AirlineSearch extends Airline
 {
     /**
      * {@inheritdoc}
@@ -17,8 +17,9 @@ class SupplierCategorySearch extends SupplierCategory
     public function rules(): array
     {
         return [
-            [['id', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
-            [['uid', 'name'], 'safe'],
+            [['id', 'supplierId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['uid', 'code', 'name'], 'safe'],
+            [['commission', 'incentive', 'govTax', 'serviceCharge'], 'number'],
         ];
     }
 
@@ -40,7 +41,7 @@ class SupplierCategorySearch extends SupplierCategory
      */
     public function search(array $params): ActiveDataProvider
     {
-        $query = SupplierCategory::find();
+        $query = Airline::find();
 
         // add conditions that should always apply here
 
@@ -60,6 +61,11 @@ class SupplierCategorySearch extends SupplierCategory
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
+            'supplierId' => $this->supplierId,
+            'commission' => $this->commission,
+            'incentive' => $this->incentive,
+            'govTax' => $this->govTax,
+            'serviceCharge' => $this->serviceCharge,
             'status' => $this->status,
             'createdBy' => $this->createdBy,
             'createdAt' => $this->createdAt,
@@ -68,6 +74,7 @@ class SupplierCategorySearch extends SupplierCategory
         ]);
 
         $query->andFilterWhere(['like', 'uid', $this->uid])
+            ->andFilterWhere(['like', 'code', $this->code])
             ->andFilterWhere(['like', 'name', $this->name]);
 
         return $dataProvider;

@@ -931,12 +931,12 @@ class Helper
         return 'badge-danger';
     }
 
-    public static function LabelClass($value): string
+    public static function typeLabelClass($value): string
     {
         if ($value) {
-            return 'badge-success';
+            return 'badge-warning';
         }
-        return 'badge-danger';
+        return 'badge-primary';
     }
 
     public static function getServiceName($invoiceDetailRefModel): string

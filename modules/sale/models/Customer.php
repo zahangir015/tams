@@ -2,7 +2,7 @@
 
 namespace app\modules\sale\models;
 
-use TimestampTrait;
+use app\traits\TimestampTrait;
 use Yii;
 use yii\db\ActiveRecord;
 
@@ -42,7 +42,7 @@ class Customer extends ActiveRecord
     public function rules(): array
     {
         return [
-            [['uid', 'name', 'company', 'customerCode', 'category', 'email', 'createdBy', 'createdAt'], 'required'],
+            [['name', 'company', 'customerCode', 'category', 'email', 'createdBy'], 'required'],
             [['category'], 'string'],
             [['creditModality', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['uid'], 'string', 'max' => 36],

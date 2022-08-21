@@ -18,7 +18,7 @@ class SupplierSearch extends Supplier
     {
         return [
             [['id', 'type', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
-            [['uid', 'name', 'email', 'company', 'address', 'phone'], 'safe'],
+            [['uid', 'name', 'email', 'company', 'address', 'phone', 'categories'], 'safe'],
             [['refundCharge'], 'number'],
         ];
     }
@@ -47,6 +47,7 @@ class SupplierSearch extends Supplier
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort'=> ['defaultOrder' => ['company' => SORT_ASC]],
         ]);
 
         $this->load($params);
@@ -72,6 +73,7 @@ class SupplierSearch extends Supplier
         $query->andFilterWhere(['like', 'uid', $this->uid])
             ->andFilterWhere(['like', 'name', $this->name])
             ->andFilterWhere(['like', 'email', $this->email])
+            ->andFilterWhere(['like', 'categories', $this->categories])
             ->andFilterWhere(['like', 'company', $this->company])
             ->andFilterWhere(['like', 'address', $this->address])
             ->andFilterWhere(['like', 'phone', $this->phone]);

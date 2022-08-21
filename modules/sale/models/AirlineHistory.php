@@ -2,8 +2,9 @@
 
 namespace app\modules\sale\models;
 
-use TimestampTrait;
+use app\traits\TimestampTrait;
 use Yii;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "{{%airline_history}}".
@@ -40,7 +41,7 @@ class AirlineHistory extends \yii\db\ActiveRecord
     public function rules(): array
     {
         return [
-            [['uid', 'airlineId', 'createdBy', 'createdAt'], 'required'],
+            [['airlineId', 'createdBy'], 'required'],
             [['airlineId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['commission', 'incentive', 'govTax', 'serviceCharge'], 'number'],
             [['uid'], 'string', 'max' => 36],
@@ -73,9 +74,9 @@ class AirlineHistory extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Airline]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getAirline()
+    public function getAirline(): ActiveQuery
     {
         return $this->hasOne(Airline::className(), ['id' => 'airlineId']);
     }
