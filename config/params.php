@@ -14,5 +14,7 @@ return [
                 'js' => ['toastr/toastr.min.js']
             ],
         ]
-    ]
+        ],
+        'dateFormatInView' => 'd-m-Y',
+    'dateTimeFormatInView' => 'd-m-Y H:i:s',
 ];
