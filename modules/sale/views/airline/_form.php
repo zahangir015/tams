@@ -1,47 +1,60 @@
 <?php
 
+use app\components\GlobalConstant;
+use app\components\Helper;
+use kartik\select2\Select2;
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+use yii\bootstrap4\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $model app\modules\sale\models\Airline */
-/* @var $form yii\widgets\ActiveForm */
+/* @var $form yii\bootstrap4\ActiveForm */
 ?>
 
 <div class="airline-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <div class="card">
+        <div class="card-header bg-gray-dark">
+            <?= Html::encode($this->title) ?>
+        </div>
+        <div class="card-body">
+            <?php $form = ActiveForm::begin(); ?>
+            <div class="row">
+                <div class="col-md">
+                    <?= $form->field($model, 'supplierId')->widget(Select2::classname(), Helper::ajaxDropDown('supplierId', '/sale/supplier/get-suppliers',  true, 'supplierId', 'supplierId', ($model->isNewRecord) ? [] : [$model->supplierId => $model->supplier->name . ' | ' . $model->supplier->company]))->label('Supplier') ?>
+                </div>
+                <div class="col-md">
+                    <?= $form->field($model, 'code')->textInput(['maxlength' => true]) ?>
+                </div>
+                <div class="col-md">
+                    <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md">
+                    <?= $form->field($model, 'commission')->textInput() ?>
+                </div>
+                <div class="col-md">
+                    <?= $form->field($model, 'incentive')->textInput() ?>
+                </div>
+                <div class="col-md">
+                    <?= $form->field($model, 'govTax')->textInput() ?>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md">
+                    <?= $form->field($model, 'serviceCharge')->textInput() ?>
+                </div>
+                <div class="col-md">
+                    <?= $form->field($model, 'status')->dropdownList(GlobalConstant::DEFAULT_STATUS) ?>
+                </div>
+            </div>
 
-    <?= $form->field($model, 'uid')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'supplierId')->textInput() ?>
-
-    <?= $form->field($model, 'code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'commission')->textInput() ?>
-
-    <?= $form->field($model, 'incentive')->textInput() ?>
-
-    <?= $form->field($model, 'govTax')->textInput() ?>
-
-    <?= $form->field($model, 'serviceCharge')->textInput() ?>
-
-    <?= $form->field($model, 'status')->textInput() ?>
-
-    <?= $form->field($model, 'createdBy')->textInput() ?>
-
-    <?= $form->field($model, 'createdAt')->textInput() ?>
-
-    <?= $form->field($model, 'updatedBy')->textInput() ?>
-
-    <?= $form->field($model, 'updatedAt')->textInput() ?>
-
-    <div class="form-group">
-        <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
+            <div class="form-group">
+                <?= Html::submitButton(Yii::t('app', ($model->isNewRecord) ? 'Save' : 'Update'), ['class' => 'btn btn-success']) ?>
+            </div>
+            <?php ActiveForm::end(); ?>
+        </div>
     </div>
-
-    <?php ActiveForm::end(); ?>
 
 </div>

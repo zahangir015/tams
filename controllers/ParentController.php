@@ -11,6 +11,13 @@ use yii\web\Response;
 
 class ParentController extends Controller
 {
+    public function beforeAction($action): bool
+    {
+        if (Yii::$app->request->isAjax) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+        }
+        return parent::beforeAction($action);
+    }
     /**
      * {@inheritdoc}
      */

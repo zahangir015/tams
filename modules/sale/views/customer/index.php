@@ -59,7 +59,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, Customer $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'id' => $model->id]);
+                    return Url::toRoute([$action, 'uid' => $model->uid]);
                 }
             ],
         ],
@@ -89,5 +89,4 @@ $this->params['breadcrumbs'][] = $this->title;
             'type' => GridView::TYPE_DARK
         ],
     ]); ?>
-
 </div>

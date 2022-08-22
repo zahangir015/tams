@@ -1,5 +1,7 @@
 <?php
 
+use app\components\GlobalConstant;
+use app\components\Helper;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -12,38 +14,44 @@ $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
 <div class="airline-view">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
     <p>
-        <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
-                'method' => 'post',
-            ],
-        ]) ?>
+        <?= Html::a(Yii::t('app', 'Update'), ['update', 'uid' => $model->uid], ['class' => 'btn btn-primary']) ?>
     </p>
-
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'id',
-            'uid',
-            'supplierId',
-            'code',
-            'name',
-            'commission',
-            'incentive',
-            'govTax',
-            'serviceCharge',
-            'status',
-            'createdBy',
-            'createdAt',
-            'updatedBy',
-            'updatedAt',
-        ],
-    ]) ?>
+    <div class="card">
+        <div class="card-header bg-gray-dark">
+            <?= Html::encode($this->title) ?>
+        </div>
+        <div class="card-body">
+            <?= DetailView::widget([
+                'model' => $model,
+                'attributes' => [
+                    [
+                        'attribute' => 'supplierId',
+                        'value' => function ($model) {
+                            return $model->supplier->company;
+                        },
+                    ],
+                    'code',
+                    'name',
+                    'commission',
+                    'incentive',
+                    'govTax',
+                    'serviceCharge',
+                    [
+                        'attribute' => 'status',
+                        'value' => function ($model) {
+                            $labelClass = Helper::statusLabelClass($model->status);
+                            return '<span class="right badge ' . $labelClass . '">' . GlobalConstant::DEFAULT_STATUS[$model->status] . '</span>';
+                        },
+                        'format' => 'html',
+                    ],
+                    'createdBy',
+                    'createdAt',
+                    'updatedBy',
+                    'updatedAt',
+                ],
+            ]) ?>
+        </div>
+    </div>
 
 </div>

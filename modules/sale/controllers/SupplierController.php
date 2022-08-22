@@ -61,7 +61,7 @@ class SupplierController extends ParentController
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
                 $model->categories = Json::encode($model->categories);
-                if ($model->save()){
+                if ($model->save()) {
                     Yii::$app->session->setFlash('success', 'Supplier created successfully.');
                     return $this->redirect(['view', 'uid' => $model->uid]);
                 }
@@ -91,7 +91,7 @@ class SupplierController extends ParentController
 
         if ($model->load($this->request->post())) {
             $model->categories = Json::encode($model->categories);
-            if ($model->save()){
+            if ($model->save()) {
                 Yii::$app->session->setFlash('success', 'Supplier created successfully.');
                 return $this->redirect(['view', 'uid' => $model->uid]);
             }
@@ -112,11 +112,11 @@ class SupplierController extends ParentController
      * @return Response
      * @throws NotFoundHttpException if the model cannot be found
      *public function actionDelete($id)
-    {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
-    }*/
+     * {
+     * $this->findModel($id)->delete();
+     *
+     * return $this->redirect(['index']);
+     * }*/
 
     /**
      * Finds the Supplier model based on its primary key value.
@@ -127,10 +127,21 @@ class SupplierController extends ParentController
      */
     protected function findModel(string $uid): Supplier
     {
-        if (($model = Supplier::findOne(['uid' => $uid])) !== null) {
+        if (($model = Supplier::find()->with(['supplier'])->Where(['uid' => $uid])->one()) !== null) {
             return $model;
         }
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+    }
+
+    public function actionGetSuppliers($query = null)
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $suppliers = Supplier::query($query);
+        $data = [];
+        foreach ($suppliers as $supplier) {
+            $data[] = ['id' => $supplier->id, 'text' => $supplier->name . ' | ' . $supplier->company];
+        }
+        return ['results' => $data];
     }
 }

@@ -44,10 +44,6 @@ class Helper
         }
     }
 
-    /*
-    * number to word convert
-    */
-
     public static function convertNumber($number): string
     {
         if (is_numeric($number) && strpos($number, '.') === false) {
@@ -251,13 +247,6 @@ class Helper
         }
     }
 
-    /**
-     * returns date &| time in given format
-     *
-     * @param $format
-     * @param null $time
-     * @return string
-     */
     public static function date($format, $time = null): string
     {
         if ($time == null) {
@@ -501,28 +490,17 @@ class Helper
         ];
     }
 
-    /**
-     * @return string
-     */
     public static function getRandomName(): string
     {
         return Yii::$app->security->generateRandomString();
     }
 
-    /**
-     * @return mixed
-     */
     public static function getMaxUploadSize()
     {
         $uploadOptions = self::get('uploadOptions');
         return $uploadOptions['maxFileSize'];
     }
 
-    /**
-     * @param $file
-     * @param string $type
-     * @return bool
-     */
     public static function validateFile($file, $type = 'file'): bool
     {
         if (!$file || !file_exists($file->tempName)) {
@@ -550,11 +528,6 @@ class Helper
         }
     }
 
-    /**
-     * @param $file
-     * @param $allowedTypes
-     * @return bool
-     */
     protected static function validateImageFile($file, $allowedTypes): bool
     {
         $isValid = true;
@@ -568,11 +541,6 @@ class Helper
         return $isValid;
     }
 
-    /**
-     * @param $file
-     * @param $allowedTypes
-     * @return bool
-     */
     protected static function validateFileTypes($file, $allowedTypes): bool
     {
         $isValid = true;
@@ -587,12 +555,6 @@ class Helper
         return $isValid;
     }
 
-    /**
-     * a short hand method to get params value
-     *
-     * @param $key
-     * @return mixed
-     */
     public static function get($key)
     {
         if (!$key) {
@@ -605,9 +567,6 @@ class Helper
         return Yii::$app->params[$key];
     }
 
-    /**
-     * @param $path
-     */
     public static function checkDir($path)
     {
         if (is_array($path)) {

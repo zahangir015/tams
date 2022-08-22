@@ -2,8 +2,10 @@
 
 namespace app\modules\sale\models;
 
+use app\components\GlobalConstant;
 use app\traits\TimestampTrait;
 use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%supplier}}".
@@ -17,16 +19,17 @@ use Yii;
  * @property string|null $phone
  * @property int $type
  * @property float $refundCharge
- * @property float $categories 
+ * @property float $categories
  * @property int $status
  * @property int $createdBy
  * @property int $createdAt
  * @property int|null $updatedBy
  * @property int|null $updatedAt
  */
-class Supplier extends \yii\db\ActiveRecord
+class Supplier extends ActiveRecord
 {
     use TimestampTrait;
+
     /**
      * {@inheritdoc}
      */
@@ -78,5 +81,15 @@ class Supplier extends \yii\db\ActiveRecord
             'updatedBy' => Yii::t('app', 'Updated By'),
             'updatedAt' => Yii::t('app', 'Updated At'),
         ];
+    }
+
+    public static function query($query): array
+    {
+        return self::find()
+            ->select(['id', 'name', 'company', 'email'])
+            ->where(['like', 'name', $query])
+            ->orWhere(['like', 'company', $query])
+            ->andWhere(['status' => GlobalConstant::ACTIVE_STATUS])
+            ->all();
     }
 }

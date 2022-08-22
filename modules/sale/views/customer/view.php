@@ -17,38 +17,44 @@ $this->params['breadcrumbs'][] = $this->title;
     <p>
         <?= Html::a(Yii::t('app', 'Update'), ['update', 'uid' => $model->uid], ['class' => 'btn btn-primary']) ?>
     </p>
-
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'name',
-            'company',
-            'customerCode',
-            'category',
-            'email:email',
-            'address',
-            'phone',
-            [
-                'attribute' => 'creditModality',
-                'value' => function ($model) {
-                    $labelClass = Helper::typeLabelClass($model->creditModality);
-                    return '<span class="right badge ' . $labelClass . '">' . GlobalConstant::YES_NO[$model->creditModality] . '</span>';
-                },
-                'format' => 'html',
-            ],
-            [
-                'attribute' => 'status',
-                'value' => function ($model) {
-                    $labelClass = Helper::statusLabelClass($model->status);
-                    return '<span class="right badge ' . $labelClass . '">' . GlobalConstant::DEFAULT_STATUS[$model->status] . '</span>';
-                },
-                'format' => 'html',
-            ],
-            'createdBy',
-            'createdAt',
-            'updatedBy',
-            'updatedAt',
-        ],
-    ]) ?>
+    <div class="card">
+        <div class="card-header bg-gray-dark">
+            <?= Html::encode($this->title) ?>
+        </div>
+        <div class="card-body">
+            <?= DetailView::widget([
+                'model' => $model,
+                'attributes' => [
+                    'name',
+                    'company',
+                    'customerCode',
+                    'category',
+                    'email:email',
+                    'address',
+                    'phone',
+                    [
+                        'attribute' => 'creditModality',
+                        'value' => function ($model) {
+                            $labelClass = Helper::typeLabelClass($model->creditModality);
+                            return '<span class="right badge ' . $labelClass . '">' . GlobalConstant::YES_NO[$model->creditModality] . '</span>';
+                        },
+                        'format' => 'html',
+                    ],
+                    [
+                        'attribute' => 'status',
+                        'value' => function ($model) {
+                            $labelClass = Helper::statusLabelClass($model->status);
+                            return '<span class="right badge ' . $labelClass . '">' . GlobalConstant::DEFAULT_STATUS[$model->status] . '</span>';
+                        },
+                        'format' => 'html',
+                    ],
+                    'createdBy',
+                    'createdAt',
+                    'updatedBy',
+                    'updatedAt',
+                ],
+            ]) ?>
+        </div>
+    </div>
 
 </div>
