@@ -76,6 +76,9 @@ $config = [
         'sale' => [
             'class' => 'app\modules\sale\Module',
         ],
+        'account' => [
+            'class' => 'app\modules\account\Module',
+        ],
     ],
     'as access' => [
         'class' => 'app\modules\admin\components\AccessControl',

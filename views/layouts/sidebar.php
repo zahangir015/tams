@@ -53,18 +53,21 @@ use hail812\adminlte\widgets\Menu;
                     [
                         'label' => 'Supplier Settings',
                         'icon' => 'truck',
-                        'badge' => '<span class="right badge badge-info">2</span>',
+                        'badge' => '<span class="right badge badge-info">4</span>',
                         'items' => [
-                            ['label' => 'Supplier Category',  'icon' => 'list-alt', 'url' => ['/sale/supplier-category']],
-                            ['label' => 'Suppliers', 'icon' => 'truck', 'url' => ['/sale/supplier']],
+                            ['label' => 'Supplier Category Add',  'icon' => 'list-alt', 'url' => ['/sale/supplier-category/create']],
+                            ['label' => 'Category List',  'icon' => 'list-alt', 'url' => ['/sale/supplier-category']],
+                            ['label' => 'Supplier Add', 'icon' => 'truck', 'url' => ['/sale/supplier/create']],
+                            ['label' => 'Supplier List', 'icon' => 'truck', 'url' => ['/sale/supplier']],
                         ]
                     ],
                     [
                         'label' => 'Airline Settings',
                         'icon' => 'paper-plane',
-                        'badge' => '<span class="right badge badge-info">2</span>',
+                        'badge' => '<span class="right badge badge-info">3</span>',
                         'items' => [
-                            ['label' => 'Airlines', 'icon' => 'paper-plane', 'url' => ['/sale/airline']],
+                            ['label' => 'Airline Add', 'icon' => 'paper-plane', 'url' => ['/sale/airline/create']],
+                            ['label' => 'Airline List', 'icon' => 'paper-plane', 'url' => ['/sale/airline']],
                             ['label' => 'Airline History', 'icon' => 'list', 'url' => ['/sale/airline-history']],
                         ]
                     ],

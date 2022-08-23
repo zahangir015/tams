@@ -61,7 +61,7 @@ class AirlineHistory extends ActiveRecord
         return [
             'id' => Yii::t('app', 'ID'),
             'uid' => Yii::t('app', 'Uid'),
-            'airlineId' => Yii::t('app', 'Airline ID'),
+            'airlineId' => Yii::t('app', 'Airline'),
             'commission' => Yii::t('app', 'Commission'),
             'incentive' => Yii::t('app', 'Incentive'),
             'govTax' => Yii::t('app', 'Gov Tax'),

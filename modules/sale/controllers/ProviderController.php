@@ -54,7 +54,7 @@ class ProviderController extends ParentController
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+                return $this->redirect(['view', 'uid' => $model->uid]);
             }
         } else {
             $model->loadDefaultValues();
@@ -77,7 +77,7 @@ class ProviderController extends ParentController
         $model = $this->findModel($uid);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['view', 'uid' => $model->uid]);
         }
 
         return $this->render('update', [

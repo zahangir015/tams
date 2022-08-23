@@ -2,7 +2,7 @@
 
 use app\components\GlobalConstant;
 use app\components\Helper;
-use app\modules\sales\models\Provider;
+use app\modules\sale\models\Provider;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use kartik\grid\ActionColumn;

@@ -39,7 +39,7 @@ class Provider extends ActiveRecord
             [['code', 'name', 'createdBy'], 'required'],
             [['status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['uid'], 'string', 'max' => 36],
-            [['code'], 'string', 'max' => 10],
+            [['code'], 'string', 'max' => 64],
             [['name'], 'string', 'max' => 150],
             [['uid'], 'unique'],
             [['code'], 'unique'],
@@ -49,7 +49,7 @@ class Provider extends ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),
