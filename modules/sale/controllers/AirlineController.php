@@ -3,11 +3,12 @@
 namespace app\modules\sale\controllers;
 
 use app\modules\sale\models\Airline;
+use app\modules\sale\models\AirlineHistory;
 use app\modules\sale\models\search\AirlineSearch;
 use app\controllers\ParentController;
+use Exception;
 use Yii;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use yii\web\Response;
 
 /**
@@ -77,36 +78,33 @@ class AirlineController extends ParentController
     {
         $model = $this->findModel($uid);
 
-        if ($this->request->isPost && $model->load() {
-            $requestedData = $this->request->post());
-
-            if (($model->commission != $requestedData['commission']) ||
-                ($model->incentive != $requestedData['incentive']) ||
-                ($model->govtTax != $requestedData['govtTax']) ||
-                ($model->serviceCharge != $requestedData['serviceCharge'])) {
-                $existAmountValues = AirlineHistory::organizeHistoryData($model);
-                $transaction = Yii::$app->db->beginTransaction();
-                try {
-                    $newAirlineHistory = new AirlineHistory();
-                    $newAirlineHistory->load(['AirlineHistory' => $existAmountValues]);
-                    if ($newAirlineHistory->save()) {
-                        $model->load($request->post());
-                        $model->save();
-                        $isValid = true;
-                        $transaction->commit();
+        if ($this->request->isPost) {
+            $dbTransaction = Yii::$app->db->beginTransaction();
+            try {
+                $requestedData = $this->request->post();
+                // History processing
+                if (($model->commission != $requestedData['Airline']['commission']) ||
+                    ($model->incentive != $requestedData['Airline']['incentive']) ||
+                    ($model->govtTax != $requestedData['Airline']['govtTax']) ||
+                    ($model->serviceCharge != $requestedData['Airline']['serviceCharge'])) {
+                    $newAirlineHistoryStoreResponse = AirlineHistory::store($model);
+                    if ($newAirlineHistoryStoreResponse['error']) {
+                        Yii::$app->session->setFlash('error', $newAirlineHistoryStoreResponse['message']);
+                        $dbTransaction->rollBack();
+                        return $this->redirect(Yii::$app->request->referrer);
                     }
-                } catch (\yii\base\Exception $e) {
-                    $isValid = false;
-                    $transaction->rollBack();
                 }
-            } else {
-                $model->load($request->post());
-                if ($model->save()) {
-                    $isValid = true;
-                }
-            }
 
-            return $this->redirect(['view', 'uid' => $model->uid]);
+                if ($model->load($requestedData) && $model->save()) {
+                    $dbTransaction->commit();
+                    return $this->redirect(['view', 'uid' => $model->uid]);
+                }
+
+                $dbTransaction->rollBack();
+            } catch (Exception $e) {
+                Yii::$app->session->setFlash('error', $e->getFile() . ' ' . $e->getLine() . '' . $e->getMessage());
+                $dbTransaction->rollBack();
+            }
         }
 
         return $this->render('update', [
@@ -121,22 +119,22 @@ class AirlineController extends ParentController
      * @return Response
      * @throws NotFoundHttpException if the model cannot be found
      *public function actionDelete($id)
-    {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
-    }*/
+     * {
+     * $this->findModel($id)->delete();
+     *
+     * return $this->redirect(['index']);
+     * }*/
 
     /**
      * Finds the Airline model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param string $uid UID
-     * @return Airline the loaded model
+     * @return array|\yii\db\ActiveRecord the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel(string $uid): Airline
+    protected function findModel(string $uid): array|\yii\db\ActiveRecord
     {
-        if (($model = Airline::findOne(['uid' => $uid])) !== null) {
+        if (($model = Airline::find()->with(['supplier'])->where(['uid' => $uid])->one()) !== null) {
             return $model;
         }
 

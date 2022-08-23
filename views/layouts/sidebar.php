@@ -50,20 +50,26 @@ use hail812\adminlte\widgets\Menu;
                     ['label' => 'Permission', 'icon' => 'key', 'url' => ['/admin/permission']],
                     ['label' => 'Assignment',  'icon' => 'check-double', 'url' => ['/admin/assignment']],
                     ['label' => 'SALES SETTINGS', 'header' => true],
-                    ['label' => 'Supplier Category',  'icon' => 'list-alt', 'url' => ['/sale/supplier-category']],
-                    ['label' => 'Suppliers', 'icon' => 'truck', 'url' => ['/sale/supplier']],
-                    ['label' => 'Customers', 'icon' => 'users', 'url' => ['/sale/customer']],
-                    ['label' => 'Airlines', 'icon' => 'paper-plane', 'url' => ['/sale/airline']],
-                    ['label' => 'Airline History', 'icon' => 'paper-plane', 'url' => ['/sale/airline-history']],
                     [
-                        'label' => 'Starter Pages',
-                        'icon' => 'tachometer-alt',
+                        'label' => 'Supplier Settings',
+                        'icon' => 'truck',
                         'badge' => '<span class="right badge badge-info">2</span>',
                         'items' => [
-                            ['label' => 'Active Page', 'url' => ['site/index'], 'iconStyle' => 'far'],
-                            ['label' => 'Inactive Page', 'iconStyle' => 'far'],
+                            ['label' => 'Supplier Category',  'icon' => 'list-alt', 'url' => ['/sale/supplier-category']],
+                            ['label' => 'Suppliers', 'icon' => 'truck', 'url' => ['/sale/supplier']],
                         ]
                     ],
+                    [
+                        'label' => 'Airline Settings',
+                        'icon' => 'paper-plane',
+                        'badge' => '<span class="right badge badge-info">2</span>',
+                        'items' => [
+                            ['label' => 'Airlines', 'icon' => 'paper-plane', 'url' => ['/sale/airline']],
+                            ['label' => 'Airline History', 'icon' => 'list', 'url' => ['/sale/airline-history']],
+                        ]
+                    ],
+                    ['label' => 'Customers', 'icon' => 'users', 'url' => ['/sale/customer']],
+                    ['label' => 'Providers', 'icon' => 'paper-plane', 'url' => ['/sale/provider']],
                     ['label' => 'Simple Link', 'icon' => 'th', 'badge' => '<span class="right badge badge-danger">New</span>'],
                     ['label' => 'Yii2 PROVIDED', 'header' => true],
                     ['label' => 'Login', 'url' => ['site/login'], 'icon' => 'sign-in-alt', 'visible' => Yii::$app->user->isGuest],

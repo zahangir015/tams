@@ -127,7 +127,7 @@ class SupplierController extends ParentController
      */
     protected function findModel(string $uid): Supplier
     {
-        if (($model = Supplier::find()->with(['supplier'])->Where(['uid' => $uid])->one()) !== null) {
+        if (($model = Supplier::find()->where(['uid' => $uid])->one()) !== null) {
             return $model;
         }
 

@@ -29,6 +29,7 @@ use yii\db\ActiveRecord;
 class AirlineHistory extends ActiveRecord
 {
     use TimestampTrait;
+
     /**
      * {@inheritdoc}
      */
@@ -83,14 +84,15 @@ class AirlineHistory extends ActiveRecord
         return $this->hasOne(Airline::className(), ['id' => 'airlineId']);
     }
 
-    public function store(array $requestData): bool
+    public static function store(Airline $airline): array
     {
         $history = new self();
-        $history->load(['AirlineHistory'] => $requestData);
-        if (!$history->save()){
-            Yii::$app->session->setFlash('error', Helper::processErrorMessages($history->getErrors()));
-            return false;
+        $historyColumn = $airline->getAttributes(['commission', 'incentive', 'govTax', 'serviceCharge'], ['id', 'uid', 'supplierId', 'code', 'name', 'status', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy']);
+        $mergedArray = array_merge($historyColumn, ['airlineId' => $airline->id]);
+        $history->load(['AirlineHistory' => $mergedArray]);
+        if (!$history->save()) {
+            return ['error' => true, 'message' => Helper::processErrorMessages($history->getErrors())];
         }
-        return true;
+        return ['error' => false, 'message' => 'History stored successfully'];
     }
 }

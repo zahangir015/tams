@@ -2,7 +2,7 @@
 
 namespace app\modules\sale\models;
 
-use TimestampTrait;
+use app\traits\TimestampTrait;
 use Yii;
 use yii\db\ActiveRecord;
 
@@ -36,7 +36,7 @@ class Provider extends ActiveRecord
     public function rules()
     {
         return [
-            [['uid', 'code', 'name', 'createdBy', 'createdAt'], 'required'],
+            [['code', 'name', 'createdBy'], 'required'],
             [['status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['code'], 'string', 'max' => 10],
