@@ -1,5 +1,7 @@
 <?php
 
+use app\components\GlobalConstant;
+use app\components\Helper;
 use app\modules\sale\models\AirlineHistory;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -43,10 +45,10 @@ $this->params['breadcrumbs'][] = $this->title;
         'toolbar' => [
             [
                 'content' =>
-                    Html::a('<i class="fas fa-plus"></i>', ['/sale/airline/create'], [
+                    /*Html::a('<i class="fas fa-plus"></i>', ['/sale/airline/create'], [
                         'title' => Yii::t('app', 'Add Airline'),
                         'class' => 'btn btn-success'
-                    ]) . ' ' .
+                    ]) . ' ' .*/
                     Html::a('<i class="fas fa-redo"></i>', ['/sale/airline/index'], [
                         'class' => 'btn btn-primary',
                         'title' => Yii::t('app', 'Reset Grid')

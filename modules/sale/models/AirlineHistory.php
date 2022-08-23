@@ -2,9 +2,11 @@
 
 namespace app\modules\sale\models;
 
+use app\components\Helper;
 use app\traits\TimestampTrait;
 use Yii;
 use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%airline_history}}".
@@ -24,7 +26,7 @@ use yii\db\ActiveQuery;
  *
  * @property Airline $airline
  */
-class AirlineHistory extends \yii\db\ActiveRecord
+class AirlineHistory extends ActiveRecord
 {
     use TimestampTrait;
     /**
@@ -79,5 +81,16 @@ class AirlineHistory extends \yii\db\ActiveRecord
     public function getAirline(): ActiveQuery
     {
         return $this->hasOne(Airline::className(), ['id' => 'airlineId']);
+    }
+
+    public function store(array $requestData): bool
+    {
+        $history = new self();
+        $history->load(['AirlineHistory'] => $requestData);
+        if (!$history->save()){
+            Yii::$app->session->setFlash('error', Helper::processErrorMessages($history->getErrors()));
+            return false;
+        }
+        return true;
     }
 }

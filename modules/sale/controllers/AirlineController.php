@@ -77,7 +77,35 @@ class AirlineController extends ParentController
     {
         $model = $this->findModel($uid);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+        if ($this->request->isPost && $model->load() {
+            $requestedData = $this->request->post());
+
+            if (($model->commission != $requestedData['commission']) ||
+                ($model->incentive != $requestedData['incentive']) ||
+                ($model->govtTax != $requestedData['govtTax']) ||
+                ($model->serviceCharge != $requestedData['serviceCharge'])) {
+                $existAmountValues = AirlineHistory::organizeHistoryData($model);
+                $transaction = Yii::$app->db->beginTransaction();
+                try {
+                    $newAirlineHistory = new AirlineHistory();
+                    $newAirlineHistory->load(['AirlineHistory' => $existAmountValues]);
+                    if ($newAirlineHistory->save()) {
+                        $model->load($request->post());
+                        $model->save();
+                        $isValid = true;
+                        $transaction->commit();
+                    }
+                } catch (\yii\base\Exception $e) {
+                    $isValid = false;
+                    $transaction->rollBack();
+                }
+            } else {
+                $model->load($request->post());
+                if ($model->save()) {
+                    $isValid = true;
+                }
+            }
+
             return $this->redirect(['view', 'uid' => $model->uid]);
         }
 
