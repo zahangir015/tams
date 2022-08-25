@@ -3,7 +3,7 @@
 namespace app\modules\sale\models;
 
 use app\components\Helper;
-use app\traits\TimestampTrait;
+use app\traits\BehaviorTrait;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
@@ -28,7 +28,7 @@ use yii\db\ActiveRecord;
  */
 class AirlineHistory extends ActiveRecord
 {
-    use TimestampTrait;
+    use BehaviorTrait;
 
     /**
      * {@inheritdoc}

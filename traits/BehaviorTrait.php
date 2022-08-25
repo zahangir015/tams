@@ -1,12 +1,15 @@
 <?php
+
 namespace app\traits;
 
+use app\models\History;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
+use yii\helpers\Json;
 
-trait TimestampTrait
+trait BehaviorTrait
 {
     public function behaviors(): array
     {
@@ -23,7 +26,7 @@ trait TimestampTrait
 
     public function beforeValidate(): bool
     {
-        if (isset(Yii::$app->controller->action) && Yii::$app->controller->action->id != "index" && !Yii::$app->user->isGuest) {
+        if (isset(Yii::$app->controller->action) && (Yii::$app->controller->action->id != "index") && !Yii::$app->user->isGuest) {
             if ($this->isNewRecord) {
                 $this->createdBy = Yii::$app->user->id ?? 1;
             } else {
@@ -38,7 +41,21 @@ trait TimestampTrait
         if ($this->isNewRecord && isset(Yii::$app->controller->action)) {
             $this->uid = Yii::$app->db->createCommand('select UUID()')->queryScalar();
         }
+
+        if (!$this->isNewRecord) {
+            $history = new History();
+            $history->snapshot($this->createSnapshot('update')); // [4]
+        }
+
         return parent::beforeSave($insert);
+    }
+
+    public function beforeDelete(): bool
+    {
+        $history = new History();
+        $history->snapshot($this->createSnapshot('delete'));
+
+        return parent::beforeDelete();
     }
 
     public function afterSave($insert, $changedAttributes)
@@ -61,6 +78,18 @@ trait TimestampTrait
             }
         }
         parent::afterSave($insert, $changedAttributes);
+    }
+
+    public function createSnapshot($action = 'update'): array
+    {
+        return [
+            'userId' => Yii::$app->user->id ?: 0,
+            'tableName' => $this->tableName(),
+            'tableId' => is_numeric($this->getPrimaryKey()) ? $this->getPrimaryKey() : 0,
+            'tableData' => Json::encode($this->getAttributes(null)),
+            'action' => $action,
+            'snapshot' => date('Y-m-d h:i:s')
+        ];
     }
 
 }

@@ -2,7 +2,7 @@
 
 namespace app\modules\sale\models;
 
-use app\traits\TimestampTrait;
+use app\traits\BehaviorTrait;
 use Yii;
 use yii\db\ActiveRecord;
 
@@ -20,7 +20,7 @@ use yii\db\ActiveRecord;
  */
 class SupplierCategory extends ActiveRecord
 {
-    use TimestampTrait;
+    use BehaviorTrait;
 
     /**
      * {@inheritdoc}
