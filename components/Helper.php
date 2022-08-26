@@ -10,6 +10,7 @@ use kartik\select2\Select2;
 use Yii;
 use yii\bootstrap4\Html;
 use yii\bootstrap4\Modal;
+use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\web\JsExpression;
 
@@ -499,6 +500,20 @@ class Helper
     {
         $uploadOptions = self::get('uploadOptions');
         return $uploadOptions['maxFileSize'];
+    }
+
+    public static function getTagWidget($data): array
+    {
+        return [
+            'theme' => Select2::THEME_BOOTSTRAP,
+            'data' => [],
+            'options' => ['placeholder' => 'Select Category ...', 'multiple' => true, 'value' => Json::decode($data)],
+            'pluginOptions' => [
+                'tags' => true,
+                'tokenSeparators' => [',', ' '],
+                'maximumInputLength' => 10
+            ],
+        ];
     }
 
     public static function validateFile($file, $type = 'file'): bool

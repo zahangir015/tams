@@ -31,6 +31,41 @@ class m220823_175112_create_ledger_table extends Migration
             'updatedBy' => $this->integer(11)->null(),
             'updatedAt' => $this->integer(11)->null(),
         ]);
+
+        // creates index for column `date`
+        $this->createIndex(
+            'idx-ledger-date',
+            'ledger',
+            'date'
+        );
+
+        // creates index for column `refId`
+        $this->createIndex(
+            'idx-ledger-refId',
+            'ledger',
+            'refId'
+        );
+
+        // creates index for column `refModel`
+        $this->createIndex(
+            'idx-ledger-refModel',
+            'ledger',
+            'refModel'
+        );
+
+        // creates index for column `subRefId`
+        $this->createIndex(
+            'idx-ledger-subRefId',
+            'ledger',
+            'subRefId'
+        );
+
+        // creates index for column `subRefModel`
+        $this->createIndex(
+            'idx-ledger-subRefModel',
+            'ledger',
+            'subRefModel'
+        );
     }
 
     /**
@@ -38,6 +73,36 @@ class m220823_175112_create_ledger_table extends Migration
      */
     public function safeDown()
     {
+        // drop index for column `date`
+        $this->dropIndex(
+            'idx-ledger-date',
+            'ledger'
+        );
+
+        // drop index for column `refId`
+        $this->dropIndex(
+            'idx-ledger-refId',
+            'ledger'
+        );
+
+        // drop index for column `refModel`
+        $this->dropIndex(
+            'idx-ledger-refModel',
+            'ledger'
+        );
+
+        // drop index for column `subRefId`
+        $this->dropIndex(
+            'idx-ledger-subRefId',
+            'ledger'
+        );
+
+        // drop index for column `subRefModel`
+        $this->dropIndex(
+            'idx-ledger-subRefModel',
+            'ledger'
+        );
+
         $this->dropTable('{{%ledger}}');
     }
 }

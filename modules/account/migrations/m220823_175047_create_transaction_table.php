@@ -33,27 +33,6 @@ class m220823_175047_create_transaction_table extends Migration
             'updatedAt' => $this->integer(11)->null(),
         ]);
 
-        // creates index for column `transactionNumber`
-        $this->createIndex(
-            'idx-ticket-transactionNumber',
-            'ticket',
-            'transactionNumber'
-        );
-
-        // creates index for column `refId`
-        $this->createIndex(
-            'idx-ticket-refId',
-            'ticket',
-            'refId'
-        );
-
-        // creates index for column `refModel`
-        $this->createIndex(
-            'idx-ticket-refModel',
-            'ticket',
-            'refModel'
-        );
-
         // creates index for column `bankId`
         $this->createIndex(
             'idx-transaction-bankId',
@@ -70,6 +49,43 @@ class m220823_175047_create_transaction_table extends Migration
             'id',
             'CASCADE'
         );
+
+        // creates index for column `transactionNumber`
+        $this->createIndex(
+            'idx-transaction-transactionNumber',
+            'transaction',
+            'transactionNumber'
+        );
+
+        // creates index for column `refId`
+        $this->createIndex(
+            'idx-transaction-refId',
+            'transaction',
+            'refId'
+        );
+
+        // creates index for column `refModel`
+        $this->createIndex(
+            'idx-transaction-refModel',
+            'transaction',
+            'refModel'
+        );
+
+        // creates index for column `subRefId`
+        $this->createIndex(
+            'idx-transaction-subRefId',
+            'transaction',
+            'subRefId'
+        );
+
+        // creates index for column `subRefModel`
+        $this->createIndex(
+            'idx-transaction-subRefModel',
+            'transaction',
+            'subRefModel'
+        );
+
+
     }
 
     /**
@@ -92,6 +108,18 @@ class m220823_175047_create_transaction_table extends Migration
         // drops index for column `refModel`
         $this->dropIndex(
             'idx-transaction-refModel',
+            'transaction'
+        );
+
+        // drops index for column `subRefId`
+        $this->dropIndex(
+            'idx-transaction-subRefId',
+            'transaction'
+        );
+
+        // drops index for column `subRefModel`
+        $this->dropIndex(
+            'idx-transaction-subRefModel',
             'transaction'
         );
 

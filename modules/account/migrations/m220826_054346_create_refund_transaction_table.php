@@ -30,6 +30,20 @@ class m220826_054346_create_refund_transaction_table extends Migration
             'updatedBy' => $this->integer(11)->null(),
             'updatedAt' => $this->integer(11)->null(),
         ]);
+
+        // creates index for column `refId`
+        $this->createIndex(
+            'idx-refund-transaction-refId',
+            'refund_transaction',
+            'refId'
+        );
+
+        // creates index for column `refModel`
+        $this->createIndex(
+            'idx-refund-transaction-refModel',
+            'refund_transaction',
+            'refModel'
+        );
     }
 
     /**
@@ -37,6 +51,18 @@ class m220826_054346_create_refund_transaction_table extends Migration
      */
     public function safeDown()
     {
+        // drops index for column `refId`
+        $this->dropIndex(
+            'idx-refund-transaction-refId',
+            'refund_transaction'
+        );
+
+        // drops index for column `refModel`
+        $this->dropIndex(
+            'idx-refund-transaction-refModel',
+            'refund_transaction'
+        );
+
         $this->dropTable('{{%refund_transaction}}');
     }
 }

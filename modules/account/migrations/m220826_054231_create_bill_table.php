@@ -30,6 +30,13 @@ class m220826_054231_create_bill_table extends Migration
             'updatedAt' => $this->integer(11)->null(),
         ]);
 
+        // creates index for column `date`
+        $this->createIndex(
+            'idx-bill-date',
+            'bill',
+            'date'
+        );
+
         // creates index for column `billNumber`
         $this->createIndex(
             'idx-bill-billNumber',
@@ -60,6 +67,12 @@ class m220826_054231_create_bill_table extends Migration
      */
     public function safeDown()
     {
+        // drops index for column `date`
+        $this->dropIndex(
+            'idx-bill-date',
+            'bill'
+        );
+
         // drops index for column `billNumber`
         $this->dropIndex(
             'idx-bill-billNumber',

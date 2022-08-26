@@ -73,6 +73,8 @@ use hail812\adminlte\widgets\Menu;
                     ],
                     ['label' => 'Customers', 'icon' => 'users', 'url' => ['/sale/customer']],
                     ['label' => 'Providers', 'icon' => 'paper-plane', 'url' => ['/sale/provider']],
+                    ['label' => 'ACCOUNTS', 'header' => true],
+                    ['label' => 'Bank Accounts', 'icon' => 'building', 'url' => ['/account/bank-account']],
                     ['label' => 'Simple Link', 'icon' => 'th', 'badge' => '<span class="right badge badge-danger">New</span>'],
                     ['label' => 'Yii2 PROVIDED', 'header' => true],
                     ['label' => 'Login', 'url' => ['site/login'], 'icon' => 'sign-in-alt', 'visible' => Yii::$app->user->isGuest],

@@ -28,6 +28,20 @@ class m220823_175007_create_invoice_detail_table extends Migration
             'invoice_detail',
             'invoiceId'
         );
+
+        // creates index for column `refId`
+        $this->createIndex(
+            'idx-invoice-detail-refId',
+            'invoice_detail',
+            'refId'
+        );
+
+        // creates index for column `refModel`
+        $this->createIndex(
+            'idx-invoice-detail-refModel',
+            'invoice_detail',
+            'refModel'
+        );
     }
 
     /**
@@ -38,6 +52,18 @@ class m220823_175007_create_invoice_detail_table extends Migration
         // drops index for column `invoiceId`
         $this->dropIndex(
             'idx-invoice-detail-invoiceId',
+            'invoice_detail'
+        );
+
+        // drops index for column `refId`
+        $this->dropIndex(
+            'idx-invoice-detail-refId',
+            'invoice_detail'
+        );
+
+        // drops index for column `refModel`
+        $this->dropIndex(
+            'idx-invoice-detail-refModel',
             'invoice_detail'
         );
 
