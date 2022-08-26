@@ -14,6 +14,15 @@ class m220823_175201_create_service_payment_history_table extends Migration
     {
         $this->createTable('{{%service_payment_history}}', [
             'id' => $this->primaryKey(),
+            'uid' => $this->string(36)->notNull()->unique(),
+            'date' => $this->date()->notNull(),
+            'refId' => $this->integer()->notNull(),
+            'refModel' => $this->string(150)->notNull(),
+            'subRefId' => $this->integer()->null(),
+            'subRefModel' => $this->string(150)->null(),
+            'paidAmount' => $this->double()->defaultValue(0),
+            'dueAmount' => $this->double()->defaultValue(0),
+            'status' => $this->boolean()->defaultValue(1),
         ]);
     }
 

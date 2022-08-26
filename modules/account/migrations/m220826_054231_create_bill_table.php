@@ -3,22 +3,21 @@
 use yii\db\Migration;
 
 /**
- * Handles the creation of table `{{%invoice}}`.
+ * Handles the creation of table `{{%bill}}`.
  */
-class m220823_174957_create_invoice_table extends Migration
+class m220826_054231_create_bill_table extends Migration
 {
     /**
      * {@inheritdoc}
      */
     public function safeUp()
     {
-        $this->createTable('{{%invoice}}', [
+        $this->createTable('{{%bill}}', [
             'id' => $this->primaryKey(),
             'uid' => $this->string(36)->notNull()->unique(),
-            'customerId' => $this->integer(11)->notNull(),
-            'invoiceNumber' => $this->string(64)->notNull()->unique(),
+            'supplierId' => $this->integer(11)->notNull(),
+            'billNumber' => $this->string(64)->notNull()->unique(),
             'date' => $this->date()->notNull(),
-            'expectedPaymentDate' => $this->date()->null(),
             'paidAmount' => $this->double()->defaultValue(0),
             'dueAmount' => $this->double()->defaultValue(0),
             'discountedAmount' => $this->double()->defaultValue(0),
@@ -31,26 +30,26 @@ class m220823_174957_create_invoice_table extends Migration
             'updatedAt' => $this->integer(11)->null(),
         ]);
 
-        // creates index for column `invoiceNumber`
+        // creates index for column `billNumber`
         $this->createIndex(
-            'idx-invoice-invoiceNumber',
-            'invoice',
-            'invoiceNumber'
+            'idx-bill-billNumber',
+            'bill',
+            'billNumber'
         );
 
-        // creates index for column `customerId`
+        // creates index for column `supplierId`
         $this->createIndex(
-            'idx-invoice-customerId',
-            'invoice',
-            'customerId'
+            'idx-bill-supplierId',
+            'bill',
+            'supplierId'
         );
 
-        // add foreign key for table `customer`
+        // add foreign key for table `supplier`
         $this->addForeignKey(
-            'fk-invoice-customerId',
-            'invoice',
-            'customerId',
-            'customer',
+            'fk-bill-supplierId',
+            'bill',
+            'supplierId',
+            'supplier',
             'id',
             'CASCADE'
         );
@@ -61,24 +60,24 @@ class m220823_174957_create_invoice_table extends Migration
      */
     public function safeDown()
     {
-        // drops index for column `invoiceNumber`
+        // drops index for column `billNumber`
         $this->dropIndex(
-            'idx-invoice-invoiceNumber',
-            'invoice'
+            'idx-bill-billNumber',
+            'bill'
         );
 
-        // drops foreign key for table `customer`
+        // drops foreign key for table `supplier`
         $this->dropForeignKey(
-            'fk-invoice-customerId',
-            'invoice'
+            'fk-bill-airlineId',
+            'bill'
         );
 
-        // drops index for column `customerId`
+        // drops index for column `supplierId`
         $this->dropIndex(
-            'idx-invoice-customerId',
-            'invoice'
+            'idx-bill-airlineId',
+            'bill'
         );
 
-        $this->dropTable('{{%invoice}}');
+        $this->dropTable('{{%bill}}');
     }
 }
