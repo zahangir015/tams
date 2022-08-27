@@ -61,7 +61,7 @@ class SupplierCategoryController extends ParentController
                 return $this->redirect(['view', 'uid' => $model->uid]);
             }
 
-            Yii::$app->session->setFlash('Error', Helper::processErrorMessages($model->getErrors()));
+            Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
         } else {
             $model->loadDefaultValues();
         }
@@ -87,8 +87,7 @@ class SupplierCategoryController extends ParentController
                 Yii::$app->session->setFlash('success', 'Supplier Category updated successfully.');
                 return $this->redirect(['view', 'uid' => $model->uid]);
             }
-
-            Yii::$app->session->setFlash('Error', Helper::processErrorMessages($model->getErrors()));
+            Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
         }
 
         return $this->render('update', [

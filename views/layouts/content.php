@@ -1,6 +1,8 @@
 <?php
 /* @var $content string */
 
+//use hail812\adminlte\widgets\Alert;
+use hail812\adminlte\widgets\Alert;
 use yii\bootstrap4\Breadcrumbs;
 use yii\helpers\Html;
 use yii\helpers\Inflector;
@@ -27,6 +29,17 @@ use yii\helpers\Inflector;
 
     <!-- Main content -->
     <div class="content">
+        <?php
+        $flashMessages = Yii::$app->session->getAllFlashes();
+        if ($flashMessages) {
+            foreach($flashMessages as $key => $message) {
+                echo Alert::widget([
+                    'type' => $key,
+                    'body' => "<p>$message</p>",
+                ]);
+            }
+        }
+        ?>
         <?= $content ?><!-- /.container-fluid -->
     </div>
     <!-- /.content -->

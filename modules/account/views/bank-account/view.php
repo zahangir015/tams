@@ -15,29 +15,34 @@ $this->params['breadcrumbs'][] = $this->title;
     <p>
         <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
     </p>
-
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'id',
-            'uid',
-            'name',
-            'shortName',
-            'accountName',
-            'accountNumber',
-            'branch',
-            'routingNumber',
-            'swiftCode',
-            'code',
-            'paymentCharge',
-            'logo',
-            'tag',
-            'status',
-            'createdBy',
-            'createdAt',
-            'updatedBy',
-            'updatedAt',
-        ],
-    ]) ?>
-
+    <div class="card">
+        <div class="card-header bg-gray-dark">
+            <?= Html::encode($this->title) ?>
+        </div>
+        <div class="card-body">
+            <?= DetailView::widget([
+                'model' => $model,
+                'attributes' => [
+                    'id',
+                    'uid',
+                    'name',
+                    'shortName',
+                    'accountName',
+                    'accountNumber',
+                    'branch',
+                    'routingNumber',
+                    'swiftCode',
+                    'code',
+                    'paymentCharge',
+                    'logo',
+                    'tag',
+                    'status',
+                    'createdBy',
+                    'createdAt',
+                    'updatedBy',
+                    'updatedAt',
+                ],
+            ]) ?>
+        </div>
+    </div>
 </div>

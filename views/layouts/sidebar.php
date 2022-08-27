@@ -56,9 +56,9 @@ use hail812\adminlte\widgets\Menu;
                         'badge' => '<span class="right badge badge-info">4</span>',
                         'items' => [
                             ['label' => 'Supplier Category Add',  'icon' => 'list-alt', 'url' => ['/sale/supplier-category/create']],
-                            ['label' => 'Category List',  'icon' => 'list-alt', 'url' => ['/sale/supplier-category']],
+                            ['label' => 'Category List',  'icon' => 'list-alt', 'url' => ['/sale/supplier-category/index']],
                             ['label' => 'Supplier Add', 'icon' => 'truck', 'url' => ['/sale/supplier/create']],
-                            ['label' => 'Supplier List', 'icon' => 'truck', 'url' => ['/sale/supplier']],
+                            ['label' => 'Supplier List', 'icon' => 'truck', 'url' => ['/sale/supplier/index']],
                         ]
                     ],
                     [
@@ -67,12 +67,24 @@ use hail812\adminlte\widgets\Menu;
                         'badge' => '<span class="right badge badge-info">3</span>',
                         'items' => [
                             ['label' => 'Airline Add', 'icon' => 'paper-plane', 'url' => ['/sale/airline/create']],
-                            ['label' => 'Airline List', 'icon' => 'paper-plane', 'url' => ['/sale/airline']],
-                            ['label' => 'Airline History', 'icon' => 'list', 'url' => ['/sale/airline-history']],
+                            ['label' => 'Airline List', 'icon' => 'paper-plane', 'url' => ['/sale/airline/index']],
+                            ['label' => 'Airline History', 'icon' => 'list', 'url' => ['/sale/airline-history/index']],
                         ]
                     ],
-                    ['label' => 'Customers', 'icon' => 'users', 'url' => ['/sale/customer']],
-                    ['label' => 'Providers', 'icon' => 'paper-plane', 'url' => ['/sale/provider']],
+                    ['label' => 'Customers', 'icon' => 'users', 'url' => ['/sale/customer/index']],
+                    ['label' => 'Providers', 'icon' => 'paper-plane', 'url' => ['/sale/provider/index']],
+                    [
+                        'label' => 'Flight Management',
+                        'icon' => 'plane',
+                        'badge' => '<span class="right badge badge-info">5</span>',
+                        'items' => [
+                            ['label' => 'Create Ticket ',  'icon' => 'plus', 'url' => ['/sale/ticket/create']],
+                            ['label' => 'Upload Ticket',  'icon' => 'upload', 'url' => ['/sale/ticket/upload']],
+                            ['label' => 'Ticket List', 'icon' => 'list', 'url' => ['/sale/ticket/index']],
+                            ['label' => 'Refund List', 'icon' => 'minus', 'url' => ['/sale/ticket/refund-list']],
+                            ['label' => 'Void List', 'icon' => 'circle', 'url' => ['/sale/ticket/void-list']],
+                        ]
+                    ],
                     ['label' => 'ACCOUNTS', 'header' => true],
                     ['label' => 'Bank Accounts', 'icon' => 'building', 'url' => ['/account/bank-account']],
                     ['label' => 'Simple Link', 'icon' => 'th', 'badge' => '<span class="right badge badge-danger">New</span>'],

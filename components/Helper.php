@@ -511,7 +511,7 @@ class Helper
             'pluginOptions' => [
                 'tags' => true,
                 'tokenSeparators' => [',', ' '],
-                'maximumInputLength' => 10
+                //'maximumInputLength' => 10
             ],
         ];
     }

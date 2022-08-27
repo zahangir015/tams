@@ -1,30 +1,26 @@
 <?php
 
-namespace app\modules\account\controllers;
+namespace app\modules\sale\controllers;
 
-use app\components\Helper;
-use app\modules\account\models\BankAccount;
-use app\modules\account\models\search\BankAccountSearch;
+use app\modules\sale\models\Ticket;
+use app\modules\sale\models\search\TicketSearch;
 use app\controllers\ParentController;
-use Yii;
-use yii\helpers\Json;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\web\Response;
 
 /**
- * BankAccountController implements the CRUD actions for BankAccount model.
+ * TicketController implements the CRUD actions for Ticket model.
  */
-class BankAccountController extends ParentController
+class TicketController extends ParentController
 {
     /**
-     * Lists all BankAccount models.
+     * Lists all Ticket models.
      *
      * @return string
      */
     public function actionIndex()
     {
-        $searchModel = new BankAccountSearch();
+        $searchModel = new TicketSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
@@ -34,35 +30,30 @@ class BankAccountController extends ParentController
     }
 
     /**
-     * Displays a single BankAccount model.
-     * @param string $uid UID
+     * Displays a single Ticket model.
+     * @param int $id ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView(string $uid)
+    public function actionView($id)
     {
         return $this->render('view', [
-            'model' => $this->findModel($uid),
+            'model' => $this->findModel($id),
         ]);
     }
 
     /**
-     * Creates a new BankAccount model.
+     * Creates a new Ticket model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|Response
+     * @return string|\yii\web\Response
      */
     public function actionCreate()
     {
-        $model = new BankAccount();
+        $model = new Ticket();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post())) {
-                $model->tag = Json::encode($model->tag);
-                if ($model->save()) {
-                    Yii::$app->session->setFlash('success', 'Bank Account created successfully.');
-                    return $this->redirect(['view', 'uid' => $model->uid]);
-                }
-                Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
+            if ($model->load($this->request->post()) && $model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {
             $model->loadDefaultValues();
@@ -74,15 +65,15 @@ class BankAccountController extends ParentController
     }
 
     /**
-     * Updates an existing BankAccount model.
+     * Updates an existing Ticket model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param string $uid UID
-     * @return string|Response
+     * @param int $id ID
+     * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate(string $uid)
+    public function actionUpdate($id)
     {
-        $model = $this->findModel($uid);
+        $model = $this->findModel($id);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -94,29 +85,29 @@ class BankAccountController extends ParentController
     }
 
     /**
-     * Deletes an existing BankAccount model.
+     * Deletes an existing Ticket model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param string $uid UID
-     * @return Response
-     * @throws NotFoundHttpException if the model cannot be found
-     *
-     * public function actionDelete($uid)
-    {
-        $this->findModel($uid)->delete();
-
-        return $this->redirect(['index']);
-    }*/
-
-    /**
-     * Finds the BankAccount model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param string $uid UID
-     * @return BankAccount the loaded model
+     * @param int $id ID
+     * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel(string $uid): BankAccount
+    public function actionDelete($id)
     {
-        if (($model = BankAccount::findOne(['uid' => $uid])) !== null) {
+        $this->findModel($id)->delete();
+
+        return $this->redirect(['index']);
+    }
+
+    /**
+     * Finds the Ticket model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param int $id ID
+     * @return Ticket the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel($id)
+    {
+        if (($model = Ticket::findOne(['id' => $id])) !== null) {
             return $model;
         }
 

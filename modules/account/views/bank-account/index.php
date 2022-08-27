@@ -6,6 +6,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use kartik\grid\ActionColumn;
 use kartik\grid\GridView;
+use app\modules\account\models\BankAccount;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\modules\account\models\search\BankAccountSearch */
@@ -44,7 +45,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, BankAccount $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'id' => $model->id]);
+                    return Url::toRoute([$action, 'uid' => $model->uid]);
                  }
             ],
         ],

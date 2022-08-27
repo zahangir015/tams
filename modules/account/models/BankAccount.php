@@ -2,6 +2,7 @@
 
 namespace app\modules\account\models;
 
+use app\traits\BehaviorTrait;
 use Yii;
 
 /**
@@ -30,6 +31,7 @@ use Yii;
  */
 class BankAccount extends \yii\db\ActiveRecord
 {
+    use BehaviorTrait;
     /**
      * {@inheritdoc}
      */
