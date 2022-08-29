@@ -2,11 +2,12 @@
 
 namespace app\modules\sale\controllers;
 
-use app\modules\sale\models\Ticket;
-use app\modules\sale\models\search\TicketSearch;
+use app\modules\sale\models\ticket\Ticket;
+use app\modules\sale\models\ticket\TicketSearch;
 use app\controllers\ParentController;
+use app\modules\sale\models\ticket\TicketSupplier;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
+use yii\web\Response;
 
 /**
  * TicketController implements the CRUD actions for Ticket model.
@@ -31,25 +32,26 @@ class TicketController extends ParentController
 
     /**
      * Displays a single Ticket model.
-     * @param int $id ID
+     * @param string $uid UID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id)
+    public function actionView(string $uid)
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $this->findModel($uid),
         ]);
     }
 
     /**
      * Creates a new Ticket model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
+     * @return string|Response
      */
     public function actionCreate()
     {
         $model = new Ticket();
+        $ticketSupplier = new TicketSupplier();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
@@ -61,19 +63,20 @@ class TicketController extends ParentController
 
         return $this->render('create', [
             'model' => $model,
+            'ticketSupplier' => $ticketSupplier,
         ]);
     }
 
     /**
      * Updates an existing Ticket model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id ID
-     * @return string|\yii\web\Response
+     * @param string $uid UID
+     * @return string|Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionUpdate(string $uid)
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel($uid);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -87,13 +90,13 @@ class TicketController extends ParentController
     /**
      * Deletes an existing Ticket model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id ID
-     * @return \yii\web\Response
+     * @param string $uid UID
+     * @return Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($id)
+    public function actionDelete(string $uid)
     {
-        $this->findModel($id)->delete();
+        $this->findModel($uid)->delete();
 
         return $this->redirect(['index']);
     }
@@ -101,13 +104,13 @@ class TicketController extends ParentController
     /**
      * Finds the Ticket model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id ID
+     * @param string $uid UID
      * @return Ticket the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel(string $uid)
     {
-        if (($model = Ticket::findOne(['id' => $id])) !== null) {
+        if (($model = Ticket::findOne(['id' => $uid])) !== null) {
             return $model;
         }
 

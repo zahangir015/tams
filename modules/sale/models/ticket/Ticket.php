@@ -1,10 +1,14 @@
 <?php
 
-namespace app\modules\sale\models;
+namespace app\modules\sale\models\ticket;
 
 use app\modules\account\models\Invoice;
+use app\modules\sale\models\Airline;
+use app\modules\sale\models\Customer;
+use app\modules\sale\models\Provider;
 use Yii;
 use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%ticket}}".
@@ -62,7 +66,7 @@ use yii\db\ActiveQuery;
  * @property TicketRefund[] $ticketRefunds
  * @property TicketSupplier[] $ticketSuppliers
  */
-class Ticket extends \yii\db\ActiveRecord
+class Ticket extends ActiveRecord
 {
     /**
      * {@inheritdoc}

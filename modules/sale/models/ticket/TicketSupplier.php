@@ -1,8 +1,12 @@
 <?php
 
-namespace app\modules\sale\models;
+namespace app\modules\sale\models\ticket;
 
+use app\modules\account\models\Bill;
+use app\modules\sale\models\Airline;
+use app\modules\sale\models\Supplier;
 use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%ticket_supplier}}".
@@ -31,12 +35,12 @@ use Yii;
  * @property Supplier $supplier
  * @property Ticket $ticket
  */
-class TicketSupplier extends \yii\db\ActiveRecord
+class TicketSupplier extends ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%ticket_supplier}}';
     }
@@ -44,7 +48,7 @@ class TicketSupplier extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['uid', 'ticketId', 'supplierId', 'airlineId', 'issueDate', 'eTicket', 'pnrCode', 'type', 'costOfSale'], 'required'],

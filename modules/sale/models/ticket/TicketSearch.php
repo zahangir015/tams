@@ -1,10 +1,8 @@
 <?php
 
-namespace app\modules\sale\models\search;
-
+namespace app\modules\sale\models\ticket;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\sale\models\Ticket;
 
 /**
  * TicketSearch represents the model behind the search form of `app\modules\sale\models\Ticket`.

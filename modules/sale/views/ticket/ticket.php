@@ -1,0 +1,147 @@
+<?php
+
+use app\components\GlobalConstant;
+use app\components\Helper;
+use app\modules\sale\models\ticket\Ticket;
+use kartik\date\DatePicker;
+use kartik\select2\Select2;
+use yii\bootstrap4\Html;
+
+/* @var $this yii\web\View */
+/* @var $image app\models\Voucher */
+/* @var $form yii\widgets\ActiveForm */
+
+?>
+<div class="card card-custom card-border mb-5" id="card<?= $row ?>">
+    <div class="card-header">
+        <div class="card-title">
+            <span class="card-icon"><i class="flaticon2-paper-plane text-primary"></i></span>
+            <h5 class="card-label" id="card-label-<?= $row ?>">
+                Ticket <?= ($model->isNewRecord) ? ($row + 1) : ' - ' . $model->eTicket ?></h5>
+        </div>
+        <?php
+        if ($row != 0) {
+            ?>
+            <div class="card-toolbar">
+                <a href="#" class="btn btn-icon btn-light-primary btn-hover-danger btn-sm"
+                   onclick="remove(<?= $row ?>)">
+                    <span class="svg-icon svg-icon-primary svg-icon-2x">
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px"
+                         height="24px" viewBox="0 0 24 24" version="1.1">
+                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                        <g transform="translate(12.000000, 12.000000) rotate(-45.000000) translate(-12.000000, -12.000000) translate(4.000000, 4.000000)"
+                           fill="#000000">
+                            <rect x="0" y="7" width="16" height="2" rx="1"/>
+                            <rect opacity="0.3"
+                                  transform="translate(8.000000, 8.000000) rotate(-270.000000) translate(-8.000000, -8.000000) "
+                                  x="0" y="7" width="16" height="2" rx="1"/>
+                        </g>
+                    </g>
+                    </svg>
+                </span>
+                </a>
+            </div>
+            <?php
+        }
+        ?>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md">
+                <?= $form->field($model, "[$row]airlineId")->widget(Select2::classname(), Helper::ajaxDropDown('airlineId','/sale/airline/get-airlines', true, 'airlineId' . $row, 'airline', ($model->isNewRecord) ? [] : [$model->airlineId => $model->airline->airlineName . ' | ' . $model->airline->code]))->label('Airline') ?>
+            </div>
+            <div class="col-md">
+                <?= $form->field($model, "[$row]commission")->textInput(['id' => 'commission' . $row, 'readOnly' => true]) ?>
+            </div>
+            <div class="col-md">
+                <?= $form->field($model, "[$row]incentive")->textInput(['id' => 'incentive' . $row, 'readOnly' => true]) ?>
+            </div>
+            <div class="col-md">
+                <?= $form->field($model, "[$row]govTax")->textInput(['id' => 'govTax' . $row, 'readOnly' => true]) ?>
+            </div>
+            <div class="col-md">
+                <?= $form->field($model, "[$row]serviceCharge")->textInput(['id' => 'serviceCharge' . $row, 'readOnly' => true]) ?>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md">
+                <?= $form->field($ticketSupplier, "[$row]supplierId")->widget(Select2::classname(), Helper::ajaxDropDown('supplierId', '/configuration/supplier/get-supplier-list', true, 'supplierId' . $row, 'supplier', ($model->isNewRecord) ? [] : [$ticketSupplier->supplierId => $ticketSupplier->supplier->name . ' | ' . $ticketSupplier->supplier->supplierCompany], $model->isNewRecord ? false : true))->label('Supplier') ?>
+                <?= $form->field($ticketSupplier, "[$row]status")->hiddenInput(['id' => 'status' . $row, 'class' => 'status', 'value' => GlobalConstant::ACTIVE_STATUS])->label(false) ?>
+                <?= $form->field($ticketSupplier, "[$row]paidAmount")->hiddenInput(['id' => 'paidAmount' . $row, 'class' => 'paidAmount', 'value' => 0])->label(false) ?>
+            </div>
+            <div class="col-md">
+                <?= $form->field($model, "[$row]type")->dropDownList(GlobalConstant::TICKET_TYPE_FOR_CREATE, ['disabled' => !$model->isNewRecord ? 'disabled' : false, 'class' => 'form-control type']) ?>
+            </div>
+            <div class="col-md">
+                <?= $form->field($model, "[$row]motherTicketId")->widget(Select2::classname(), Helper::ajaxDropDown('motherTicketId', 'get-mother-ticket', true, 'motherTicketId' . $row, 'motherTicket', (!$model->isNewRecord && $model->motherTicket) ? [$model->motherTicket => $model->motherTicket->eTicket . ' | ' . $model->motherTicket->pnrCode] : [], true))->label('Parent') ?>
+            </div>
+            <div class="col-md">
+                <?= $form->field($model, "[$row]numberOfSegment")->textInput(['maxlength' => true]) ?>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md">
+                <?= $form->field($model, "[$row]pnrCode")->textInput(['maxlength' => true])->label('PNR Code') ?>
+            </div>
+            <div class="col-md">
+                <?= $form->field($model, "[$row]eTicket")->textInput(['maxlength' => true]) ?>
+            </div>
+            <div class="col-md">
+                <?= $form->field($model, "[$row]paxName")->textInput(['maxlength' => true]) ?>
+            </div>
+            <div class="col-md">
+                <?= $form->field($model, "[$row]paxType")->dropDownList(GlobalConstant::PAX_TYPE, ['prompt' => '']) ?>
+            </div>
+            <div class="col-md">
+                <?= $form->field($model, "[$row]seatClass")->textInput() ?>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md">
+                <?= $form->field($model, "[$row]providerId")->widget(Select2::className(), Helper::ajaxDropDown('providerId', '/sales/provider/get-providers', true, 'providerId' . $row, 'providerId' . $row, (!$model->isNewRecord && $model->provider) ? [$model->provider->id => $model->provider->name] : []))->label('Select GDS'); ?>
+            </div>
+            <div class="col-md">
+                <?= $form->field($model, "[$row]route")->textInput(['maxlength' => true]) ?>
+            </div>
+            <div class="col-md">
+                <?= $form->field($model, "[$row]issueDate")->widget(DatePicker::className(), Helper::getDatewidget('issueDate' . $row))->label('Issue'); ?>
+            </div>
+            <div class="col-md">
+                <?= $form->field($model, "[$row]departureDate")->widget(DatePicker::className(), Helper::getDatewidget('departureDate' . $row))->label('Departure'); ?>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md">
+                <?= $form->field($model, "[$row]baseFare")->textInput(['type' => 'number']) ?>
+            </div>
+            <div class="col-md">
+                <?= $form->field($model, "[$row]tax")->textInput(['type' => 'number']) ?>
+            </div>
+            <div class="col-md">
+                <?= $form->field($model, "[$row]otherTax")->textInput(['type' => 'number']) ?>
+            </div>
+            <div class="col-md">
+                <?= $form->field($model, "[$row]quoteAmount")->textInput(['type' => 'number', 'step' => 'any']) ?>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md">
+                <?= $form->field($model, "[$row]tripType")->dropDownList(GlobalConstant::TRIP_TYPE) ?>
+            </div>
+            <div class="col-md">
+                <?= $form->field($model, "[$row]bookedOnline")->dropDownList(GlobalConstant::BOOKING_TYPE, ['value' => 0]) ?>
+            </div>
+            <div class="col-md">
+                <?= $form->field($model, "[$row]codeShare")->dropDownList(GlobalConstant::YES_NO, ['value' => 0]) ?>
+            </div>
+            <div class="col-md">
+                <?= $form->field($model, "[$row]baggage")->textInput(['maxlength' => true]) ?>
+            </div>
+            <div class="col-md">
+                <?= $form->field($model, "[$row]reference")->textInput(['maxlength' => true]) ?>
+            </div>
+            <?= $form->field($model, "[$row]customerId")->hiddenInput(['id' => 'customerId' . $row, 'class' => 'customerId'])->label(false) ?>
+        </div>
+        <?= (!$model->isNewRecord) ? Html::submitButton('<i class="fas fa-save"></i>Update', ['class' => 'btn btn-light-primary font-weight-bold float-right']) : '' ?>
+    </div>
+</div>
