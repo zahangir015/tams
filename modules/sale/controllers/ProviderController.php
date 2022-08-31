@@ -118,10 +118,10 @@ class ProviderController extends ParentController
     public function actionGetProviders($query = null): array
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
-        $suppliers = Provider::query($query);
+        $providers = Provider::query($query);
         $data = [];
-        foreach ($suppliers as $supplier) {
-            $data[] = ['id' => $supplier->id, 'text' => $supplier->name . ' | ' . $supplier->company];
+        foreach ($providers as $provider) {
+            $data[] = ['id' => $provider->id, 'text' => $provider->name . ' ('.$provider->code.')'];
         }
         return ['results' => $data];
     }

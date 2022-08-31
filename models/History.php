@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\components\Helper;
 use Yii;
 
 /**
@@ -54,4 +55,23 @@ class History extends \yii\db\ActiveRecord
             'action' => 'Action',
         ];
     }
+
+    public function snapshot($snapshot = array()): bool
+    {
+        if (empty($snapshot)) {
+            Yii::$app->session->setFlash('danger','Empty snapshot data - application.models.History');
+            return false;
+        }
+        else {
+            $this->setAttributes($snapshot);
+            if ($this->save()) {
+                return true;
+            }
+            else {
+                Yii::$app->session->setFlash('danger','Error while saving snapshot - application.models.History - '.Helper::processErrorMessages($this->getErrors()));
+                return false;
+            }
+        }
+    }
+
 }
