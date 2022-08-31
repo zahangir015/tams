@@ -8,6 +8,7 @@ use app\modules\sale\models\search\AirlineSearch;
 use app\controllers\ParentController;
 use Exception;
 use Yii;
+use yii\db\ActiveRecord;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
@@ -85,7 +86,7 @@ class AirlineController extends ParentController
                 // History processing
                 if (($model->commission != $requestedData['Airline']['commission']) ||
                     ($model->incentive != $requestedData['Airline']['incentive']) ||
-                    ($model->govtTax != $requestedData['Airline']['govtTax']) ||
+                    ($model->govTax != $requestedData['Airline']['govTax']) ||
                     ($model->serviceCharge != $requestedData['Airline']['serviceCharge'])) {
                     $newAirlineHistoryStoreResponse = AirlineHistory::store($model);
                     if ($newAirlineHistoryStoreResponse['error']) {
@@ -129,15 +130,34 @@ class AirlineController extends ParentController
      * Finds the Airline model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param string $uid UID
-     * @return array|\yii\db\ActiveRecord the loaded model
+     * @return array|ActiveRecord the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel(string $uid): array|\yii\db\ActiveRecord
+    protected function findModel(string $uid): array|ActiveRecord
     {
         if (($model = Airline::find()->with(['supplier'])->where(['uid' => $uid])->one()) !== null) {
             return $model;
         }
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+    }
+
+    public function actionGetAirlines($query = null): array
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $airlines = Airline::query($query);
+        $data = [];
+        foreach ($airlines as $airline) {
+            $data[] = ['id' => $airline->id, 'text' => $airline->name . ' (' . $airline->code . ')'];
+        }
+        return ['results' => $data];
+    }
+
+    public function actionGetAirlineDetails(int $airlineId): array|ActiveRecord|null
+    {
+        return Airline::find()
+            ->select(['id', 'commission', 'incentive', 'govTax', 'serviceCharge'])
+            ->where(['id' => $airlineId])
+            ->one();
     }
 }

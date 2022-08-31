@@ -2,6 +2,7 @@
 
 namespace app\modules\sale\models\ticket;
 
+use app\components\GlobalConstant;
 use app\modules\account\models\Invoice;
 use app\modules\sale\models\Airline;
 use app\modules\sale\models\Customer;
@@ -213,5 +214,15 @@ class Ticket extends ActiveRecord
     public function getTicketSuppliers(): ActiveQuery
     {
         return $this->hasMany(TicketSupplier::className(), ['ticketId' => 'id']);
+    }
+
+    public static function query($query): array
+    {
+        return self::find()
+            ->select(['id', 'eTicket', 'pnrCode'])
+            ->where(['like', 'eTicket', $query])
+            ->orWhere(['like', 'pnrCode', $query])
+            ->andWhere(['status' => GlobalConstant::ACTIVE_STATUS])
+            ->all();
     }
 }

@@ -2,6 +2,7 @@
 
 namespace app\modules\sale\models;
 
+use app\components\GlobalConstant;
 use app\traits\BehaviorTrait;
 use Yii;
 use yii\db\ActiveQuery;
@@ -98,5 +99,15 @@ class Airline extends ActiveRecord
     public function getSupplier(): ActiveQuery
     {
         return $this->hasOne(Supplier::className(), ['id' => 'supplierId']);
+    }
+
+    public static function query($query): array
+    {
+        return self::find()
+            ->select(['id', 'name', 'code'])
+            ->where(['like', 'name', $query])
+            ->orWhere(['like', 'code', $query])
+            ->andWhere(['status' => GlobalConstant::ACTIVE_STATUS])
+            ->all();
     }
 }

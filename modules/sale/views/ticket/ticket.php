@@ -26,18 +26,6 @@ use yii\bootstrap4\Html;
                 <a href="#" class="btn btn-icon btn-light-primary btn-hover-danger btn-sm"
                    onclick="remove(<?= $row ?>)">
                     <span class="svg-icon svg-icon-primary svg-icon-2x">
-                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px"
-                         height="24px" viewBox="0 0 24 24" version="1.1">
-                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                        <g transform="translate(12.000000, 12.000000) rotate(-45.000000) translate(-12.000000, -12.000000) translate(4.000000, 4.000000)"
-                           fill="#000000">
-                            <rect x="0" y="7" width="16" height="2" rx="1"/>
-                            <rect opacity="0.3"
-                                  transform="translate(8.000000, 8.000000) rotate(-270.000000) translate(-8.000000, -8.000000) "
-                                  x="0" y="7" width="16" height="2" rx="1"/>
-                        </g>
-                    </g>
-                    </svg>
                 </span>
                 </a>
             </div>
@@ -65,7 +53,7 @@ use yii\bootstrap4\Html;
         </div>
         <div class="row">
             <div class="col-md">
-                <?= $form->field($ticketSupplier, "[$row]supplierId")->widget(Select2::classname(), Helper::ajaxDropDown('supplierId', '/configuration/supplier/get-supplier-list', true, 'supplierId' . $row, 'supplier', ($model->isNewRecord) ? [] : [$ticketSupplier->supplierId => $ticketSupplier->supplier->name . ' | ' . $ticketSupplier->supplier->supplierCompany], $model->isNewRecord ? false : true))->label('Supplier') ?>
+                <?= $form->field($ticketSupplier, "[$row]supplierId")->widget(Select2::classname(), Helper::ajaxDropDown('supplierId', '/sale/supplier/get-suppliers', true, 'supplierId' . $row, 'supplier', ($model->isNewRecord) ? [] : [$ticketSupplier->supplierId => $ticketSupplier->supplier->name . ' | ' . $ticketSupplier->supplier->supplierCompany], $model->isNewRecord ? false : true))->label('Supplier') ?>
                 <?= $form->field($ticketSupplier, "[$row]status")->hiddenInput(['id' => 'status' . $row, 'class' => 'status', 'value' => GlobalConstant::ACTIVE_STATUS])->label(false) ?>
                 <?= $form->field($ticketSupplier, "[$row]paidAmount")->hiddenInput(['id' => 'paidAmount' . $row, 'class' => 'paidAmount', 'value' => 0])->label(false) ?>
             </div>
@@ -98,7 +86,7 @@ use yii\bootstrap4\Html;
         </div>
         <div class="row">
             <div class="col-md">
-                <?= $form->field($model, "[$row]providerId")->widget(Select2::className(), Helper::ajaxDropDown('providerId', '/sales/provider/get-providers', true, 'providerId' . $row, 'providerId' . $row, (!$model->isNewRecord && $model->provider) ? [$model->provider->id => $model->provider->name] : []))->label('Select GDS'); ?>
+                <?= $form->field($model, "[$row]providerId")->widget(Select2::className(), Helper::ajaxDropDown('providerId', '/sale/provider/get-providers', true, 'providerId' . $row, 'providerId' . $row, (!$model->isNewRecord && $model->provider) ? [$model->provider->id => $model->provider->name] : []))->label('Select GDS'); ?>
             </div>
             <div class="col-md">
                 <?= $form->field($model, "[$row]route")->textInput(['maxlength' => true]) ?>

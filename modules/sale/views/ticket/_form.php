@@ -15,7 +15,7 @@ use yii\web\View;
 /* @var $form yii\bootstrap4\ActiveForm */
 
 $this->registerJs(
-    "var ticket = '" . Yii::$app->request->baseUrl . '/sales/ticket/add-ticket' . "';var _csrf='" . Yii::$app->request->getCsrfToken() . "'; var airlineUrl='" . Yii::$app->request->baseUrl . '/sales/airline/get-airline-details' . "';",
+    "var ticket = '" . Yii::$app->request->baseUrl . '/sale/ticket/add-ticket' . "';var _csrf='" . Yii::$app->request->getCsrfToken() . "'; var airlineUrl='" . Yii::$app->request->baseUrl . '/sale/airline/get-airline-details' . "';",
     View::POS_HEAD,
     'url'
 );
@@ -48,7 +48,7 @@ $this->registerJsFile(
             <div class="card-body">
                 <div class="row pb-10">
                     <div class="col-md mb-5">
-                        <?= Select2::widget(Helper::ajaxDropDown('customerId', '/sales/customer/get-customers', true)); ?>
+                        <?= Select2::widget(Helper::ajaxDropDown('customerId', '/sale/customer/get-customers', true)); ?>
                     </div>
                 </div>
                 <div class="row">

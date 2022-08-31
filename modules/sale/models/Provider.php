@@ -2,6 +2,7 @@
 
 namespace app\modules\sale\models;
 
+use app\components\GlobalConstant;
 use app\traits\BehaviorTrait;
 use Yii;
 use yii\db\ActiveRecord;
@@ -33,7 +34,7 @@ class Provider extends ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['code', 'name', 'createdBy'], 'required'],
@@ -62,5 +63,15 @@ class Provider extends ActiveRecord
             'updatedBy' => Yii::t('app', 'Updated By'),
             'updatedAt' => Yii::t('app', 'Updated At'),
         ];
+    }
+
+    public static function query($query): array
+    {
+        return self::find()
+            ->select(['id', 'name', 'code'])
+            ->where(['like', 'name', $query])
+            ->orWhere(['like', 'code', $query])
+            ->andWhere(['status' => GlobalConstant::ACTIVE_STATUS])
+            ->all();
     }
 }

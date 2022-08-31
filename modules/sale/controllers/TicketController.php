@@ -6,6 +6,7 @@ use app\modules\sale\models\ticket\Ticket;
 use app\modules\sale\models\ticket\TicketSearch;
 use app\controllers\ParentController;
 use app\modules\sale\models\ticket\TicketSupplier;
+use Yii;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
@@ -115,5 +116,16 @@ class TicketController extends ParentController
         }
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+    }
+
+    public function actionGetMotherTicket($query = null): array
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $tickets = Ticket::query($query);
+        $data = [];
+        foreach ($tickets as $ticket) {
+            $data[] = ['id' => $ticket->id, 'text' => $ticket->eTicket . ' (' . $ticket->pnrCode . ')'];
+        }
+        return ['results' => $data];
     }
 }

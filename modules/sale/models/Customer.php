@@ -2,6 +2,7 @@
 
 namespace app\modules\sale\models;
 
+use app\components\GlobalConstant;
 use app\traits\BehaviorTrait;
 use Yii;
 use yii\db\ActiveRecord;
@@ -28,6 +29,7 @@ use yii\db\ActiveRecord;
 class Customer extends ActiveRecord
 {
     use BehaviorTrait;
+
     /**
      * {@inheritdoc}
      */
@@ -75,5 +77,17 @@ class Customer extends ActiveRecord
             'updatedBy' => Yii::t('app', 'Updated By'),
             'updatedAt' => Yii::t('app', 'Updated At'),
         ];
+    }
+
+    public static function query($query): array
+    {
+        return self::find()
+            ->select(['id', 'name', 'company', 'email', 'customerCode'])
+            ->where(['like', 'name', $query])
+            ->orWhere(['like', 'company', $query])
+            ->orWhere(['like', 'customerCode', $query])
+            ->orWhere(['like', 'email', $query])
+            ->andWhere(['status' => GlobalConstant::ACTIVE_STATUS])
+            ->all();
     }
 }

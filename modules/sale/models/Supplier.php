@@ -89,6 +89,7 @@ class Supplier extends ActiveRecord
             ->select(['id', 'name', 'company', 'email'])
             ->where(['like', 'name', $query])
             ->orWhere(['like', 'company', $query])
+            ->orWhere(['like', 'email', $query])
             ->andWhere(['status' => GlobalConstant::ACTIVE_STATUS])
             ->all();
     }

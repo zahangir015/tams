@@ -5,6 +5,7 @@ namespace app\modules\sale\controllers;
 use app\modules\sale\models\Provider;
 use app\modules\sale\models\search\ProviderSearch;
 use app\controllers\ParentController;
+use Yii;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
@@ -112,5 +113,16 @@ class ProviderController extends ParentController
         }
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+    }
+
+    public function actionGetProviders($query = null): array
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $suppliers = Provider::query($query);
+        $data = [];
+        foreach ($suppliers as $supplier) {
+            $data[] = ['id' => $supplier->id, 'text' => $supplier->name . ' | ' . $supplier->company];
+        }
+        return ['results' => $data];
     }
 }

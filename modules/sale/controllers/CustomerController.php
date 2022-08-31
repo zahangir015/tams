@@ -8,6 +8,7 @@ use app\controllers\ParentController;
 use Yii;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Response;
 
 /**
  * CustomerController implements the CRUD actions for Customer model.
@@ -113,5 +114,16 @@ class CustomerController extends ParentController
         }
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+    }
+
+    public function actionGetCustomers($query = null): array
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $customers = Customer::query($query);
+        $data = [];
+        foreach ($customers as $customer) {
+            $data[] = ['id' => $customer->id, 'text' => $customer->name . ' | ' . $customer->company . ' | ' . $customer->email];
+        }
+        return ['results' => $data];
     }
 }

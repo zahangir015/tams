@@ -51,6 +51,7 @@ $(document).on('change', ".airline", function (e) {
         data: {airlineId: $(this).val()},
         dataType: 'json',
         success: function (data) {
+            console.log(data)
             if (data) {
                 $('#commission' + suffix).val(data.commission);
                 $('#incentive' + suffix).val(data.incentive);
@@ -64,8 +65,8 @@ $(document).on('change', ".airline", function (e) {
 $(document).on('change', ".type", function (e) {
     var suffix = this.id.match(/\d+/);
     if (this.value === 'Reissue' || this.value === 'Refund') {
-        $('#parentId' + suffix).prop("disabled", false);
+        $('#motherTicketId' + suffix).prop("disabled", false)
     } else {
-        $('#parentId' + suffix).prop("disabled", true);
+        $('#motherTicketId' + suffix).prop("disabled", true)
     }
 });
