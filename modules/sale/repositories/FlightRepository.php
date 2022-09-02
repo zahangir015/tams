@@ -1,34 +1,30 @@
 <?php
+namespace app\modules\sale\repositories;
+
+use app\components\GlobalConstant;
+use app\modules\sale\models\ticket\Ticket;
+use yii\db\ActiveRecord;
 
 class FlightRepository
 {
-    public function store(Expense $expense): Expense
+    public function store(ActiveRecord $object): ActiveRecord
     {
-        $expense->createdBy = Yii::$app->user->id;
-        $expense->createdAt = Utils::convertToTimestamp(date('Y-m-d H:i:s'));
-        $expense->save();
-        return $expense;
+        $object->save();
+        return $object;
     }
 
-    public function findOne(string $uid): ActiveRecord
+    public function findOneTicket(string $uid): ActiveRecord
     {
-        return Expense::find()->with(['transactionStatement'])->where(['uid' => $uid])->one();
+        return Ticket::find()->with(['customer', 'ticketSupplier', 'airline', 'provider'])->where(['uid' => $uid])->one();
     }
 
-    public function findAll(string $query): array
+    public function findAllTicket(string $query): array
     {
-        return Expense::find()
-            ->select(['id', 'name'])
-            ->where(['like', 'name', $query])
-            ->andWhere(['status' => 1])
+        return Ticket::find()
+            ->select(['id', 'eTicket', 'pnrCode'])
+            ->where(['like', 'eTicket', $query])
+            ->orWhere(['like', 'pnrCode', $query])
+            ->andWhere(['status' => GlobalConstant::ACTIVE_STATUS])
             ->all();
-    }
-
-    public function update(Expense $expense): Expense
-    {
-        $expense->updatedBy = Yii::$app->user->id;
-        $expense->updatedAt = Utils::convertToTimestamp(date('Y-m-d H:i:s'));
-        $expense->save();
-        return $expense;
     }
 }

@@ -85,6 +85,7 @@ class Ticket extends ActiveRecord
         return [
             [['uid', 'airlineId', 'providerId', 'customerId', 'customerCategory', 'paxName', 'eTicket', 'pnrCode', 'type', 'seatClass', 'issueDate', 'createdBy', 'createdAt'], 'required'],
             [['motherTicketId', 'airlineId', 'providerId', 'invoiceId', 'customerId', 'bookedOnline', 'flightType', 'codeShare', 'numberOfSegment', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['eTicket', 'airlineId', 'type'], 'unique', 'targetAttribute' => ['eTicket', 'airlineId', 'type'], 'on' => 'create'],
             [['type', 'tripType', 'paymentStatus'], 'string'],
             [['issueDate', 'departureDate', 'refundRequestDate'], 'safe'],
             [['baseFare', 'tax', 'otherTax', 'commission', 'commissionReceived', 'incentive', 'incentiveReceived', 'govTax', 'serviceCharge', 'ait', 'quoteAmount', 'receivedAmount', 'costOfSale', 'netProfit'], 'number'],

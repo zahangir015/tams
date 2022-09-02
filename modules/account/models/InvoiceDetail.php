@@ -2,7 +2,9 @@
 
 namespace app\modules\account\models;
 
+use app\traits\BehaviorTrait;
 use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%invoice_detail}}".
@@ -15,12 +17,14 @@ use Yii;
  * @property float|null $dueAmount
  * @property int|null $status
  */
-class InvoiceDetail extends \yii\db\ActiveRecord
+class  InvoiceDetail extends ActiveRecord
 {
+    use BehaviorTrait;
+
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%invoice_detail}}';
     }
@@ -28,7 +32,7 @@ class InvoiceDetail extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['invoiceId', 'refId', 'refModel'], 'required'],
@@ -41,7 +45,7 @@ class InvoiceDetail extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),

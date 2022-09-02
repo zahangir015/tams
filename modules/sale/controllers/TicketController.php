@@ -6,6 +6,7 @@ use app\modules\sale\models\ticket\Ticket;
 use app\modules\sale\models\ticket\TicketSearch;
 use app\controllers\ParentController;
 use app\modules\sale\models\ticket\TicketSupplier;
+use app\modules\sale\services\FlightService;
 use Yii;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
@@ -15,6 +16,15 @@ use yii\web\Response;
  */
 class TicketController extends ParentController
 {
+
+    public FlightService $flightService;
+
+    public function __construct($uid, $module, $config = [])
+    {
+        $this->flightService = new FlightService();
+        parent::__construct($uid, $module, $config);
+    }
+
     /**
      * Lists all Ticket models.
      *
@@ -55,8 +65,12 @@ class TicketController extends ParentController
         $ticketSupplier = new TicketSupplier();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+            dd(Yii::$app->request->post());
+            // Store ticket data
+            $model = $this->flightService->storeTicket(Yii::$app->request->post());
+            dd($model);
+            if ($model) {
+                return $this->redirect(['view', 'uid' => $model->uid]);
             }
         } else {
             $model->loadDefaultValues();

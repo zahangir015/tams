@@ -857,7 +857,7 @@ class Helper
 
     public static function invoiceNumber(): string
     {
-        return Yii::$app->user->id . date('Ymdhis');
+        return 'INV'.date('ymdhis').rand(9, 999);
     }
 
     public static function serviceTypeLabelClass($value, array $types): string
