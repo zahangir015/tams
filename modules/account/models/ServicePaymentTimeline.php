@@ -2,7 +2,9 @@
 
 namespace app\modules\account\models;
 
+use app\traits\BehaviorTrait;
 use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%service_payment_timeline}}".
@@ -18,12 +20,13 @@ use Yii;
  * @property float|null $dueAmount
  * @property int|null $status
  */
-class ServicePaymentTimeline extends \yii\db\ActiveRecord
+class ServicePaymentTimeline extends ActiveRecord
 {
+    use BehaviorTrait;
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%service_payment_timeline}}';
     }
@@ -31,7 +34,7 @@ class ServicePaymentTimeline extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['uid', 'date', 'refId', 'refModel'], 'required'],
@@ -47,7 +50,7 @@ class ServicePaymentTimeline extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),

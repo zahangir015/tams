@@ -6,18 +6,14 @@ use app\components\GlobalConstant;
 use app\components\Helper;
 use app\modules\account\models\Invoice;
 use app\modules\account\models\InvoiceDetail;
+use app\modules\account\models\ServicePaymentTimeline;
 use app\modules\account\repositories\InvoiceRepository;
+use app\modules\account\repositories\PaymentTimelineRepository;
+use app\modules\sale\models\Customer;
 use yii\db\Exception;
 
 class InvoiceService
 {
-    private InvoiceRepository $invoiceRepository;
-
-    public function __construct()
-    {
-        $this->invoiceRepository = new InvoiceRepository();
-    }
-
     public static function autoInvoice(int $customerId, array $services, int $group, mixed $user): array
     {
         $invoice = new Invoice();
@@ -33,65 +29,96 @@ class InvoiceService
         $invoice->status = GlobalConstant::ACTIVE_STATUS;
 
         // Invoice data process
-        $invoice = $this->invoiceRepository->store($invoice);
+        $invoice = InvoiceRepository::store($invoice);
         if ($invoice->hasErrors()) {
             throw new Exception('Invoice creation failed - ' . Helper::processErrorMessages($invoice->getErrors()));
         }
 
-        // Invoice Details data process
-        $invoiceDetailProcessResponse = self::storeInvoiceDetail($invoice, $services);
-        if ($invoiceDetailProcessResponse['error']) {
-            return ['error' => true, 'message' => 'Service Data process - ' . $invoiceDetailProcessResponse['message']];
+
+        // Service process
+        $serviceProcessResponse = self::serviceProcess($invoice, $services);
+        if ($serviceProcessResponse['error']) {
+            return ['error' => true, 'message' => $serviceProcessResponse['message']];
         }
 
-        // Invoice Details data process
-        $invoiceDetailProcessResponse = self::storeInvoiceDetail($invoice, $services);
-        if ($invoiceDetailProcessResponse['error']) {
-            return ['error' => true, 'message' => 'Service Data process - ' . $invoiceDetailProcessResponse['message']];
+        // Customer Ledger process
+        $ledgerRequestData = [
+            'title' => 'Service Purchase',
+            'reference' => 'Invoice Number - ' . $invoice->invoiceNumber,
+            'refId' => $invoice->customerId,
+            'refModel' => Customer::class,
+            'subRefId' => $invoice->id,
+            'subRefModel' => $invoice::class,
+            'debit' => array_sum(array_column($services, 'due')),
+            'credit' => 0
+        ];
+        $ledgerRequestResponse = LedgerService::storeLedger($ledgerRequestData);
+        if ($ledgerRequestResponse['error']) {
+            return ['error' => true, 'message' => $ledgerRequestResponse['message']];
         }
 
-
-        if ($invoice->validate() && $invoice->save()) {
-
-
-            // Customer Ledger process
-            $ledgerRequestData = [
-                'title' => 'Service Purchase',
-                'reference' => 'Invoice Number - ' . $invoice->invoiceNumber,
-                'refId' => $invoice->customerId,
-                'refModel' => Customer::className(),
-                'subRefId' => $invoice->id,
-                'subRefModel' => $invoice::className(),
-                'debit' => array_sum(array_column($services, 'due')),
-                'credit' => 0
-            ];
-            $ledgerRequestResponse = LedgerComponent::createNewLedger($ledgerRequestData);
-            if ($ledgerRequestResponse['error']) {
-                return ['error' => true, 'message' => 'Customer Ledger creation failed - ' . $ledgerRequestResponse['message']];
-            }
-
-            return ['error' => false, 'message' => 'Invoice created successfully', 'data' => $invoice];
-        }
-
-        return ['error' => true, 'message' => Utils::processErrorMessages($invoice->getErrors())];
+        return ['error' => false, 'message' => 'Invoice created successfully', 'data' => $invoice];
     }
 
-    private static function storeInvoiceDetail(Invoice $invoice, array $services): array
+    private static function serviceProcess(Invoice $invoice, array $services): array
     {
-        $batchData = [];
+        $invoiceDetailBatchData = [];
+        $paymentTimelineBatchData = [];
         foreach ($services as $singleService) {
             $invoiceDetail = new InvoiceDetail();
             if (!$invoiceDetail->load(['InvoiceDetail' => $singleService]) || !$invoiceDetail->validate()) {
                 return ['error' => true, 'message' => 'Invoice Details validation failed - ' . Helper::processErrorMessages($invoiceDetail->getErrors())];
             }
             $invoiceDetail->invoiceId = $invoice->id;
-            $batchData[] = $invoiceDetail->getAttributes();
+            $invoiceDetailBatchData[] = $invoiceDetail->getAttributes();
+            if (!$invoiceDetail->load(['InvoiceDetail' => $singleService]) || !$invoiceDetail->validate()) {
+                return ['error' => true, 'message' => 'Service payment timeline validation failed - ' . Helper::processErrorMessages($invoiceDetail->getErrors())];
+            }
+
+            // Customer service payment timeline
+            $customerServicePaymentTimeline = new ServicePaymentTimeline();
+            $customerServicePaymentTimeline->subRefId = $invoice->id;
+            $customerServicePaymentTimeline->subRefModel = $invoice::class;
+            $paymentTimelineBatchData[] = $customerServicePaymentTimeline->getAttributes();
+            if (!$customerServicePaymentTimeline->load(['ServicePaymentTimeline' => $singleService]) || !$customerServicePaymentTimeline->validate()) {
+                return ['error' => true, 'message' => 'Customer Service payment timeline validation failed - ' . Helper::processErrorMessages($customerServicePaymentTimeline->getErrors())];
+            }
+
+            // Supplier service payment timeline
+            $supplierServicePaymentTimeline = new ServicePaymentTimeline();
+            $supplierServicePaymentTimeline->subRefId = $invoice->id;
+            $supplierServicePaymentTimeline->subRefModel = $invoice::class;
+            $paymentTimelineBatchData[] = $supplierServicePaymentTimeline->getAttributes();
+            if (!$supplierServicePaymentTimeline->load(['ServicePaymentTimeline' => $singleService['supplierData']]) || !$supplierServicePaymentTimeline->validate()) {
+                return ['error' => true, 'message' => 'Supplier Service payment timeline validation failed - ' . Helper::processErrorMessages($supplierServicePaymentTimeline->getErrors())];
+            }
+
+            $serviceObject = $singleService['refModel']::findPne(['id' => $singleService['refId']]);
+            if (!$serviceObject) {
+                return ['error' => true, 'message' => 'Service not found'];
+            }
+            $serviceObject->invoiceId = $invoice->id;
+            if (!$serviceObject->update()) {
+                return ['error' => true, 'message' => 'Service update failed - ' . Helper::processErrorMessages($serviceObject->getErrors())];
+            }
         }
 
-        if (!$this->invoiceRepository->batchStore(InvoiceDetail::tableName(), array_keys($batchData[0]), $batchData)) {
-            return ['error' => true, 'message' => 'Invoice Details batch insert failed')];
+        // Invoice Details insert process
+        if (empty($invoiceDetailBatchData)) {
+            return ['error' => true, 'message' => 'Invoice Detail Batch Data can not be empty.'];
+        }
+        if (!InvoiceRepository::batchStore(InvoiceDetail::tableName(), array_keys($invoiceDetailBatchData[0]), $invoiceDetailBatchData)) {
+            return ['error' => true, 'message' => 'Invoice Details batch insert failed'];
         }
 
-        return ['error' => false, 'message' => 'Invoice details created successfully'];
+        // Payment Timeline insert process
+        if (empty($paymentTimelineBatchData)) {
+            return ['error' => true, 'message' => 'Payment Timeline Batch Data can not be empty.'];
+        }
+        if (!PaymentTimelineRepository::batchStore(ServicePaymentTimeline::tableName(), array_keys($paymentTimelineBatchData[0]), $paymentTimelineBatchData)) {
+            return ['error' => true, 'message' => 'Payment Timeline batch insert failed'];
+        }
+
+        return ['error' => false, 'message' => 'Service process done.'];
     }
 }

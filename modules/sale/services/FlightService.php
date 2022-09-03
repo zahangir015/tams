@@ -69,7 +69,7 @@ class FlightService
                                         'refId' => $ticketSupplier->id,
                                         'refModel' => $ticketSupplier::class,
                                         'subRefId' => null,
-                                        'subRefModel' => Invoice::className(),
+                                        'subRefModel' => Invoice::class,
                                         'due' => $ticketSupplier->costOfSale,
                                         'amount' => $ticketSupplier->paidAmount,
                                     ]

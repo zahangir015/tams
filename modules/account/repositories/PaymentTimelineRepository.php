@@ -3,11 +3,11 @@
 namespace app\modules\account\repositories;
 
 use app\components\GlobalConstant;
-use app\modules\account\models\Invoice;
+use app\modules\account\models\ServicePaymentTimeline;
 use Yii;
 use yii\db\ActiveRecord;
 
-class InvoiceRepository
+class PaymentTimelineRepository
 {
     public static function store(ActiveRecord $object): ActiveRecord
     {
@@ -23,18 +23,18 @@ class InvoiceRepository
         return false;
     }
 
-    public static function findOne(string $uid, array $withArray = []): ActiveRecord
+    public function findOne(string $uid, array $withArray = []): ActiveRecord
     {
-        $query = Invoice::find();
+        $query = ServicePaymentTimeline::find();
         if (!empty($withArray)) {
             $query->with($withArray);
         }
         return $query->where(['uid' => $uid])->one();
     }
 
-    public static function findAll(string $query): array
+    public function findAll(string $query): array
     {
-        return Invoice::find()
+        return ServicePaymentTimeline::find()
             ->select(['id', 'eTicket', 'pnrCode'])
             ->where(['like', 'eTicket', $query])
             ->orWhere(['like', 'pnrCode', $query])

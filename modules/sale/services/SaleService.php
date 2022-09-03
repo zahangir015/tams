@@ -45,6 +45,7 @@ class SaleService
             if ($servicePaymentDetailResponse['error']) {
                 return ['error' => true, 'message' => $servicePaymentDetailResponse['message']];
             }
+
             // Service Payment Details entry  for Supplier
             if (!empty($service['supplierData'])) {
                 foreach ($service['supplierData'] as $supplierDatum) {
@@ -54,6 +55,7 @@ class SaleService
                     }
                 }
             }
+
             // Update InvoiceId column in Service (Ticket/Hotel/Visa/Package etc) Model
             $AllServices = $service['refModel']::find()->where(['id' => $service['refId']])->all();
             foreach ($AllServices as $storedService) {
