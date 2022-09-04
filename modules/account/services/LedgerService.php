@@ -15,23 +15,23 @@ class LedgerService
     public static function storeLedger(array $requestData): array
     {
         $balance = 0;
-        $ledger = LedgerRepository::findLatestOne($requestData['refId'], $requestData['refModel']); // bank/customer/supplier
-        if ($ledger) {
-            $balance = $ledger['balance'];
+        $oldLedger = LedgerRepository::findLatestOne($requestData['refId'], $requestData['refModel']); // bank/customer/supplier
+        if ($oldLedger) {
+            $balance = $oldLedger['balance'];
         }
 
         // Process Ledger data
-        $model = new Ledger();
-        $model->load(['Ledger' => $requestData]);
-
-        $closingBalance = self::calculateBalance($requestData['refModel'], $model, $balance);
-        $model->balance = $closingBalance;
-        $model->date = date('Y-m-d');
-        $model->status = GlobalConstant::ACTIVE_STATUS;
-        if (!$model->save()) {
-            return ['error' => true, 'message' => 'Ledger creation failed - '.Helper::processErrorMessages($model->getErrors())];
+        $Ledger = new Ledger();
+        $Ledger->load(['Ledger' => $requestData]);
+        $closingBalance = self::calculateBalance($requestData['refModel'], $Ledger, $balance);
+        $Ledger->balance = $closingBalance;
+        $Ledger->date = date('Y-m-d');
+        $Ledger->status = GlobalConstant::ACTIVE_STATUS;
+        $Ledger = LedgerRepository::store($Ledger);
+        if ($Ledger->hasErrors()) {
+            return ['error' => true, 'message' => 'Ledger creation failed - '.Helper::processErrorMessages($Ledger->getErrors())];
         }
-        return ['error' => false, 'data' => $model, 'message' => 'Ledger created successfully.'];
+        return ['error' => false, 'message' => 'Ledger created successfully.'];
     }
 
     private static function calculateBalance($refModel, $ledger, $balance): float

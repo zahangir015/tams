@@ -34,7 +34,6 @@ class InvoiceService
             throw new Exception('Invoice creation failed - ' . Helper::processErrorMessages($invoice->getErrors()));
         }
 
-
         // Service process
         $serviceProcessResponse = self::serviceProcess($invoice, $services);
         if ($serviceProcessResponse['error']) {
