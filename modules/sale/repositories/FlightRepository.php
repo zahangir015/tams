@@ -1,4 +1,5 @@
 <?php
+
 namespace app\modules\sale\repositories;
 
 use app\components\GlobalConstant;
@@ -13,9 +14,14 @@ class FlightRepository
         return $object;
     }
 
-    public function findOneTicket(string $uid): ActiveRecord
+    public function findOneTicket(string $uid, $withArray = []): ActiveRecord
     {
-        return Ticket::find()->with(['customer', 'ticketSupplier', 'airline', 'provider'])->where(['uid' => $uid])->one();
+        $query = Ticket::find();
+        if (!empty($withArray)) {
+            $query->with($withArray);
+        }
+
+        return $query->where(['uid' => $uid])->one();
     }
 
     public function findAllTicket(string $query): array

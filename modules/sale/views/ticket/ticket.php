@@ -13,30 +13,23 @@ use yii\bootstrap4\Html;
 
 ?>
 <div class="card card-custom card-border mb-5" id="card<?= $row ?>">
-    <div class="card-header">
+    <div class="card-header bg-dark">
         <div class="card-title">
             <span class="card-icon"><i class="flaticon2-paper-plane text-primary"></i></span>
             <h5 class="card-label" id="card-label-<?= $row ?>">
                 Ticket <?= ($model->isNewRecord) ? ($row + 1) : ' - ' . $model->eTicket ?></h5>
         </div>
-        <?php
-        if ($row != 0) {
-            ?>
-            <div class="card-toolbar">
-                <a href="#" class="btn btn-icon btn-light-primary btn-hover-danger btn-sm"
-                   onclick="remove(<?= $row ?>)">
-                    <span class="svg-icon svg-icon-primary svg-icon-2x">
+        <div class="card-toolbar float-right">
+            <a href="#" class="btn btn-danger btn-sm" onclick="remove(<?= $row ?>)">
+                    <span class="fa fa-times-circle">
                 </span>
-                </a>
-            </div>
-            <?php
-        }
-        ?>
+            </a>
+        </div>
     </div>
     <div class="card-body">
         <div class="row">
             <div class="col-md">
-                <?= $form->field($model, "[$row]airlineId")->widget(Select2::classname(), Helper::ajaxDropDown('airlineId','/sale/airline/get-airlines', true, 'airlineId' . $row, 'airline', ($model->isNewRecord) ? [] : [$model->airlineId => $model->airline->airlineName . ' | ' . $model->airline->code]))->label('Airline') ?>
+                <?= $form->field($model, "[$row]airlineId")->widget(Select2::classname(), Helper::ajaxDropDown('airlineId', '/sale/airline/get-airlines', true, 'airlineId' . $row, 'airline', ($model->isNewRecord) ? [] : [$model->airlineId => $model->airline->airlineName . ' | ' . $model->airline->code]))->label('Airline') ?>
             </div>
             <div class="col-md">
                 <?= $form->field($model, "[$row]commission")->textInput(['id' => 'commission' . $row, 'readOnly' => true]) ?>

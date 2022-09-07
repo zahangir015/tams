@@ -5,6 +5,7 @@ namespace app\modules\sale\models\ticket;
 use app\modules\account\models\Bill;
 use app\modules\sale\models\Airline;
 use app\modules\sale\models\Supplier;
+use app\traits\BehaviorTrait;
 use Yii;
 use yii\db\ActiveRecord;
 
@@ -37,6 +38,8 @@ use yii\db\ActiveRecord;
  */
 class TicketSupplier extends ActiveRecord
 {
+    use BehaviorTrait;
+
     /**
      * {@inheritdoc}
      */
@@ -51,8 +54,8 @@ class TicketSupplier extends ActiveRecord
     public function rules(): array
     {
         return [
-            [['uid', 'ticketId', 'supplierId', 'airlineId', 'issueDate', 'eTicket', 'pnrCode', 'type', 'costOfSale'], 'required'],
-            [['ticketId', 'supplierId', 'airlineId', 'billId', 'issueDate', 'status'], 'integer'],
+            [['ticketId', 'supplierId', 'airlineId', 'issueDate', 'eTicket', 'pnrCode', 'type', 'issueDate', 'costOfSale'], 'required'],
+            [['ticketId', 'supplierId', 'airlineId', 'billId', 'status'], 'integer'],
             [['refundRequestDate'], 'safe'],
             [['type', 'paymentStatus'], 'string'],
             [['baseFare', 'tax', 'otherTax', 'costOfSale', 'paidAmount'], 'number'],

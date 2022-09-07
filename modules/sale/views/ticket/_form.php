@@ -29,25 +29,26 @@ $this->registerJsFile(
 <div class="ticket-form">
     <?php $form = ActiveForm::begin(['class' => 'form']); ?>
     <?php if ($model->isNewRecord) : ?>
-        <div class="card card-custom card-sticky mb-5" id="kt_page_sticky_card">
+        <div class="card card-custom mb-5 sticky-top">
             <div class="card-header">
                 <div class="card-title">
                     <h3 class="card-label">
                         Create Ticket <i class="mr-2"></i><small class="">try to scroll the page</small>
                     </h3>
                 </div>
-                <div class="card-toolbar">
-                    <a href="#" id="addButton" class="btn btn-light-success font-weight-bolder mr-2"
+                <div class="card-toolbar float-right">
+                    <a href="#" id="addButton" class="btn btn-success font-weight-bolder mr-2"
                        onclick="addTicket()"
                        data-row-number="1">
-                        <i class="ki ki-plus icon-sm"></i> Add More
+                        <i class="fa fa-plus-circle"></i> Add More
                     </a>
-                    <?= Html::submitButton(Yii::t('app', '<i class="ki ki-double-arrow-down icon-sm"></i>Save'), ['class' => 'btn btn-primary']) ?>
+                    <?= Html::submitButton(Yii::t('app', '<i class="fa fa-arrow-alt-circle-down"></i> Save'), ['class' => 'btn btn-primary']) ?>
                 </div>
             </div>
             <div class="card-body">
                 <div class="row pb-10">
                     <div class="col-md mb-5">
+                        Select Customer
                         <?= Select2::widget(Helper::ajaxDropDown('customerId', '/sale/customer/get-customers', true)); ?>
                     </div>
                 </div>

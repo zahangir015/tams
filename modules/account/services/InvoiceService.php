@@ -21,17 +21,16 @@ class InvoiceService
         $invoice->expectedPaymentDate = $invoice->date;
         $invoice->customerId = $customerId;
         $invoice->invoiceNumber = Helper::invoiceNumber();
-        $invoice->due = array_sum(array_column($services, 'due'));;
-        $invoice->amount = 0;
-        $invoice->comment = 'Auto generated invoice';
+        $invoice->dueAmount = array_sum(array_column($services, 'due'));;
+        $invoice->paidAmount = 0;
         $invoice->remarks = 'Auto generated invoice';
-        $invoice->discount = 0;
+        $invoice->discountedAmount = 0;
         $invoice->status = GlobalConstant::ACTIVE_STATUS;
 
         // Invoice data process
         $invoice = InvoiceRepository::store($invoice);
         if ($invoice->hasErrors()) {
-            throw new Exception('Invoice creation failed - ' . Helper::processErrorMessages($invoice->getErrors()));
+            return ['error' => true, 'message' => 'Invoice creation failed - ' . Helper::processErrorMessages($invoice->getErrors())];
         }
 
         // Service process
@@ -64,34 +63,20 @@ class InvoiceService
         $invoiceDetailBatchData = [];
         $paymentTimelineBatchData = [];
         foreach ($services as $singleService) {
+
             $invoiceDetail = new InvoiceDetail();
+            $invoiceDetail->invoiceId = $invoice->id;
             if (!$invoiceDetail->load(['InvoiceDetail' => $singleService]) || !$invoiceDetail->validate()) {
                 return ['error' => true, 'message' => 'Invoice Details validation failed - ' . Helper::processErrorMessages($invoiceDetail->getErrors())];
             }
-            $invoiceDetail->invoiceId = $invoice->id;
             $invoiceDetailBatchData[] = $invoiceDetail->getAttributes();
             if (!$invoiceDetail->load(['InvoiceDetail' => $singleService]) || !$invoiceDetail->validate()) {
                 return ['error' => true, 'message' => 'Service payment timeline validation failed - ' . Helper::processErrorMessages($invoiceDetail->getErrors())];
             }
 
-            // Customer service payment timeline
-            $customerServicePaymentTimeline = new ServicePaymentTimeline();
-            $customerServicePaymentTimeline->subRefId = $invoice->id;
-            $customerServicePaymentTimeline->subRefModel = $invoice::class;
-            $paymentTimelineBatchData[] = $customerServicePaymentTimeline->getAttributes();
-            if (!$customerServicePaymentTimeline->load(['ServicePaymentTimeline' => $singleService]) || !$customerServicePaymentTimeline->validate()) {
-                return ['error' => true, 'message' => 'Customer Service payment timeline validation failed - ' . Helper::processErrorMessages($customerServicePaymentTimeline->getErrors())];
-            }
 
-            // Supplier service payment timeline
-            $supplierServicePaymentTimeline = new ServicePaymentTimeline();
-            $supplierServicePaymentTimeline->subRefId = $invoice->id;
-            $supplierServicePaymentTimeline->subRefModel = $invoice::class;
-            $paymentTimelineBatchData[] = $supplierServicePaymentTimeline->getAttributes();
-            if (!$supplierServicePaymentTimeline->load(['ServicePaymentTimeline' => $singleService['supplierData']]) || !$supplierServicePaymentTimeline->validate()) {
-                return ['error' => true, 'message' => 'Supplier Service payment timeline validation failed - ' . Helper::processErrorMessages($supplierServicePaymentTimeline->getErrors())];
-            }
 
+            // service update
             $serviceObject = $singleService['refModel']::findPne(['id' => $singleService['refId']]);
             if (!$serviceObject) {
                 return ['error' => true, 'message' => 'Service not found'];

@@ -4,8 +4,9 @@ namespace app\modules\sale\services;
 
 use app\components\Helper;
 use app\modules\account\models\Invoice;
+use app\modules\account\models\ServicePaymentTimeline;
 
-class SaleService
+class PaymentTimelineService
 {
     public static function serviceUpdate(array $data, array $updatedService = NULL): array
     {
@@ -67,5 +68,29 @@ class SaleService
         }
 
         return ['error' => false, 'message' => 'Service data processed successfully'];
+    }
+
+    public static function servicePaymentTimelineProcess(Invoice $invoice, array $serviceData)
+    {
+        // Customer service payment timeline
+        $customerServicePaymentTimeline = new ServicePaymentTimeline();
+        $customerServicePaymentTimeline->subRefId = $invoice->id;
+        $customerServicePaymentTimeline->subRefModel = $invoice::class;
+        $customerServicePaymentTimeline->date = $invoice->date;
+        if (!$customerServicePaymentTimeline->load(['ServicePaymentTimeline' => $serviceData]) || !$customerServicePaymentTimeline->validate()) {
+            return ['error' => true, 'message' => 'Customer Service payment timeline validation failed - ' . Helper::processErrorMessages($customerServicePaymentTimeline->getErrors())];
+        }
+        $paymentTimelineBatchData[] = $customerServicePaymentTimeline->getAttributes();
+
+        // Supplier service payment timeline
+        $supplierServicePaymentTimeline = new ServicePaymentTimeline();
+        $supplierServicePaymentTimeline->subRefId = $invoice->id;
+        $supplierServicePaymentTimeline->date = $invoice->date;
+        if (!$supplierServicePaymentTimeline->load(['ServicePaymentTimeline' => $serviceData['supplierData'][0]]) || !$supplierServicePaymentTimeline->validate()) {
+            return ['error' => true, 'message' => 'Supplier Service payment timeline validation failed - ' . Helper::processErrorMessages($supplierServicePaymentTimeline->getErrors())];
+        }
+        $paymentTimelineBatchData[] = $supplierServicePaymentTimeline->getAttributes();
+
+
     }
 }

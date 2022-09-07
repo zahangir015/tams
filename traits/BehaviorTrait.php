@@ -17,8 +17,8 @@ trait BehaviorTrait
             [
                 'class' => TimestampBehavior::className(),
                 'attributes' => [
-                    ActiveRecord::EVENT_BEFORE_INSERT => ['createdAt'],
-                    ActiveRecord::EVENT_BEFORE_UPDATE => ['updatedAt'],
+                    ActiveRecord::EVENT_BEFORE_INSERT => ($this->hasAttribute('createdAt')) ? ['createdAt'] : [],
+                    ActiveRecord::EVENT_BEFORE_UPDATE => ($this->hasAttribute('createdAt')) ? ['updatedAt'] : [],
                 ],
             ],
         ];
@@ -27,9 +27,9 @@ trait BehaviorTrait
     public function beforeValidate(): bool
     {
         if (isset(Yii::$app->controller->action) && (Yii::$app->controller->action->id != "index") && !Yii::$app->user->isGuest) {
-            if ($this->isNewRecord && isset($this->createdBy)) {
+            if ($this->isNewRecord && $this->hasAttribute('createdBy')) {
                 $this->createdBy = Yii::$app->user->id ?? 1;
-            } elseif(!$this->isNewRecord && isset($this->updatedBy)) {
+            } elseif(!$this->isNewRecord && $this->hasAttribute('updatedBy')) {
                 $this->updatedBy = Yii::$app->user->id ?? 1;
             }
         }
@@ -61,19 +61,19 @@ trait BehaviorTrait
     public function afterSave($insert, $changedAttributes)
     {
         if (isset(Yii::$app->controller->action) && (Yii::$app->controller->action->id == "index" || Yii::$app->controller->action->id == "view")) {
-            if (isset($this->createdAt)) {
+            if ($this->hasAttribute('createdAt')) {
                 $this->createdAt = $this->createdAt ? date(Yii::$app->params['dateTimeFormatInView'], $this->createdAt) : null;
             }
-            if (isset($this->updatedAt)) {
+            if ($this->hasAttribute('updatedAt')) {
                 $this->updatedAt = $this->updatedAt ? date(Yii::$app->params['dateTimeFormatInView'], $this->updatedAt) : null;
             }
-            if (isset($this->createdBy)) {
+            if ($this->hasAttribute('createdBy')) {
                 $this->createdBy = $this->createdBy ? ucfirst($this->creator['username']) : null;
             }
-            if (isset($this->updatedBy)) {
+            if ($this->hasAttribute('updatedBy')) {
                 $this->updatedBy = $this->updatedBy ? ucfirst($this->updater['username']) : null;
             }
-            if (isset($this->uid)) {
+            if ($this->hasAttribute('uid')) {
                 $this->uid = $this->uid ? $this->uid : null;
             }
         }

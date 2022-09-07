@@ -2,7 +2,9 @@
 
 namespace app\modules\account\models;
 
+use app\traits\BehaviorTrait;
 use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%ledger}}".
@@ -25,12 +27,13 @@ use Yii;
  * @property int|null $updatedBy
  * @property int|null $updatedAt
  */
-class Ledger extends \yii\db\ActiveRecord
+class Ledger extends ActiveRecord
 {
+    use BehaviorTrait;
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%ledger}}';
     }
@@ -38,7 +41,7 @@ class Ledger extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['uid', 'title', 'date', 'refId', 'refModel', 'createdBy', 'createdAt'], 'required'],
@@ -55,7 +58,7 @@ class Ledger extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),

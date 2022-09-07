@@ -31,7 +31,7 @@ function remove(row) {
 
 function titleUpdate(row) {
     while (($('#card-label-' + (row + 1)).length !== 0)) {
-        $('#card-label-' + (row + 1)).text('Supplier ' + (row + 1))
+        $('#card-label-' + (row + 1)).text('Ticket ' + (row + 1))
         row++
     }
 }
@@ -51,7 +51,6 @@ $(document).on('change', ".airline", function (e) {
         data: {airlineId: $(this).val()},
         dataType: 'json',
         success: function (data) {
-            console.log(data)
             if (data) {
                 $('#commission' + suffix).val(data.commission);
                 $('#incentive' + suffix).val(data.incentive);

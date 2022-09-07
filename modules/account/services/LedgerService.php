@@ -15,21 +15,20 @@ class LedgerService
     public static function storeLedger(array $requestData): array
     {
         $balance = 0;
-        $oldLedger = LedgerRepository::findLatestOne($requestData['refId'], $requestData['refModel']); // bank/customer/supplier
-        if ($oldLedger) {
-            $balance = $oldLedger['balance'];
+        if ($previousLedger = LedgerRepository::findLatestOne($requestData['refId'], $requestData['refModel'])) {
+            $balance = $previousLedger['balance'];
         }
 
         // Process Ledger data
-        $Ledger = new Ledger();
-        $Ledger->load(['Ledger' => $requestData]);
-        $closingBalance = self::calculateBalance($requestData['refModel'], $Ledger, $balance);
-        $Ledger->balance = $closingBalance;
-        $Ledger->date = date('Y-m-d');
-        $Ledger->status = GlobalConstant::ACTIVE_STATUS;
-        $Ledger = LedgerRepository::store($Ledger);
-        if ($Ledger->hasErrors()) {
-            return ['error' => true, 'message' => 'Ledger creation failed - '.Helper::processErrorMessages($Ledger->getErrors())];
+        $newLedger = new Ledger();
+        $newLedger->load(['Ledger' => $requestData]);
+        $closingBalance = self::calculateBalance($requestData['refModel'], $newLedger, $balance);
+        $newLedger->balance = $closingBalance;
+        $newLedger->date = date('Y-m-d');
+        $newLedger->status = GlobalConstant::ACTIVE_STATUS;
+        $newLedger = LedgerRepository::store($newLedger);
+        if ($newLedger->hasErrors()) {
+            return ['error' => true, 'message' => 'Ledger creation failed - '.Helper::processErrorMessages($newLedger->getErrors())];
         }
         return ['error' => false, 'message' => 'Ledger created successfully.'];
     }

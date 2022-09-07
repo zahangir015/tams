@@ -8,6 +8,7 @@ use app\controllers\ParentController;
 use app\modules\sale\models\ticket\TicketSupplier;
 use app\modules\sale\services\FlightService;
 use Yii;
+use yii\bootstrap4\ActiveForm;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
@@ -50,7 +51,7 @@ class TicketController extends ParentController
     public function actionView(string $uid)
     {
         return $this->render('view', [
-            'model' => $this->findModel($uid),
+            'model' => $this->flightService->findTicket($uid, ['customer', 'ticketSupplier', 'airline', 'provider']),
         ]);
     }
 
@@ -65,10 +66,9 @@ class TicketController extends ParentController
         $ticketSupplier = new TicketSupplier();
 
         if ($this->request->isPost) {
-            dd(Yii::$app->request->post());
             // Store ticket data
             $model = $this->flightService->storeTicket(Yii::$app->request->post());
-            dd($model);
+            dd(Yii::$app->session->getAllFlashes(), false);
             if ($model) {
                 return $this->redirect(['view', 'uid' => $model->uid]);
             }
@@ -116,22 +116,6 @@ class TicketController extends ParentController
         return $this->redirect(['index']);
     }
 
-    /**
-     * Finds the Ticket model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param string $uid UID
-     * @return Ticket the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel(string $uid)
-    {
-        if (($model = Ticket::findOne(['id' => $uid])) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
-    }
-
     public function actionGetMotherTicket($query = null): array
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -142,4 +126,96 @@ class TicketController extends ParentController
         }
         return ['results' => $data];
     }
+
+    public function actionAddTicket($row): string
+    {
+        $model = new Ticket();
+        $ticketSupplier = new TicketSupplier();
+        return $this->renderAjax('ticket', [
+            'model' => $model,
+            'row' => $row,
+            'ticketSupplier' => $ticketSupplier,
+            'form' => ActiveForm::begin(['class' => 'form'])
+        ]);
+    }
+
+    /*public function getData()
+    {
+        return [
+            ['_csrf'] => 'dxluxf_vo-78LaLwZBiHr3v6Tmk3TF1s08Zqn_zJMBwkQyeglqrzuc9kk6hVW7TNHrR7IkZ1PAeakBr6tZ1BcA==',
+            ['customerId'] => 1,
+            ['invoice'] => 'on',
+            ['group'] => 1,
+            ['Ticket'] => [
+                [0] => [
+                    ['airlineId'] => 1,
+                    ['commission'] => 0.07,
+                    ['incentive'] => 0.003,
+                    ['govTax'] => 0,
+                    ['serviceCharge'] => 0,
+                    ['type'] => 'new',
+                    ['numberOfSegment'] => 1,
+                    ['pnrCode'] => 'ASDDAF',
+                    ['eTicket'] => '12356487',
+                    ['paxName'] => 'Chloe Nolan',
+                    ['paxType'] => 'A',
+                    ['seatClass'] => 'Y',
+                    ['providerId'] => 1,
+                    ['route'] => 'DAC-CTG',
+                    ['issueDate'] => '2022-09-05',
+                    ['departureDate'] => '2022-09-10',
+                    ['baseFare'] => 100,
+                    ['tax'] => 10,
+                    ['otherTax'] => 0,
+                    ['quoteAmount'] => 150,
+                    ['tripType'] => 'One Way',
+                    ['bookedOnline'] => 0,
+                    ['codeShare'] => 0,
+                    ['baggage'] => '20kg',
+                    ['reference'] => 'Ref',
+                    ['customerId'] => 1,
+                ],
+                [2] => [
+                    ['airlineId'] => 1,
+                    ['commission'] => 0.07,
+                    ['incentive'] => 0.003,
+                    ['govTax'] => 0,
+                    ['serviceCharge'] => 0,
+                    ['type'] => 'new',
+                    ['numberOfSegment'] => 1,
+                    ['pnrCode'] => 'ASDDAF',
+                    ['eTicket'] => '4535235345',
+                    ['paxName'] => 'sdfgdsf sdfgsdg',
+                    ['paxType'] => 'A',
+                    ['seatClass'] => 'y',
+                    ['providerId'] => 1,
+                    ['route'] => 'DAC-ASD',
+                    ['issueDate'] => '2022 - 09 - 05',
+                    ['departureDate'] => '2022 - 09 - 10',
+                    ['baseFare'] => 100,
+                    ['tax'] => 10,
+                    ['otherTax'] => 0,
+                    ['quoteAmount'] => 150,
+                    ['tripType'] => 'One Way',
+                    ['bookedOnline'] => 0,
+                    ['codeShare'] => 0,
+                    ['baggage'] => '13kg',
+                    ['reference'] => 'ref',
+                    ['customerId'] => 1,
+                ]
+            ],
+            ['TicketSupplier'] => [
+                [0] => [
+                    ['supplierId'] => 1,
+                    ['status'] => 1,
+                    ['paidAmount'] => 0,
+                ],
+                [2] => [
+                    ['supplierId'] => 1,
+                    ['status'] => 1,
+                    ['paidAmount'] => 0,
+                ]
+            ]
+        ];
+    }*/
 }

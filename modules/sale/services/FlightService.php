@@ -13,6 +13,7 @@ use app\modules\sale\models\ticket\Ticket;
 use app\modules\sale\models\ticket\TicketSupplier;
 use app\modules\sale\repositories\FlightRepository;
 use Yii;
+use yii\db\ActiveRecord;
 use yii\db\Exception;
 
 class FlightService
@@ -35,13 +36,14 @@ class FlightService
                 $autoInvoiceCreateResponse = null;
                 $customer = Customer::findOne(['id' => $requestData['Ticket'][0]['customerId']]);
 
-
                 foreach ($requestData['Ticket'] as $key => $ticketData) {
                     $ticket = new Ticket();
                     $ticket->scenario = 'create';
                     $supplier = Supplier::findOne(['id' => $requestData['TicketSupplier'][$key]['supplierId']]);
 
+
                     if ($ticket->load(['Ticket' => $ticketData])) {
+                        $ticket = self::processTicketData($ticket);
                         $ticket = $this->flightRepository->store($ticket);
                         if ($ticket->hasErrors()) {
                             throw new Exception('Ticket create failed - ' . Helper::processErrorMessages($ticket->getErrors()));
@@ -68,7 +70,6 @@ class FlightService
                                     [
                                         'refId' => $ticketSupplier->id,
                                         'refModel' => $ticketSupplier::class,
-                                        'subRefId' => null,
                                         'subRefModel' => Invoice::class,
                                         'due' => $ticketSupplier->costOfSale,
                                         'amount' => $ticketSupplier->paidAmount,
@@ -87,14 +88,14 @@ class FlightService
                                 'subRefId' => null
                             ];
                         }
-
                     } else {
                         throw new Exception('Ticket data loading failed - ' . Helper::processErrorMessages($ticket->getErrors()));
                     }
                 }
 
                 // Invoice process and create
-                $autoInvoiceCreateResponse = InvoiceService::autoInvoice($customer->id, $tickets, $requestData['group'],Yii::$app->user);
+                $autoInvoiceCreateResponse = InvoiceService::autoInvoice($customer->id, $tickets, $requestData['group'], Yii::$app->user);
+                dd($autoInvoiceCreateResponse);
                 if ($autoInvoiceCreateResponse['error']) {
                     $dbTransaction->rollBack();
                     Yii::$app->session->setFlash('error', 'Invoice - ' . $autoInvoiceCreateResponse['message']);
@@ -133,101 +134,99 @@ class FlightService
         }
     }
 
-    public function updateExpense($request, Expense $expense): Expense
+    protected static function processTicketData(Ticket $ticket): Ticket
     {
-        // Request Data
-        if (empty($request['Expense'])) {
-            Yii::$app->session->setFlash('error', 'Expense data is required.');
-            return $expense;
-        }
+        $commissionReceived = self::calculateCommissionReceived($ticket->baseFare, $ticket->commission);
+        $incentiveReceived = self::calculateIncentiveReceived($ticket->baseFare, $ticket->commission, $ticket->incentive);
+        $ait = self::calculateAIT($ticket->baseFare, $ticket->tax, $ticket->govTax);
 
-        if (!$expense->load($request) || !$expense->validate()) {
-            Yii::$app->session->setFlash('error', Utils::processErrorMessages($expense->getErrors()));
-            return $expense;
+        $ticket->commissionReceived = $commissionReceived;
+        $ticket->incentiveReceived = $incentiveReceived;
+        $ticket->ait = $ait;
+        $ticket->costOfSale = self::calculateCostOfSale($ticket->tax, $ticket->serviceCharge, $ait, $ticket->baseFare, $commissionReceived, $incentiveReceived);
+        $ticket->flightType = self::flightTypeIdentifier($ticket->route);
+        $ticket->netProfit = self::calculateNetProfit($ticket->quoteAmount, $ticket->tax, $ticket->baseFare, $ticket->serviceCharge, $ait, $commissionReceived, $incentiveReceived);
+        $ticket->customerCategory = Customer::findOne(['id' => $ticket->customerId])->category;
+        if ($ticket->isNewRecord) {
+            $ticket->paymentStatus = GlobalConstant::PAYMENT_STATUS['Due'];
+            $ticket->receivedAmount = 0;
+            $ticket->status = GlobalConstant::ACTIVE_STATUS;
         }
-
-        $expense = $this->expenseRepository->update($expense);
-        if ($expense->hasErrors()) {
-            Yii::$app->session->setFlash('error', Utils::processErrorMessages($expense->getErrors()));
-            return $expense;
-        }
-
-        Yii::$app->session->setFlash('success', 'Expense updated successfully.');
-        return $expense;
+        return $ticket;
     }
 
-    public function payExpense($request, Expense $expense): Expense
+    private static function calculateAIT(float $baseFare, float $tax, mixed $govtTax): float
     {
-        if (!isset($request['TransactionStatement'])) {
-            Yii::$app->session->setFlash('error', 'Transaction Statement data is required.');
-            return $expense;
-        }
-
-        $dbTransaction = Yii::$app->db->beginTransaction();
-        try {
-            // Transaction Process
-            $transactionData = TransactionService::formDataForTransactionStatement($request['TransactionStatement'], $expense->id, Expense::className(), $expense->supplierId, Supplier::className(), Yii::$app->user->id);
-            $transactionStoreResponse = TransactionService::store($transactionData);
-            if ($transactionStoreResponse['error']) {
-                Yii::$app->session->setFlash('error', 'Transaction Statement - ' . $transactionStoreResponse['message']);
-                $dbTransaction->rollBack();
-                return $expense;
+        /*$BD = $UT = $E5 = 0;
+        if (!empty($taxBreakDown)) {
+            foreach (['BD', 'UT', 'E5'] as $taxKey) {
+                $key = array_search($taxKey, array_column($taxBreakDown, 'code'));
+                if ($key !== false) {
+                    $$taxKey = (double)$taxBreakDown[$key]->amount;
+                }
             }
-            //
-            $expense->totalPaid += $transactionStoreResponse['data']->amount;
-            $expense = $this->expenseRepository->update($expense);
-
-            // Supplier Ledger process for payment
-            $supplierLedgerRequestData = [
-                'title' => 'Expense',
-                'reference' => 'Expense Number - ' . $expense->name,
-                'refId' => $expense->supplierId,
-                'refModel' => Supplier::className(),
-                'subRefId' => $expense->id,
-                'subRefModel' => $expense::className(),
-                'debit' => $transactionStoreResponse['data']->amount,
-                'credit' => 0
-            ];
-            $ledgerRequestResponse = LedgerComponent::createNewLedger($supplierLedgerRequestData);
-            if ($ledgerRequestResponse['error']) {
-                Yii::$app->session->setFlash('error', 'Supplier Ledger creation failed - ' . $ledgerRequestResponse['message']);
-                $dbTransaction->rollBack();
-                return $expense;
-            }
-
-
-            // Bank Ledger process
-            $bankLedgerRequestData = [
-                'title' => 'Expense',
-                'reference' => 'Expense Number - ' . $expense->name,
-                'refId' => $transactionStoreResponse['data']->bankId,
-                'refModel' => BankAccount::className(),
-                'subRefId' => $expense->id,
-                'subRefModel' => $expense::className(),
-                'debit' => 0,
-                'credit' => $transactionStoreResponse['data']->amount
-            ];
-            $bankLedgerRequestResponse = LedgerComponent::createNewLedger($bankLedgerRequestData);
-            if ($bankLedgerRequestResponse['error']) {
-                Yii::$app->session->setFlash('error', 'Bank Ledger creation failed - ' . $bankLedgerRequestResponse['message']);
-                $dbTransaction->rollBack();
-                return $expense;
-            }
-
-            Yii::$app->session->setFlash('success', 'Expense payment done successfully.');
-            $dbTransaction->commit();
-            return $expense;
-
-        } catch (\Exception $e) {
-            Yii::$app->session->setFlash('error', $e->getMessage());
-            return $expense;
-        }
+            return ((($baseFare + $tax) - ($BD + $UT + $E5)) * $govtTax);
+        }*/
+        return (((double)$baseFare + (double)$tax) * (double)$govtTax);
     }
 
-    public function findExpense(string $uid): \yii\db\ActiveRecord
+    protected static function tripTypeIdentifier($route): string
     {
-        return $this->expenseRepository->findOne($uid);
+        $airports = explode('-', $route);
+        $totalAirports = count($airports);
+        if ($airports[0] == $airports[($totalAirports - 1)]) {
+            return GlobalConstant::TRIP_TYPE['Return'];
+        }
+        return GlobalConstant::TRIP_TYPE['One Way'];
+    }
+    
+    private static function flightTypeIdentifier(mixed $route): string
+    {
+        $airports = array_unique(explode('-', $route));
+        $international = array_diff($airports, GlobalConstant::BD_AIRPORTS);
+        if (empty($international)) {
+            return 1;
+        }
+        return 2;
     }
 
+    private static function calculateCommissionReceived($baseFare, $commission): float
+    {
+        return ($baseFare * $commission);
+    }
 
+    private static function calculateIncentiveReceived($baseFare, $commission, $incentive): float
+    {
+        return (($baseFare - ($baseFare * $commission)) * ($incentive));
+    }
+
+    private static function calculateNetProfit($quoteAmount, $tax, $baseFare, $serviceCharge, $ait, $commissionReceived, $incentiveReceived)
+    {
+        return ($quoteAmount - ($tax + $serviceCharge + $ait + (($baseFare - $commissionReceived) - $incentiveReceived)));
+    }
+
+    private static function calculateCostOfSale($tax, $airlineServiceCharge, $ait, $baseFare, $commissionReceived, $incentiveReceived)
+    {
+        return ($tax + $airlineServiceCharge + $ait + (($baseFare - $commissionReceived) - $incentiveReceived));
+    }
+
+    public static function calculateQuoteAmount($baseFare, $tax, $ait, $requestData): float
+    {
+        $quoteAmount = $baseFare + $tax;
+        // Ticket Discount calculation
+        $discount = 0;
+        // If there is any convenienceFee
+        if (isset($requestData['convenienceFee']) && ($requestData['convenienceFee'] != 0)) {
+            $quoteAmount += ($requestData['convenienceFee'] / count($requestData['passenger']));
+        }
+
+        // If there is any advanceIncomeTax
+        $quoteAmount += floor($ait);
+        return ($quoteAmount - $discount);
+    }
+
+    public function findTicket(string $uid, $withArray = []): ActiveRecord
+    {
+        return $this->flightRepository->findOneTicket($uid, $withArray);
+    }
 }

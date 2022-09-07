@@ -56,4 +56,6 @@ final class GlobalConstant
     const BD_AIRPORTS = ['DAC', 'CGP', 'CXB', 'ZYL', 'RJH', 'BZL', 'JSR', 'SPD', 'IRD'];
     const TRIP_TYPE = ['One Way' => 'One Way', 'Return' => 'Return'];
     const BOOKING_TYPE = ['Offline', 'Online'];
+    const FLIGHT_TYPE = ['Domestic', 'International'];
+    const PAYMENT_STATUS = ['Due' => 'Due', 'Partially Paid' => 'Partially Paid', 'Full Paid' => 'Full Paid0'];
 }

@@ -2,7 +2,12 @@
 
 namespace app\modules\account\models;
 
+use app\modules\sale\models\Customer;
+use app\modules\sale\models\ticket\Ticket;
+use app\traits\BehaviorTrait;
 use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%invoice}}".
@@ -27,12 +32,13 @@ use Yii;
  * @property Customer $customer
  * @property Ticket[] $tickets
  */
-class Invoice extends \yii\db\ActiveRecord
+class Invoice extends ActiveRecord
 {
+    use BehaviorTrait;
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%invoice}}';
     }
@@ -40,10 +46,10 @@ class Invoice extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            [['uid', 'customerId', 'invoiceNumber', 'date', 'createdBy', 'createdAt'], 'required'],
+            [['customerId', 'invoiceNumber', 'date'], 'required'],
             [['customerId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['date', 'expectedPaymentDate'], 'safe'],
             [['paidAmount', 'dueAmount', 'discountedAmount', 'refundAdjustmentAmount'], 'number'],
@@ -59,7 +65,7 @@ class Invoice extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),
@@ -84,9 +90,9 @@ class Invoice extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Customer]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getCustomer()
+    public function getCustomer(): ActiveQuery
     {
         return $this->hasOne(Customer::className(), ['id' => 'customerId']);
     }
@@ -94,9 +100,9 @@ class Invoice extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Tickets]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getTickets()
+    public function getTickets(): ActiveQuery
     {
         return $this->hasMany(Ticket::className(), ['invoiceId' => 'id']);
     }

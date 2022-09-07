@@ -37,7 +37,7 @@ class ServicePaymentTimeline extends ActiveRecord
     public function rules(): array
     {
         return [
-            [['uid', 'date', 'refId', 'refModel'], 'required'],
+            [['date', 'refId', 'refModel'], 'required'],
             [['date'], 'safe'],
             [['refId', 'subRefId', 'status'], 'integer'],
             [['paidAmount', 'dueAmount'], 'number'],
