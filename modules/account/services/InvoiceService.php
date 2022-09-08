@@ -50,7 +50,7 @@ class InvoiceService
             'debit' => array_sum(array_column($services, 'due')),
             'credit' => 0
         ];
-        $ledgerRequestResponse = LedgerService::storeLedger($ledgerRequestData);
+        $ledgerRequestResponse = LedgerService::store($ledgerRequestData);
         if ($ledgerRequestResponse['error']) {
             return ['error' => true, 'message' => $ledgerRequestResponse['message']];
         }
@@ -63,7 +63,6 @@ class InvoiceService
         $invoiceDetailBatchData = [];
         $paymentTimelineBatchData = [];
         foreach ($services as $singleService) {
-
             $invoiceDetail = new InvoiceDetail();
             $invoiceDetail->invoiceId = $invoice->id;
             if (!$invoiceDetail->load(['InvoiceDetail' => $singleService]) || !$invoiceDetail->validate()) {
@@ -74,7 +73,9 @@ class InvoiceService
                 return ['error' => true, 'message' => 'Service payment timeline validation failed - ' . Helper::processErrorMessages($invoiceDetail->getErrors())];
             }
 
-
+            // Payment timeline process
+            $processedData = PaymentTimelineService::processData($invoice, $singleService);
+            $paymentTimelineBatchData = array_merge($paymentTimelineBatchData, $processedData);
 
             // service update
             $serviceObject = $singleService['refModel']::findPne(['id' => $singleService['refId']]);
@@ -95,12 +96,10 @@ class InvoiceService
             return ['error' => true, 'message' => 'Invoice Details batch insert failed'];
         }
 
-        // Payment Timeline insert process
-        if (empty($paymentTimelineBatchData)) {
-            return ['error' => true, 'message' => 'Payment Timeline Batch Data can not be empty.'];
-        }
-        if (!PaymentTimelineRepository::batchStore(ServicePaymentTimeline::tableName(), array_keys($paymentTimelineBatchData[0]), $paymentTimelineBatchData)) {
-            return ['error' => true, 'message' => 'Payment Timeline batch insert failed'];
+        // Service Payment timeline batch insert
+        $paymentTimelineProcessResponse = PaymentTimelineService::batchInsert($paymentTimelineBatchData);
+        if ($paymentTimelineProcessResponse['error']){
+            return $paymentTimelineProcessResponse;
         }
 
         return ['error' => false, 'message' => 'Service process done.'];

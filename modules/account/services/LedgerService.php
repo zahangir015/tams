@@ -5,6 +5,7 @@ namespace app\modules\account\services;
 use app\components\GlobalConstant;
 use app\components\Helper;
 use app\modules\account\models\BankAccount;
+use app\modules\account\models\Invoice;
 use app\modules\account\models\Ledger;
 use app\modules\account\repositories\LedgerRepository;
 use app\modules\sale\models\Customer;
@@ -12,7 +13,8 @@ use app\modules\sale\models\Supplier;
 
 class LedgerService
 {
-    public static function storeLedger(array $requestData): array
+
+    public static function store(array $requestData): array
     {
         $balance = 0;
         if ($previousLedger = LedgerRepository::findLatestOne($requestData['refId'], $requestData['refModel'])) {
@@ -28,8 +30,9 @@ class LedgerService
         $newLedger->status = GlobalConstant::ACTIVE_STATUS;
         $newLedger = LedgerRepository::store($newLedger);
         if ($newLedger->hasErrors()) {
-            return ['error' => true, 'message' => 'Ledger creation failed - '.Helper::processErrorMessages($newLedger->getErrors())];
+            return ['error' => true, 'message' => 'Ledger creation failed - ' . Helper::processErrorMessages($newLedger->getErrors())];
         }
+
         return ['error' => false, 'message' => 'Ledger created successfully.'];
     }
 
@@ -72,5 +75,28 @@ class LedgerService
         // Payment Received to Bank -  (debit > credit)
         // Payment Done from Bank - (credit > debit)
         return ($ledger->debit > $ledger->credit) ? ($balance + ($ledger->credit + $ledger->debit)) : ($balance - ($ledger->credit + $ledger->debit));
+    }
+
+    public static function batchInsert(Invoice $invoice, array $ledgerArray): array
+    {
+        foreach ($ledgerArray as $key => $value) {
+            $ledgerRequestData = [
+                'title' => 'Service Purchase',
+                'reference' => 'Service Purchase',
+                'refId' => $key,
+                'refModel' => Supplier::class,
+                'subRefId' => ($value['subRefId']) ?? $invoice->id,
+                'subRefModel' => Invoice::class,
+                'debit' => $value['debit'],
+                'credit' => $value['credit']
+            ];
+
+            $response = self::store($ledgerRequestData);
+            if ($response['error']) {
+                return $response;
+            }
+        }
+
+        return ['error' => false, 'message' => 'Ledger created successfully.'];
     }
 }

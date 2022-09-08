@@ -6,6 +6,7 @@ use app\components\GlobalConstant;
 use app\components\Helper;
 use app\modules\account\models\Invoice;
 use app\modules\account\services\InvoiceService;
+use app\modules\account\services\LedgerService;
 use app\modules\admin\models\User;
 use app\modules\sale\models\Customer;
 use app\modules\sale\models\Supplier;
@@ -95,32 +96,21 @@ class FlightService
 
                 // Invoice process and create
                 $autoInvoiceCreateResponse = InvoiceService::autoInvoice($customer->id, $tickets, $requestData['group'], Yii::$app->user);
-                dd($autoInvoiceCreateResponse);
                 if ($autoInvoiceCreateResponse['error']) {
                     $dbTransaction->rollBack();
                     Yii::$app->session->setFlash('error', 'Invoice - ' . $autoInvoiceCreateResponse['message']);
                     return false;
                 }
+                $invoice = $autoInvoiceCreateResponse['data'];
 
                 // Ledger process
-                foreach ($supplierLedgerArray as $key => $value) {
-                    $ledgerRequestData = [
-                        'title' => 'Service Purchase',
-                        'reference' => 'Service Purchase',
-                        'refId' => $key,
-                        'refModel' => Supplier::className(),
-                        'subRefId' => ($value['subRefId']) ?? $autoInvoiceCreateResponse['data']->id,
-                        'subRefModel' => Invoice::className(),
-                        'debit' => $value['debit'],
-                        'credit' => $value['credit']
-                    ];
-                    $ledgerRequestResponse = LedgerComponent::createNewLedger($ledgerRequestData);
-                    if ($ledgerRequestResponse['error']) {
-                        $dbTransaction->rollBack();
-                        Yii::$app->session->setFlash('success', 'Supplier Ledger creation failed - ' . $ledgerRequestResponse['message']);
-                        return false;
-                    }
+                $ledgerRequestResponse = LedgerService::batchInsert($invoice, $supplierLedgerArray);
+                if ($ledgerRequestResponse['error']) {
+                    $dbTransaction->rollBack();
+                    Yii::$app->session->setFlash('success', 'Supplier Ledger creation failed - ' . $ledgerRequestResponse['message']);
+                    return false;
                 }
+
 
                 $dbTransaction->commit();
                 Yii::$app->session->setFlash('success', 'Ticket added successfully');
