@@ -1,6 +1,10 @@
 <?php
 
 namespace app\modules\sale\models\ticket;
+use app\modules\account\models\Invoice;
+use app\modules\sale\models\Airline;
+use app\modules\sale\models\Customer;
+use app\modules\sale\models\Provider;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
@@ -9,6 +13,11 @@ use yii\data\ActiveDataProvider;
  */
 class TicketSearch extends Ticket
 {
+    public $airline;
+    public $provider;
+    public $customer;
+    public $invoice;
+
     /**
      * {@inheritdoc}
      */
@@ -16,7 +25,7 @@ class TicketSearch extends Ticket
     {
         return [
             [['id', 'motherTicketId', 'airlineId', 'providerId', 'invoiceId', 'customerId', 'bookedOnline', 'flightType', 'codeShare', 'numberOfSegment', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
-            [['uid', 'customerCategory', 'paxName', 'paxType', 'eTicket', 'pnrCode', 'type', 'tripType', 'seatClass', 'reference', 'issueDate', 'departureDate', 'refundRequestDate', 'route', 'paymentStatus', 'baggage'], 'safe'],
+            [['uid', 'customerCategory', 'paxName', 'paxType', 'eTicket', 'pnrCode', 'type', 'tripType', 'seatClass', 'reference', 'issueDate', 'departureDate', 'refundRequestDate', 'route', 'paymentStatus', 'baggage', 'customer', 'airline', 'provider', 'invoice'], 'safe'],
             [['baseFare', 'tax', 'otherTax', 'commission', 'commissionReceived', 'incentive', 'incentiveReceived', 'govTax', 'serviceCharge', 'ait', 'quoteAmount', 'receivedAmount', 'costOfSale', 'netProfit'], 'number'],
         ];
     }
@@ -41,11 +50,42 @@ class TicketSearch extends Ticket
     {
         $query = Ticket::find();
 
+        // do we have values? if so, add a filter to our query
+        if (isset($params['TicketSearch'])) {
+            if (!empty($params['TicketSearch']['issueDate']) && str_contains($params['TicketSearch']['issueDate'], '-')) {
+                list($start_date, $end_date) = explode(' - ', $params['TicketSearch']['issueDate']);
+                $query->andFilterWhere(['between', 'issueDate', date('Y-m-d', strtotime($start_date)), date('Y-m-d', strtotime($end_date))]);
+            }
+            if (!empty($params['TicketSearch']['departureDate']) && str_contains($params['TicketSearch']['departureDate'], '-')) {
+                list($start_date, $end_date) = explode(' - ', $params['TicketSearch']['departureDate']);
+                $query->andFilterWhere(['between', 'departureDate', date('Y-m-d', strtotime($start_date)), date('Y-m-d', strtotime($end_date))]);
+            }
+        }
+
         // add conditions that should always apply here
+        $query->joinWith(['airline', 'customer', 'provider', 'invoice']);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => ['defaultOrder' => ['issueDate' => SORT_DESC]],
         ]);
+
+        $dataProvider->sort->attributes['customer'] = [
+            'asc' => [Customer::tableName().'.company' => SORT_ASC],
+            'desc' => [Customer::tableName().'.company' => SORT_DESC],
+        ];
+        $dataProvider->sort->attributes['provider'] = [
+            'asc' => [Provider::tableName().'.name' => SORT_ASC],
+            'desc' => [Provider::tableName().'.name' => SORT_DESC],
+        ];
+        $dataProvider->sort->attributes['airline'] = [
+            'asc' => [Airline::tableName().'.name' => SORT_ASC],
+            'desc' => [Airline::tableName().'.name' => SORT_DESC],
+        ];
+        $dataProvider->sort->attributes['invoice'] = [
+            'asc' => [Invoice::tableName().'.invoiceNumber' => SORT_ASC],
+            'desc' => [Invoice::tableName().'.invoiceNumber' => SORT_DESC],
+        ];
 
         $this->load($params);
 
@@ -92,6 +132,12 @@ class TicketSearch extends Ticket
         ]);
 
         $query->andFilterWhere(['like', 'uid', $this->uid])
+            ->andFilterWhere(['like', Customer::tableName().'.company', $this->customer])
+            ->orFilterWhere(['like', Customer::tableName().'.customerCode', $this->customer])
+            ->andFilterWhere(['like', Airline::tableName().'.name', $this->airline])
+            ->orFilterWhere(['like', Airline::tableName().'.code', $this->airline])
+            ->andFilterWhere(['like', Provider::tableName().'.name', $this->provider])
+            ->andFilterWhere(['like', Invoice::tableName().'.invoiceNumber', $this->invoice])
             ->andFilterWhere(['like', 'customerCategory', $this->customerCategory])
             ->andFilterWhere(['like', 'paxName', $this->paxName])
             ->andFilterWhere(['like', 'paxType', $this->paxType])

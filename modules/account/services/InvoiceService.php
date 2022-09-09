@@ -78,7 +78,7 @@ class InvoiceService
             $paymentTimelineBatchData = array_merge($paymentTimelineBatchData, $processedData);
 
             // service update
-            $serviceObject = $singleService['refModel']::findPne(['id' => $singleService['refId']]);
+            $serviceObject = $singleService['refModel']::findOne(['id' => $singleService['refId']]);
             if (!$serviceObject) {
                 return ['error' => true, 'message' => 'Service not found'];
             }

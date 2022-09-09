@@ -68,7 +68,6 @@ class TicketController extends ParentController
         if ($this->request->isPost) {
             // Store ticket data
             $model = $this->flightService->storeTicket(Yii::$app->request->post());
-            dd(Yii::$app->session->getAllFlashes(), false);
             if ($model) {
                 return $this->redirect(['view', 'uid' => $model->uid]);
             }

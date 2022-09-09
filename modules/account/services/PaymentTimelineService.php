@@ -45,6 +45,8 @@ class PaymentTimelineService
         if (!PaymentTimelineRepository::batchStore(ServicePaymentTimeline::tableName(), array_keys($rowData[0]), $rowData)) {
             return ['error' => true, 'message' => 'Payment Timeline batch insert failed'];
         }
+
+        return ['error' => false, 'message' => 'Payment Timeline Batch Data inserted successfully.'];
     }
 
     public static function store($invoice, $requestData, $user): array

@@ -44,7 +44,7 @@ class Ledger extends ActiveRecord
     public function rules(): array
     {
         return [
-            [['uid', 'title', 'date', 'refId', 'refModel', 'createdBy', 'createdAt'], 'required'],
+            [['uid', 'title', 'date', 'refId', 'refModel', 'createdBy'], 'required'],
             [['date'], 'safe'],
             [['refId', 'subRefId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['debit', 'credit', 'balance'], 'number'],

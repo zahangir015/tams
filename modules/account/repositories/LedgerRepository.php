@@ -43,7 +43,7 @@ class LedgerRepository
             ->all();
     }
 
-    public static function findLatestOne(int $refId, string $refModel): array
+    public static function findLatestOne(int $refId, string $refModel)
     {
         return Ledger::find()
             ->where(['refId' => $refId, 'refModel' => $refModel])

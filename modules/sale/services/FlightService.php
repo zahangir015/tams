@@ -111,7 +111,6 @@ class FlightService
                     return false;
                 }
 
-
                 $dbTransaction->commit();
                 Yii::$app->session->setFlash('success', 'Ticket added successfully');
                 return true;
