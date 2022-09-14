@@ -97,4 +97,8 @@ class PaymentTimelineService
 
         return ['status' => true, 'message' => 'Service payment detail updated'];
     }
+
+    public static function updateServicePaymentDetail(array $servicePaymentUpdateData)
+    {
+    }
 }

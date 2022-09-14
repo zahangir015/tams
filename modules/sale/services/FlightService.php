@@ -26,22 +26,18 @@ class FlightService
         $this->flightRepository = new FlightRepository();
     }
 
-    public function storeTicket($requestData): bool
+    public function storeTicket(array $requestData): bool
     {
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
-            if (!empty($requestData['Ticket']) && !empty($requestData['TicketSupplier'])) {
-                $error = false;
+            if (!empty($requestData['Ticket']) || !empty($requestData['TicketSupplier'])) {
                 $tickets = [];
                 $supplierLedgerArray = [];
-                $autoInvoiceCreateResponse = null;
                 $customer = Customer::findOne(['id' => $requestData['Ticket'][0]['customerId']]);
 
                 foreach ($requestData['Ticket'] as $key => $ticketData) {
                     $ticket = new Ticket();
                     $ticket->scenario = 'create';
-                    $supplier = Supplier::findOne(['id' => $requestData['TicketSupplier'][$key]['supplierId']]);
-
 
                     if ($ticket->load(['Ticket' => $ticketData])) {
                         $ticket = self::processTicketData($ticket);
@@ -98,24 +94,102 @@ class FlightService
                 $autoInvoiceCreateResponse = InvoiceService::autoInvoice($customer->id, $tickets, $requestData['group'], Yii::$app->user);
                 if ($autoInvoiceCreateResponse['error']) {
                     $dbTransaction->rollBack();
-                    Yii::$app->session->setFlash('error', 'Invoice - ' . $autoInvoiceCreateResponse['message']);
-                    return false;
+                    throw new Exception('Invoice - ' . $autoInvoiceCreateResponse['message']);
                 }
                 $invoice = $autoInvoiceCreateResponse['data'];
 
-                // Ledger process
+                // Supplier Ledger process
                 $ledgerRequestResponse = LedgerService::batchInsert($invoice, $supplierLedgerArray);
                 if ($ledgerRequestResponse['error']) {
                     $dbTransaction->rollBack();
-                    Yii::$app->session->setFlash('success', 'Supplier Ledger creation failed - ' . $ledgerRequestResponse['message']);
-                    return false;
+                    throw new Exception('Supplier Ledger creation failed - ' . $ledgerRequestResponse['message']);
                 }
 
                 $dbTransaction->commit();
                 Yii::$app->session->setFlash('success', 'Ticket added successfully');
                 return true;
             }
+            // Ticket and supplier data can not be empty
+            throw new Exception('Ticket and supplier data can not be empty.');
+
+        } catch (Exception $e) {
+            $dbTransaction->rollBack();
+            Yii::$app->session->setFlash('danger', $e->getMessage() . ' - in file - ' . $e->getFile() . ' - in line -' . $e->getLine());
             return false;
+        }
+    }
+
+    public function updateTicket(array $requestData, Ticket $ticket)
+    {
+        $dbTransaction = Yii::$app->db->beginTransaction();
+        try {
+            if (!empty($requestData['Ticket']) || !empty($requestData['TicketSupplier'])) {
+                $oldQuoteAmount = $ticket->quoteAmount;
+                $oldCostOfSale = $ticket->costOfSale;
+
+                $ticket->setAttributes($requestData['Ticket'][0]);
+                $ticket = self::processTicketData($ticket);
+                if (!$ticket->save()) {
+                    throw new Exception('Ticket update failed - ' . Helper::processErrorMessages($ticket->getErrors()));
+                }
+
+                // Compare old quote and new quote
+                $updateServiceQuoteResponse = self::compareOldQuoteAndNewQuoteAndProcessData($ticket, $oldQuoteAmount);
+                if ($updateServiceQuoteResponse['error']) {
+                    throw new Exception($updateServiceQuoteResponse['message']);
+                }
+
+                $ticketSupplier = $ticket->ticketSupplier;
+                $oldSupplierId = $ticketSupplier->supplierId;
+                $ticketSupplier->load(['TicketSupplier' => $ticket->getAttributes(['issueDate', 'eTicket', 'pnrCode', 'airlineId', 'paymentStatus', 'type'])]);
+                $ticketSupplier->load(['TicketSupplier' => $requestData['TicketSupplier'][0]]);
+                $ticketSupplier->costOfSale = $ticket->costOfSale;
+                if (!$ticketSupplier->update()) {
+                    throw new Exception('Ticket supplier update failed - ' .Helper::processErrorMessages($ticketSupplier->getErrors()));
+                }
+
+                // supplier Ledger update
+                if (!empty($ticket->invoice) && ($ticketSupplier->costOfSale != $oldCostOfSale)) {
+
+                    if ($ticket->ticketSupplier->supplierId != $oldSupplierId) {
+                        $suppliersLedgerData[] = [
+                            'title' => 'Service Purchase Update',
+                            'reference' => 'Invoice Number - ' . $ticket->invoice->invoiceNumber,
+                            'refId' => $oldSupplierId,
+                            'refModel' => Supplier::class,
+                            'subRefId' => $ticket->invoiceId,
+                            'subRefModel' => $ticket->invoice::className(),
+                            'debit' => 0,
+                            'credit' => 0
+                        ];
+                        if (!TicketSupplier::updateAll(['status' => 0, 'updatedBy' => Yii::$app->user->id, 'updatedAt' => Helper::convertToTimestamp(date('Y-m-d h:i:s'))], ['id' => $oldSupplierId])) {
+                            throw new Exception(Utils::processErrorMessages('Ticket Supplier delete failed.'));
+                        }
+                    }
+
+                    $suppliersLedgerData[] = [
+                        'title' => 'Service Purchase Update',
+                        'reference' => 'Invoice Number - ' . $ticketModel->invoice->invoiceNumber,
+                        'refId' => $ticketSupplier->supplierId,
+                        'refModel' => Supplier::class,
+                        'subRefId' => $ticketModel->invoiceId,
+                        'subRefModel' => $ticketModel->invoice::className(),
+                        'debit' => 0,
+                        'credit' => $ticketSupplier->costOfSale
+                    ];
+
+                    foreach ($suppliersLedgerData as $singleLedger) {
+                        $ledgerRequestResponse = LedgerComponent::updateLedger($singleLedger);
+                        if (!$ledgerRequestResponse['status']) {
+                            throw new Exception(Utils::processErrorMessages('Not update ticket  ' . $ledgerRequestResponse['message']));
+                        }
+                    }
+                }
+
+                $dbTransaction->commit();
+                Yii::$app->session->setFlash('success', 'Ticket updated successfully');
+                return true;
+            }
         } catch (Exception $e) {
             $dbTransaction->rollBack();
             Yii::$app->session->setFlash('error', $e->getMessage() . ' - in file - ' . $e->getFile() . ' - in line -' . $e->getLine());
@@ -132,6 +206,7 @@ class FlightService
         $ticket->commissionReceived = $commissionReceived;
         $ticket->incentiveReceived = $incentiveReceived;
         $ticket->ait = $ait;
+        $ticket->tripType = self::tripTypeIdentifier($ticket->route);
         $ticket->costOfSale = self::calculateCostOfSale($ticket->tax, $ticket->serviceCharge, $ait, $ticket->baseFare, $commissionReceived, $incentiveReceived);
         $ticket->flightType = self::flightTypeIdentifier($ticket->route);
         $ticket->netProfit = self::calculateNetProfit($ticket->quoteAmount, $ticket->tax, $ticket->baseFare, $ticket->serviceCharge, $ait, $commissionReceived, $incentiveReceived);
@@ -142,6 +217,23 @@ class FlightService
             $ticket->status = GlobalConstant::ACTIVE_STATUS;
         }
         return $ticket;
+    }
+
+    private static function compareOldQuoteAndNewQuoteAndProcessData(Ticket $ticket, float $oldQuoteAmount): array
+    {
+        if (($oldQuoteAmount != $ticket->quoteAmount) && !empty($ticket->invoice)) {
+            // Update Invoice Entity
+            $tickets[] = [
+                'refId' => $ticket->id,
+                'refModel' => Ticket::class,
+                'amount' => $ticket->receivedAmount,
+                'due' => ($ticket->quoteAmount - $ticket->receivedAmount),
+            ];
+            return SaleService::updatedServiceRelatedData($ticket, $tickets);
+
+        }
+
+        return ['error' => false, 'message' => 'Quote amount is not updated'];
     }
 
     private static function calculateAIT(float $baseFare, float $tax, mixed $govtTax): float
@@ -168,7 +260,7 @@ class FlightService
         }
         return GlobalConstant::TRIP_TYPE['One Way'];
     }
-    
+
     private static function flightTypeIdentifier(mixed $route): string
     {
         $airports = array_unique(explode('-', $route));

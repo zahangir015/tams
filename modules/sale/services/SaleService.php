@@ -5,8 +5,12 @@ namespace app\modules\sale\services;
 use app\components\Helper;
 use app\modules\account\models\Invoice;
 use app\modules\account\models\ServicePaymentTimeline;
+use app\modules\account\services\InvoiceService;
+use app\modules\account\services\LedgerService;
+use app\modules\account\services\PaymentTimelineService;
+use yii\db\ActiveRecord;
 
-class PaymentTimelineService
+class SaleService
 {
     public static function serviceUpdate(array $data, array $updatedService = NULL): array
     {
@@ -92,5 +96,38 @@ class PaymentTimelineService
         $paymentTimelineBatchData[] = $supplierServicePaymentTimeline->getAttributes();
 
 
+    }
+
+    public static function updatedServiceRelatedData(ActiveRecord $model, array $services)
+    {
+        // Invoice update
+        $invoiceUpdateResponse = InvoiceService::updateInvoice($model->invoice, $services);
+        if (!$invoiceUpdateResponse['status']) {
+            return ['error' => true, 'message' => $invoiceUpdateResponse['message']];
+        }
+
+        // Ledger update
+        $customerLedgerUpdateData = LedgerService::formCustomerLedgerData($model);
+        $customerLedgerUpdateData['date'] = $invoiceUpdateResponse['data']->date;
+        $ledgerUpdateResponse = LedgerService::updateLedger($customerLedgerUpdateData);
+        if (!$ledgerUpdateResponse['status']) {
+            return ['error' => true, 'message' => $ledgerUpdateResponse['message']];
+        }
+
+        // update service payment details
+        $servicePaymentUpdateData = [
+            'refId' => $model->id,
+            'refModel' => $model::className(),
+            'subRefId' => $model->invoiceId,
+            'subRefModel' => Invoice::class,
+            'due' => $model->quoteAmount,
+            'amount' => 0
+        ];
+        $servicePaymentDetailUpdateResponse = PaymentTimelineService::updateServicePaymentDetail($servicePaymentUpdateData);
+        if (!$servicePaymentDetailUpdateResponse['status']) {
+            return ['error' => true, 'message' => $servicePaymentDetailUpdateResponse['message']];
+        }
+
+        return ['error' => false, 'message' => 'Invoice, ledger and service payment detail updated successfully'];
     }
 }

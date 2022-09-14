@@ -90,9 +90,15 @@ class TicketController extends ParentController
      */
     public function actionUpdate(string $uid)
     {
-        $model = $this->findModel($uid);
+        $model = $this->flightService->findTicket($uid);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+        if ($this->request->isPost) {
+
+            // Update Ticket
+            $model = $this->flightService->updateTicket(Yii::$app->request->post(), $model);
+            if ($model) {
+                return $this->redirect(['view', 'uid' => $model->uid]);
+            }
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
