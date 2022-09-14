@@ -65,15 +65,15 @@ class FlightService
                             $tickets[] = [
                                 'refId' => $ticket->id,
                                 'refModel' => Ticket::class,
-                                'due' => $ticket->quoteAmount,
-                                'amount' => 0,
+                                'dueAmount' => $ticket->quoteAmount,
+                                'paidAmount' => 0,
                                 'supplierData' => [
                                     [
                                         'refId' => $ticketSupplier->id,
                                         'refModel' => $ticketSupplier::class,
                                         'subRefModel' => Invoice::class,
-                                        'due' => $ticketSupplier->costOfSale,
-                                        'amount' => $ticketSupplier->paidAmount,
+                                        'dueAmount' => $ticketSupplier->costOfSale,
+                                        'paidAmount' => $ticketSupplier->paidAmount,
                                     ]
                                 ]
                             ];

@@ -13,6 +13,28 @@ use app\modules\sale\models\Supplier;
 
 class LedgerService
 {
+    public static function batchInsert(Invoice $invoice, array $ledgerArray): array
+    {
+        foreach ($ledgerArray as $key => $value) {
+            $ledgerRequestData = [
+                'title' => 'Service Purchase',
+                'reference' => 'Service Purchase',
+                'refId' => $key,
+                'refModel' => Supplier::class,
+                'subRefId' => ($value['subRefId']) ?? $invoice->id,
+                'subRefModel' => Invoice::class,
+                'debit' => $value['debit'],
+                'credit' => $value['credit']
+            ];
+
+            $response = self::store($ledgerRequestData);
+            if ($response['error']) {
+                return $response;
+            }
+        }
+
+        return ['error' => false, 'message' => 'Ledger created successfully.'];
+    }
 
     public static function store(array $requestData): array
     {
@@ -75,28 +97,5 @@ class LedgerService
         // Payment Received to Bank -  (debit > credit)
         // Payment Done from Bank - (credit > debit)
         return ($ledger->debit > $ledger->credit) ? ($balance + ($ledger->credit + $ledger->debit)) : ($balance - ($ledger->credit + $ledger->debit));
-    }
-
-    public static function batchInsert(Invoice $invoice, array $ledgerArray): array
-    {
-        foreach ($ledgerArray as $key => $value) {
-            $ledgerRequestData = [
-                'title' => 'Service Purchase',
-                'reference' => 'Service Purchase',
-                'refId' => $key,
-                'refModel' => Supplier::class,
-                'subRefId' => ($value['subRefId']) ?? $invoice->id,
-                'subRefModel' => Invoice::class,
-                'debit' => $value['debit'],
-                'credit' => $value['credit']
-            ];
-
-            $response = self::store($ledgerRequestData);
-            if ($response['error']) {
-                return $response;
-            }
-        }
-
-        return ['error' => false, 'message' => 'Ledger created successfully.'];
     }
 }
