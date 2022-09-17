@@ -50,6 +50,7 @@ use yii\db\ActiveRecord;
  * @property float|null $govTax
  * @property float|null $serviceCharge
  * @property float|null $ait
+ * @property float|null $discount
  * @property float|null $quoteAmount
  * @property float|null $receivedAmount
  * @property string|null $paymentStatus
@@ -72,6 +73,7 @@ use yii\db\ActiveRecord;
 class Ticket extends ActiveRecord
 {
     use BehaviorTrait;
+    public $csv;
     /**
      * {@inheritdoc}
      */
@@ -91,7 +93,7 @@ class Ticket extends ActiveRecord
             [['eTicket', 'airlineId', 'type'], 'unique', 'targetAttribute' => ['eTicket', 'airlineId', 'type'], 'on' => 'create'],
             [['type', 'tripType', 'paymentStatus'], 'string'],
             [['issueDate', 'departureDate', 'refundRequestDate'], 'safe'],
-            [['baseFare', 'tax', 'otherTax', 'commission', 'commissionReceived', 'incentive', 'incentiveReceived', 'govTax', 'serviceCharge', 'ait', 'quoteAmount', 'receivedAmount', 'costOfSale', 'netProfit'], 'number'],
+            [['baseFare', 'tax', 'otherTax', 'commission', 'commissionReceived', 'incentive', 'incentiveReceived', 'govTax', 'serviceCharge', 'ait', 'quoteAmount', 'receivedAmount', 'costOfSale', 'netProfit', 'discount'], 'number'],
             [['uid'], 'string', 'max' => 36],
             [['customerCategory'], 'string', 'max' => 10],
             [['paxName'], 'string', 'max' => 120],
@@ -146,6 +148,7 @@ class Ticket extends ActiveRecord
             'govTax' => Yii::t('app', 'Gov Tax'),
             'serviceCharge' => Yii::t('app', 'Service Charge'),
             'ait' => Yii::t('app', 'Ait'),
+            'discount' => Yii::t('app', 'Discount'),
             'quoteAmount' => Yii::t('app', 'Quote Amount'),
             'receivedAmount' => Yii::t('app', 'Received Amount'),
             'paymentStatus' => Yii::t('app', 'Payment Status'),

@@ -16,7 +16,6 @@ $this->title = Yii::t('app', 'Tickets');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="ticket-index">
-
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
@@ -47,7 +46,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'customer',
                 'value' => function ($model) {
-                    return $model->customer->company. '(' . $model->customer->customerCode . ')';
+                    return $model->customer->company . '(' . $model->customer->customerCode . ')';
                 },
                 'label' => 'Customer',
             ],
@@ -129,9 +128,9 @@ $this->params['breadcrumbs'][] = $this->title;
             'tax',
             'otherTax',
             //'commission',
-            //'commissionReceived',
+            'commissionReceived',
             //'incentive',
-            //'incentiveReceived',
+            'incentiveReceived',
             'govTax',
             'serviceCharge',
             'ait',
@@ -180,6 +179,4 @@ $this->params['breadcrumbs'][] = $this->title;
             'type' => GridView::TYPE_DARK
         ],
     ]); ?>
-
-
 </div>

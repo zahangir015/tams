@@ -7,6 +7,7 @@ use app\modules\sale\models\Airline;
 use app\modules\sale\models\Supplier;
 use app\traits\BehaviorTrait;
 use Yii;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
 /**
@@ -26,6 +27,7 @@ use yii\db\ActiveRecord;
  * @property float|null $baseFare
  * @property float|null $tax
  * @property float|null $otherTax
+ * @property float $serviceCharge
  * @property float $costOfSale
  * @property float|null $paidAmount
  * @property string|null $paymentStatus
@@ -58,7 +60,7 @@ class TicketSupplier extends ActiveRecord
             [['ticketId', 'supplierId', 'airlineId', 'billId', 'status'], 'integer'],
             [['refundRequestDate'], 'safe'],
             [['type', 'paymentStatus'], 'string'],
-            [['baseFare', 'tax', 'otherTax', 'costOfSale', 'paidAmount'], 'number'],
+            [['baseFare', 'tax', 'otherTax', 'costOfSale', 'paidAmount', 'serviceCharge'], 'number'],
             [['uid'], 'string', 'max' => 36],
             [['eTicket', 'pnrCode'], 'string', 'max' => 50],
             [['uid'], 'unique'],
@@ -99,9 +101,9 @@ class TicketSupplier extends ActiveRecord
     /**
      * Gets query for [[Airline]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getAirline()
+    public function getAirline(): ActiveQuery
     {
         return $this->hasOne(Airline::className(), ['id' => 'airlineId']);
     }
@@ -109,9 +111,9 @@ class TicketSupplier extends ActiveRecord
     /**
      * Gets query for [[Bill]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getBill()
+    public function getBill(): ActiveQuery
     {
         return $this->hasOne(Bill::className(), ['id' => 'billId']);
     }
@@ -119,9 +121,9 @@ class TicketSupplier extends ActiveRecord
     /**
      * Gets query for [[Supplier]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getSupplier()
+    public function getSupplier(): ActiveQuery
     {
         return $this->hasOne(Supplier::className(), ['id' => 'supplierId']);
     }
@@ -129,9 +131,9 @@ class TicketSupplier extends ActiveRecord
     /**
      * Gets query for [[Ticket]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getTicket()
+    public function getTicket(): ActiveQuery
     {
         return $this->hasOne(Ticket::className(), ['id' => 'ticketId']);
     }

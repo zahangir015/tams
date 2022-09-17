@@ -4,11 +4,14 @@ namespace app\modules\sale\services;
 
 use app\components\GlobalConstant;
 use app\components\Helper;
+use app\components\Uploader;
 use app\modules\account\models\Invoice;
 use app\modules\account\services\InvoiceService;
 use app\modules\account\services\LedgerService;
 use app\modules\admin\models\User;
+use app\modules\sale\models\Airline;
 use app\modules\sale\models\Customer;
+use app\modules\sale\models\Provider;
 use app\modules\sale\models\Supplier;
 use app\modules\sale\models\ticket\Ticket;
 use app\modules\sale\models\ticket\TicketSupplier;
@@ -16,6 +19,7 @@ use app\modules\sale\repositories\FlightRepository;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\db\Exception;
+use yii\web\UploadedFile;
 
 class FlightService
 {
@@ -25,6 +29,7 @@ class FlightService
     {
         $this->flightRepository = new FlightRepository();
     }
+
 
     public function storeTicket(array $requestData): bool
     {
@@ -51,6 +56,7 @@ class FlightService
                         $ticketSupplier->load(['TicketSupplier' => $ticket->getAttributes(['issueDate', 'eTicket', 'pnrCode', 'airlineId', 'paymentStatus', 'type', 'costOfSale', 'baseFare', 'tax'])]);
                         $ticketSupplier->load(['TicketSupplier' => $requestData['TicketSupplier'][$key]]);
                         $ticketSupplier->ticketId = $ticket->id;
+                        $ticketSupplier->serviceCharge = Airline::findOne($ticket->airlineId)->serviceCharge;
                         $ticketSupplier = $this->flightRepository->store($ticketSupplier);
                         if ($ticketSupplier->hasErrors()) {
                             throw new Exception('Ticket Supplier create failed - ' . Helper::processErrorMessages($ticketSupplier->getErrors()));
@@ -119,6 +125,70 @@ class FlightService
         }
     }
 
+    public function uploadTicket(UploadedFile $file, array $requestData): array
+    {
+        // Upload to tmp
+        $fileName = Uploader::processFile($file, false);
+        $fileData = fopen('uploads/tmp/'.$fileName, "r");
+
+        $airline = Airline::findOne(['id' => $requestData['Ticket']['airlineId']]);
+        $customer = Customer::findOne(['id' => $requestData['Ticket']['customerId']]);
+        $supplier = Supplier::findOne(['id' => $requestData['TicketSupplier']['supplierId']]);
+        $provider = Provider::findOne(['id' => $requestData['Ticket']['providerId']]);
+
+        $data = [];
+        $data['invoice'] = 'on';
+        $data['group'] = 1;
+        $key = 0;
+        while (($line = fgetcsv($fileData, 1000, ",")) !== false) {
+            if (!empty($line)) {
+                if (trim($line[0]) == 'issueDate') {
+                    continue;
+                }
+                $baseFare = $line[5];
+                $tax = $line[6];
+                $otherTax = $line[7];
+                $quoteAmount = $line[8];
+                $data['Ticket'][$key] = [
+                    'airlineId' => $airline->id,
+                    'commission' => $airline->commission,
+                    'incentive' => $airline->incentive,
+                    'govTax' => $airline->govTax,
+                    'type' => GlobalConstant::TICKET_TYPE_FOR_CREATE['New'],
+                    'numberOfSegment' => $line[10],
+                    'pnrCode' => $line[2],
+                    'eTicket' => $line[1],
+                    'paxName' => $line[3],
+                    'paxType' => $line[4],
+                    'seatClass' => $line[11],
+                    'providerId' => $provider->id,
+                    'route' => $line[9],
+                    'issueDate' => date('Y-m-d', strtotime($line[0])),
+                    'departureDate' => date('Y-m-d', strtotime($line[12])),
+                    'baseFare' => $baseFare,
+                    'tax' => $tax,
+                    'otherTax' => $otherTax,
+                    'quoteAmount' => $quoteAmount,
+                    'tripType' => self::tripTypeIdentifier($line[9]),
+                    'baggage' => $line[13],
+                    'customerId' => $customer->id,
+                ];
+                $data['TicketSupplier'][$key] = [
+                    'supplierId' => $supplier->id,
+                    'status' => 1,
+                    'paidAmount' => 0,
+                ];
+                $key++;
+            }
+        }
+        $response = $this->storeTicket($data);
+
+        if (file_exists(getcwd() . '/uploads/tmp/' . $file)) {
+            unlink(getcwd() . '/uploads/tmp/' . $file);
+        }
+        return ['status' => true, 'message' => 'Ticket uploaded successfully.'];
+    }
+
     public function updateTicket(array $requestData, Ticket $ticket)
     {
         $dbTransaction = Yii::$app->db->beginTransaction();
@@ -145,7 +215,7 @@ class FlightService
                 $ticketSupplier->load(['TicketSupplier' => $requestData['TicketSupplier'][0]]);
                 $ticketSupplier->costOfSale = $ticket->costOfSale;
                 if (!$ticketSupplier->update()) {
-                    throw new Exception('Ticket supplier update failed - ' .Helper::processErrorMessages($ticketSupplier->getErrors()));
+                    throw new Exception('Ticket supplier update failed - ' . Helper::processErrorMessages($ticketSupplier->getErrors()));
                 }
 
                 // supplier Ledger update

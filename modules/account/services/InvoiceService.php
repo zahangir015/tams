@@ -21,7 +21,7 @@ class InvoiceService
         $invoice->expectedPaymentDate = $invoice->date;
         $invoice->customerId = $customerId;
         $invoice->invoiceNumber = Helper::invoiceNumber();
-        $invoice->dueAmount = array_sum(array_column($services, 'due'));;
+        $invoice->dueAmount = array_sum(array_column($services, 'dueAmount'));;
         $invoice->paidAmount = 0;
         $invoice->remarks = 'Auto generated invoice';
         $invoice->discountedAmount = 0;
@@ -47,7 +47,7 @@ class InvoiceService
             'refModel' => Customer::class,
             'subRefId' => $invoice->id,
             'subRefModel' => $invoice::class,
-            'debit' => array_sum(array_column($services, 'due')),
+            'debit' => array_sum(array_column($services, 'dueAmount')),
             'credit' => 0
         ];
         $ledgerRequestResponse = LedgerService::store($ledgerRequestData);

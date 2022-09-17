@@ -11,6 +11,7 @@ use Yii;
 use yii\bootstrap4\ActiveForm;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
+use yii\web\UploadedFile;
 
 /**
  * TicketController implements the CRUD actions for Ticket model.
@@ -67,9 +68,9 @@ class TicketController extends ParentController
 
         if ($this->request->isPost) {
             // Store ticket data
-            $model = $this->flightService->storeTicket(Yii::$app->request->post());
-            if ($model) {
-                return $this->redirect(['view', 'uid' => $model->uid]);
+            $storeResponse = $this->flightService->storeTicket(Yii::$app->request->post());
+            if ($storeResponse) {
+                return $this->redirect(['index']);
             }
         } else {
             $model->loadDefaultValues();
@@ -78,6 +79,40 @@ class TicketController extends ParentController
         return $this->render('create', [
             'model' => $model,
             'ticketSupplier' => $ticketSupplier,
+        ]);
+    }
+
+    /**
+     * Upload new Ticket models.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return string|Response
+     */
+    public function actionUpload()
+    {
+        $model = new Ticket();
+        if (Yii::$app->request->isPost) {
+            $requestData = Yii::$app->request->post();
+            $csvFile = UploadedFile::getInstance($model, 'csv');
+            if ($csvFile) {
+                $uploadResponse = $this->flightService->uploadTicket($csvFile, $requestData);
+                if ($uploadResponse) {
+                    return $this->redirect(['index']);
+                }
+                /*$uploadResponse = $this->flightService->uploadTicket($csvFile, $requestData);
+                if (!$ticketUploadResponse['error']) {
+                    Yii::$app->session->setFlash('success', 'Ticket data uploaded successfully.');
+                    return $this->redirect(['index']);
+                } else {
+                    Yii::$app->session->setFlash('danger', $ticketUploadResponse['message']);
+                }*/
+            }
+
+            Yii::$app->session->setFlash('danger', 'File not found');
+        }
+
+        return $this->render('upload', [
+            'model' => $model,
+            'ticketSupplier' => new TicketSupplier(),
         ]);
     }
 
