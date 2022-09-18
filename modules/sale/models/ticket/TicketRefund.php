@@ -1,8 +1,11 @@
 <?php
 
-namespace app\modules\sale\models;
+namespace app\modules\sale\models\ticket;
 
+use app\modules\account\models\RefundTransaction;
 use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%ticket_refund}}".
@@ -29,12 +32,12 @@ use Yii;
  * @property RefundTransaction $refundTransaction
  * @property Ticket $ticket
  */
-class TicketRefund extends \yii\db\ActiveRecord
+class TicketRefund extends ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%ticket_refund}}';
     }
@@ -42,7 +45,7 @@ class TicketRefund extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['uid', 'ticketId', 'refId', 'refModel', 'refundRequestDate'], 'required'],
@@ -61,7 +64,7 @@ class TicketRefund extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),
@@ -88,9 +91,9 @@ class TicketRefund extends \yii\db\ActiveRecord
     /**
      * Gets query for [[RefundTransaction]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getRefundTransaction()
+    public function getRefundTransaction(): ActiveQuery
     {
         return $this->hasOne(RefundTransaction::className(), ['id' => 'refundTransactionId']);
     }
@@ -98,9 +101,9 @@ class TicketRefund extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Ticket]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getTicket()
+    public function getTicket(): ActiveQuery
     {
         return $this->hasOne(Ticket::className(), ['id' => 'ticketId']);
     }

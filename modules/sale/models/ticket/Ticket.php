@@ -73,7 +73,9 @@ use yii\db\ActiveRecord;
 class Ticket extends ActiveRecord
 {
     use BehaviorTrait;
+
     public $csv;
+
     /**
      * {@inheritdoc}
      */
@@ -208,9 +210,9 @@ class Ticket extends ActiveRecord
      *
      * @return ActiveQuery
      */
-    public function getTicketRefunds(): ActiveQuery
+    public function getTicketRefund(): ActiveQuery
     {
-        return $this->hasMany(TicketRefund::className(), ['ticketId' => 'id']);
+        return $this->hasOne(TicketRefund::className(), ['ticketId' => 'id']);
     }
 
     /**
@@ -218,9 +220,14 @@ class Ticket extends ActiveRecord
      *
      * @return ActiveQuery
      */
-    public function getTicketSuppliers(): ActiveQuery
+    public function getTicketSupplier(): ActiveQuery
     {
-        return $this->hasMany(TicketSupplier::className(), ['ticketId' => 'id']);
+        return $this->hasOne(TicketSupplier::className(), ['ticketId' => 'id']);
+    }
+
+    public function getMotherTicket(): ActiveQuery
+    {
+        return $this->hasOne(self::class, ['id' => 'motherTicketId']);
     }
 
     public static function query($query): array

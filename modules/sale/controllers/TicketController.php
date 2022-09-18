@@ -6,6 +6,7 @@ use app\modules\sale\models\ticket\Ticket;
 use app\modules\sale\models\ticket\TicketSearch;
 use app\controllers\ParentController;
 use app\modules\sale\models\ticket\TicketSupplier;
+use app\modules\sale\models\ticket\TicketRefund;
 use app\modules\sale\services\FlightService;
 use Yii;
 use yii\bootstrap4\ActiveForm;
@@ -61,7 +62,7 @@ class TicketController extends ParentController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|Response
      */
-    public function actionCreate()
+    public function actionCreate(): Response|string
     {
         $model = new Ticket();
         $ticketSupplier = new TicketSupplier();
@@ -87,7 +88,7 @@ class TicketController extends ParentController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|Response
      */
-    public function actionUpload()
+    public function actionUpload(): Response|string
     {
         $model = new Ticket();
         if (Yii::$app->request->isPost) {
@@ -117,13 +118,39 @@ class TicketController extends ParentController
     }
 
     /**
+     * Creates a new Refund Type Ticket model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return string|Response
+     */
+    public function actionRefund(string $uid): Response|string
+    {
+        $motherTicketModel = $this->flightService->findTicket($uid, ['airline', 'provider', 'customer', 'ticketSupplier']);
+
+        if ($this->request->isPost) {
+            // Store refund ticket data
+            $storeResponse = $this->flightService->addRefundTicket(Yii::$app->request->post());
+            if ($storeResponse) {
+                return $this->redirect(['index']);
+            }
+        } else {
+            $motherTicketModel->loadDefaultValues();
+        }
+
+        return $this->render('refund', [
+            'model' => $motherTicketModel,
+            'ticketSupplier' => new TicketSupplier(),
+            'ticketRefund' => new TicketRefund(),
+        ]);
+    }
+
+    /**
      * Updates an existing Ticket model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param string $uid UID
      * @return string|Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate(string $uid)
+    public function actionUpdate(string $uid): Response|string
     {
         $model = $this->flightService->findTicket($uid);
 

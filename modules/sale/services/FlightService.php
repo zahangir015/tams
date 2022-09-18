@@ -88,6 +88,8 @@ class FlightService
                             $supplierLedgerArray[$ticketSupplier->supplier->id] = [
                                 'debit' => 0,
                                 'credit' => $ticketSupplier->costOfSale,
+                                'refId' => $ticketSupplier->supplier->id,
+                                'refModel' => Supplier::class,
                                 'subRefId' => null
                             ];
                         }
@@ -187,6 +189,11 @@ class FlightService
             unlink(getcwd() . '/uploads/tmp/' . $file);
         }
         return ['status' => true, 'message' => 'Ticket uploaded successfully.'];
+    }
+
+    public function addRefundTicket(mixed $post)
+    {
+
     }
 
     public function updateTicket(array $requestData, Ticket $ticket)
@@ -380,4 +387,6 @@ class FlightService
     {
         return $this->flightRepository->findOneTicket($uid, $withArray);
     }
+
+
 }

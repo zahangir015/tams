@@ -17,16 +17,15 @@ class LedgerService
     {
         foreach ($ledgerArray as $key => $value) {
             $ledgerRequestData = [
-                'title' => 'Service Purchase',
-                'reference' => 'Service Purchase',
-                'refId' => $key,
-                'refModel' => Supplier::class,
+                'title' => 'Service Purchase - '.$invoice->invoiceNumber,
+                'reference' => 'Invoice Number - ' . $invoice->invoiceNumber,
+                'refId' => $value['refId'],
+                'refModel' => $value['refModel'],
                 'subRefId' => ($value['subRefId']) ?? $invoice->id,
-                'subRefModel' => Invoice::class,
+                'subRefModel' => ($value['subRefModel']) ?? Invoice::class,
                 'debit' => $value['debit'],
                 'credit' => $value['credit']
             ];
-
             $response = self::store($ledgerRequestData);
             if ($response['error']) {
                 return $response;

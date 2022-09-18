@@ -29,7 +29,7 @@ use yii\bootstrap4\Html;
     <div class="card-body">
         <div class="row">
             <div class="col-md">
-                <?= $form->field($model, "[$row]airlineId")->widget(Select2::classname(), Helper::ajaxDropDown('airlineId', '/sale/airline/get-airlines', true, 'airlineId' . $row, 'airline', ($model->isNewRecord) ? [] : [$model->airlineId => $model->airline->airlineName . ' | ' . $model->airline->code]))->label('Airline') ?>
+                <?= $form->field($model, "[$row]airlineId")->widget(Select2::classname(), Helper::ajaxDropDown('airlineId', '/sale/airline/get-airlines', true, 'airlineId' . $row, 'airline', ($model->isNewRecord) ? [] : [$model->airlineId => $model->airline->name . ' | ' . $model->airline->code]))->label('Airline') ?>
             </div>
             <div class="col-md">
                 <?= $form->field($model, "[$row]commission")->textInput(['id' => 'commission' . $row, 'readOnly' => true]) ?>
@@ -46,7 +46,7 @@ use yii\bootstrap4\Html;
         </div>
         <div class="row">
             <div class="col-md">
-                <?= $form->field($ticketSupplier, "[$row]supplierId")->widget(Select2::classname(), Helper::ajaxDropDown('supplierId', '/sale/supplier/get-suppliers', true, 'supplierId' . $row, 'supplier', ($model->isNewRecord) ? [] : [$ticketSupplier->supplierId => $ticketSupplier->supplier->name . ' | ' . $ticketSupplier->supplier->supplierCompany], $model->isNewRecord ? false : true))->label('Supplier') ?>
+                <?= $form->field($ticketSupplier, "[$row]supplierId")->widget(Select2::class, Helper::ajaxDropDown('supplierId', '/sale/supplier/get-suppliers', true, 'supplierId' . $row, 'supplier', ($model->isNewRecord) ? [] : [$ticketSupplier->supplierId => $ticketSupplier->supplier->name . ' | ' . $ticketSupplier->supplier->company], $model->isNewRecord ? false : true))->label('Supplier') ?>
                 <?= $form->field($ticketSupplier, "[$row]status")->hiddenInput(['id' => 'status' . $row, 'class' => 'status', 'value' => GlobalConstant::ACTIVE_STATUS])->label(false) ?>
                 <?= $form->field($ticketSupplier, "[$row]paidAmount")->hiddenInput(['id' => 'paidAmount' . $row, 'class' => 'paidAmount', 'value' => 0])->label(false) ?>
             </div>
