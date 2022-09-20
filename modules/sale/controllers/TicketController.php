@@ -2,6 +2,7 @@
 
 namespace app\modules\sale\controllers;
 
+use app\modules\sale\components\SaleConstant;
 use app\modules\sale\models\ticket\Ticket;
 use app\modules\sale\models\ticket\TicketSearch;
 use app\controllers\ParentController;
@@ -124,22 +125,38 @@ class TicketController extends ParentController
      */
     public function actionRefund(string $uid): Response|string
     {
-        $motherTicketModel = $this->flightService->findTicket($uid, ['airline', 'provider', 'customer', 'ticketSupplier']);
-
+        $motherTicket = $this->flightService->findTicket($uid, ['airline', 'provider', 'customer', 'ticketSupplier']);
         if ($this->request->isPost) {
             // Store refund ticket data
-            $storeResponse = $this->flightService->addRefundTicket(Yii::$app->request->post());
+            $storeResponse = $this->flightService->addRefundTicket(Yii::$app->request->post(), $motherTicket);
             if ($storeResponse) {
                 return $this->redirect(['index']);
             }
         } else {
-            $motherTicketModel->loadDefaultValues();
+            $motherTicket->loadDefaultValues();
+        }
+
+        $totalReceivedAmount = 0;
+        if (($motherTicket->type == SaleConstant::TYPE['Refund']) || ($motherTicket->type == SaleConstant::TYPE['Refund Requested'])) {
+            Yii::$app->session->setFlash('error', 'Refund and Refund Requested Ticket can not be refunded.');
+            return $this->redirect(Yii::$app->request->referrer);
+        } elseif ($motherTicket->type == SaleConstant::TYPE['Reissue']) {
+            if (!$motherTicket->motherTicketId) {
+                Yii::$app->session->setFlash('error', 'Parent Ticket not found');
+                return $this->redirect(Yii::$app->request->referrer);
+            }
+            if (Ticket::findOne(['motherTicketId' => $motherTicket->id])) {
+                Yii::$app->session->setFlash('warning', 'This ticket has a parent ticket.');
+                return $this->redirect(Yii::$app->request->referrer);
+            }
+            $totalReceivedAmount = $this->flightService->reissueParentChain($motherTicket->motherTicketId, $motherTicket->receivedAmount);
         }
 
         return $this->render('refund', [
-            'model' => $motherTicketModel,
+            'model' => $motherTicket,
             'ticketSupplier' => new TicketSupplier(),
             'ticketRefund' => new TicketRefund(),
+            'totalReceivedAmount' => $totalReceivedAmount,
         ]);
     }
 

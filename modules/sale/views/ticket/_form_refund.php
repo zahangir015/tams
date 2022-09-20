@@ -45,9 +45,7 @@ $this->registerJsFile(
                         </table>
                     </div>
                     <div class="row">
-                        <div class="col-md">
-                            <?= $form->field($model, 'refundRequestDate')->widget(DatePicker::class, Helper::getDatewidget('refundRequestDate', 'refundRequestDate')); ?>
-                        </div>
+
                         <div class="col-md">
                             <?= $form->field($model, 'issueDate')->textInput(['disabled' => 'disabled']) ?>
                         </div>
@@ -57,11 +55,11 @@ $this->registerJsFile(
                         <div class="col-md">
                             <?= $form->field($model, 'supplierId')->textInput(['value' => $model->ticketSupplier->supplier->name ?? '', 'disabled' => 'disabled'])->label('Supplier') ?>
                         </div>
-                    </div>
-                    <div class="row">
                         <div class="col-md">
                             <?= $form->field($model, 'customerId')->textInput(['value' => $model->customer->name ?? '', 'disabled' => 'disabled'])->label('Customer') ?>
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md">
                             <?= $form->field($model, 'paxName')->textInput(['disabled' => 'disabled']) ?>
                         </div>
@@ -71,33 +69,36 @@ $this->registerJsFile(
                         <div class="col-md">
                             <?= $form->field($model, 'bookedOnline')->textInput(['disabled' => 'disabled']) ?>
                         </div>
+                        <div class="col-md">
+                            <?= $form->field($model, 'route')->textInput(['disabled' => 'disabled']) ?>
+                        </div>
                     </div>
                     <div class="row">
+                        <div class="col-md">
+                            <?= $form->field($model, 'seatClass')->textInput(['maxlength' => true, 'disabled' => 'disabled']) ?>
+                        </div>
+                        <div class="col-md">
+                            <?= $form->field($model, 'refundRequestDate')->widget(DatePicker::class, Helper::getDatewidget('refundRequestDate', 'refundRequestDate')); ?>
+                        </div>
                         <div class="col-md">
                             <?= $form->field($model, 'pnrCode')->textInput(); ?>
                         </div>
                         <div class="col-md">
                             <?= $form->field($model, 'eTicket')->textInput(); ?>
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md">
                             <?= $form->field($model, 'baseFare')->textInput(['value' => 0]) ?>
                         </div>
                         <div class="col-md">
                             <?= $form->field($model, 'tax')->textInput(['value' => 0]) ?>
                         </div>
-                    </div>
-                    <div class="row">
                         <div class="col-md">
                             <?= $form->field($model, 'otherTax')->textInput(['value' => 0]) ?>
                         </div>
                         <div class="col-md">
-                            <?= $form->field($model, 'numberOfSegment')->textInput(['maxlength' => true, 'disabled' => 'disabled']) ?>
-                        </div>
-                        <div class="col-md">
-                            <?= $form->field($model, 'route')->textInput(['disabled' => 'disabled']) ?>
-                        </div>
-                        <div class="col-md">
-                            <?= $form->field($model, 'seatClass')->textInput(['maxlength' => true, 'disabled' => 'disabled']) ?>
+                            <?= $form->field($model, 'numberOfSegment')->textInput(['maxlength' => true, 'value' => 0]) ?>
                         </div>
                     </div>
                     <div class="row">
@@ -119,7 +120,7 @@ $this->registerJsFile(
                             <?= $form->field($model, 'quoteAmount')->textInput(['type' => 'number', 'value' => $ticketRefund->isNewRecord ? ($model->ticketSupplier->supplier->refundCharge + $model->airline->serviceCharge) : $model->quoteAmount, 'class' => 'form-control']) ?>
                         </div>
                         <div class="col-md">
-                            <?= $form->field($model, 'receivedAmount')->textInput(['type' => 'number', 'value' => $ticketRefund->isNewRecord ? 0 : $model->receivedAmount, 'class' => 'form-control', 'readOnly' => true]) ?>
+                            <?= $form->field($model, 'receivedAmount')->textInput(['type' => 'number', 'value' => $ticketRefund->isNewRecord ? $totalReceivedAmount : $model->receivedAmount, 'class' => 'form-control', 'readOnly' => true]) ?>
                         </div>
                         <div class="col-md">
                             <?= $form->field($model, 'paymentStatus')->dropDownList(['Full Paid' => 'Full Paid', 'Partially Paid' => 'Partially Paid', 'Due' => 'Due'], ['disabled' => 'disabled']) ?>
@@ -142,6 +143,7 @@ $this->registerJsFile(
                     <div class="row">
                         <div class="col-md">
                             <?= $form->field($ticketRefund, 'remarks')->textarea(['rows' => 3]) ?>
+                            <?= $form->field($model, 'motherTicketId')->hiddenInput(['value' => $model->id])->label(false) ?>
                         </div>
                     </div>
                     <div class="form-group float-right mt-5">

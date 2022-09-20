@@ -9,6 +9,7 @@ use app\modules\account\models\Invoice;
 use app\modules\account\services\InvoiceService;
 use app\modules\account\services\LedgerService;
 use app\modules\admin\models\User;
+use app\modules\sale\components\SaleConstant;
 use app\modules\sale\models\Airline;
 use app\modules\sale\models\Customer;
 use app\modules\sale\models\Provider;
@@ -131,7 +132,7 @@ class FlightService
     {
         // Upload to tmp
         $fileName = Uploader::processFile($file, false);
-        $fileData = fopen('uploads/tmp/'.$fileName, "r");
+        $fileData = fopen('uploads/tmp/' . $fileName, "r");
 
         $airline = Airline::findOne(['id' => $requestData['Ticket']['airlineId']]);
         $customer = Customer::findOne(['id' => $requestData['Ticket']['customerId']]);
@@ -184,17 +185,83 @@ class FlightService
             }
         }
         $response = $this->storeTicket($data);
-
         if (file_exists(getcwd() . '/uploads/tmp/' . $file)) {
             unlink(getcwd() . '/uploads/tmp/' . $file);
         }
-        return ['status' => true, 'message' => 'Ticket uploaded successfully.'];
+        if ($response) {
+            return ['error' => false, 'message' => 'Ticket uploaded successfully.'];
+        }
     }
 
-    public function addRefundTicket(mixed $post)
+    public function addRefundTicket(array $requestData, Ticket $motherTicket): bool
+    {
+        $dbTransaction = Yii::$app->db->beginTransaction();
+        try {
+
+            // Store New Refund ticket
+            $createNewRefundTicket = self::storeNewRefundTicket($motherTicket, $requestData);
+            if (!$createNewRefundTicket['status']) {
+                throw new Exception($createNewRefundTicket['message']);
+            }
+            // Create ticketSupplier
+            $createNewTicketSupplier = TicketSupplier::createNewTicketSupplier($createNewRefundTicket['data'], $ticket->ticketSupplier->supplierId);
+            if (!$createNewTicketSupplier['status']) {
+                throw new Exception('Refund Ticket Supplier creation failed - ' . $createNewTicketSupplier['message']);
+            }
+
+            // Update Existing ticket
+            $updateExistTicket = self::updateExistTicketForRefundRequest($ticket, Ticket::TICKET_TYPE['Refund Requested']);
+            if (!$updateExistTicket['status']) {
+                throw new Exception('Existing ticket update failed - ' . $updateExistTicket['message']);
+            }
+            // Create refund for customer and supplier
+            $refundTicket = TicketRefund::storeForCustomerAndSupplier($ticket, Yii::$app->request->post('TicketRefund'), $createNewRefundTicket['data']);
+            if (!$refundTicket['status']) {
+                throw new Exception('Ticket refund creation failed - ' . $refundTicket['message']);
+            }
+            // Add refund ticket in invoice
+            $invoiceData = RefundComponent::formInvoiceData($createNewRefundTicket['data']);
+            $storedInvoiceDetail = InvoiceComponent::createInvoiceDetailForRefund($invoiceData);
+            if (!$storedInvoiceDetail['status']) {
+                throw new Exception('Invoice creation failed - ' . $storedInvoiceDetail['message']);
+            }
+            // Supplier Ledger process
+            $processSupplierLedgerResponse = RefundComponent::processSupplierLedger($ticket->id, $createNewTicketSupplier['data'], $storedInvoiceDetail['data']->invoiceId);
+            if ($processSupplierLedgerResponse['error']) {
+                throw new Exception('Supplier Ledger creation failed - ' . $processSupplierLedgerResponse['message']);
+            }
+            // Create Service Payment Detail for refund
+            $servicePaymentDetailData = RefundComponent::storeServicePaymentDetailData(['refundService' => $createNewRefundTicket['data'], 'parentService' => $ticket], $storedInvoiceDetail['data']);
+            if ($servicePaymentDetailData['error']) {
+                throw new Exception($servicePaymentDetailData['message']);
+            }
+            $dbTransaction->commit();
+            Yii::$app->session->setFlash('success', ' Refund Ticket added successfully');
+
+            return true;
+        } catch (\Exception $e) {
+            $dbTransaction->rollBack();
+            Yii::$app->session->setFlash('error', $e->getMessage() . ' - in file - ' . $e->getFile() . ' - in line -' . $e->getLine());
+
+            return false;
+        }
+    }
+
+    private static function storeNewRefundTicket(Ticket $motherTicket, array $requestData)
     {
 
     }
+
+    public static function reissueParentChain(int $motherTicketId, int $totalReceived): float
+    {
+        $parentTicket = Ticket::findOne(['id' => $motherTicketId]);
+        $totalReceived += $parentTicket->receivedAmount;
+        if ($parentTicket->motherTicketId) {
+            return self::reissueParentChain($parentTicket->motherTicketId, $totalReceived);
+        }
+        return $totalReceived;
+    }
+
 
     public function updateTicket(array $requestData, Ticket $ticket)
     {

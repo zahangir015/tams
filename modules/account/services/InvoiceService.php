@@ -58,6 +58,50 @@ class InvoiceService
         return ['error' => false, 'message' => 'Invoice created successfully', 'data' => $invoice];
     }
 
+    public static function invoiceProcessForRefund($data, $update = false): array
+    {
+        $invoiceDetail = new InvoiceDetail();
+        if (!$invoiceDetail->load($data) || !$invoiceDetail->save()) {
+            return ['error' => true, 'message' => 'Invoice Detail create failed - ' . Helper::processErrorMessages($invoiceDetail->getErrors())];
+        }
+
+        // Mother Invoice Detail status update
+        $motherInvoiceDetailUpdateResponse = InvoiceDetail::find()->where(['refId' => $data['parentId'], 'refModel' => $data['refModel']])->one();
+        $motherInvoiceDetailUpdateResponse->status = 2;
+        if (!$motherInvoiceDetailUpdateResponse->save()) {
+            return ['error' => true, 'message' => 'Mother Invoice details update failed'];
+        }
+
+        // Invoice due update
+        $invoiceDue = InvoiceDetail::find()->select([new Expression('SUM(due) AS due')])->where(['status' => 1])->andWhere(['invoiceId' => $invoiceDetail->invoiceId])->asArray()->all();
+        if (!$invoiceDue) {
+            return ['status' => false, 'message' => 'Mother Invoice details update failed'];
+        }
+        $invoice = $invoiceDetail->invoice;
+        $invoice->due = $invoiceDue[0]['due'];
+        if (!$invoice->save()) {
+            return ['status' => false, 'message' => 'Invoice due update failed - ' . Utils::processErrorMessages($invoice->getErrors())];
+        }
+
+        // Customer Ledger process
+        $ledgerRequestData = [
+            'title' => 'Service Refund',
+            'reference' => 'Invoice Number - ' . $invoice->invoiceNumber,
+            'refId' => $invoice->customerId,
+            'refModel' => Customer::className(),
+            'subRefId' => $invoice->id,
+            'subRefModel' => $invoice::className(),
+            'debit' => ($invoiceDetail->due > 0) ? $invoiceDetail->due : 0,
+            'credit' => ($invoiceDetail->due > 0) ? 0 : $invoiceDetail->due
+        ];
+        $ledgerRequestResponse = LedgerComponent::createNewLedger($ledgerRequestData);
+        if ($ledgerRequestResponse['error']) {
+            return ['error' => true, 'message' => 'Customer Ledger creation failed - ' . $ledgerRequestResponse['message']];
+        }
+
+        return ['status' => true, 'data' => $invoiceDetail];
+    }
+
     private static function serviceProcess(Invoice $invoice, array $services): array
     {
         $invoiceDetailBatchData = [];
@@ -98,7 +142,7 @@ class InvoiceService
 
         // Service Payment timeline batch insert
         $paymentTimelineProcessResponse = PaymentTimelineService::batchInsert($paymentTimelineBatchData);
-        if ($paymentTimelineProcessResponse['error']){
+        if ($paymentTimelineProcessResponse['error']) {
             return $paymentTimelineProcessResponse;
         }
 
