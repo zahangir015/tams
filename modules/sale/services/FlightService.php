@@ -15,6 +15,7 @@ use app\modules\sale\models\Customer;
 use app\modules\sale\models\Provider;
 use app\modules\sale\models\Supplier;
 use app\modules\sale\models\ticket\Ticket;
+use app\modules\sale\models\ticket\TicketRefund;
 use app\modules\sale\models\ticket\TicketSupplier;
 use app\modules\sale\repositories\FlightRepository;
 use Yii;
@@ -30,7 +31,6 @@ class FlightService
     {
         $this->flightRepository = new FlightRepository();
     }
-
 
     public function storeTicket(array $requestData): bool
     {
@@ -193,35 +193,31 @@ class FlightService
         }
     }
 
-    public function addRefundTicket(array $requestData, Ticket $motherTicket): bool
+    public function addRefundTicket(ActiveRecord $motherTicket, array $requestData): bool
     {
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
-
             // Store New Refund ticket
-            $createNewRefundTicket = self::storeNewRefundTicket($motherTicket, $requestData);
-            if (!$createNewRefundTicket['status']) {
-                throw new Exception($createNewRefundTicket['message']);
-            }
-            // Create ticketSupplier
-            $createNewTicketSupplier = TicketSupplier::createNewTicketSupplier($createNewRefundTicket['data'], $ticket->ticketSupplier->supplierId);
-            if (!$createNewTicketSupplier['status']) {
-                throw new Exception('Refund Ticket Supplier creation failed - ' . $createNewTicketSupplier['message']);
+            $newRefundTicket = self::storeRefundTicket($motherTicket, $requestData);
+            if ($newRefundTicket->hasErrors()) {
+                throw new Exception('New Refund Ticket store failed - ' . Helper::processErrorMessages($newRefundTicket->getErrors()));
             }
 
-            // Update Existing ticket
-            $updateExistTicket = self::updateExistTicketForRefundRequest($ticket, Ticket::TICKET_TYPE['Refund Requested']);
-            if (!$updateExistTicket['status']) {
-                throw new Exception('Existing ticket update failed - ' . $updateExistTicket['message']);
+            // Ticket Supplier data process
+            $ticketSupplier = self::storeTicketSupplier($newRefundTicket, $requestData);
+            if ($ticketSupplier->hasErrors()) {
+                throw new Exception('Ticket Supplier store failed - ' . Helper::processErrorMessages($ticketSupplier->getErrors()));
             }
+
             // Create refund for customer and supplier
-            $refundTicket = TicketRefund::storeForCustomerAndSupplier($ticket, Yii::$app->request->post('TicketRefund'), $createNewRefundTicket['data']);
-            if (!$refundTicket['status']) {
+            $refundTicket = self::processTickerRefundModelData($newRefundTicket, $requestData);
+            if ($refundTicket['error']) {
                 throw new Exception('Ticket refund creation failed - ' . $refundTicket['message']);
             }
+
+
             // Add refund ticket in invoice
-            $invoiceData = RefundComponent::formInvoiceData($createNewRefundTicket['data']);
-            $storedInvoiceDetail = InvoiceComponent::createInvoiceDetailForRefund($invoiceData);
+            $storedInvoiceDetail = InvoiceService::addRefundTicketToInvoice($newRefundTicket);
             if (!$storedInvoiceDetail['status']) {
                 throw new Exception('Invoice creation failed - ' . $storedInvoiceDetail['message']);
             }
@@ -247,9 +243,71 @@ class FlightService
         }
     }
 
-    private static function storeNewRefundTicket(Ticket $motherTicket, array $requestData)
+    public function storeRefundTicket(Ticket $motherTicket, array $requestData)
     {
+        $newRefundTicket = new Ticket();
+        $motherTicketData = $motherTicket->getAttributes(null, $except = ['id', 'uid', 'createdAt', 'updatedAt', 'createdBy', 'updatedBy', 'baseFare', 'tax', 'otherTax', 'quoteAmount']);
+        $newRefundTicket->load(['Ticket' => $motherTicketData]);
+        $newRefundTicket->load($requestData);
+        $newRefundTicket->netProfit = ($newRefundTicket->quoteAmount - $newRefundTicket->costOfSale);
+        $newRefundTicket->motherTicketId = $motherTicket->id;
+        $newRefundTicket->type = SaleConstant::TYPE['Refund'];
+        $newRefundTicket->serviceCharge = isset($requestData['TicketRefund']['refundCharge']) ? (double)$requestData['TicketRefund']['supplierRefundCharge'] : (double)$requestData['Ticket']['costOfSale'];
 
+        if (($newRefundTicket->baseFare != 0) || ($newRefundTicket->tax != 0) || ($newRefundTicket->otherTax != 0)) {
+            $newRefundTicket->commission = $motherTicket->commission;
+            $newRefundTicket->incentive = $motherTicket->incentive;
+            $newRefundTicket->commissionReceived = ($newRefundTicket->baseFare * $newRefundTicket->commission);
+            $newRefundTicket->incentiveReceived = (($newRefundTicket->baseFare - $newRefundTicket->commissionReceived) * ($newRefundTicket->incentive));
+        }
+        return $this->flightRepository->store($newRefundTicket);
+    }
+
+    public function storeTicketSupplier(Ticket $newRefundTicket, array $requestData): ActiveRecord
+    {
+        $ticketSupplier = new TicketSupplier();
+        $ticketSupplier->load(['TicketSupplier' => $newRefundTicket->getAttributes(['issueDate', 'eTicket', 'pnrCode', 'airlineId', 'paymentStatus', 'type', 'costOfSale', 'baseFare', 'tax'])]);
+        $ticketSupplier->load(['TicketSupplier' => $requestData['TicketSupplier']]);
+        $ticketSupplier->ticketId = $newRefundTicket->id;
+        $ticketSupplier->serviceCharge = (double)$requestData['TicketRefund']['airlineRefundCharge'] + (double)$requestData['TicketRefund']['supplierRefundCharge'];
+        return $this->flightRepository->store($ticketSupplier);
+    }
+
+    private static function processTickerRefundModelData(Ticket $newRefundTicket, mixed $requestDate): array
+    {
+        $referenceData = [
+            [
+                'refId' => $newRefundTicket->customerId,
+                'refModel' => Customer::class,
+            ],
+            [
+                'refId' => $requestDate['TicketSupplier']['supplierId'],
+                'refModel' => Supplier::class,
+            ]
+        ];
+        $ticketRefundBatchData = [];
+        // Customer Ticket refund data process
+        foreach ($referenceData as $ref) {
+            $ticketRefund = new TicketRefund();
+            $ticketRefund->refId = $ref['refId'];
+            $ticketRefund->refModel = $ref['refModel'];
+            $ticketRefund->ticketId = $newRefundTicket->id;
+            $ticketRefund->refundRequestDate = $newRefundTicket->refundRequestDate;
+            if (!$ticketRefund->load(['TicketRefund' => $requestDate]) || !$ticketRefund->validate()) {
+                return ['error' => true, 'message' => 'Ticket Refund validation failed - ' . Helper::processErrorMessages($ticketRefund->getErrors())];
+            }
+            $ticketRefundBatchData[] = $ticketRefund->getAttributes();
+        }
+
+        // Invoice Details insert process
+        if (empty($ticketRefundBatchData)) {
+            return ['error' => true, 'message' => 'Ticket Refund batch data process failed.'];
+        }
+        if (!FlightRepository::batchStore(TicketRefund::tableName(), array_keys($ticketRefundBatchData[0]), $ticketRefundBatchData)) {
+            return ['error' => true, 'message' => 'Ticket Refund batch insert failed'];
+        }
+
+        return ['error' => false, 'message' => 'Ticket Refund process done.'];
     }
 
     public static function reissueParentChain(int $motherTicketId, int $totalReceived): float

@@ -23,13 +23,22 @@ class InvoiceRepository
         return false;
     }
 
-    public static function findOne(string $uid, array $withArray = []): ActiveRecord
+    public static function findOne(string $uid, ActiveRecord $model, array $withArray = []): ActiveRecord
     {
-        $query = Invoice::find();
+        $query = $model::find();
         if (!empty($withArray)) {
             $query->with($withArray);
         }
         return $query->where(['uid' => $uid])->one();
+    }
+
+    public static function find(array $query, ActiveRecord $model, array $withArray = []): ActiveRecord
+    {
+        $query = $model::find();
+        if (!empty($withArray)) {
+            $query->with($withArray);
+        }
+        return $query->where($query)->all();
     }
 
     public static function findAll(string $query): array

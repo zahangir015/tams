@@ -126,20 +126,15 @@ class TicketController extends ParentController
     public function actionRefund(string $uid): Response|string
     {
         $motherTicket = $this->flightService->findTicket($uid, ['airline', 'provider', 'customer', 'ticketSupplier']);
-        if ($this->request->isPost) {
-            // Store refund ticket data
-            $storeResponse = $this->flightService->addRefundTicket(Yii::$app->request->post(), $motherTicket);
-            if ($storeResponse) {
-                return $this->redirect(['index']);
-            }
-        } else {
-            $motherTicket->loadDefaultValues();
-        }
-
         $totalReceivedAmount = 0;
         if (($motherTicket->type == SaleConstant::TYPE['Refund']) || ($motherTicket->type == SaleConstant::TYPE['Refund Requested'])) {
             Yii::$app->session->setFlash('error', 'Refund and Refund Requested Ticket can not be refunded.');
             return $this->redirect(Yii::$app->request->referrer);
+        } elseif ($motherTicket->type == SaleConstant::TYPE['New']) {
+            if (Ticket::findOne(['motherTicketId' => $motherTicket->id])) {
+                Yii::$app->session->setFlash('error', 'This New ticket has a child ticket.');
+                return $this->redirect(Yii::$app->request->referrer);
+            }
         } elseif ($motherTicket->type == SaleConstant::TYPE['Reissue']) {
             if (!$motherTicket->motherTicketId) {
                 Yii::$app->session->setFlash('error', 'Parent Ticket not found');
@@ -150,6 +145,16 @@ class TicketController extends ParentController
                 return $this->redirect(Yii::$app->request->referrer);
             }
             $totalReceivedAmount = $this->flightService->reissueParentChain($motherTicket->motherTicketId, $motherTicket->receivedAmount);
+        }
+
+        if ($this->request->isPost) {
+            // Store refund ticket data
+            $storeResponse = $this->flightService->addRefundTicket($motherTicket, Yii::$app->request->post());
+            if ($storeResponse) {
+                return $this->redirect(['index']);
+            }
+        } else {
+            $motherTicket->loadDefaultValues();
         }
 
         return $this->render('refund', [

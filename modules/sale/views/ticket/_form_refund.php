@@ -1,5 +1,6 @@
 <?php
 
+use app\components\GlobalConstant;
 use app\components\Helper;
 use app\modules\sale\components\SaleConstant;
 use kartik\date\DatePicker;
@@ -144,6 +145,9 @@ $this->registerJsFile(
                         <div class="col-md">
                             <?= $form->field($ticketRefund, 'remarks')->textarea(['rows' => 3]) ?>
                             <?= $form->field($model, 'motherTicketId')->hiddenInput(['value' => $model->id])->label(false) ?>
+                            <?= $form->field($model->ticketSupplier, "supplierId")->hiddenInput(['value' => $model->ticketSupplier->supplierId])->label(false) ?>
+                            <?= $form->field($model->ticketSupplier, "status")->hiddenInput(['class' => 'status', 'value' => GlobalConstant::ACTIVE_STATUS])->label(false) ?>
+                            <?= $form->field($model->ticketSupplier, "paidAmount")->hiddenInput(['class' => 'paidAmount', 'value' => $model->ticketSupplier->paidAmount])->label(false) ?>
                         </div>
                     </div>
                     <div class="form-group float-right mt-5">
@@ -155,85 +159,85 @@ $this->registerJsFile(
         <!--<div class="col-md-6">
             <div class="card card-custom">
                 <div class="card-header">
-                    <div class="card-title"><?/*= ($ticketRefund->isNewRecord) ?  'Mother Ticket Information' : 'Ticket Information' */?></div>
+                    <div class="card-title"><? /*= ($ticketRefund->isNewRecord) ?  'Mother Ticket Information' : 'Ticket Information' */ ?></div>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <table class="table  table-bordered">
                             <tr>
-                                <td><strong>Base Fare: </strong><?/*= $model->baseFare */?></td>
-                                <td><strong>Tax: </strong><?/*= $model->tax */?></td>
-                                <td><strong>Other Tax: </strong><?/*= $model->otherTax */?></td>
+                                <td><strong>Base Fare: </strong><? /*= $model->baseFare */ ?></td>
+                                <td><strong>Tax: </strong><? /*= $model->tax */ ?></td>
+                                <td><strong>Other Tax: </strong><? /*= $model->otherTax */ ?></td>
                             </tr>
                             <tr>
-                                <td><strong>Commission: </strong><?/*= $model->commission */?></td>
-                                <td><strong>Incentive: </strong><?/*= $model->incentive */?></td>
-                                <td><strong>Commission Received: </strong><?/*= $model->commissionReceived */?></td>
+                                <td><strong>Commission: </strong><? /*= $model->commission */ ?></td>
+                                <td><strong>Incentive: </strong><? /*= $model->incentive */ ?></td>
+                                <td><strong>Commission Received: </strong><? /*= $model->commissionReceived */ ?></td>
                             </tr>
                             <tr>
-                                <td><strong>Incentive Received: </strong><?/*= $model->incentiveReceived */?></td>
-                                <td><strong>Cost of Sale: </strong> <?/*= $model->costOfSale */?>  </td>
+                                <td><strong>Incentive Received: </strong><? /*= $model->incentiveReceived */ ?></td>
+                                <td><strong>Cost of Sale: </strong> <? /*= $model->costOfSale */ ?>  </td>
                             </tr>
                         </table>
                     </div>
 
                     <div class="row">
                         <div class="col-md">
-                            <?/*= $form->field($model, 'airlineId')->textInput(['value' => $model->airline->airlineName ?? '', 'disabled' => 'disabled'])->label('Airline') */?>
+                            <? /*= $form->field($model, 'airlineId')->textInput(['value' => $model->airline->airlineName ?? '', 'disabled' => 'disabled'])->label('Airline') */ ?>
                         </div>
                         <div class="col-md">
-                            <?/*= $form->field($model, 'supplierId')->textInput(['value' => $model->ticketSupplier->supplier->name ?? '', 'disabled' => 'disabled'])->label('Supplier') */?>
+                            <? /*= $form->field($model, 'supplierId')->textInput(['value' => $model->ticketSupplier->supplier->name ?? '', 'disabled' => 'disabled'])->label('Supplier') */ ?>
                         </div>
                         <div class="col-md">
-                            <?/*= $form->field($model, 'customerId')->textInput(['value' => $model->customer->name ?? '', 'disabled' => 'disabled'])->label('Customer') */?>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md">
-                            <?/*= $form->field($model, 'issueDate')->textInput(['disabled' => 'disabled']) */?>
-                        </div>
-                        <div class="col-md">
-                            <?/*= $form->field($model, 'eTicket')->textInput(['disabled' => 'disabled']); */?>
-                        </div>
-                        <div class="col-md">
-                            <?/*= $form->field($model, 'paxName')->textInput(['disabled' => 'disabled']) */?>
+                            <? /*= $form->field($model, 'customerId')->textInput(['value' => $model->customer->name ?? '', 'disabled' => 'disabled'])->label('Customer') */ ?>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md">
-                            <?/*= $form->field($model, 'paxType')->dropDownList(['A' => 'A', 'C' => 'C', 'I' => 'I',], ['prompt' => '', 'disabled' => 'disabled']) */?>
+                            <? /*= $form->field($model, 'issueDate')->textInput(['disabled' => 'disabled']) */ ?>
                         </div>
                         <div class="col-md">
-                            <?/*= $form->field($model, 'pnrCode')->textInput(); */?>
+                            <? /*= $form->field($model, 'eTicket')->textInput(['disabled' => 'disabled']); */ ?>
                         </div>
                         <div class="col-md">
-                            <?/*= $form->field($model, 'route')->textInput(['disabled' => 'disabled']) */?>
+                            <? /*= $form->field($model, 'paxName')->textInput(['disabled' => 'disabled']) */ ?>
                         </div>
                     </div>
-
                     <div class="row">
                         <div class="col-md">
-                            <?/*= $form->field($model, 'numberOfSegment')->textInput(['maxlength' => true, 'disabled' => 'disabled']) */?>
+                            <? /*= $form->field($model, 'paxType')->dropDownList(['A' => 'A', 'C' => 'C', 'I' => 'I',], ['prompt' => '', 'disabled' => 'disabled']) */ ?>
                         </div>
                         <div class="col-md">
-                            <?/*= $form->field($model, 'seatClass')->textInput(['maxlength' => true, 'disabled' => 'disabled']) */?>
+                            <? /*= $form->field($model, 'pnrCode')->textInput(); */ ?>
                         </div>
                         <div class="col-md">
-                            <?/*= $form->field($model, 'paymentStatus')->dropDownList(['Full Paid' => 'Full Paid', 'Partially Paid' => 'Partially Paid', 'Due' => 'Due'], ['disabled' => 'disabled']) */?>
+                            <? /*= $form->field($model, 'route')->textInput(['disabled' => 'disabled']) */ ?>
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-md">
-                            <?/*= $form->field($model, 'receivedAmount')->textInput(['disabled' => 'disabled']) */?>
+                            <? /*= $form->field($model, 'numberOfSegment')->textInput(['maxlength' => true, 'disabled' => 'disabled']) */ ?>
                         </div>
                         <div class="col-md">
-                            <?/*= $form->field($model, 'bookedOnline')->textInput(['disabled' => 'disabled']) */?>
+                            <? /*= $form->field($model, 'seatClass')->textInput(['maxlength' => true, 'disabled' => 'disabled']) */ ?>
+                        </div>
+                        <div class="col-md">
+                            <? /*= $form->field($model, 'paymentStatus')->dropDownList(['Full Paid' => 'Full Paid', 'Partially Paid' => 'Partially Paid', 'Due' => 'Due'], ['disabled' => 'disabled']) */ ?>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md">
+                            <? /*= $form->field($model, 'receivedAmount')->textInput(['disabled' => 'disabled']) */ ?>
+                        </div>
+                        <div class="col-md">
+                            <? /*= $form->field($model, 'bookedOnline')->textInput(['disabled' => 'disabled']) */ ?>
                         </div>
 
                         <div class="col-md">
-                            <?/*= $form->field($model, 'type')->textInput(['disabled' => 'disabled', 'id' => 'oldTicketType']) */?>
-                            <?/*= $form->field($model, 'type')->hiddenInput(['value' => 'Refund'])->label(false) */?>
+                            <? /*= $form->field($model, 'type')->textInput(['disabled' => 'disabled', 'id' => 'oldTicketType']) */ ?>
+                            <? /*= $form->field($model, 'type')->hiddenInput(['value' => 'Refund'])->label(false) */ ?>
                         </div>
                     </div>
                 </div>

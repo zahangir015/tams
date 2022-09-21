@@ -4,10 +4,19 @@ namespace app\modules\sale\repositories;
 
 use app\components\GlobalConstant;
 use app\modules\sale\models\ticket\Ticket;
+use Yii;
 use yii\db\ActiveRecord;
 
 class FlightRepository
 {
+    public static function batchStore($table, $columns, $rows): bool
+    {
+        if (Yii::$app->db->createCommand()->batchInsert($table, $columns, $rows)->execute()) {
+            return true;
+        }
+        return false;
+    }
+
     public function store(ActiveRecord $object): ActiveRecord
     {
         $object->save();
