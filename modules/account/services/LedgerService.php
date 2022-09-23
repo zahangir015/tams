@@ -97,4 +97,36 @@ class LedgerService
         // Payment Done from Bank - (credit > debit)
         return ($ledger->debit > $ledger->credit) ? ($balance + ($ledger->credit + $ledger->debit)) : ($balance - ($ledger->credit + $ledger->debit));
     }
+
+    public static function processSingleSupplierLedger($motherTicket, $ticketSupplier, $invoiceDetail): array
+    {
+        $debit = $credit = 0;
+        $motherTicketSupplier = $motherTicket->ticketSupplier;
+        if ($motherTicketSupplier->paymentStatus == GlobalConstant::PAYMENT_STATUS['Due']) {
+            $debit = ($motherTicketSupplier->costOfSale - $ticketSupplier->costOfSale);
+        } else {
+            $amount = ($motherTicketSupplier->paidAmount - $ticketSupplier->costOfSale);
+            if ($amount > 0) {
+                $debit = $amount;
+            } else {
+                $credit = abs($amount);
+            }
+        }
+
+        $ledgerRequestData = [
+            'title' => 'Service Refund',
+            'reference' => 'Service Refund',
+            'refId' => $ticketSupplier->supplierId,
+            'refModel' => Supplier::class,
+            'subRefId' => $invoiceDetail->invoiceId,
+            'subRefModel' => Invoice::class,
+            'debit' => $debit,
+            'credit' => $credit
+        ];
+        $ledgerRequestResponse = LedgerService::store($ledgerRequestData);
+        if ($ledgerRequestResponse['error']) {
+            return ['error' => true, 'message' => $ledgerRequestResponse['message']];
+        }
+        return ['error' => false, 'message' => 'Supplier ledger processed successfully'];
+    }
 }

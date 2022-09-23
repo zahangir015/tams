@@ -1,5 +1,6 @@
 $(function () {
     $(document).on('change', '.quotePart', function () {
+        alert();
         var costOfSale;
         var airlineCharge = parseFloat($('#ticketrefund-airlinerefundcharge').val());
         var supplierCharge = parseFloat($('#ticketrefund-supplierrefundcharge').val());

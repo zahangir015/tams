@@ -1,7 +1,7 @@
 <?php
 namespace app\modules\sale\components;
 
-final class SaleConstant
+final class ServiceConstant
 {
     const ALL_TICKET_TYPE = [
         'New' => 'New',

@@ -106,4 +106,14 @@ class Invoice extends ActiveRecord
     {
         return $this->hasMany(Ticket::className(), ['invoiceId' => 'id']);
     }
+
+    /**
+     * Gets query for [[InvoiceDetail]].
+     *
+     * @return ActiveQuery
+     */
+    public function getDetails(): ActiveQuery
+    {
+        return $this->hasMany(InvoiceDetail::className(), ['invoiceId' => 'id']);
+    }
 }

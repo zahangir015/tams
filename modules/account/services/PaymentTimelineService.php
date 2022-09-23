@@ -2,10 +2,12 @@
 
 namespace app\modules\account\services;
 
+use app\components\GlobalConstant;
 use app\components\Helper;
 use app\modules\account\models\Invoice;
 use app\modules\account\models\ServicePaymentTimeline;
 use app\modules\account\repositories\PaymentTimelineRepository;
+use yii\db\ActiveRecord;
 
 class PaymentTimelineService
 {
@@ -36,7 +38,7 @@ class PaymentTimelineService
         return $paymentTimelineBatchData;
     }
 
-    public static function batchInsert(array $rowData)
+    public static function batchInsert(array $rowData): array
     {
         // Payment Timeline insert process
         if (empty($rowData)) {
@@ -100,5 +102,30 @@ class PaymentTimelineService
 
     public static function updateServicePaymentDetail(array $servicePaymentUpdateData)
     {
+    }
+
+    public static function storeServicePaymentDetailData(array $services, ActiveRecord $invoiceDetail): array
+    {
+        foreach ($services as $key => $service) {
+            if ($key == 'parentService' && $service->paymentStatus == GlobalConstant::PAYMENT_STATUS['Full Paid']) {
+                continue;
+            }
+            $model = new ServicePaymentTimeline();
+            $model->date = date('Y-m-d');
+            $model->refId = $service->id;
+            $model->refModel = get_class($service);
+            $model->subRefId = $invoiceDetail->invoiceId;
+            $model->subRefModel = Invoice::className();
+            $model->type = ($key == 'parentService') ? 'Paid' : "Due";
+            $model->amount = ($key == 'parentService') ? $service->receivedAmount : 0;
+            $model->due = ($key == 'parentService') ? 0 : ($service->quoteAmount - $services['parentService']->receivedAmount);
+            $model->status = GlobalConstant::ACTIVE_STATUS;
+            $model = PaymentTimelineRepository::store($model);
+            if ($model->hasErrors()) {
+                return ['error' => true, 'message' => 'Service Payment details not saved - ' . Helper::processErrorMessages($model->getErrors())];
+            }
+        }
+
+        return ['error' => false, 'message' => 'service payment detail saved successfully'];
     }
 }

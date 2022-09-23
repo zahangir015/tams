@@ -32,7 +32,7 @@ class PaymentTimelineRepository
         return $query->where(['uid' => $uid])->one();
     }
 
-    public function findAll(string $query): array
+    public function search(string $query): array
     {
         return ServicePaymentTimeline::find()
             ->select(['id', 'eTicket', 'pnrCode'])

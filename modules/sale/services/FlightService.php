@@ -8,8 +8,9 @@ use app\components\Uploader;
 use app\modules\account\models\Invoice;
 use app\modules\account\services\InvoiceService;
 use app\modules\account\services\LedgerService;
+use app\modules\account\services\PaymentTimelineService;
 use app\modules\admin\models\User;
-use app\modules\sale\components\SaleConstant;
+use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\Airline;
 use app\modules\sale\models\Customer;
 use app\modules\sale\models\Provider;
@@ -215,22 +216,25 @@ class FlightService
                 throw new Exception('Ticket refund creation failed - ' . $refundTicket['message']);
             }
 
-
             // Add refund ticket in invoice
-            $storedInvoiceDetail = InvoiceService::addRefundTicketToInvoice($newRefundTicket);
+            $storedInvoiceDetail = InvoiceService::addRefundServiceToInvoice($newRefundTicket);
             if (!$storedInvoiceDetail['status']) {
                 throw new Exception('Invoice creation failed - ' . $storedInvoiceDetail['message']);
             }
+            $invoiceDetail = $storedInvoiceDetail['data'];
+
             // Supplier Ledger process
-            $processSupplierLedgerResponse = RefundComponent::processSupplierLedger($ticket->id, $createNewTicketSupplier['data'], $storedInvoiceDetail['data']->invoiceId);
+            $processSupplierLedgerResponse = LedgerService::processSingleSupplierLedger($motherTicket, $ticketSupplier, $invoiceDetail);
             if ($processSupplierLedgerResponse['error']) {
                 throw new Exception('Supplier Ledger creation failed - ' . $processSupplierLedgerResponse['message']);
             }
+
             // Create Service Payment Detail for refund
-            $servicePaymentDetailData = RefundComponent::storeServicePaymentDetailData(['refundService' => $createNewRefundTicket['data'], 'parentService' => $ticket], $storedInvoiceDetail['data']);
+            $servicePaymentDetailData = PaymentTimelineService::storeServicePaymentDetailData(['refundService' => $newRefundTicket, 'parentService' => $motherTicket], $invoiceDetail);
             if ($servicePaymentDetailData['error']) {
                 throw new Exception($servicePaymentDetailData['message']);
             }
+
             $dbTransaction->commit();
             Yii::$app->session->setFlash('success', ' Refund Ticket added successfully');
 
@@ -243,7 +247,7 @@ class FlightService
         }
     }
 
-    public function storeRefundTicket(Ticket $motherTicket, array $requestData)
+    public function storeRefundTicket(Ticket $motherTicket, array $requestData): ActiveRecord
     {
         $newRefundTicket = new Ticket();
         $motherTicketData = $motherTicket->getAttributes(null, $except = ['id', 'uid', 'createdAt', 'updatedAt', 'createdBy', 'updatedBy', 'baseFare', 'tax', 'otherTax', 'quoteAmount']);
@@ -251,7 +255,7 @@ class FlightService
         $newRefundTicket->load($requestData);
         $newRefundTicket->netProfit = ($newRefundTicket->quoteAmount - $newRefundTicket->costOfSale);
         $newRefundTicket->motherTicketId = $motherTicket->id;
-        $newRefundTicket->type = SaleConstant::TYPE['Refund'];
+        $newRefundTicket->type = ServiceConstant::TYPE['Refund'];
         $newRefundTicket->serviceCharge = isset($requestData['TicketRefund']['refundCharge']) ? (double)$requestData['TicketRefund']['supplierRefundCharge'] : (double)$requestData['Ticket']['costOfSale'];
 
         if (($newRefundTicket->baseFare != 0) || ($newRefundTicket->tax != 0) || ($newRefundTicket->otherTax != 0)) {
@@ -319,7 +323,6 @@ class FlightService
         }
         return $totalReceived;
     }
-
 
     public function updateTicket(array $requestData, Ticket $ticket)
     {

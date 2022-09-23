@@ -1,6 +1,8 @@
 <?php
 
 use app\components\GlobalConstant;
+use app\components\Helper;
+use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\ticket\Ticket;
 use kartik\daterange\DateRangePicker;
 use yii\helpers\Html;
@@ -146,11 +148,25 @@ $this->params['breadcrumbs'][] = $this->title;
             'updatedBy',
             //'updatedAt',
             [
-                'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, Ticket $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'uid' => $model->uid]);
-                }
-            ],
+                'class' => 'kartik\grid\ActionColumn',
+                'urlCreator' => function ($action, $model) {
+                    return Url::to([$action, 'uid' => $model->uid]);
+                },
+                'template' => '{view} {update} {delete} {refund}',
+                'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
+                //'updateOptions' => ['role' => 'modal-remote', 'title' => 'Update', 'data-toggle' => 'tooltip'],
+                'buttons' => [
+                    'refund' => function ($url, $model) {
+                        if ($model->type === ServiceConstant::TYPE['Refund'] || $model->type === ServiceConstant::TYPE['Refund Requested']) {
+                            return false;
+                        }
+                        return Html::a('<span class="fas fa-minus-square"></span>', ['/sale/ticket/refund', 'uid' => $model->uid], [
+                            'title' => 'Refund',
+                            'data-toggle' => 'tooltip'
+                        ]);
+                    },
+                ]
+            ]
         ],
         'toolbar' => [
             [

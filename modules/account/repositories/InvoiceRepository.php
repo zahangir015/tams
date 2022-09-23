@@ -23,25 +23,37 @@ class InvoiceRepository
         return false;
     }
 
-    public static function findOne(string $uid, ActiveRecord $model, array $withArray = []): ActiveRecord
+    public static function findOne(array $queryArray, string $model, array $withArray = [], $asArray = false): ActiveRecord
     {
         $query = $model::find();
         if (!empty($withArray)) {
             $query->with($withArray);
         }
-        return $query->where(['uid' => $uid])->one();
+
+        $query->where($queryArray);
+        if ($asArray){
+            $query->asArray();
+        }
+
+        return $query->one();
     }
 
-    public static function find(array $query, ActiveRecord $model, array $withArray = []): ActiveRecord
+    public static function findAll(array $queryArray, string $model, array $withArray = [], $asArray = false): array
     {
         $query = $model::find();
         if (!empty($withArray)) {
             $query->with($withArray);
         }
-        return $query->where($query)->all();
+
+        $query->where($queryArray);
+        if ($asArray){
+            $query->asArray();
+        }
+
+        return $query->all();
     }
 
-    public static function findAll(string $query): array
+    public static function search(string $query): array
     {
         return Invoice::find()
             ->select(['id', 'eTicket', 'pnrCode'])
