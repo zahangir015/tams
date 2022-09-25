@@ -217,11 +217,11 @@ class FlightService
             }
 
             // Add refund ticket in invoice
-            $storedInvoiceDetail = InvoiceService::addRefundServiceToInvoice($newRefundTicket);
-            if (!$storedInvoiceDetail['status']) {
-                throw new Exception('Invoice creation failed - ' . $storedInvoiceDetail['message']);
+            $invoiceDetailProcessResponse = InvoiceService::addRefundServiceToInvoice($newRefundTicket);
+            if ($invoiceDetailProcessResponse['error']) {
+                throw new Exception('Invoice creation failed - ' . $invoiceDetailProcessResponse['message']);
             }
-            $invoiceDetail = $storedInvoiceDetail['data'];
+            $invoiceDetail = $invoiceDetailProcessResponse['data'];
 
             // Supplier Ledger process
             $processSupplierLedgerResponse = LedgerService::processSingleSupplierLedger($motherTicket, $ticketSupplier, $invoiceDetail);
@@ -229,25 +229,24 @@ class FlightService
                 throw new Exception('Supplier Ledger creation failed - ' . $processSupplierLedgerResponse['message']);
             }
 
+
             // Create Service Payment Detail for refund
             $servicePaymentDetailData = PaymentTimelineService::storeServicePaymentDetailData(['refundService' => $newRefundTicket, 'parentService' => $motherTicket], $invoiceDetail);
             if ($servicePaymentDetailData['error']) {
-                throw new Exception($servicePaymentDetailData['message']);
+                throw new Exception('Service payment detail process failed - '.$servicePaymentDetailData['message']);
             }
 
             $dbTransaction->commit();
             Yii::$app->session->setFlash('success', ' Refund Ticket added successfully');
-
             return true;
         } catch (\Exception $e) {
             $dbTransaction->rollBack();
             Yii::$app->session->setFlash('error', $e->getMessage() . ' - in file - ' . $e->getFile() . ' - in line -' . $e->getLine());
-
             return false;
         }
     }
 
-    public function storeRefundTicket(Ticket $motherTicket, array $requestData): ActiveRecord
+    public function storeRefundTicket(ActiveRecord $motherTicket, array $requestData): ActiveRecord
     {
         $newRefundTicket = new Ticket();
         $motherTicketData = $motherTicket->getAttributes(null, $except = ['id', 'uid', 'createdAt', 'updatedAt', 'createdBy', 'updatedBy', 'baseFare', 'tax', 'otherTax', 'quoteAmount']);
@@ -267,7 +266,7 @@ class FlightService
         return $this->flightRepository->store($newRefundTicket);
     }
 
-    public function storeTicketSupplier(Ticket $newRefundTicket, array $requestData): ActiveRecord
+    public function storeTicketSupplier(ActiveRecord $newRefundTicket, array $requestData): ActiveRecord
     {
         $ticketSupplier = new TicketSupplier();
         $ticketSupplier->load(['TicketSupplier' => $newRefundTicket->getAttributes(['issueDate', 'eTicket', 'pnrCode', 'airlineId', 'paymentStatus', 'type', 'costOfSale', 'baseFare', 'tax'])]);
@@ -277,7 +276,7 @@ class FlightService
         return $this->flightRepository->store($ticketSupplier);
     }
 
-    private static function processTickerRefundModelData(Ticket $newRefundTicket, mixed $requestDate): array
+    private static function processTickerRefundModelData(ActiveRecord $newRefundTicket, mixed $requestDate): array
     {
         $referenceData = [
             [
@@ -374,11 +373,11 @@ class FlightService
 
                     $suppliersLedgerData[] = [
                         'title' => 'Service Purchase Update',
-                        'reference' => 'Invoice Number - ' . $ticketModel->invoice->invoiceNumber,
+                        'reference' => 'Invoice Number - ' . $ticket->invoice->invoiceNumber,
                         'refId' => $ticketSupplier->supplierId,
                         'refModel' => Supplier::class,
-                        'subRefId' => $ticketModel->invoiceId,
-                        'subRefModel' => $ticketModel->invoice::className(),
+                        'subRefId' => $ticket->invoiceId,
+                        'subRefModel' => $ticket->invoice::className(),
                         'debit' => 0,
                         'credit' => $ticketSupplier->costOfSale
                     ];

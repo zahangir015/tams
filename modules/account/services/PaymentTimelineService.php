@@ -115,10 +115,9 @@ class PaymentTimelineService
             $model->refId = $service->id;
             $model->refModel = get_class($service);
             $model->subRefId = $invoiceDetail->invoiceId;
-            $model->subRefModel = Invoice::className();
-            $model->type = ($key == 'parentService') ? 'Paid' : "Due";
-            $model->amount = ($key == 'parentService') ? $service->receivedAmount : 0;
-            $model->due = ($key == 'parentService') ? 0 : ($service->quoteAmount - $services['parentService']->receivedAmount);
+            $model->subRefModel = Invoice::class;
+            $model->paidAmount = ($key == 'parentService') ? $service->receivedAmount : 0;
+            $model->dueAmount = ($key == 'parentService') ? 0 : ($service->quoteAmount - $services['parentService']->receivedAmount);
             $model->status = GlobalConstant::ACTIVE_STATUS;
             $model = PaymentTimelineRepository::store($model);
             if ($model->hasErrors()) {

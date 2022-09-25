@@ -159,8 +159,8 @@ class InvoiceService
         $invoiceDetail->refModel = $newRefundService::class;
         $invoiceDetail->status = GlobalConstant::ACTIVE_STATUS;
         $invoiceDetail = InvoiceRepository::store($invoiceDetail);
-        if (!$invoiceDetail->hasErrors()) {
-            return ['error' => true, 'message' => 'Invoice Detail create failed - ' . Helper::processErrorMessages($invoiceDetail->getErrors())];
+        if ($invoiceDetail->hasErrors()) {
+            return ['error' => true, 'message' => 'Invoice Detail creation failed - ' . Helper::processErrorMessages($invoiceDetail->getErrors())];
         }
 
         // Mother Invoice Detail status update
@@ -174,10 +174,10 @@ class InvoiceService
         // Invoice due update
         $invoice = InvoiceRepository::findOne(['id' => $newRefundService->invoiceId], Invoice::class, ['details']);
         $invoiceDetailArray = ArrayHelper::toArray($invoice->details);
-        $invoice->due = (double)array_sum(array_column($invoiceDetailArray, 'dueAmount'));
+        $invoice->dueAmount = (double)array_sum(array_column($invoiceDetailArray, 'dueAmount'));
         $invoice = InvoiceRepository::store($invoice);
-        if (!$invoice->hasErrors()) {
-            return ['error' => false, 'message' => 'Invoice due update failed - ' . Helper::processErrorMessages($invoice->getErrors())];
+        if ($invoice->hasErrors()) {
+            return ['error' => true, 'message' => 'Invoice due update failed - ' . Helper::processErrorMessages($invoice->getErrors())];
         }
 
         // Customer Ledger process
@@ -188,12 +188,13 @@ class InvoiceService
             'refModel' => Customer::class,
             'subRefId' => $invoice->id,
             'subRefModel' => Invoice::class,
-            'debit' => ($invoiceDetail->due > 0) ? $invoiceDetail->due : 0,
-            'credit' => ($invoiceDetail->due > 0) ? 0 : $invoiceDetail->due
+            'debit' => ($invoiceDetail->dueAmount > 0) ? $invoiceDetail->dueAmount : 0,
+            'credit' => ($invoiceDetail->dueAmount > 0) ? 0 : $invoiceDetail->dueAmount
         ];
+
         $ledgerRequestResponse = LedgerService::store($ledgerRequestData);
         if ($ledgerRequestResponse['error']) {
-            return ['error' => true, 'message' => 'Customer Ledger creation failed - ' . $ledgerRequestResponse['message']];
+            return ['error' => $ledgerRequestResponse['error'], 'message' => 'Customer Ledger creation failed - ' . $ledgerRequestResponse['message']];
         }
 
         return ['error' => false, 'data' => $invoiceDetail];

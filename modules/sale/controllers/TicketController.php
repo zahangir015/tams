@@ -3,6 +3,7 @@
 namespace app\modules\sale\controllers;
 
 use app\modules\sale\components\ServiceConstant;
+use app\modules\sale\models\ticket\RefundTicketSearch;
 use app\modules\sale\models\ticket\Ticket;
 use app\modules\sale\models\ticket\TicketSearch;
 use app\controllers\ParentController;
@@ -37,9 +38,25 @@ class TicketController extends ParentController
     public function actionIndex()
     {
         $searchModel = new TicketSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
+        $dataProvider = $searchModel->searchRefund($this->request->queryParams);
 
         return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
+     * Lists all Ticket models.
+     *
+     * @return string
+     */
+    public function actionRefundList(): string
+    {
+        $searchModel = new RefundTicketSearch();
+        $dataProvider = $searchModel->search($this->request->queryParams);
+
+        return $this->render('refund_list', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);

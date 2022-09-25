@@ -3,6 +3,7 @@
 namespace app\modules\sale\models\ticket;
 
 use app\modules\account\models\RefundTransaction;
+use app\traits\BehaviorTrait;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
@@ -34,6 +35,8 @@ use yii\db\ActiveRecord;
  */
 class TicketRefund extends ActiveRecord
 {
+    use BehaviorTrait;
+
     /**
      * {@inheritdoc}
      */

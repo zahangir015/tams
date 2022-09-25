@@ -7,7 +7,7 @@ use app\modules\account\models\Invoice;
 use app\modules\sale\models\Airline;
 use app\modules\sale\models\Customer;
 use app\modules\sale\models\Provider;
-use app\modules\sale\models\TicketRefund;
+use app\modules\sale\models\ticket\TicketRefund;
 use app\traits\BehaviorTrait;
 use Yii;
 use yii\db\ActiveQuery;
