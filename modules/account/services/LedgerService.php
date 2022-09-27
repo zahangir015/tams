@@ -123,6 +123,7 @@ class LedgerService
             'debit' => $debit,
             'credit' => $credit
         ];
+        dd($ledgerRequestData);
         $ledgerRequestResponse = LedgerService::store($ledgerRequestData);
         if ($ledgerRequestResponse['error']) {
             return ['error' => true, 'message' => $ledgerRequestResponse['message']];

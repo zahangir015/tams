@@ -189,9 +189,10 @@ class FlightService
         if (file_exists(getcwd() . '/uploads/tmp/' . $file)) {
             unlink(getcwd() . '/uploads/tmp/' . $file);
         }
-        if ($response) {
-            return ['error' => false, 'message' => 'Ticket uploaded successfully.'];
+        if (!$response) {
+            return ['error' => true, 'message' => 'Ticket uploaded Failed.'];
         }
+        return ['error' => false, 'message' => 'Ticket uploaded successfully.'];
     }
 
     public function addRefundTicket(ActiveRecord $motherTicket, array $requestData): bool
@@ -211,9 +212,9 @@ class FlightService
             }
 
             // Create refund for customer and supplier
-            $refundTicket = self::processTickerRefundModelData($newRefundTicket, $requestData);
-            if ($refundTicket['error']) {
-                throw new Exception('Ticket refund creation failed - ' . $refundTicket['message']);
+            $refundDataProcessResponse = self::processTickerRefundModelData($newRefundTicket, $requestData);
+            if ($refundDataProcessResponse['error']) {
+                throw new Exception('Ticket refund creation failed - ' . $refundDataProcessResponse['message']);
             }
 
             // Add refund ticket in invoice
@@ -233,7 +234,7 @@ class FlightService
             // Create Service Payment Detail for refund
             $servicePaymentDetailData = PaymentTimelineService::storeServicePaymentDetailData(['refundService' => $newRefundTicket, 'parentService' => $motherTicket], $invoiceDetail);
             if ($servicePaymentDetailData['error']) {
-                throw new Exception('Service payment detail process failed - '.$servicePaymentDetailData['message']);
+                throw new Exception('Service payment detail process failed - ' . $servicePaymentDetailData['message']);
             }
 
             $dbTransaction->commit();
@@ -276,37 +277,41 @@ class FlightService
         return $this->flightRepository->store($ticketSupplier);
     }
 
-    private static function processTickerRefundModelData(ActiveRecord $newRefundTicket, mixed $requestDate): array
+    private static function processTickerRefundModelData(ActiveRecord $newRefundTicket, mixed $requestData): array
     {
         $referenceData = [
             [
                 'refId' => $newRefundTicket->customerId,
                 'refModel' => Customer::class,
+                'serviceCharge' => $newRefundTicket->quoteAmount,
+                'ticketId' => $newRefundTicket->id,
+                'refundRequestDate' => $newRefundTicket->refundRequestDate,
             ],
             [
-                'refId' => $requestDate['TicketSupplier']['supplierId'],
+                'refId' => $newRefundTicket->ticketSupplier->supplierId,
                 'refModel' => Supplier::class,
+                'serviceCharge' => $newRefundTicket->ticketSupplier->costOfSale,
+                'ticketId' => $newRefundTicket->id,
+                'refundRequestDate' => $newRefundTicket->refundRequestDate,
             ]
         ];
+
         $ticketRefundBatchData = [];
         // Customer Ticket refund data process
         foreach ($referenceData as $ref) {
             $ticketRefund = new TicketRefund();
-            $ticketRefund->refId = $ref['refId'];
-            $ticketRefund->refModel = $ref['refModel'];
-            $ticketRefund->ticketId = $newRefundTicket->id;
-            $ticketRefund->refundRequestDate = $newRefundTicket->refundRequestDate;
-            if (!$ticketRefund->load(['TicketRefund' => $requestDate]) || !$ticketRefund->validate()) {
+            if (!$ticketRefund->load($requestData) || !$ticketRefund->load(['TicketRefund' => $ref]) || !$ticketRefund->validate()) {
                 return ['error' => true, 'message' => 'Ticket Refund validation failed - ' . Helper::processErrorMessages($ticketRefund->getErrors())];
             }
-            $ticketRefundBatchData[] = $ticketRefund->getAttributes();
+            $ticketRefundBatchData[] = $ticketRefund->getAttributes(null, ['id']);
         }
 
         // Invoice Details insert process
         if (empty($ticketRefundBatchData)) {
             return ['error' => true, 'message' => 'Ticket Refund batch data process failed.'];
         }
-        if (!FlightRepository::batchStore(TicketRefund::tableName(), array_keys($ticketRefundBatchData[0]), $ticketRefundBatchData)) {
+
+        if (!FlightRepository::batchStore('ticket_refund', array_keys($ticketRefundBatchData[0]), $ticketRefundBatchData)) {
             return ['error' => true, 'message' => 'Ticket Refund batch insert failed'];
         }
 
@@ -367,7 +372,7 @@ class FlightService
                             'credit' => 0
                         ];
                         if (!TicketSupplier::updateAll(['status' => 0, 'updatedBy' => Yii::$app->user->id, 'updatedAt' => Helper::convertToTimestamp(date('Y-m-d h:i:s'))], ['id' => $oldSupplierId])) {
-                            throw new Exception(Utils::processErrorMessages('Ticket Supplier delete failed.'));
+                            throw new Exception(Helper::processErrorMessages('Ticket Supplier delete failed.'));
                         }
                     }
 
@@ -383,9 +388,9 @@ class FlightService
                     ];
 
                     foreach ($suppliersLedgerData as $singleLedger) {
-                        $ledgerRequestResponse = LedgerComponent::updateLedger($singleLedger);
+                        $ledgerRequestResponse = LedgerService::updateLedger($singleLedger);
                         if (!$ledgerRequestResponse['status']) {
-                            throw new Exception(Utils::processErrorMessages('Not update ticket  ' . $ledgerRequestResponse['message']));
+                            throw new Exception(Helper::processErrorMessages('Not update ticket  ' . $ledgerRequestResponse['message']));
                         }
                     }
                 }
@@ -440,18 +445,8 @@ class FlightService
         return ['error' => false, 'message' => 'Quote amount is not updated'];
     }
 
-    private static function calculateAIT(float $baseFare, float $tax, mixed $govtTax): float
+    public static function calculateAIT(float $baseFare, float $tax, mixed $govtTax): float
     {
-        /*$BD = $UT = $E5 = 0;
-        if (!empty($taxBreakDown)) {
-            foreach (['BD', 'UT', 'E5'] as $taxKey) {
-                $key = array_search($taxKey, array_column($taxBreakDown, 'code'));
-                if ($key !== false) {
-                    $$taxKey = (double)$taxBreakDown[$key]->amount;
-                }
-            }
-            return ((($baseFare + $tax) - ($BD + $UT + $E5)) * $govtTax);
-        }*/
         return (((double)$baseFare + (double)$tax) * (double)$govtTax);
     }
 
@@ -513,6 +508,16 @@ class FlightService
     public function findTicket(string $uid, $withArray = []): ActiveRecord
     {
         return $this->flightRepository->findOneTicket($uid, $withArray);
+    }
+
+    public function ajaxCostCalculation($baseFare, $tax, $airlineId)
+    {
+        $airline = Airline::findOne(['id' => (int)$airlineId]);
+        $commissionReceived = self::calculateCommissionReceived($baseFare, $airline->commission);
+        $incentiveReceived = self::calculateIncentiveReceived($baseFare, $airline->commission, $airline->incentive);
+        $ait = self::calculateAIT($baseFare, $tax, $airline->govTax);
+
+        return self::calculateCostOfSale($tax, $airline->serviceCharge, $ait, $baseFare, $commissionReceived, $incentiveReceived);
     }
 
 

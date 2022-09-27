@@ -3,6 +3,7 @@
 namespace app\modules\sale\models\ticket;
 
 use app\modules\account\models\RefundTransaction;
+use app\modules\sale\models\Supplier;
 use app\traits\BehaviorTrait;
 use Yii;
 use yii\db\ActiveQuery;

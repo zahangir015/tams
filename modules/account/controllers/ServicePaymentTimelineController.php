@@ -14,24 +14,6 @@ use yii\filters\VerbFilter;
 class ServicePaymentTimelineController extends ParentController
 {
     /**
-     * @inheritDoc
-     */
-    public function behaviors()
-    {
-        return array_merge(
-            parent::behaviors(),
-            [
-                'verbs' => [
-                    'class' => VerbFilter::className(),
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
-                ],
-            ]
-        );
-    }
-
-    /**
      * Lists all ServicePaymentTimeline models.
      *
      * @return string

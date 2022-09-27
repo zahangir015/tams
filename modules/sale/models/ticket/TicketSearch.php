@@ -1,7 +1,9 @@
 <?php
 
 namespace app\modules\sale\models\ticket;
+
 use app\modules\account\models\Invoice;
+use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\Airline;
 use app\modules\sale\models\Customer;
 use app\modules\sale\models\Provider;
@@ -63,7 +65,8 @@ class TicketSearch extends Ticket
         }
 
         // add conditions that should always apply here
-        $query->joinWith(['airline', 'customer', 'provider', 'invoice']);
+        $query->joinWith(['airline', 'customer', 'provider', 'invoice'])
+            ->where(['<>', 'type', ServiceConstant::TYPE['Refund']]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -71,20 +74,20 @@ class TicketSearch extends Ticket
         ]);
 
         $dataProvider->sort->attributes['customer'] = [
-            'asc' => [Customer::tableName().'.company' => SORT_ASC],
-            'desc' => [Customer::tableName().'.company' => SORT_DESC],
+            'asc' => [Customer::tableName() . '.company' => SORT_ASC],
+            'desc' => [Customer::tableName() . '.company' => SORT_DESC],
         ];
         $dataProvider->sort->attributes['provider'] = [
-            'asc' => [Provider::tableName().'.name' => SORT_ASC],
-            'desc' => [Provider::tableName().'.name' => SORT_DESC],
+            'asc' => [Provider::tableName() . '.name' => SORT_ASC],
+            'desc' => [Provider::tableName() . '.name' => SORT_DESC],
         ];
         $dataProvider->sort->attributes['airline'] = [
-            'asc' => [Airline::tableName().'.name' => SORT_ASC],
-            'desc' => [Airline::tableName().'.name' => SORT_DESC],
+            'asc' => [Airline::tableName() . '.name' => SORT_ASC],
+            'desc' => [Airline::tableName() . '.name' => SORT_DESC],
         ];
         $dataProvider->sort->attributes['invoice'] = [
-            'asc' => [Invoice::tableName().'.invoiceNumber' => SORT_ASC],
-            'desc' => [Invoice::tableName().'.invoiceNumber' => SORT_DESC],
+            'asc' => [Invoice::tableName() . '.invoiceNumber' => SORT_ASC],
+            'desc' => [Invoice::tableName() . '.invoiceNumber' => SORT_DESC],
         ];
 
         $this->load($params);
@@ -132,12 +135,12 @@ class TicketSearch extends Ticket
         ]);
 
         $query->andFilterWhere(['like', 'uid', $this->uid])
-            ->andFilterWhere(['like', Customer::tableName().'.company', $this->customer])
-            ->orFilterWhere(['like', Customer::tableName().'.customerCode', $this->customer])
-            ->andFilterWhere(['like', Airline::tableName().'.name', $this->airline])
-            ->orFilterWhere(['like', Airline::tableName().'.code', $this->airline])
-            ->andFilterWhere(['like', Provider::tableName().'.name', $this->provider])
-            ->andFilterWhere(['like', Invoice::tableName().'.invoiceNumber', $this->invoice])
+            ->andFilterWhere(['like', Customer::tableName() . '.company', $this->customer])
+            ->orFilterWhere(['like', Customer::tableName() . '.customerCode', $this->customer])
+            ->andFilterWhere(['like', Airline::tableName() . '.name', $this->airline])
+            ->orFilterWhere(['like', Airline::tableName() . '.code', $this->airline])
+            ->andFilterWhere(['like', Provider::tableName() . '.name', $this->provider])
+            ->andFilterWhere(['like', Invoice::tableName() . '.invoiceNumber', $this->invoice])
             ->andFilterWhere(['like', 'customerCategory', $this->customerCategory])
             ->andFilterWhere(['like', 'paxName', $this->paxName])
             ->andFilterWhere(['like', 'paxType', $this->paxType])

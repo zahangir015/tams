@@ -3,6 +3,7 @@
 namespace app\modules\sale\controllers;
 
 use app\modules\sale\components\ServiceConstant;
+use app\modules\sale\models\Airline;
 use app\modules\sale\models\ticket\RefundTicketSearch;
 use app\modules\sale\models\ticket\Ticket;
 use app\modules\sale\models\ticket\TicketSearch;
@@ -38,7 +39,7 @@ class TicketController extends ParentController
     public function actionIndex()
     {
         $searchModel = new TicketSearch();
-        $dataProvider = $searchModel->searchRefund($this->request->queryParams);
+        $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -243,6 +244,11 @@ class TicketController extends ParentController
             'ticketSupplier' => $ticketSupplier,
             'form' => ActiveForm::begin(['class' => 'form'])
         ]);
+    }
+
+    public function actionAjaxCostCalculate($baseFare, $tax, $airlineId)
+    {
+        return $this->flightService->ajaxCostCalculation($baseFare, $tax, $airlineId);
     }
 
     /*public function getData()

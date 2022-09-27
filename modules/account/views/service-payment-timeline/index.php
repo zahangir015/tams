@@ -1,5 +1,6 @@
 <?php
 
+use app\modules\account\models\ServicePaymentTimeline;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -34,11 +35,11 @@ $this->params['breadcrumbs'][] = $this->title;
             'date',
             'refId',
             'refModel',
-            //'subRefId',
-            //'subRefModel',
-            //'paidAmount',
-            //'dueAmount',
-            //'status',
+            'subRefId',
+            'subRefModel',
+            'paidAmount',
+            'dueAmount',
+            'status',
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, ServicePaymentTimeline $model, $key, $index, $column) {

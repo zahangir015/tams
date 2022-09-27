@@ -33,10 +33,18 @@ use yii\helpers\Inflector;
         $flashMessages = Yii::$app->session->getAllFlashes();
         if ($flashMessages) {
             foreach($flashMessages as $key => $message) {
-                echo Alert::widget([
-                    'type' => $key,
-                    'body' => "<p>$message</p>",
-                ]);
+                if ($key == 'error'){
+                    echo Alert::widget([
+                        'type' => 'danger',
+                        'body' => "<p>$message</p>",
+                    ]);
+                }else{
+                    echo Alert::widget([
+                        'type' => $key,
+                        'body' => "<p>$message</p>",
+                    ]);
+                }
+
             }
         }
         ?>
