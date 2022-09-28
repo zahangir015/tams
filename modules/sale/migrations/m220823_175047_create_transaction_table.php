@@ -40,12 +40,12 @@ class m220823_175047_create_transaction_table extends Migration
             'bankId'
         );
 
-        // add foreign key for table `bankAccount`
+        // add foreign key for table `bank_account`
         $this->addForeignKey(
             'fk-transaction-bankId',
             'transaction',
             'bankId',
-            'bankAccount',
+            'bank_account',
             'id',
             'CASCADE'
         );
