@@ -5,7 +5,7 @@ use yii\db\Migration;
 /**
  * Handles the creation of table `{{%invoice}}`.
  */
-class m220823_174957_create_invoice_table extends Migration
+class m220823_165645_create_invoice_table extends Migration
 {
     /**
      * {@inheritdoc}
