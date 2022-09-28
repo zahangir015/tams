@@ -5,7 +5,7 @@ use yii\db\Migration;
 /**
  * Handles the creation of table `{{%refund_transaction}}`.
  */
-class m220826_054346_create_refund_transaction_table extends Migration
+class m220823165647_create_refund_transaction_table extends Migration
 {
     /**
      * {@inheritdoc}
