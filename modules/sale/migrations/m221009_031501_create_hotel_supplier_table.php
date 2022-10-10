@@ -3,63 +3,64 @@
 use yii\db\Migration;
 
 /**
- * Handles the creation of table `{{%holiday_supplier}}`.
+ * Handles the creation of table `{{%hotel_supplier}}`.
  */
-class m221003_183538_create_holiday_supplier_table extends Migration
+class m221009_031501_create_hotel_supplier_table extends Migration
 {
     /**
      * {@inheritdoc}
      */
     public function safeUp()
     {
-        $this->createTable('{{%holiday_supplier}}', [
+        $this->createTable('{{%hotel_supplier}}', [
             'id' => $this->primaryKey(),
             'uid' => $this->string(36)->notNull()->unique(),
-            'holidayId' => $this->integer(11)->notNull(),
+            'motherHotelSupplierId' => $this->integer(11)->null(),
+            'hotelId' => $this->integer(11)->notNull(),
             'billId' => $this->integer(11)->null(),
             'supplierId' => $this->integer(11)->notNull(),
             'supplierRef' => $this->string()->notNull(),
             'issueDate' => $this->date()->notNull(),
-            'departureDate' => $this->date()->notNull(),
             'refundRequestDate' => $this->date()->null(),
             'type' => "ENUM('New', 'Refund', 'Refund Requested') NOT NULL" ,
             'serviceDetails' => $this->string()->null(),
+            'numberOfNights' => $this->integer()->notNull(),
             'quantity' => $this->integer()->notNull(),
-            'unitPrice' => $this->integer()->notNull(),
+            'unitPrice' => $this->double()->notNull(),
             'costOfSale' => $this->double()->notNull(),
             'paidAmount' => $this->double()->defaultValue(0),
             'paymentStatus' => "ENUM('Full Paid','Partially Paid','Due','Refund Adjustment') DEFAULT 'Due'",
             'status' => $this->boolean()->defaultValue(1),
         ]);
 
-        // creates index for column `holidayId`
+        // creates index for column `hotelId`
         $this->createIndex(
-            'idx-holiday-supplier-holidayId',
-            'holiday_supplier',
-            'holidayId'
+            'idx-hotel-supplier-hotelId',
+            'hotel_supplier',
+            'hotelId'
         );
 
-        // add foreign key for table `holiday`
+        // add foreign key for table `hotelId`
         $this->addForeignKey(
-            'fk-holiday-supplier-holidayId',
-            'holiday_supplier',
-            'holidayId',
-            'holiday',
+            'fk-hotel-supplier-hotelId',
+            'hotel_supplier',
+            'hotelId',
+            'hotel',
             'id',
             'CASCADE'
         );
 
         // creates index for column `supplierId`
         $this->createIndex(
-            'idx-holiday-supplier-supplierId',
-            'holiday_supplier',
+            'idx-hotel-supplier-supplierId',
+            'hotel_supplier',
             'supplierId'
         );
 
         // add foreign key for table `supplier`
         $this->addForeignKey(
-            'fk-holiday-supplier-supplierId',
-            'holiday_supplier',
+            'fk-hotel-supplier-supplierId',
+            'hotel_supplier',
             'supplierId',
             'supplier',
             'id',
@@ -68,15 +69,15 @@ class m221003_183538_create_holiday_supplier_table extends Migration
 
         // creates index for column `billId`
         $this->createIndex(
-            'idx-holiday-supplier-billId',
-            'holiday_supplier',
+            'idx-hotel-supplier-billId',
+            'hotel_supplier',
             'billId'
         );
 
         // add foreign key for table `bill`
         $this->addForeignKey(
-            'fk-holiday-supplier-billId',
-            'holiday_supplier',
+            'fk-hotel-supplier-billId',
+            'hotel_supplier',
             'billId',
             'bill',
             'id',
@@ -89,42 +90,42 @@ class m221003_183538_create_holiday_supplier_table extends Migration
      */
     public function safeDown()
     {
-        // drops foreign key for table `holiday`
+        // drops foreign key for table `hotel`
         $this->dropForeignKey(
-            'fk-holiday-supplier-holidayId',
-            'holiday_supplier'
+            'fk-hotel-supplier-hotelId',
+            'hotel_supplier'
         );
 
-        // drops index for column `holidayId`
+        // drops index for column `hotelId`
         $this->dropIndex(
-            'idx-holiday-supplier-holidayId',
-            'holiday_supplier'
+            'idx-hotel-supplier-hotelId',
+            'hotel_supplier'
         );
 
         // drops foreign key for table `supplier`
         $this->dropForeignKey(
-            'fk-holiday-supplier-supplierId',
-            'holiday_supplier'
+            'fk-hotel-supplier-supplierId',
+            'hotel_supplier'
         );
 
         // drops index for column `supplierId`
         $this->dropIndex(
-            'idx-holiday-supplier-supplierId',
-            'holiday_supplier'
+            'idx-hotel-supplier-supplierId',
+            'hotel_supplier'
         );
 
         // drops foreign key for table `bill`
         $this->dropForeignKey(
-            'fk-holiday-supplier-billId',
-            'holiday_supplier'
+            'fk-hotel-supplier-billId',
+            'hotel_supplier'
         );
 
         // drops index for column `billId`
         $this->dropIndex(
-            'idx-holiday-supplier-billId',
-            'holiday_supplier'
+            'idx-hotel-supplier-billId',
+            'hotel_supplier'
         );
 
-        $this->dropTable('{{%holiday_supplier}}');
+        $this->dropTable('{{%hotel_supplier}}');
     }
 }

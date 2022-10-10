@@ -3,19 +3,19 @@
 use yii\db\Migration;
 
 /**
- * Handles the creation of table `{{%holiday_refund}}`.
+ * Handles the creation of table `{{%visa_refund}}`.
  */
-class m221003_183553_create_holiday_refund_table extends Migration
+class m221009_043836_create_visa_refund_table extends Migration
 {
     /**
      * {@inheritdoc}
      */
     public function safeUp()
     {
-        $this->createTable('{{%holiday_refund}}', [
+        $this->createTable('{{%visa_refund}}', [
             'id' => $this->primaryKey(),
             'uid' => $this->string(36)->notNull()->unique(),
-            'holidayId' => $this->integer()->notNull(),
+            'visaId' => $this->integer()->notNull(),
             'refundTransactionId' => $this->integer()->null(),
             'refId' => $this->integer()->notNull(),
             'refModel' => $this->string(150)->notNull(),
@@ -32,24 +32,24 @@ class m221003_183553_create_holiday_refund_table extends Migration
             'status' => $this->boolean()->defaultValue(1),
         ]);
 
-        // creates index for column `holidayId`
+        // creates index for column `visaId`
         $this->createIndex(
-            'idx-holiday-refund-holidayId',
-            'holiday_refund',
-            'holidayId'
+            'idx-visa-refund-visaId',
+            'visa_refund',
+            'visaId'
         );
 
         // creates index for column `refundTransactionId`
         $this->createIndex(
-            'idx-holiday-refund-refundTransactionId',
-            'holiday_refund',
+            'idx-visa-refund-refundTransactionId',
+            'visa_refund',
             'refundTransactionId'
         );
 
         // add foreign key for table `refundTransaction`
         $this->addForeignKey(
-            'fk-holiday-refund-refundTransactionId',
-            'holiday_refund',
+            'fk-visa-refund-refundTransactionId',
+            'visa_refund',
             'refundTransactionId',
             'refund_transaction',
             'id',
@@ -62,24 +62,24 @@ class m221003_183553_create_holiday_refund_table extends Migration
      */
     public function safeDown()
     {
-        // drops index for column `holidayId`
+        // drops index for column `visaId`
         $this->dropIndex(
-            'idx-holiday-refund-holidayId',
-            'holiday_refund'
+            'idx-visa-refund-visaId',
+            'visa_refund'
         );
 
         // drops foreign key for table `refundTransaction`
         $this->dropForeignKey(
-            'fk-holiday-refund-refundTransactionId',
-            'holiday_refund'
+            'fk-visa-refund-refundTransactionId',
+            'visa_refund'
         );
 
         // drops index for column `refundTransactionId`
         $this->dropIndex(
-            'idx-holiday-refund-refundTransactionId',
-            'holiday_refund'
+            'idx-visa-refund-refundTransactionId',
+            'visa_refund'
         );
 
-        $this->dropTable('{{%holiday_refund}}');
+        $this->dropTable('{{%visa_refund}}');
     }
 }

@@ -21,7 +21,7 @@ $this->registerJs(
 );
 
 $this->registerJsFile(
-    '@web/js/ticket.js',
+    '@web/js/flight.js',
     ['depends' => [JqueryAsset::className()]]
 );
 ?>
@@ -59,7 +59,8 @@ $this->registerJsFile(
                         <div class="col-md">
                             <div class="form-group">
                                 <div class="custom-control custom-checkbox">
-                                    <input class="custom-control-input" type="checkbox" id="customCheckbox1" name="invoice">
+                                    <input class="custom-control-input" type="checkbox" id="customCheckbox1"
+                                           name="invoice">
                                     <label for="customCheckbox1" class="custom-control-label">Create Invoice</label>
                                 </div>
                             </div>
@@ -67,7 +68,8 @@ $this->registerJsFile(
                         <div class="col-md">
                             <div class="form-group">
                                 <div class="custom-control custom-radio">
-                                    <input class="custom-control-input" type="radio" id="customRadio1" name="group" value="1" checked="checked">
+                                    <input class="custom-control-input" type="radio" id="customRadio1" name="group"
+                                           value="1" checked="checked">
                                     <label for="customRadio1" class="custom-control-label">Group Invoice</label>
                                 </div>
                             </div>
@@ -75,19 +77,13 @@ $this->registerJsFile(
                         <div class="col-md">
                             <div class="form-group">
                                 <div class="custom-control custom-radio">
-                                    <input class="custom-control-input" type="radio" id="customRadio2" name="group"  value="2">
-                                    <label for="customRadio2" class="custom-control-label">Individual Ticket Invoice</label>
+                                    <input class="custom-control-input" type="radio" id="customRadio2" name="group"
+                                           value="2">
+                                    <label for="customRadio2" class="custom-control-label">Individual Ticket
+                                        Invoice</label>
                                 </div>
                             </div>
                         </div>
-                        <!--<div class="col-md">
-                            <div class="form-group">
-                                <div class="custom-control custom-switch">
-                                    <input type="checkbox" class="custom-control-input" id="customSwitch1" name="customRequest">
-                                    <label class="custom-control-label" for="customSwitch1">Create Custom Request</label>
-                                </div>
-                            </div>
-                        </div>-->
                         <?php
                     } elseif (!$model->isNewRecord && !$model->invoice) {
                         ?>

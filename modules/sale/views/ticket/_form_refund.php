@@ -19,7 +19,7 @@ $this->registerJs(
     'url'
 );
 $this->registerJsFile(
-    '@web/js/ticket_refund.js',
+    '@web/js/flight_refund.js',
     ['depends' => [JqueryAsset::className()]]
 );
 ?>

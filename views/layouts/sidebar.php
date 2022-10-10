@@ -76,18 +76,53 @@ use hail812\adminlte\widgets\Menu;
                     [
                         'label' => 'Flight Management',
                         'icon' => 'plane',
-                        'badge' => '<span class="right badge badge-info">5</span>',
+                        'badge' => '<span class="right badge badge-info">6</span>',
                         'items' => [
-                            ['label' => 'Create Ticket ',  'icon' => 'plus', 'url' => ['/sale/ticket/create']],
+                            ['label' => 'Add Ticket ',  'icon' => 'plus-circle', 'url' => ['/sale/ticket/create']],
                             ['label' => 'Upload Ticket',  'icon' => 'upload', 'url' => ['/sale/ticket/upload']],
                             ['label' => 'Ticket List', 'icon' => 'list', 'url' => ['/sale/ticket/index']],
-                            ['label' => 'Refund List', 'icon' => 'minus', 'url' => ['/sale/ticket/refund-list']],
+                            ['label' => 'Ticket Supplier List', 'icon' => 'list', 'url' => ['/sale/ticket/ticket-supplier-list']],
+                            ['label' => 'Refund List', 'icon' => 'minus-circle', 'url' => ['/sale/ticket/refund-list']],
                             ['label' => 'Void List', 'icon' => 'circle', 'url' => ['/sale/ticket/void-list']],
+                        ]
+                    ],
+                    [
+                        'label' => 'Holiday Management',
+                        'icon' => 'suitcase',
+                        'badge' => '<span class="right badge badge-info">4</span>',
+                        'items' => [
+                            ['label' => 'Add Holiday ',  'icon' => 'plus-circle', 'url' => ['/sale/holiday/create']],
+                            ['label' => 'Holiday List', 'icon' => 'list', 'url' => ['/sale/holiday/index']],
+                            ['label' => 'Holiday Supplier List', 'icon' => 'list', 'url' => ['/sale/holiday/holiday-supplier-list']],
+                            ['label' => 'Refund List', 'icon' => 'minus-circle', 'url' => ['/sale/holiday/refund-list']],
+                        ]
+                    ],
+                    [
+                        'label' => 'Hotel Management',
+                        'icon' => 'hotel',
+                        'badge' => '<span class="right badge badge-info">4</span>',
+                        'items' => [
+                            ['label' => 'Add Hotel ',  'icon' => 'plus-circle', 'url' => ['/sale/hotel/create']],
+                            ['label' => 'Hotel List', 'icon' => 'list', 'url' => ['/sale/hotel/index']],
+                            ['label' => 'Hotel Supplier List', 'icon' => 'list', 'url' => ['/sale/hotel/hotel-supplier-list']],
+                            ['label' => 'Refund List', 'icon' => 'minus-circle', 'url' => ['/sale/hotel/refund-list']],
+                        ]
+                    ],
+                    [
+                        'label' => 'Visa Management',
+                        'icon' => 'passport',
+                        'badge' => '<span class="right badge badge-info">4</span>',
+                        'items' => [
+                            ['label' => 'Add Visa ',  'icon' => 'plus-circle', 'url' => ['/sale/visa/create']],
+                            ['label' => 'Visa List', 'icon' => 'list', 'url' => ['/sale/visa/index']],
+                            ['label' => 'Visa Supplier List', 'icon' => 'list', 'url' => ['/sale/visa/visa-supplier-list']],
+                            ['label' => 'Refund List', 'icon' => 'minus-circle', 'url' => ['/sale/visa/refund-list']],
                         ]
                     ],
                     ['label' => 'ACCOUNTS', 'header' => true],
                     ['label' => 'Bank Accounts', 'icon' => 'building', 'url' => ['/account/bank-account']],
-                    ['label' => 'Invoice', 'icon' => 'file-invoice', 'url' => ['/account/invoice/index']],
+                    ['label' => 'Invoice', 'icon' => 'file-invoice-dollar', 'url' => ['/account/invoice/index']],
+                    ['label' => 'Bill', 'icon' => 'money-bill', 'url' => ['/account/bill/index']],
                     ['label' => 'Ledger', 'icon' => 'book', 'url' => ['/account/ledger/index']],
                     ['label' => 'Payment Timeline', 'icon' => 'list', 'url' => ['/account/service-payment-timeline/index']],
                     ['label' => 'Simple Link', 'icon' => 'th', 'badge' => '<span class="right badge badge-danger">New</span>'],

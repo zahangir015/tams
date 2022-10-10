@@ -2,7 +2,11 @@
 
 namespace app\modules\account\models;
 
+use app\modules\sale\models\Supplier;
+use app\modules\sale\models\ticket\TicketSupplier;
 use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%bill}}".
@@ -26,12 +30,12 @@ use Yii;
  * @property Supplier $supplier
  * @property TicketSupplier[] $ticketSuppliers
  */
-class Bill extends \yii\db\ActiveRecord
+class Bill extends ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%bill}}';
     }
@@ -39,7 +43,7 @@ class Bill extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['uid', 'supplierId', 'billNumber', 'date', 'createdBy', 'createdAt'], 'required'],
@@ -51,14 +55,14 @@ class Bill extends \yii\db\ActiveRecord
             [['billNumber'], 'string', 'max' => 64],
             [['uid'], 'unique'],
             [['billNumber'], 'unique'],
-            [['supplierId'], 'exist', 'skipOnError' => true, 'targetClass' => Supplier::className(), 'targetAttribute' => ['supplierId' => 'id']],
+            [['supplierId'], 'exist', 'skipOnError' => true, 'targetClass' => Supplier::class, 'targetAttribute' => ['supplierId' => 'id']],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),
@@ -82,20 +86,20 @@ class Bill extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Supplier]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getSupplier()
+    public function getSupplier(): ActiveQuery
     {
-        return $this->hasOne(Supplier::className(), ['id' => 'supplierId']);
+        return $this->hasOne(Supplier::class, ['id' => 'supplierId']);
     }
 
     /**
      * Gets query for [[TicketSuppliers]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getTicketSuppliers()
+    public function getTicketSuppliers(): ActiveQuery
     {
-        return $this->hasMany(TicketSupplier::className(), ['billId' => 'id']);
+        return $this->hasMany(TicketSupplier::class, ['billId' => 'id']);
     }
 }

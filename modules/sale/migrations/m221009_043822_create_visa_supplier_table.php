@@ -3,63 +3,66 @@
 use yii\db\Migration;
 
 /**
- * Handles the creation of table `{{%holiday_supplier}}`.
+ * Handles the creation of table `{{%visa_supplier}}`.
  */
-class m221003_183538_create_holiday_supplier_table extends Migration
+class m221009_043822_create_visa_supplier_table extends Migration
 {
     /**
      * {@inheritdoc}
      */
     public function safeUp()
     {
-        $this->createTable('{{%holiday_supplier}}', [
+        $this->createTable('{{%visa_supplier}}', [
             'id' => $this->primaryKey(),
             'uid' => $this->string(36)->notNull()->unique(),
-            'holidayId' => $this->integer(11)->notNull(),
+            'motherVisaSupplierId' => $this->integer(11)->null(),
+            'visaId' => $this->integer(11)->notNull(),
             'billId' => $this->integer(11)->null(),
+            'countryId' => $this->integer()->notNull(),
             'supplierId' => $this->integer(11)->notNull(),
             'supplierRef' => $this->string()->notNull(),
+            'paxName' => $this->string()->notNull(),
             'issueDate' => $this->date()->notNull(),
-            'departureDate' => $this->date()->notNull(),
             'refundRequestDate' => $this->date()->null(),
             'type' => "ENUM('New', 'Refund', 'Refund Requested') NOT NULL" ,
             'serviceDetails' => $this->string()->null(),
             'quantity' => $this->integer()->notNull(),
-            'unitPrice' => $this->integer()->notNull(),
+            'unitPrice' => $this->double()->notNull(),
             'costOfSale' => $this->double()->notNull(),
+            'securityDeposit' => $this->double()->null(),
             'paidAmount' => $this->double()->defaultValue(0),
             'paymentStatus' => "ENUM('Full Paid','Partially Paid','Due','Refund Adjustment') DEFAULT 'Due'",
             'status' => $this->boolean()->defaultValue(1),
         ]);
 
-        // creates index for column `holidayId`
+        // creates index for column `visaId`
         $this->createIndex(
-            'idx-holiday-supplier-holidayId',
-            'holiday_supplier',
-            'holidayId'
+            'idx-visa-supplier-visaId',
+            'visa_supplier',
+            'visaId'
         );
 
-        // add foreign key for table `holiday`
+        // add foreign key for table `visaId`
         $this->addForeignKey(
-            'fk-holiday-supplier-holidayId',
-            'holiday_supplier',
-            'holidayId',
-            'holiday',
+            'fk-visa-supplier-visaId',
+            'visa_supplier',
+            'visaId',
+            'visa',
             'id',
             'CASCADE'
         );
 
         // creates index for column `supplierId`
         $this->createIndex(
-            'idx-holiday-supplier-supplierId',
-            'holiday_supplier',
+            'idx-visa-supplier-supplierId',
+            'visa_supplier',
             'supplierId'
         );
 
         // add foreign key for table `supplier`
         $this->addForeignKey(
-            'fk-holiday-supplier-supplierId',
-            'holiday_supplier',
+            'fk-visa-supplier-supplierId',
+            'visa_supplier',
             'supplierId',
             'supplier',
             'id',
@@ -68,15 +71,15 @@ class m221003_183538_create_holiday_supplier_table extends Migration
 
         // creates index for column `billId`
         $this->createIndex(
-            'idx-holiday-supplier-billId',
-            'holiday_supplier',
+            'idx-visa-supplier-billId',
+            'visa_supplier',
             'billId'
         );
 
         // add foreign key for table `bill`
         $this->addForeignKey(
-            'fk-holiday-supplier-billId',
-            'holiday_supplier',
+            'fk-visa-supplier-billId',
+            'visa_supplier',
             'billId',
             'bill',
             'id',
@@ -89,42 +92,42 @@ class m221003_183538_create_holiday_supplier_table extends Migration
      */
     public function safeDown()
     {
-        // drops foreign key for table `holiday`
+        // drops foreign key for table `visa`
         $this->dropForeignKey(
-            'fk-holiday-supplier-holidayId',
-            'holiday_supplier'
+            'fk-visa-supplier-visaId',
+            'visa_supplier'
         );
 
-        // drops index for column `holidayId`
+        // drops index for column `visaId`
         $this->dropIndex(
-            'idx-holiday-supplier-holidayId',
-            'holiday_supplier'
+            'idx-visa-supplier-visaId',
+            'visa_supplier'
         );
 
         // drops foreign key for table `supplier`
         $this->dropForeignKey(
-            'fk-holiday-supplier-supplierId',
-            'holiday_supplier'
+            'fk-visa-supplier-supplierId',
+            'visa_supplier'
         );
 
         // drops index for column `supplierId`
         $this->dropIndex(
-            'idx-holiday-supplier-supplierId',
-            'holiday_supplier'
+            'idx-visa-supplier-supplierId',
+            'visa_supplier'
         );
 
         // drops foreign key for table `bill`
         $this->dropForeignKey(
-            'fk-holiday-supplier-billId',
-            'holiday_supplier'
+            'fk-visa-supplier-billId',
+            'visa_supplier'
         );
 
         // drops index for column `billId`
         $this->dropIndex(
-            'idx-holiday-supplier-billId',
-            'holiday_supplier'
+            'idx-visa-supplier-billId',
+            'visa_supplier'
         );
 
-        $this->dropTable('{{%holiday_supplier}}');
+        $this->dropTable('{{%visa_supplier}}');
     }
 }
