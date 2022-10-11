@@ -27,12 +27,11 @@ $this->registerJsFile(
 ?>
 
 <div class="hotel-form">
-
     <?php $form = ActiveForm::begin(['class' => 'form']); ?>
 
     <?php if ($model->isNewRecord) : ?>
         <div class="card card-custom mb-5 sticky-top">
-            <div class="card-header bg-lightblue">
+            <div class="card-header">
                 <div class="card-title">
                     <h5 class="card-label">
                         Create Hotel
@@ -50,10 +49,7 @@ $this->registerJsFile(
             <div class="card-body">
                 <div class="row">
                     <div class="col-md">
-                        <?= $form->field($model, 'customerId')->widget(Select2::class, Helper::ajaxDropDown('customerId', '/sales/customer/get-customers', true, 'customerId'))->label('Customer') ?>
-                    </div>
-                    <div class="col-md">
-                        <?= $form->field($model, 'identificationNumber')->textInput(['value' => ($model->isNewRecord) ? Helper::hotelIdentificationNumber() : $model->identificationNumber, 'readOnly' => 'readOnly']) ?>
+                        <?= $form->field($model, 'customerId')->widget(Select2::class, Helper::ajaxDropDown('customerId', '/sale/customer/get-customers', true, 'customerId'))->label('Customer') ?>
                     </div>
                     <div class="col-md">
                         <?= $form->field($model, 'issueDate')->widget(DateRangePicker::class, Helper::dateFormat(false, true)) ?>
@@ -76,6 +72,11 @@ $this->registerJsFile(
                         </div>
                     </div>
                     <div class="card-body">
+                        <div class="row">
+                            <div class="col-md">
+                                <?= $form->field($model, 'identificationNumber')->textInput(['value' => ($model->isNewRecord) ? Helper::hotelIdentificationNumber() : $model->identificationNumber, 'readOnly' => 'readOnly']) ?>
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="col-md">
                                 <?= $form->field($model, 'costOfSale')->textInput(['type' => 'number', 'value' => 0, 'min' => 0, 'step' => 'any', 'readOnly' => 'readOnly'])->label('Total Cost Of Sale') ?>
@@ -137,7 +138,6 @@ $this->registerJsFile(
                     </div>
                 </div>
             </div>
-
             <div class="col-md-7 col-lg-8">
                 <div class="card-holder">
                     <?= $this->render('supplier', ['row' => 0, 'model' => $model, 'hotelSupplier' => $model->hotelSupplier ?? $hotelSupplier, 'form' => $form]); ?>
@@ -147,5 +147,4 @@ $this->registerJsFile(
     <?php endif; ?>
 
     <?php ActiveForm::end(); ?>
-
 </div>

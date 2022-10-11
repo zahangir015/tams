@@ -35,9 +35,9 @@ $this->registerJsFile(
         <div class="card card-custom mb-5 sticky-top">
             <div class="card-header">
                 <div class="card-title">
-                    <h3 class="card-label">
-                        Create Holiday <i class="mr-2"></i><small class="">try to scroll the page</small>
-                    </h3>
+                    <h5 class="card-label">
+                        Create Holiday
+                    </h5>
                 </div>
                 <div class="card-toolbar float-right">
                     <a href="#" id="addButton" class="btn btn-success font-weight-bolder mr-2"
@@ -59,47 +59,69 @@ $this->registerJsFile(
                     <div class="col-md">
                         <?= $form->field($model, 'holidayCategoryId')->dropdownList($holidayCategories, ['prompt' => ''])->label('Category') ?>
                     </div>
-                    <div class="col-md">
-                        <?= $form->field($model, 'route')->textInput(['maxlength' => true]) ?>
-                    </div>
                 </div>
-                <div class="row">
-                    <div class="col-md">
-                        <?= $form->field($model, 'identificationNumber')->textInput(['value' => ($model->isNewRecord) ? Helper::holidayIdentificationNumber() : $model->identificationNumber, 'readOnly' => 'readOnly']) ?>
-                    </div>
-                    <div class="col-md">
-                        <?= $form->field($model, 'costOfSale')->textInput(['type' => 'number', 'value' => 0, 'min' => 0, 'step' => 'any', 'readOnly' => 'readOnly'])->label('Total Cost Of Sale') ?>
-                    </div>
-                    <div class="col-md">
-                        <?= $form->field($model, 'quoteAmount')->textInput(['type' => 'number', 'value' => 0, 'min' => 0, 'step' => 'any', 'readOnly' => 'readOnly'])->label('Total Quote Amount') ?>
-                    </div>
-                    <div class="col-md">
-                        <?= $form->field($model, 'netProfit')->textInput(['type' => 'number', 'value' => 0, 'step' => 'any', 'readOnly' => 'readOnly'])->label('Net Profit') ?>
-                    </div>
-                </div>
-                <?php
-                if ($model->isNewRecord) {
-                    ?>
-                    <div class="col-md">
-                        <div class="form-group">
-                            <div class="custom-control custom-radio">
-                                <input class="custom-control-input" type="radio" id="customRadio1"
-                                       name="invoice" value="1">
-                                <label for="customRadio1" class="custom-control-label">Create
-                                    Invoice</label>
-                            </div>
+            </div>
+        </div>
+        <div class="row g-5">
+            <div class="col-md-5 col-lg-4 order-md-last">
+                <div class="card card-custom card-border mb-7">
+                    <div class="card-header bg-primary">
+                        <div class="card-title">
+                            <h5 class="card-label" id="card-label-0">Summary</h5>
                         </div>
                     </div>
-
-                    <?php
-                }
-                ?>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md">
+                                <?= $form->field($model, 'identificationNumber')->textInput(['value' => ($model->isNewRecord) ? Helper::holidayIdentificationNumber() : $model->identificationNumber, 'readOnly' => 'readOnly']) ?>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md">
+                                <?= $form->field($model, 'route')->textInput(['maxlength' => true]) ?>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md">
+                                <?= $form->field($model, 'costOfSale')->textInput(['type' => 'number', 'value' => 0, 'min' => 0, 'step' => 'any', 'readOnly' => 'readOnly'])->label('Total Cost Of Sale') ?>
+                            </div>
+                            <div class="col-md">
+                                <?= $form->field($model, 'quoteAmount')->textInput(['type' => 'number', 'value' => 0, 'min' => 0, 'step' => 'any', 'readOnly' => 'readOnly'])->label('Total Quote Amount') ?>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md">
+                                <?= $form->field($model, 'netProfit')->textInput(['type' => 'number', 'value' => 0, 'step' => 'any', 'readOnly' => 'readOnly'])->label('Net Profit') ?>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <?php
+                            if ($model->isNewRecord) {
+                                ?>
+                                <div class="col-md">
+                                    <div class="form-group">
+                                        <div class="custom-control custom-radio">
+                                            <input class="custom-control-input" type="radio" id="customRadio1"
+                                                   name="invoice" value="1">
+                                            <label for="customRadio1" class="custom-control-label">Create
+                                                Invoice</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php
+                            }
+                            ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-7 col-lg-8">
+                <div class="card-holder">
+                    <?= $this->render('supplier', ['row' => 0, 'model' => $model, 'holidaySupplier' => $model->holidaySupplier ?? $holidaySupplier, 'form' => $form, 'holidayCategories' => $holidayCategories]); ?>
+                </div>
             </div>
         </div>
     <?php endif; ?>
-    <div class="card-holder">
-        <?= $this->render('supplier', ['row' => 0, 'model' => $model, 'holidaySupplier' => $model->holidaySupplier ?? $holidaySupplier, 'form' => $form, 'holidayCategories' => $holidayCategories]); ?>
-    </div>
-    <?php ActiveForm::end(); ?>
 
+    <?php ActiveForm::end(); ?>
 </div>

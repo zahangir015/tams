@@ -30,7 +30,7 @@ function remove(row) {
 
 function titleUpdate(row) {
     while (($('#card-label-' + (row + 1)).length !== 0)) {
-        $('#card-label-' + (row + 1)).text('Ticket ' + (row + 1))
+        $('#card-label-' + (row + 1)).text('Hotel Supplier ' + (row + 1))
         row++
     }
 }
@@ -46,15 +46,6 @@ function updateSummery() {
     calculateQuoteAmount();
     calculateCostOfSale();
     calculateNetProfit();
-}
-
-function titleUpdate() {
-    totalSupplierCounter = $('.supplier_sl').length;
-    if (totalSupplierCounter) {
-        $(".supplier_sl").each(function (index) {
-            $(this).text(++index)
-        });
-    }
 }
 
 function calculateNetProfit() {

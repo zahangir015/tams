@@ -30,7 +30,7 @@ function remove(row) {
 
 function titleUpdate(row) {
     while (($('#card-label-' + (row + 1)).length !== 0)) {
-        $('#card-label-' + (row + 1)).text('Holiday Supplier ' + (row + 1))
+        $('#card-label-' + (row + 1)).text('Visa Supplier ' + (row + 1))
         row++
     }
 }
@@ -82,15 +82,4 @@ function calculateCostOfSale() {
         return false;
     }
     calculateNetProfit();
-}
-
-function holidayTypeChange(el) {
-    let type = el.value
-    if (type === 'Refund') {
-        $(el).parents('.refundCalc').find('.quantity').attr('readOnly', false)
-        $(el).parents('.refundCalc').find('.perServicePrice').attr('readOnly', false)
-    } else {
-        $(el).parents('.refundCalc').find('.quantity').attr('readOnly', true)
-        $(el).parents('.refundCalc').find('.perServicePrice').attr('readOnly', true)
-    }
 }

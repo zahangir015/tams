@@ -6,6 +6,7 @@ use app\modules\sale\models\hotel\Hotel;
 use app\modules\sale\models\hotel\HotelSearch;
 use app\controllers\ParentController;
 use app\modules\sale\models\hotel\HotelSupplier;
+use Yii;
 use yii\bootstrap4\ActiveForm;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -121,11 +122,11 @@ class HotelController extends ParentController
     public function actionAddSupplier($row): string
     {
         $model = new Hotel();
-        $holidaySupplier = new HotelSupplier();
+        $hotelSupplier = new HotelSupplier();
         return $this->renderAjax('supplier', [
             'row' => $row,
             'model' => $model,
-            'holidaySupplier' => $holidaySupplier,
+            'hotelSupplier' => $hotelSupplier,
             'form' => ActiveForm::begin(['class' => 'form'])
         ]);
     }

@@ -3,8 +3,10 @@
 namespace app\modules\sale\controllers;
 
 use app\modules\sale\models\visa\Visa;
+use app\modules\sale\models\visa\VisaSupplier;
 use app\modules\sale\models\VisaSearch;
 use app\controllers\ParentController;
+use yii\bootstrap4\ActiveForm;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
@@ -13,24 +15,6 @@ use yii\filters\VerbFilter;
  */
 class VisaController extends ParentController
 {
-    /**
-     * @inheritDoc
-     */
-    public function behaviors()
-    {
-        return array_merge(
-            parent::behaviors(),
-            [
-                'verbs' => [
-                    'class' => VerbFilter::className(),
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
-                ],
-            ]
-        );
-    }
-
     /**
      * Lists all Visa models.
      *
@@ -68,6 +52,7 @@ class VisaController extends ParentController
     public function actionCreate()
     {
         $model = new Visa();
+        $visaSupplier = new VisaSupplier();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
@@ -79,6 +64,7 @@ class VisaController extends ParentController
 
         return $this->render('create', [
             'model' => $model,
+            'visaSupplier' => $visaSupplier,
         ]);
     }
 
@@ -130,5 +116,17 @@ class VisaController extends ParentController
         }
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+    }
+
+    public function actionAddSupplier($row): string
+    {
+        $model = new Visa();
+        $visaSupplier = new VisaSupplier();
+        return $this->renderAjax('supplier', [
+            'row' => $row,
+            'model' => $model,
+            'visaSupplier' => $visaSupplier,
+            'form' => ActiveForm::begin(['class' => 'form'])
+        ]);
     }
 }
