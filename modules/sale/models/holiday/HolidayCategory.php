@@ -2,6 +2,7 @@
 
 namespace app\modules\sale\models\holiday;
 
+use app\traits\BehaviorTrait;
 use Yii;
 
 /**
@@ -20,10 +21,11 @@ use Yii;
  */
 class HolidayCategory extends \yii\db\ActiveRecord
 {
+    use BehaviorTrait;
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%holiday_category}}';
     }
@@ -31,10 +33,10 @@ class HolidayCategory extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            [['uid', 'name', 'createdBy', 'createdAt'], 'required'],
+            [['name', 'status'], 'required'],
             [['status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['name'], 'string', 'max' => 30],
@@ -46,7 +48,7 @@ class HolidayCategory extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),

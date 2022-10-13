@@ -91,6 +91,7 @@ use hail812\adminlte\widgets\Menu;
                         'icon' => 'suitcase',
                         'badge' => '<span class="right badge badge-info">4</span>',
                         'items' => [
+                            ['label' => 'Category List ',  'icon' => 'list', 'url' => ['/sale/holiday-category/index']],
                             ['label' => 'Add Holiday ',  'icon' => 'plus-circle', 'url' => ['/sale/holiday/create']],
                             ['label' => 'Holiday List', 'icon' => 'list', 'url' => ['/sale/holiday/index']],
                             ['label' => 'Holiday Supplier List', 'icon' => 'list', 'url' => ['/sale/holiday/holiday-supplier-list']],

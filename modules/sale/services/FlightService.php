@@ -306,7 +306,7 @@ class FlightService
             $ticketRefundBatchData[] = $ticketRefund->getAttributes(null, ['id']);
         }
 
-        // Invoice Details insert process
+        // Ticket Refund batch insert process
         if (empty($ticketRefundBatchData)) {
             return ['error' => true, 'message' => 'Ticket Refund batch data process failed.'];
         }

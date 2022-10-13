@@ -1,7 +1,5 @@
 <?php
 
-use app\components\GlobalConstant;
-use app\modules\sale\components\ServiceConstant;
 use kartik\daterange\DateRangePicker;
 use kartik\select2\Select2;
 use yii\helpers\Html;
@@ -51,7 +49,7 @@ $this->registerJsFile(
             <div class="card-body">
                 <div class="row">
                     <div class="col-md">
-                        <?= $form->field($model, 'customerId')->widget(Select2::class, Helper::ajaxDropDown('customerId', '/sales/customer/get-customers', true, 'customerId'))->label('Customer') ?>
+                        <?= $form->field($model, 'customerId')->widget(Select2::class, Helper::ajaxDropDown('customerId', '/sale/customer/get-customers', true, 'customerId'))->label('Customer') ?>
                     </div>
                     <div class="col-md">
                         <?= $form->field($model, 'issueDate')->widget(DateRangePicker::class, Helper::dateFormat(false, true)) ?>

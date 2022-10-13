@@ -2,20 +2,19 @@
 
 namespace app\modules\sale\services;
 
-use app\components\GlobalConstant;
 use app\components\Helper;
 use app\modules\account\models\Invoice;
 use app\modules\account\services\InvoiceService;
 use app\modules\account\services\LedgerService;
-use app\modules\account\services\PaymentTimelineService;
 use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\Customer;
+use app\modules\sale\models\holiday\Holiday;
+use app\modules\sale\models\holiday\HolidaySupplier;
 use app\modules\sale\models\Supplier;
 use app\modules\sale\repositories\HolidayRepository;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\db\Exception;
-use yii\web\UploadedFile;
 
 class HolidayService
 {
@@ -31,71 +30,73 @@ class HolidayService
         return $this->holidayRepository->findOne($uid, $withArray);
     }
 
-    public static function storeHoliday(array $requestData): bool
+    public function storeHoliday(array $requestData): bool
     {
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
-            if (!empty($requestData['Ticket']) || !empty($requestData['TicketSupplier'])) {
-                $tickets = [];
+            if (!empty($requestData['Holiday']) || !empty($requestData['HolidaySupplier'])) {
+                $services = [];
                 $supplierLedgerArray = [];
-                $customer = Customer::findOne(['id' => $requestData['Ticket'][0]['customerId']]);
+                $customer = Customer::findOne(['id' => $requestData['Holiday']['customerId']]);
 
-                foreach ($requestData['Ticket'] as $key => $ticketData) {
-                    $ticket = new Ticket();
-                    $ticket->scenario = 'create';
-
-                    if ($ticket->load(['Ticket' => $ticketData])) {
-                        $ticket = self::processTicketData($ticket);
-                        $ticket = $this->holidayRepository->store($ticket);
-                        if ($ticket->hasErrors()) {
-                            throw new Exception('Ticket create failed - ' . Helper::processErrorMessages($ticket->getErrors()));
-                        }
-
-                        // Ticket Supplier data process
-                        $ticketSupplier = new TicketSupplier();
-                        $ticketSupplier->load(['TicketSupplier' => $ticket->getAttributes(['issueDate', 'eTicket', 'pnrCode', 'airlineId', 'paymentStatus', 'type', 'costOfSale', 'baseFare', 'tax'])]);
-                        $ticketSupplier->load(['TicketSupplier' => $requestData['TicketSupplier'][$key]]);
-                        $ticketSupplier->ticketId = $ticket->id;
-                        $ticketSupplier->serviceCharge = Airline::findOne($ticket->airlineId)->serviceCharge;
-                        $ticketSupplier = $this->holidayRepository->store($ticketSupplier);
-                        if ($ticketSupplier->hasErrors()) {
-                            throw new Exception('Ticket Supplier create failed - ' . Helper::processErrorMessages($ticketSupplier->getErrors()));
-                        }
-
-                        // Invoice details data process
-                        if (isset($requestData['invoice'])) {
-                            $tickets[] = [
-                                'refId' => $ticket->id,
-                                'refModel' => Ticket::class,
-                                'dueAmount' => $ticket->quoteAmount,
-                                'paidAmount' => 0,
-                                'supplierData' => [
-                                    [
-                                        'refId' => $ticketSupplier->id,
-                                        'refModel' => $ticketSupplier::class,
-                                        'subRefModel' => Invoice::class,
-                                        'dueAmount' => $ticketSupplier->costOfSale,
-                                        'paidAmount' => $ticketSupplier->paidAmount,
-                                    ]
-                                ]
-                            ];
-                        }
-
-                        // Supplier ledger data process
-                        if (isset($supplierLedgerArray[$ticketSupplier->supplier->id])) {
-                            $supplierLedgerArray[$ticketSupplier->supplier->id]['credit'] += $ticketSupplier->costOfSale;
-                        } else {
-                            $supplierLedgerArray[$ticketSupplier->supplier->id] = [
-                                'debit' => 0,
-                                'credit' => $ticketSupplier->costOfSale,
-                                'refId' => $ticketSupplier->supplier->id,
-                                'refModel' => Supplier::class,
-                                'subRefId' => null
-                            ];
-                        }
-                    } else {
-                        throw new Exception('Ticket data loading failed - ' . Helper::processErrorMessages($ticket->getErrors()));
+                $holiday = new Holiday();
+                if ($holiday->load($requestData)) {
+                    $holiday->type = ServiceConstant::TYPE['New'];
+                    $holiday->customerCategory = $customer->category;
+                    $holiday = $this->holidayRepository->store($holiday);
+                    if ($holiday->hasErrors()) {
+                        throw new Exception('Holiday create failed - ' . Helper::processErrorMessages($holiday->getErrors()));
                     }
+
+                    // Holiday Supplier data process
+                    $holidaySupplierBatchData = [];
+                    foreach ($requestData['HolidaySupplier'] as $singleSupplierArray) {
+                        $holidaySupplier = new HolidaySupplier();
+                        if (!$holidaySupplier->load($requestData)  || !$holidaySupplier->validate()) {
+                            throw new Exception('Holiday Supplier validation failed - ' . Helper::processErrorMessages($holidaySupplier->getErrors()));
+                        }
+                        $holidaySupplierBatchData[] = $holidaySupplier->getAttributes(null, ['id']);
+                    }
+                    if (empty($holidaySupplierBatchData)) {
+                        throw new Exception('Holiday Supplier batch data can not be empty.');
+                    }
+                    if (!$this->holidayRepository->batchStore('holiday_supplier`', $holiday)) {
+                        throw new Exception('Holiday Supplier batch insert failed.');
+                    }
+
+                    // Invoice details data process
+                    if (isset($requestData['invoice'])) {
+                        $services[] = [
+                            'refId' => $holiday->id,
+                            'refModel' => Holiday::class,
+                            'dueAmount' => $holiday->quoteAmount,
+                            'paidAmount' => 0,
+                            'supplierData' => [
+                                [
+                                    'refId' => $holidaySupplier->id,
+                                    'refModel' => HolidaySupplier::class,
+                                    'subRefModel' => Invoice::class,
+                                    'dueAmount' => $holidaySupplier->costOfSale,
+                                    'paidAmount' => $holidaySupplier->paidAmount,
+                                ]
+                            ]
+                        ];
+                    }
+
+                    // Supplier ledger data process
+                    if (isset($supplierLedgerArray[$ticketSupplier->supplier->id])) {
+                        $supplierLedgerArray[$ticketSupplier->supplier->id]['credit'] += $ticketSupplier->costOfSale;
+                    } else {
+                        $supplierLedgerArray[$ticketSupplier->supplier->id] = [
+                            'debit' => 0,
+                            'credit' => $ticketSupplier->costOfSale,
+                            'refId' => $ticketSupplier->supplier->id,
+                            'refModel' => Supplier::class,
+                            'subRefId' => null
+                        ];
+                    }
+                } else {
+                    throw new Exception('Ticket data loading failed - ' . Helper::processErrorMessages($ticket->getErrors()));
                 }
 
                 // Invoice process and create

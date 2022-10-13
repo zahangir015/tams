@@ -67,9 +67,9 @@ class HolidayController extends ParentController
         $model = new Holiday();
         $holidaySupplier = new HolidaySupplier();
         $holidayCategories = ArrayHelper::map(HolidayCategory::findAll(['status' => GlobalConstant::ACTIVE_STATUS]), 'id', 'name');
-        if ($this->request->isPost) {
+        if (Yii::$app->request->isPost) {
             $requestData = Yii::$app->request->post();
-            $response = HolidayService::storeHoliday($requestData);
+            $response = $this->holidayService->storeHoliday($requestData);
             if ($response) {
                 return $this->redirect('index');
             }

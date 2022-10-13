@@ -4,6 +4,7 @@ namespace app\modules\sale\models\holiday;
 
 use app\modules\account\models\Invoice;
 use app\modules\sale\models\Customer;
+use app\traits\BehaviorTrait;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
@@ -43,6 +44,7 @@ use yii\db\ActiveRecord;
  */
 class Holiday extends ActiveRecord
 {
+    use BehaviorTrait;
     /**
      * {@inheritdoc}
      */
@@ -57,7 +59,7 @@ class Holiday extends ActiveRecord
     public function rules(): array
     {
         return [
-            [['uid', 'holidayCategoryId', 'identificationNumber', 'customerId', 'customerCategory', 'type', 'issueDate', 'quoteAmount', 'costOfSale', 'netProfit', 'route', 'createdBy', 'createdAt'], 'required'],
+            [['holidayCategoryId', 'identificationNumber', 'customerId', 'customerCategory', 'type', 'issueDate', 'quoteAmount', 'costOfSale', 'netProfit', 'route'], 'required'],
             [['motherId', 'invoiceId', 'holidayCategoryId', 'customerId', 'isOnlineBooked', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['type', 'paymentStatus'], 'string'],
             [['issueDate', 'departureDate', 'refundRequestDate'], 'safe'],

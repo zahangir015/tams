@@ -42,7 +42,7 @@ use yii\bootstrap4\Html;
         </div>
         <div class="row calcData">
             <div class="col-md">
-                <?= $form->field($holidaySupplier, 'holidayCategoryId')->dropdownList($holidayCategories, ['prompt' => ''])->label('Category') ?>
+                <?= $form->field($holidaySupplier, "[$row]holidayCategoryId")->dropdownList($holidayCategories, ['prompt' => ''])->label('Category') ?>
             </div>
             <div class="col-md">
                 <?= $form->field($holidaySupplier, "[$row]qty")->textInput(['type' => 'number', 'value' => 0, 'onChange' => 'calculateQuoteAmount()', 'min' => 0, 'class' => 'form-control quantity'])->label('Quantity') ?>
