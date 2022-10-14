@@ -28,7 +28,7 @@ use yii\bootstrap4\Html;
     <div class="card-body">
         <div class="row">
             <div class="col-md">
-                <?= $form->field($holidaySupplier, "[$row]supplierId")->widget(Select2::class, Helper::ajaxDropDown('supplierId', '/sale/supplier/get-suppliers', true, 'supplierId'.$row))->label('Supplier') ?>
+                <?= $form->field($holidaySupplier, "[$row]supplierId")->widget(Select2::class, Helper::ajaxDropDown('supplierId', '/sale/supplier/get-suppliers', true, 'supplierId' . $row, 'supplier', [$holidaySupplier->supplier->id => $holidaySupplier->supplier->company]))->label('Supplier') ?>
             </div>
             <div class="col-md">
                 <?= $form->field($holidaySupplier, "[$row]supplierRef")->textInput(['maxlength' => true]); ?>
@@ -45,13 +45,13 @@ use yii\bootstrap4\Html;
                 <?= $form->field($holidaySupplier, "[$row]holidayCategoryId")->dropdownList($holidayCategories, ['prompt' => ''])->label('Category') ?>
             </div>
             <div class="col-md">
-                <?= $form->field($holidaySupplier, "[$row]qty")->textInput(['type' => 'number', 'value' => 0, 'onChange' => 'calculateQuoteAmount()', 'min' => 0, 'class' => 'form-control quantity'])->label('Quantity') ?>
+                <?= $form->field($holidaySupplier, "[$row]quantity")->textInput(['type' => 'number', 'value' => $holidaySupplier->isNewrecord ? 0 : $holidaySupplier->quantity, 'onChange' => 'calculateQuoteAmount()', 'min' => 0, 'class' => 'form-control quantity'])->label('Quantity') ?>
             </div>
             <div class="col-md">
-                <?= $form->field($holidaySupplier, "[$row]price")->textInput(['type' => 'number', 'value' => 0, 'onChange' => 'calculateQuoteAmount()', 'min' => 0, 'class' => 'form-control perServicePrice'])->label('Quote Rate') ?>
+                <?= $form->field($holidaySupplier, "[$row]unitPrice")->textInput(['type' => 'number', 'value' => $holidaySupplier->isNewrecord ? 0 : $holidaySupplier->unitPrice, 'onChange' => 'calculateQuoteAmount()', 'min' => 0, 'class' => 'form-control perServicePrice'])->label('Quote Rate') ?>
             </div>
             <div class="col-md">
-                <?= $form->field($holidaySupplier, "[$row]costOfSale")->textInput(['type' => 'number', 'value' => 0, 'onChange' => 'calculateCostOfSale()', 'min' => 0, 'class' => 'form-control supplierCostOfSale']) ?>
+                <?= $form->field($holidaySupplier, "[$row]costOfSale")->textInput(['type' => 'number', 'value' => $holidaySupplier->isNewrecord ? 0 : $holidaySupplier->costOfSale, 'onChange' => 'calculateCostOfSale()', 'min' => 0, 'class' => 'form-control supplierCostOfSale']) ?>
             </div>
         </div>
         <div class="row">

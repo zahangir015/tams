@@ -3,6 +3,7 @@
 namespace app\modules\sale\repositories;
 
 use app\modules\sale\models\holiday\Holiday;
+use Yii;
 use yii\db\ActiveRecord;
 
 class HolidayRepository

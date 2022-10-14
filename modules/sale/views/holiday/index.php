@@ -1,10 +1,12 @@
 <?php
 
+use app\components\GlobalConstant;
+use app\modules\sale\components\ServiceConstant;
+use app\modules\sale\models\holiday\Holiday;
+use kartik\daterange\DateRangePicker;
 use yii\helpers\Html;
 use yii\helpers\Url;
-use yii\grid\ActionColumn;
-use yii\grid\GridView;
-use yii\widgets\Pjax;
+use kartik\grid\GridView;
 /* @var $this yii\web\View */
 /* @var $searchModel app\modules\sale\models\holiday\HolidaySearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -13,55 +15,140 @@ $this->title = Yii::t('app', 'Holidays');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="holiday-index">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <p>
-        <?= Html::a(Yii::t('app', 'Create Holiday'), ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
-    <?php Pjax::begin(); ?>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
-            'uid',
+            ['class' => 'kartik\grid\SerialColumn'],
             'motherId',
-            'invoiceId',
+            [
+                'attribute' => 'invoice',
+                'value' => function ($model) {
+                    return $model->invoice->invoiceNumber;
+                },
+                'label' => 'Invoice',
+            ],
             'holidayCategoryId',
-            //'identificationNumber',
-            //'customerId',
-            //'customerCategory',
-            //'type',
-            //'issueDate',
-            //'departureDate',
-            //'refundRequestDate',
-            //'quoteAmount',
-            //'costOfSale',
-            //'netProfit',
-            //'receivedAmount',
-            //'paymentStatus',
-            //'isOnlineBooked',
-            //'route',
+            'identificationNumber',
+            [
+                'attribute' => 'customer',
+                'value' => function ($model) {
+                    return $model->customer->company . '(' . $model->customer->customerCode . ')';
+                },
+                'label' => 'Customer',
+            ],
+            [
+                'attribute' => 'customerCategory',
+                'value' => 'customerCategory',
+                'label' => 'Category',
+                'filter' => GlobalConstant::CUSTOMER_CATEGORY
+            ],
+            [
+                'attribute' => 'type',
+                'value' => 'type',
+                'filter' => GlobalConstant::TICKET_TYPE_FOR_CREATE
+            ],
+            [
+                'attribute' => 'issueDate',
+                'label' => 'ISSUE',
+                'format' => 'date',
+                'filter' => DateRangePicker::widget([
+                    'model' => $searchModel,
+                    'attribute' => 'issueDate',
+                    'pluginOptions' => [
+                        'format' => 'Y-m-d',
+                        'autoUpdateInput' => false
+                    ]
+                ])
+            ],
+            [
+                'attribute' => 'departureDate',
+                'label' => 'Departure',
+                'format' => 'date',
+                'filter' => DateRangePicker::widget([
+                    'model' => $searchModel,
+                    'attribute' => 'departureDate',
+                    'pluginOptions' => [
+                        'format' => 'Y-m-d',
+                        'autoUpdateInput' => false
+                    ]
+                ])
+            ],
+            [
+                'attribute' => 'refundRequestDate',
+                'label' => 'Refund Request',
+                'format' => 'date',
+                'filter' => DateRangePicker::widget([
+                    'model' => $searchModel,
+                    'attribute' => 'refundRequestDate',
+                    'pluginOptions' => [
+                        'format' => 'Y-m-d',
+                        'autoUpdateInput' => false
+                    ]
+                ])
+            ],
+            'quoteAmount',
+            'costOfSale',
+            'netProfit',
+            'receivedAmount',
+            'paymentStatus',
+            [
+                'attribute' => 'isOnlineBooked',
+                'value' => 'isOnlineBooked',
+                'filter' => GlobalConstant::BOOKING_TYPE
+            ],
+            'route',
             //'status',
             //'createdBy',
             //'createdAt',
             //'updatedBy',
             //'updatedAt',
             [
-                'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, Holiday $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'id' => $model->id]);
-                 }
+                'class' => 'kartik\grid\ActionColumn',
+                'urlCreator' => function ($action, $model) {
+                    return Url::to([$action, 'uid' => $model->uid]);
+                },
+                'template' => '{view} {update} {delete} {refund}',
+                'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
+                'updateOptions' => ['role' => 'modal-remote', 'title' => 'Update', 'data-toggle' => 'tooltip'],
+                'buttons' => [
+                    'refund' => function ($url, $model) {
+                        if ($model->type === ServiceConstant::TYPE['Refund'] || $model->type === ServiceConstant::TYPE['Refund Requested']) {
+                            return false;
+                        }
+                        return Html::a('<span class="fas fa-minus-square"></span>', ['/sale/ticket/refund', 'uid' => $model->uid], [
+                            'title' => 'Refund',
+                            'data-toggle' => 'tooltip'
+                        ]);
+                    },
+                ]
             ],
         ],
+        'toolbar' => [
+            [
+                'content' =>
+                    Html::a('<i class="fas fa-plus"></i>', ['/sale/ticket/create'], [
+                        'title' => Yii::t('app', 'Add Category'),
+                        'class' => 'btn btn-success'
+                    ]) . ' ' .
+                    Html::a('<i class="fas fa-redo"></i>', ['/sale/ticket/index'], [
+                        'class' => 'btn btn-primary',
+                        'title' => Yii::t('app', 'Reset Grid')
+                    ]),
+            ],
+            '{export}',
+            '{toggleData}'
+        ],
+        'pjax' => true,
+        'bordered' => true,
+        'striped' => false,
+        'condensed' => false,
+        'responsive' => true,
+        'responsiveWrap' => false,
+        'hover' => true,
+        'panel' => [
+            'heading' => '<i class="fas fa-list-alt"></i> ' . Html::encode($this->title),
+            'type' => GridView::TYPE_DARK
+        ],
     ]); ?>
-
-    <?php Pjax::end(); ?>
-
 </div>

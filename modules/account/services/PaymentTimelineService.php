@@ -26,14 +26,16 @@ class PaymentTimelineService
         $paymentTimelineBatchData[] = $customerServicePaymentTimeline->getAttributes();
 
         // Supplier service payment timeline
-        $supplierServicePaymentTimeline = new ServicePaymentTimeline();
-        $supplierServicePaymentTimeline->subRefId = $invoice->id;
-        $supplierServicePaymentTimeline->subRefModel = $invoice::class;
-        $supplierServicePaymentTimeline->date = $invoice->date;
-        if (!$supplierServicePaymentTimeline->load(['ServicePaymentTimeline' => $singleService['supplierData'][0]]) || !$supplierServicePaymentTimeline->validate()) {
-            return ['error' => true, 'message' => 'Supplier Service payment timeline validation failed - ' . Helper::processErrorMessages($supplierServicePaymentTimeline->getErrors())];
+        foreach ($singleService['supplierData'] as $supplierData) {
+            $supplierServicePaymentTimeline = new ServicePaymentTimeline();
+            $supplierServicePaymentTimeline->subRefId = $invoice->id;
+            $supplierServicePaymentTimeline->subRefModel = $invoice::class;
+            $supplierServicePaymentTimeline->date = $invoice->date;
+            if (!$supplierServicePaymentTimeline->load(['ServicePaymentTimeline' => $supplierData]) || !$supplierServicePaymentTimeline->validate()) {
+                return ['error' => true, 'message' => 'Supplier Service payment timeline validation failed - ' . Helper::processErrorMessages($supplierServicePaymentTimeline->getErrors())];
+            }
+            $paymentTimelineBatchData[] = $supplierServicePaymentTimeline->getAttributes();
         }
-        $paymentTimelineBatchData[] = $supplierServicePaymentTimeline->getAttributes();
 
         return $paymentTimelineBatchData;
     }

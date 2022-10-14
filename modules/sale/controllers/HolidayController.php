@@ -3,6 +3,7 @@
 namespace app\modules\sale\controllers;
 
 use app\components\GlobalConstant;
+use app\models\History;
 use app\modules\sale\models\holiday\Holiday;
 use app\modules\sale\models\holiday\HolidayCategory;
 use app\modules\sale\models\holiday\HolidaySearch;
@@ -50,10 +51,12 @@ class HolidayController extends ParentController
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView(string $uid)
+    public function actionView(string $uid): string
     {
+        $model = $this->holidayService->findHoliday($uid, ['holidaySuppliers', 'customer', 'holidayCategory']);
         return $this->render('view', [
-            'model' => $this->holidayService->findHoliday($uid),
+            'model' => $model,
+            'histories' => History::find()->where(['tableName' => Holiday::tableName(), 'tableId' => $model->id])->orderBy(['id' => SORT_DESC])->all()
         ]);
     }
 
@@ -67,7 +70,7 @@ class HolidayController extends ParentController
         $model = new Holiday();
         $holidaySupplier = new HolidaySupplier();
         $holidayCategories = ArrayHelper::map(HolidayCategory::findAll(['status' => GlobalConstant::ACTIVE_STATUS]), 'id', 'name');
-        if (Yii::$app->request->isPost) {
+        if ($this->request->isPost) {
             $requestData = Yii::$app->request->post();
             $response = $this->holidayService->storeHoliday($requestData);
             if ($response) {
@@ -91,16 +94,23 @@ class HolidayController extends ParentController
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionUpdate(string $uid)
     {
-        $model = $this->findModel($id);
+        $model = $this->holidayService->findHoliday($uid, ['holidaySuppliers', 'customer', 'holidayCategory']);
+        $holidayCategories = ArrayHelper::map(HolidayCategory::findAll(['status' => GlobalConstant::ACTIVE_STATUS]), 'id', 'name');
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+        if ($this->request->isPost) {
+            // Update Holiday
+            $model = $this->holidayService->updateHoliday(Yii::$app->request->post(), $model);
+            if ($model) {
+                return $this->redirect(['view', 'uid' => $model->uid]);
+            }
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
             'model' => $model,
+            'holidayCategories' => $holidayCategories
         ]);
     }
 
@@ -111,27 +121,11 @@ class HolidayController extends ParentController
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($id)
+    public function actionDelete(string $uid)
     {
-        $this->findModel($id)->delete();
+        $this->findModel($uid)->delete();
 
         return $this->redirect(['index']);
-    }
-
-    /**
-     * Finds the Holiday model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param string $uid UID
-     * @return Holiday the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id)
-    {
-        if (($model = Holiday::findOne(['id' => $id])) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
 
     public function actionAddSupplier($row): string

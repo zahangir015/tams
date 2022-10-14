@@ -4,6 +4,7 @@ namespace app\modules\sale\models\holiday;
 
 use app\modules\account\models\Bill;
 use app\modules\sale\models\Supplier;
+use app\traits\BehaviorTrait;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
@@ -37,6 +38,7 @@ use yii\db\ActiveRecord;
  */
 class HolidaySupplier extends ActiveRecord
 {
+    use BehaviorTrait;
     /**
      * {@inheritdoc}
      */
@@ -51,7 +53,7 @@ class HolidaySupplier extends ActiveRecord
     public function rules(): array
     {
         return [
-            [['uid', 'holidayId', 'supplierId', 'supplierRef', 'issueDate', 'departureDate', 'type', 'quantity', 'unitPrice', 'costOfSale', 'holidayCategoryId'], 'required'],
+            [['holidayId', 'supplierId', 'supplierRef', 'issueDate', 'departureDate', 'type', 'quantity', 'unitPrice', 'costOfSale', 'holidayCategoryId'], 'required'],
             [['holidayId', 'billId', 'supplierId', 'quantity', 'unitPrice', 'status', 'holidayCategoryId'], 'integer'],
             [['issueDate', 'departureDate', 'refundRequestDate', 'description'], 'safe'],
             [['type', 'paymentStatus'], 'string'],
