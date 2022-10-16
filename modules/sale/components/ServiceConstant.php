@@ -26,6 +26,17 @@ final class ServiceConstant
         'Refund Requested' => 'Refund Requested',
     ];
 
+    const ALL_HOLIDAY_TYPE = [
+        'New' => 'New',
+        'Refund' => 'Refund',
+        'Refund Requested' => 'Refund Requested',
+    ];
+
+    const HOLIDAY_TYPE_FOR_CREATE = [
+        'New' => 'New',
+        'Refund' => 'Refund'
+    ];
+
     const PAX_TYPE = ['A' => 'Adult', 'C' => 'Child', 'I' => 'Infant'];
     const PAX_TYPE_INT = ['Adult', 'Child', 'Infant'];
     const BD_AIRPORTS = ['DAC', 'CGP', 'CXB', 'ZYL', 'RJH', 'BZL', 'JSR', 'SPD', 'IRD'];

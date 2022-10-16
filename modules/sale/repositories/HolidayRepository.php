@@ -2,7 +2,9 @@
 
 namespace app\modules\sale\repositories;
 
+use app\components\GlobalConstant;
 use app\modules\sale\models\holiday\Holiday;
+use app\modules\sale\models\holiday\HolidayCategory;
 use Yii;
 use yii\db\ActiveRecord;
 
@@ -30,5 +32,10 @@ class HolidayRepository
     {
         $object->save();
         return $object;
+    }
+
+    public function findCategories(): array
+    {
+        return HolidayCategory::find()->select(['id', 'name'])->where(['status' => GlobalConstant::ACTIVE_STATUS])->all();
     }
 }

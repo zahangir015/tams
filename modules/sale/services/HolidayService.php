@@ -2,6 +2,7 @@
 
 namespace app\modules\sale\services;
 
+use app\components\GlobalConstant;
 use app\components\Helper;
 use app\modules\account\models\Invoice;
 use app\modules\account\services\InvoiceService;
@@ -9,12 +10,14 @@ use app\modules\account\services\LedgerService;
 use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\Customer;
 use app\modules\sale\models\holiday\Holiday;
+use app\modules\sale\models\holiday\HolidayCategory;
 use app\modules\sale\models\holiday\HolidaySupplier;
 use app\modules\sale\models\Supplier;
 use app\modules\sale\repositories\HolidayRepository;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\db\Exception;
+use yii\helpers\ArrayHelper;
 
 class HolidayService
 {
@@ -28,6 +31,11 @@ class HolidayService
     public function findHoliday(string $uid, $withArray = []): ActiveRecord
     {
         return $this->holidayRepository->findOne($uid, $withArray);
+    }
+
+    public function getCategories(): array
+    {
+        return ArrayHelper::map($this->holidayRepository->findCategories(), 'id', 'name');
     }
 
     public function storeHoliday(array $requestData): bool

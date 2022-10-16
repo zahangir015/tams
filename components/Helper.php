@@ -311,6 +311,7 @@ class Helper
 
     public static function ajaxDropDown($name, $endPoint, $required = false, $id = null, $class = null, array $data = null, $disabled = false): array
     {
+
         return [
             'name' => $name,
             'options' => [
@@ -726,10 +727,17 @@ class Helper
         return $result;
     }
 
-    public static function dateFormat($disabled = false, $required = false, $format = 'Y-m-d'): array
+    public static function dateFormat($disabled = false, $required = false, $format = 'Y-m-d', $value = null): array
     {
         return [
-            'options' => ['placeholder' => $format, 'autocomplete' => 'off', 'required' => $required, 'class' => 'form-control', 'disabled' => $disabled ? 'disabled' : false],
+            'options' => [
+                'placeholder' => $format,
+                'autocomplete' => 'off',
+                'required' => $required,
+                'class' => 'form-control',
+                'disabled' => $disabled ? 'disabled' : false,
+                'value' => $value ?? null
+            ],
             'convertFormat' => true,
             'pluginOptions' => [
                 'singleDatePicker' => true,
@@ -749,22 +757,22 @@ class Helper
 
     public static function invoiceNumber(): string
     {
-        return 'INV'.date('ymdhis').rand(9, 999);
+        return 'INV' . date('ymdhis') . rand(9, 999);
     }
 
     public static function holidayIdentificationNumber(): string
     {
-        return 'HLI'.date('ymdhis').rand(9, 999);
+        return 'HLI' . date('ymdhis') . rand(9, 999);
     }
 
     public static function hotelIdentificationNumber(): string
     {
-        return 'HTL'.date('ymdhis').rand(9, 999);
+        return 'HTL' . date('ymdhis') . rand(9, 999);
     }
 
     public static function visaIdentificationNumber(): string
     {
-        return 'VA'.date('ymdhis').rand(9, 999);
+        return 'VA' . date('ymdhis') . rand(9, 999);
     }
 
 

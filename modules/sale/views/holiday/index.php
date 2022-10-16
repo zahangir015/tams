@@ -28,8 +28,19 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
                 'label' => 'Invoice',
             ],
-            'holidayCategoryId',
-            'identificationNumber',
+            [
+                'attribute' => 'holidayCategoryId',
+                'value' => function ($model) {
+                    return $model->holidayCategory->name;
+                },
+                'label' => 'Category',
+                'filter' => $holidayCategories
+            ],
+            [
+                'attribute' => 'identificationNumber',
+                'value' => 'identificationNumber',
+                'label' => 'Identification#',
+            ],
             [
                 'attribute' => 'customer',
                 'value' => function ($model) {
@@ -94,7 +105,9 @@ $this->params['breadcrumbs'][] = $this->title;
             'paymentStatus',
             [
                 'attribute' => 'isOnlineBooked',
-                'value' => 'isOnlineBooked',
+                'value' => function($model){
+                    return GlobalConstant::BOOKING_TYPE[$model->isOnlineBooked];
+                },
                 'filter' => GlobalConstant::BOOKING_TYPE
             ],
             'route',
@@ -116,7 +129,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         if ($model->type === ServiceConstant::TYPE['Refund'] || $model->type === ServiceConstant::TYPE['Refund Requested']) {
                             return false;
                         }
-                        return Html::a('<span class="fas fa-minus-square"></span>', ['/sale/ticket/refund', 'uid' => $model->uid], [
+                        return Html::a('<span class="fas fa-minus-square"></span>', ['/sale/holiday/refund', 'uid' => $model->uid], [
                             'title' => 'Refund',
                             'data-toggle' => 'tooltip'
                         ]);
@@ -127,11 +140,11 @@ $this->params['breadcrumbs'][] = $this->title;
         'toolbar' => [
             [
                 'content' =>
-                    Html::a('<i class="fas fa-plus"></i>', ['/sale/ticket/create'], [
+                    Html::a('<i class="fas fa-plus"></i>', ['/sale/holiday/create'], [
                         'title' => Yii::t('app', 'Add Category'),
                         'class' => 'btn btn-success'
                     ]) . ' ' .
-                    Html::a('<i class="fas fa-redo"></i>', ['/sale/ticket/index'], [
+                    Html::a('<i class="fas fa-redo"></i>', ['/sale/holiday/index'], [
                         'class' => 'btn btn-primary',
                         'title' => Yii::t('app', 'Reset Grid')
                     ]),

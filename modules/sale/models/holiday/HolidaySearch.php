@@ -2,6 +2,8 @@
 
 namespace app\modules\sale\models\holiday;
 
+use app\modules\account\models\Invoice;
+use app\modules\sale\models\Customer;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\sale\models\holiday\Holiday;
@@ -11,14 +13,17 @@ use app\modules\sale\models\holiday\Holiday;
  */
 class HolidaySearch extends Holiday
 {
+    public $invoice;
+    public $customer;
+
     /**
      * {@inheritdoc}
      */
     public function rules(): array
     {
         return [
-            [['id', 'motherId', 'invoiceId', 'holidayCategoryId', 'customerId', 'isOnlineBooked', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
-            [['uid', 'identificationNumber', 'customerCategory', 'type', 'issueDate', 'departureDate', 'refundRequestDate', 'paymentStatus', 'route'], 'safe'],
+            [['id', 'motherId', 'holidayCategoryId', 'isOnlineBooked', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['invoice', 'customer', 'identificationNumber', 'customerCategory', 'type', 'issueDate', 'departureDate', 'refundRequestDate', 'paymentStatus', 'route'], 'safe'],
             [['quoteAmount', 'costOfSale', 'netProfit', 'receivedAmount'], 'number'],
         ];
     }
@@ -44,10 +49,21 @@ class HolidaySearch extends Holiday
         $query = Holiday::find();
 
         // add conditions that should always apply here
+        $query->joinWith(['invoice', 'customer']);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
+
+        $dataProvider->sort->attributes['invoice'] = [
+            'asc' => [Invoice::tableName() . '.invoiceNumber' => SORT_ASC],
+            'desc' => [Invoice::tableName() . '.invoiceNumber' => SORT_DESC],
+        ];
+
+        $dataProvider->sort->attributes['customer'] = [
+            'asc' => [Customer::tableName() . '.company' => SORT_ASC],
+            'desc' => [Customer::tableName() . '.company' => SORT_DESC],
+        ];
 
         $this->load($params);
 
@@ -61,9 +77,7 @@ class HolidaySearch extends Holiday
         $query->andFilterWhere([
             'id' => $this->id,
             'motherId' => $this->motherId,
-            'invoiceId' => $this->invoiceId,
             'holidayCategoryId' => $this->holidayCategoryId,
-            'customerId' => $this->customerId,
             'issueDate' => $this->issueDate,
             'departureDate' => $this->departureDate,
             'refundRequestDate' => $this->refundRequestDate,
@@ -80,6 +94,9 @@ class HolidaySearch extends Holiday
         ]);
 
         $query->andFilterWhere(['like', 'uid', $this->uid])
+            ->andFilterWhere(['like', Invoice::tableName() . '.invoiceNumber', $this->invoice])
+            ->andFilterWhere(['like', Customer::tableName() . '.company', $this->customer])
+            ->orFilterWhere(['like', Customer::tableName() . '.customerCode', $this->customer])
             ->andFilterWhere(['like', 'identificationNumber', $this->identificationNumber])
             ->andFilterWhere(['like', 'customerCategory', $this->customerCategory])
             ->andFilterWhere(['like', 'type', $this->type])

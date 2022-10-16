@@ -15,6 +15,7 @@ use yii\bootstrap4\ActiveForm;
 use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Response;
 
 /**
  * HolidayController implements the CRUD actions for Holiday model.
@@ -42,6 +43,7 @@ class HolidayController extends ParentController
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'holidayCategories' => $this->holidayService->getCategories()
         ]);
     }
 
@@ -63,13 +65,12 @@ class HolidayController extends ParentController
     /**
      * Creates a new Holiday model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
+     * @return string|Response
      */
     public function actionCreate()
     {
         $model = new Holiday();
         $holidaySupplier = new HolidaySupplier();
-        $holidayCategories = ArrayHelper::map(HolidayCategory::findAll(['status' => GlobalConstant::ACTIVE_STATUS]), 'id', 'name');
         if ($this->request->isPost) {
             $requestData = Yii::$app->request->post();
             $response = $this->holidayService->storeHoliday($requestData);
@@ -83,7 +84,33 @@ class HolidayController extends ParentController
         return $this->render('create', [
             'model' => $model,
             'holidaySupplier' => $holidaySupplier,
-            'holidayCategories' => $holidayCategories
+            'holidayCategories' => $this->holidayService->getCategories()
+        ]);
+    }
+
+    /**
+     * Creates a new Holiday model.
+     * If creation is successful, the browser will be redirected to the 'refund list' page.
+     * @return string|Response
+     */
+    public function actionRefund(string $uid)
+    {
+        $model = new Holiday();
+        $motherHoliday = $this->holidayService->findHoliday($uid, ['holidaySuppliers', 'customer', 'holidayCategory']);
+        if ($this->request->isPost) {
+            $requestData = Yii::$app->request->post();
+            $response = $this->holidayService->storeHoliday($requestData);
+            if ($response) {
+                return $this->redirect('index');
+            }
+        } else {
+            $model->loadDefaultValues();
+        }
+
+        return $this->render('_refund', [
+            'model' => $model,
+            'motherHoliday' => $motherHoliday,
+            'holidayCategories' => $this->holidayService->getCategories()
         ]);
     }
 
@@ -91,13 +118,12 @@ class HolidayController extends ParentController
      * Updates an existing Holiday model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param string $uid UID
-     * @return string|\yii\web\Response
+     * @return string|Response
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionUpdate(string $uid)
     {
         $model = $this->holidayService->findHoliday($uid, ['holidaySuppliers', 'customer', 'holidayCategory']);
-        $holidayCategories = ArrayHelper::map(HolidayCategory::findAll(['status' => GlobalConstant::ACTIVE_STATUS]), 'id', 'name');
 
         if ($this->request->isPost) {
             // Update Holiday
@@ -110,7 +136,7 @@ class HolidayController extends ParentController
 
         return $this->render('update', [
             'model' => $model,
-            'holidayCategories' => $holidayCategories
+            'holidayCategories' => $this->holidayService->getCategories()
         ]);
     }
 
@@ -118,7 +144,7 @@ class HolidayController extends ParentController
      * Deletes an existing Holiday model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param string $uid UID
-     * @return \yii\web\Response
+     * @return Response
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionDelete(string $uid)

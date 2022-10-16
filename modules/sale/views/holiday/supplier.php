@@ -2,6 +2,7 @@
 
 use app\components\GlobalConstant;
 use app\components\Helper;
+use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\ticket\Ticket;
 use kartik\date\DatePicker;
 use kartik\daterange\DateRangePicker;
@@ -28,7 +29,7 @@ use yii\bootstrap4\Html;
     <div class="card-body">
         <div class="row">
             <div class="col-md">
-                <?= $form->field($holidaySupplier, "[$row]supplierId")->widget(Select2::class, Helper::ajaxDropDown('supplierId', '/sale/supplier/get-suppliers', true, 'supplierId' . $row, 'supplier', [$holidaySupplier->supplier->id => $holidaySupplier->supplier->company]))->label('Supplier') ?>
+                <?= $form->field($holidaySupplier, "[$row]supplierId")->widget(Select2::class, Helper::ajaxDropDown('supplierId', '/sale/supplier/get-suppliers', true, 'supplierId' . $row, 'supplier', ($holidaySupplier->isNewRecord) ? [] : [$holidaySupplier->supplier->id => $holidaySupplier->supplier->company]))->label('Supplier') ?>
             </div>
             <div class="col-md">
                 <?= $form->field($holidaySupplier, "[$row]supplierRef")->textInput(['maxlength' => true]); ?>
@@ -55,7 +56,10 @@ use yii\bootstrap4\Html;
             </div>
         </div>
         <div class="row">
-            <div class="col-md">
+            <div class="col-md-4">
+                <?= $form->field($holidaySupplier, "[$row]type")->textInput(['value' => ($holidaySupplier->isNewRecord) ? ServiceConstant::HOLIDAY_TYPE_FOR_CREATE['New'] : ServiceConstant::HOLIDAY_TYPE_FOR_CREATE['Refund'], 'readOnly' => 'readOnly']) ?>
+            </div>
+            <div class="col-md-8">
                 <?= $form->field($holidaySupplier, "[$row]serviceDetails")->textInput(['maxlength' => true]); ?>
             </div>
         </div>
