@@ -31,13 +31,17 @@ $config = [
         ],
     ],
     'params' => $params,
-    /*
+
     'controllerMap' => [
         'fixture' => [ // Fixture generation command line.
             'class' => 'yii\faker\FixtureController',
         ],
+        'migrate' => [
+            'class' => 'yii\console\controllers\MigrateController',
+            'migrationPath' => ['@app/modules/account/migrations','@app/modules/sale/migrations', '@app/migrations'], // allows to disable not namespaced migration completely
+        ],
     ],
-    */
+
 ];
 
 if (YII_ENV_DEV) {

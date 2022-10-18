@@ -96,10 +96,10 @@ class HolidayController extends ParentController
     public function actionRefund(string $uid)
     {
         $model = new Holiday();
-        $motherHoliday = $this->holidayService->findHoliday($uid, ['holidaySuppliers', 'customer', 'holidayCategory']);
+        $motherHoliday = $this->holidayService->findHoliday($uid, ['holidaySuppliers', 'holidayCategory', 'invoice']);
         if ($this->request->isPost) {
             $requestData = Yii::$app->request->post();
-            $response = $this->holidayService->refundHoliday($requestData);
+            $response = $this->holidayService->refundHoliday($requestData, $motherHoliday);
             if ($response) {
                 return $this->redirect('index');
             }
