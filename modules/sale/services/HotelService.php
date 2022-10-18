@@ -9,23 +9,23 @@ use app\modules\account\services\InvoiceService;
 use app\modules\account\services\LedgerService;
 use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\Customer;
-use app\modules\sale\models\holiday\Holiday;
-use app\modules\sale\models\holiday\HolidayCategory;
-use app\modules\sale\models\holiday\HolidaySupplier;
+use app\modules\sale\models\hotel\Hotel;
+use app\modules\sale\models\hotel\HotelCategory;
+use app\modules\sale\models\hotel\HotelSupplier;
 use app\modules\sale\models\Supplier;
-use app\modules\sale\repositories\HolidayRepository;
+use app\modules\sale\repositories\HotelRepository;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\db\Exception;
 use yii\helpers\ArrayHelper;
 
-class HolidayService
+class HotelService
 {
-    private HolidayRepository $holidayRepository;
+    private HotelRepository $hotelRepository;
 
     public function __construct()
     {
-        $this->holidayRepository = new HolidayRepository();
+        $this->hotelRepository = new HotelRepository();
     }
 
     private static function calculateNetProfit(mixed $quoteAmount, mixed $costOfSale)
@@ -33,45 +33,40 @@ class HolidayService
         return ($quoteAmount - $costOfSale);
     }
 
-    public function findHoliday(string $uid, $withArray = []): ActiveRecord
+    public function findHotel(string $uid, $withArray = []): ActiveRecord
     {
-        return $this->holidayRepository->findOne($uid, $withArray);
+        return $this->hotelRepository->findOne($uid, $withArray);
     }
 
-    public function getCategories(): array
-    {
-        return ArrayHelper::map($this->holidayRepository->findCategories(), 'id', 'name');
-    }
-
-    public function storeHoliday(array $requestData): bool
+    public function storeHotel(array $requestData): bool
     {
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
-            if (!empty($requestData['Holiday']) || !empty($requestData['HolidaySupplier'])) {
+            if (!empty($requestData['Hotel']) || !empty($requestData['HotelSupplier'])) {
                 $services = [];
                 $supplierLedgerArray = [];
-                $customer = Customer::findOne(['id' => $requestData['Holiday']['customerId']]);
-                $holiday = new Holiday();
-                if ($holiday->load($requestData)) {
-                    $holiday->type = ServiceConstant::TYPE['New'];
-                    $holiday->customerCategory = $customer->category;
-                    $holiday = $this->holidayRepository->store($holiday);
-                    if ($holiday->hasErrors()) {
-                        throw new Exception('Holiday create failed - ' . Helper::processErrorMessages($holiday->getErrors()));
+                $customer = Customer::findOne(['id' => $requestData['Hotel']['customerId']]);
+                $hotel = new Hotel();
+                if ($hotel->load($requestData)) {
+                    $hotel->type = ServiceConstant::TYPE['New'];
+                    $hotel->customerCategory = $customer->category;
+                    $hotel = $this->hotelRepository->store($hotel);
+                    if ($hotel->hasErrors()) {
+                        throw new Exception('Hotel create failed - ' . Helper::processErrorMessages($hotel->getErrors()));
                     }
 
-                    // Holiday Supplier data process
-                    $holidaySupplierProcessedData = self::holidaySupplierProcess($holiday, $requestData['HolidaySupplier']);
+                    // Hotel Supplier data process
+                    $hotelSupplierProcessedData = self::hotelSupplierProcess($hotel, $requestData['HotelSupplier']);
 
                     // Invoice details data process
                     $services[] = [
-                        'refId' => $holiday->id,
-                        'refModel' => Holiday::class,
-                        'dueAmount' => $holiday->quoteAmount,
+                        'refId' => $hotel->id,
+                        'refModel' => Hotel::class,
+                        'dueAmount' => $hotel->quoteAmount,
                         'paidAmount' => 0,
-                        'supplierData' => $holidaySupplierProcessedData['serviceSupplierData']
+                        'supplierData' => $hotelSupplierProcessedData['serviceSupplierData']
                     ];
-                    $supplierLedgerArray = $holidaySupplierProcessedData['supplierLedgerArray'];
+                    $supplierLedgerArray = $hotelSupplierProcessedData['supplierLedgerArray'];
 
                     // Invoice process and create
                     $autoInvoiceCreateResponse = InvoiceService::autoInvoice($customer->id, $services, 1, Yii::$app->user);
@@ -86,15 +81,15 @@ class HolidayService
                         throw new Exception('Supplier Ledger creation failed - ' . $ledgerRequestResponse['message']);
                     }
                 } else {
-                    throw new Exception('Holiday data loading failed - ' . Helper::processErrorMessages($holiday->getErrors()));
+                    throw new Exception('Hotel data loading failed - ' . Helper::processErrorMessages($hotel->getErrors()));
                 }
 
                 $dbTransaction->commit();
-                Yii::$app->session->setFlash('success', 'Holiday added successfully');
+                Yii::$app->session->setFlash('success', 'Hotel added successfully');
                 return true;
             }
             // Ticket and supplier data can not be empty
-            throw new Exception('Holiday and supplier data can not be empty.');
+            throw new Exception('Hotel and supplier data can not be empty.');
 
         } catch (Exception $e) {
             $dbTransaction->rollBack();
@@ -103,39 +98,39 @@ class HolidayService
         }
     }
 
-    public function refundHoliday(array $requestData, ActiveRecord $motherHoliday): bool
+    public function refundHotel(array $requestData, ActiveRecord $motherHotel): bool
     {
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
-            if (!empty($requestData['Holiday']) || !empty($requestData['HolidaySupplier'])) {
+            if (!empty($requestData['Hotel']) || !empty($requestData['HotelSupplier'])) {
                 $services = [];
                 $invoice = null;
-                $customer = Customer::findOne(['id' => $requestData['Holiday']['customerId']]);
-                $holiday = new Holiday();
-                if ($holiday->load($requestData)) {
-                    $holiday->customerCategory = $customer->category;
-                    $holiday = $this->holidayRepository->store($holiday);
-                    if ($holiday->hasErrors()) {
-                        throw new Exception('Holiday refund create failed - ' . Helper::processErrorMessages($holiday->getErrors()));
+                $customer = Customer::findOne(['id' => $requestData['Hotel']['customerId']]);
+                $hotel = new Hotel();
+                if ($hotel->load($requestData)) {
+                    $hotel->customerCategory = $customer->category;
+                    $hotel = $this->hotelRepository->store($hotel);
+                    if ($hotel->hasErrors()) {
+                        throw new Exception('Hotel refund create failed - ' . Helper::processErrorMessages($hotel->getErrors()));
                     }
 
-                    // Holiday Supplier data process
-                    $holidaySupplierProcessedData = self::holidaySupplierProcess($holiday, $requestData['HolidaySupplier']);
+                    // Hotel Supplier data process
+                    $hotelSupplierProcessedData = self::hotelSupplierProcess($hotel, $requestData['HotelSupplier']);
 
                     // Invoice details data process
                     $services[] = [
-                        'invoiceId' => $motherHoliday->invoiceId ?? null,
-                        'refId' => $holiday->id,
-                        'refModel' => Holiday::class,
-                        'dueAmount' => ($holiday->quoteAmount - $holiday->receivedAmount),
-                        'paidAmount' => $holiday->receivedAmount,
-                        'supplierData' => $holidaySupplierProcessedData['serviceSupplierData']
+                        'invoiceId' => $motherHotel->invoiceId ?? null,
+                        'refId' => $hotel->id,
+                        'refModel' => Hotel::class,
+                        'dueAmount' => ($hotel->quoteAmount - $hotel->receivedAmount),
+                        'paidAmount' => $hotel->receivedAmount,
+                        'supplierData' => $hotelSupplierProcessedData['serviceSupplierData']
                     ];
-                    $supplierLedgerArray = $holidaySupplierProcessedData['supplierLedgerArray'];
+                    $supplierLedgerArray = $hotelSupplierProcessedData['supplierLedgerArray'];
 
-                    if ($motherHoliday->invoiceId) {
+                    if ($motherHotel->invoiceId) {
                         // Invoice process
-                        $autoInvoiceCreateResponse = InvoiceService::autoInvoiceForRefund($motherHoliday->invoice, $services, Yii::$app->user);
+                        $autoInvoiceCreateResponse = InvoiceService::autoInvoiceForRefund($motherHotel->invoice, $services, Yii::$app->user);
                         if ($autoInvoiceCreateResponse['error']) {
                             throw new Exception('Auto Invoice creation failed - ' . $autoInvoiceCreateResponse['message']);
                         }
@@ -149,15 +144,15 @@ class HolidayService
                     }
 
                 } else {
-                    throw new Exception('Holiday data loading failed - ' . Helper::processErrorMessages($holiday->getErrors()));
+                    throw new Exception('Hotel data loading failed - ' . Helper::processErrorMessages($hotel->getErrors()));
                 }
 
                 $dbTransaction->commit();
-                Yii::$app->session->setFlash('success', 'Holiday added successfully');
+                Yii::$app->session->setFlash('success', 'Hotel added successfully');
                 return true;
             }
             // Ticket and supplier data can not be empty
-            throw new Exception('Holiday and supplier data can not be empty.');
+            throw new Exception('Hotel and supplier data can not be empty.');
 
         } catch (Exception $e) {
             $dbTransaction->rollBack();
@@ -166,41 +161,41 @@ class HolidayService
         }
     }
 
-    public function updateHoliday(array $requestData, ActiveRecord $holiday): bool
+    public function updateHotel(array $requestData, ActiveRecord $hotel): bool
     {
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
-            $invoice = $holiday->invoice;
-            $oldQuoteAmount = $holiday->quoteAmount;
+            $invoice = $hotel->invoice;
+            $oldQuoteAmount = $hotel->quoteAmount;
 
             // Update Package
-            $holiday->setAttributes($requestData['Holiday']);
-            $holiday->netProfit = self::calculateNetProfit($holiday->quoteAmount, $holiday->costOfSale);
-            $holiday->paymentStatus = InvoiceService::checkAndDetectPaymentStatus($holiday->quoteAmount, $holiday->receivedAmount);
-            if (!$holiday->save()) {
-                throw new Exception('Holiday update failed - ' . Helper::processErrorMessages($holiday->getErrors()));
+            $hotel->setAttributes($requestData['Hotel']);
+            $hotel->netProfit = self::calculateNetProfit($hotel->quoteAmount, $hotel->costOfSale);
+            $hotel->paymentStatus = InvoiceService::checkAndDetectPaymentStatus($hotel->quoteAmount, $hotel->receivedAmount);
+            if (!$hotel->save()) {
+                throw new Exception('Hotel update failed - ' . Helper::processErrorMessages($hotel->getErrors()));
             }
 
             //Create Package-Supplier Entity
-            $suppliers = $requestData['HolidaySupplier'];
+            $suppliers = $requestData['HotelSupplier'];
             if (!$suppliers) {
                 throw new Exception('At least 1 Supplier is required');
             }
-            $updateHolidaySupplierResponse = self::updateHolidaySupplier($holiday, $suppliers, $invoice);
-            if (!$updateHolidaySupplierResponse['status']) {
-                throw new Exception($updateHolidaySupplierResponse['message']);
+            $updateHotelSupplierResponse = self::updateHotelSupplier($hotel, $suppliers, $invoice);
+            if (!$updateHotelSupplierResponse['status']) {
+                throw new Exception($updateHotelSupplierResponse['message']);
             }
 
-            if (!empty($invoice) && ($oldQuoteAmount != $holiday->quoteAmount)) {
+            if (!empty($invoice) && ($oldQuoteAmount != $hotel->quoteAmount)) {
                 //Update Invoice Entity
                 $services[] = [
-                    'refId' => $holiday->id,
-                    'refModel' => get_class($holiday),
-                    'due' => ($holiday->quoteAmount - $holiday->receivedAmount),
-                    'amount' => $holiday->receivedAmount
+                    'refId' => $hotel->id,
+                    'refModel' => get_class($hotel),
+                    'due' => ($hotel->quoteAmount - $hotel->receivedAmount),
+                    'amount' => $hotel->receivedAmount
                 ];
 
-                $updateServiceQuoteResponse = ServiceComponent::updatedServiceRelatedData($holiday, $services);
+                $updateServiceQuoteResponse = ServiceComponent::updatedServiceRelatedData($hotel, $services);
                 if ($updateServiceQuoteResponse['error']) {
                     throw new Exception($updateServiceQuoteResponse['message']);
                 }
@@ -215,7 +210,7 @@ class HolidayService
         }
     }
 
-    private static function updateHolidaySupplier(ActiveRecord $holiday, mixed $suppliers, mixed $invoice)
+    private static function updateHotelSupplier(ActiveRecord $hotel, mixed $suppliers, mixed $invoice)
     {
         $selectedPackageSuppliers = [];
         $deletedSuppliers = [];
@@ -306,35 +301,35 @@ class HolidayService
         return ['status' => true, 'message' => 'Package Supplier Saved Successfully'];
     }
 
-    private function holidaySupplierProcess(ActiveRecord $holiday, mixed $holidaySuppliers): array
+    private function hotelSupplierProcess(ActiveRecord $hotel, mixed $hotelSuppliers): array
     {
         $serviceSupplierData = [];
         $supplierLedgerArray = [];
-        foreach ($holidaySuppliers as $singleSupplierArray) {
-            $holidaySupplier = new HolidaySupplier();
-            $holidaySupplier->load(['HolidaySupplier' => $singleSupplierArray]);
-            $holidaySupplier->holidayId = $holiday->id;
-            $holidaySupplier = $this->holidayRepository->store($holidaySupplier);
-            if ($holidaySupplier->hasErrors()) {
-                throw new Exception('Holiday Supplier refund creation failed - ' . Helper::processErrorMessages($holidaySupplier->getErrors()));
+        foreach ($hotelSuppliers as $singleSupplierArray) {
+            $hotelSupplier = new HotelSupplier();
+            $hotelSupplier->load(['HotelSupplier' => $singleSupplierArray]);
+            $hotelSupplier->hotelId = $hotel->id;
+            $hotelSupplier = $this->hotelRepository->store($hotelSupplier);
+            if ($hotelSupplier->hasErrors()) {
+                throw new Exception('Hotel Supplier refund creation failed - ' . Helper::processErrorMessages($hotelSupplier->getErrors()));
             }
 
             $serviceSupplierData[] = [
-                'refId' => $holidaySupplier->id,
-                'refModel' => HolidaySupplier::class,
+                'refId' => $hotelSupplier->id,
+                'refModel' => HotelSupplier::class,
                 'subRefModel' => Invoice::class,
-                'dueAmount' => $holidaySupplier->costOfSale,
-                'paidAmount' => $holidaySupplier->paidAmount,
+                'dueAmount' => $hotelSupplier->costOfSale,
+                'paidAmount' => $hotelSupplier->paidAmount,
             ];
 
             // Supplier ledger data process
-            if (isset($supplierLedgerArray[$holidaySupplier->supplierId])) {
-                $supplierLedgerArray[$holidaySupplier->supplierId]['credit'] += $holidaySupplier->costOfSale;
+            if (isset($supplierLedgerArray[$hotelSupplier->supplierId])) {
+                $supplierLedgerArray[$hotelSupplier->supplierId]['credit'] += $hotelSupplier->costOfSale;
             } else {
-                $supplierLedgerArray[$holidaySupplier->supplierId] = [
+                $supplierLedgerArray[$hotelSupplier->supplierId] = [
                     'debit' => 0,
-                    'credit' => $holidaySupplier->costOfSale,
-                    'refId' => $holidaySupplier->supplierId,
+                    'credit' => $hotelSupplier->costOfSale,
+                    'refId' => $hotelSupplier->supplierId,
                     'refModel' => Supplier::class,
                     'subRefId' => null
                 ];

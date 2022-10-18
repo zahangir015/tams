@@ -131,7 +131,6 @@ class HolidayController extends ParentController
             if ($model) {
                 return $this->redirect(['view', 'uid' => $model->uid]);
             }
-            return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [

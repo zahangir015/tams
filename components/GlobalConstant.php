@@ -6,6 +6,7 @@ final class GlobalConstant
     const ACTIVE_STATUS = 1;
     const INACTIVE_STATUS = 0;
     const REFUND_REQUESTED_STATUS = 2;
+    const GRACE_DISCOUNT = 5;
 
     const DEFAULT_STATUS = [
         1 => 'Active',
