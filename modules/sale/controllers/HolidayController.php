@@ -99,7 +99,7 @@ class HolidayController extends ParentController
         $motherHoliday = $this->holidayService->findHoliday($uid, ['holidaySuppliers', 'customer', 'holidayCategory']);
         if ($this->request->isPost) {
             $requestData = Yii::$app->request->post();
-            $response = $this->holidayService->storeHoliday($requestData);
+            $response = $this->holidayService->refundHoliday($requestData);
             if ($response) {
                 return $this->redirect('index');
             }

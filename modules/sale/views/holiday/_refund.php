@@ -19,17 +19,10 @@ $this->title = Yii::t('app', 'Refund Holiday');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Holidays'), 'url' => ['refund-list']];
 $this->params['breadcrumbs'][] = $this->title;
 
-$this->registerJs(
-    "var supplier = '" . Yii::$app->request->baseUrl . '/sale/holiday/add-supplier' . "';",
-    View::POS_HEAD,
-    'url'
-);
-
 $this->registerJsFile(
     '@web/js/holiday.js',
     ['depends' => [JqueryAsset::class]]
 );
-
 ?>
 
 <div class="holiday-form">
@@ -50,13 +43,16 @@ $this->registerJsFile(
         <div class="card-body">
             <div class="row">
                 <div class="col-md">
-                    <?= $form->field($model, 'customerId')->widget(Select2::class, Helper::ajaxDropDown('customerId', '/sale/customer/get-customers', true, 'customerId', 'customer', [$motherHoliday->customer->id => $motherHoliday->customer->company], false))->label('Customer') ?>
-                </div>
-                <div class="col-md">
-                    <?= $form->field($model, 'issueDate')->widget(DateRangePicker::class, Helper::dateFormat(false, true, 'Y-m-d', $motherHoliday->issueDate)) ?>
+                    <?= $form->field($model, 'customerId')->dropdownList([$motherHoliday->customer->id => $motherHoliday->customer->company], ['readOnly' => 'readOnly'])->label('Customer') ?>
                 </div>
                 <div class="col-md">
                     <?= $form->field($model, 'holidayCategoryId')->dropdownList($holidayCategories, ['prompt' => '', 'readOnly' => 'readOnly', 'value' => $motherHoliday->holidayCategoryId])->label('Category') ?>
+                </div>
+                <div class="col-md">
+                    <?= $form->field($model, 'issueDate')->textInput(['value' => $motherHoliday->issueDate, 'readOnly' => 'readOnly']) ?>
+                </div>
+                <div class="col-md">
+                    <?= $form->field($model, 'refundRequestDate')->widget(DateRangePicker::class, Helper::dateFormat(false, true)) ?>
                 </div>
             </div>
         </div>
@@ -103,7 +99,7 @@ $this->registerJsFile(
                 <?php
                 foreach ($motherHoliday->holidaySuppliers as $key => $holidaySupplier) {
                     ?>
-                    <?= $this->render('supplier', ['row' => $key, 'model' => $model, 'holidaySupplier' => $holidaySupplier, 'form' => $form, 'holidayCategories' => $holidayCategories]); ?>
+                    <?= $this->render('refund_supplier', ['row' => $key, 'model' => $model, 'holidaySupplier' => $holidaySupplier, 'form' => $form, 'holidayCategories' => $holidayCategories]); ?>
                     <?php
                 }
                 ?>

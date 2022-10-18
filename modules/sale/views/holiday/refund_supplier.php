@@ -29,16 +29,16 @@ use yii\bootstrap4\Html;
     <div class="card-body">
         <div class="row">
             <div class="col-md">
-                <?= $form->field($holidaySupplier, "[$row]supplierId")->widget(Select2::class, Helper::ajaxDropDown('supplierId', '/sale/supplier/get-suppliers', true, 'supplierId' . $row, 'supplier', ($holidaySupplier->isNewRecord) ? [] : [$holidaySupplier->supplier->id => $holidaySupplier->supplier->company], !$holidaySupplier->isNewRecord))->label('Supplier') ?>
+                <?= $form->field($holidaySupplier, "[$row]supplierId")->dropdownList([$holidaySupplier->supplier->id => $holidaySupplier->supplier->company], ['readOnly' => 'readOnly'])->label('Supplier') ?>
             </div>
             <div class="col-md">
-                <?= $form->field($holidaySupplier, "[$row]supplierRef")->textInput(['maxlength' => true, 'readOnly' => !(bool)$holidaySupplier->isNewRecord]); ?>
+                <?= $form->field($holidaySupplier, "[$row]supplierRef")->textInput(['maxlength' => true, 'readOnly' => 'readOnly']); ?>
             </div>
             <div class="col-md">
-                <?= $form->field($holidaySupplier, "[$row]issueDate")->widget(DateRangePicker::class, Helper::dateFormat(!(bool)$holidaySupplier->isNewRecord, true)); ?>
+                <?= $form->field($holidaySupplier, "[$row]issueDate")->textInput(['value' => $holidaySupplier->issueDate, 'readOnly' => 'readOnly']); ?>
             </div>
             <div class="col-md">
-                <?= $form->field($holidaySupplier, "[$row]departureDate")->widget(DateRangePicker::class, Helper::dateFormat(!(bool)$holidaySupplier->isNewRecord, true)) ?>
+                <?= $form->field($holidaySupplier, "[$row]departureDate")->textInput(['maxlength' => true, 'readOnly' => 'readOnly']) ?>
             </div>
         </div>
         <div class="row calcData">
@@ -46,21 +46,22 @@ use yii\bootstrap4\Html;
                 <?= $form->field($holidaySupplier, "[$row]holidayCategoryId")->dropdownList($holidayCategories, ['prompt' => '', 'disabled' => !(bool)$holidaySupplier->isNewRecord])->label('Category') ?>
             </div>
             <div class="col-md">
-                <?= $form->field($holidaySupplier, "[$row]quantity")->textInput(['type' => 'number', 'value' => $holidaySupplier->isNewrecord ? 0 : $holidaySupplier->quantity, 'onChange' => 'calculateQuoteAmount()', 'min' => 0, 'class' => 'form-control quantity', 'readOnly' => !(bool)$holidaySupplier->isNewRecord])->label('Quantity') ?>
+                <?= $form->field($holidaySupplier, "[$row]quantity")->textInput(['type' => 'number', 'value' => $holidaySupplier->quantity, 'onChange' => 'calculateQuoteAmount()', 'min' => 0, 'class' => 'form-control quantity', 'readOnly' => !(bool)$holidaySupplier->isNewRecord])->label('Quantity') ?>
             </div>
             <div class="col-md">
-                <?= $form->field($holidaySupplier, "[$row]unitPrice")->textInput(['type' => 'number', 'value' => $holidaySupplier->isNewrecord ? 0 : $holidaySupplier->unitPrice, 'onChange' => 'calculateQuoteAmount()', 'min' => 0, 'class' => 'form-control perServicePrice'])->label('Quote Rate') ?>
+                <?= $form->field($holidaySupplier, "[$row]unitPrice")->textInput(['type' => 'number', 'value' => $holidaySupplier->unitPrice, 'onChange' => 'calculateQuoteAmount()', 'min' => 0, 'class' => 'form-control perServicePrice'])->label('Quote Rate') ?>
             </div>
             <div class="col-md">
-                <?= $form->field($holidaySupplier, "[$row]costOfSale")->textInput(['type' => 'number', 'value' => $holidaySupplier->isNewrecord ? 0 : $holidaySupplier->costOfSale, 'onChange' => 'calculateCostOfSale()', 'min' => 0, 'class' => 'form-control supplierCostOfSale']) ?>
+                <?= $form->field($holidaySupplier, "[$row]costOfSale")->textInput(['type' => 'number', 'value' => $holidaySupplier->costOfSale, 'onChange' => 'calculateCostOfSale()', 'min' => 0, 'class' => 'form-control supplierCostOfSale']) ?>
             </div>
         </div>
         <div class="row">
             <div class="col-md-4">
-                <?= $form->field($holidaySupplier, "[$row]type")->textInput(['value' => ($holidaySupplier->isNewRecord) ? ServiceConstant::HOLIDAY_TYPE_FOR_CREATE['New'] : ServiceConstant::HOLIDAY_TYPE_FOR_CREATE['Refund'], 'readOnly' => 'readOnly']) ?>
+                <?= $form->field($holidaySupplier, "[$row]type")->dropdownList(ServiceConstant::HOLIDAY_TYPE_FOR_CREATE, ['value' => $holidaySupplier->type]) ?>
             </div>
             <div class="col-md-8">
                 <?= $form->field($holidaySupplier, "[$row]serviceDetails")->textInput(['maxlength' => true]); ?>
+                <?= $form->field($holidaySupplier, "[$row]motherHolidayId")->hiddenInput(['maxlength' => true, 'value' => $holidaySupplier->id]); ?>
             </div>
         </div>
         <?= (!$model->isNewRecord) ? Html::submitButton('<i class="fas fa-save"></i>Update', ['class' => 'btn btn-light-primary font-weight-bold float-right']) : '' ?>

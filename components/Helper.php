@@ -341,36 +341,6 @@ class Helper
         ];
     }
 
-    public static function ajaxDropDownWithModel($model, $name, $endPoint, $required = false, $id = null, $class = null, $data = null, $disabled = null): array
-    {
-        return [
-            'model' => $model,
-            'attribute' => $name,
-            'options' => [
-                'placeholder' => 'Type for suggestion ...',
-                'class' => $class ?? '',
-                'id' => $id ?? '',
-                'required' => $required,
-                'disabled' => $disabled ? 'readonly' : false,
-            ],
-            'theme' => Select2::THEME_DEFAULT,
-            'data' => $data ?: [],
-            'maintainOrder' => true,
-            'pluginOptions' => [
-                'allowClear' => true,
-                'minimumInputLength' => 2,
-                'language' => [
-                    'errorLoading' => new JsExpression("function () { return 'Waiting for results...'; }"),
-                ],
-                'ajax' => [
-                    'url' => Url::to($endPoint),
-                    'dataType' => 'json',
-                    'data' => new JsExpression('function(params) { return {query:params.term}; }'),
-                ],
-            ],
-        ];
-    }
-
     public static function depDropConfigurationGenerate($model, $id, $depandedId, $endPoint): array
     {
         return [
