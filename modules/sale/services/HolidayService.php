@@ -238,11 +238,11 @@ class HolidayService
                     throw new Exception($updateServiceQuoteResponse['message']);
                 }
             }
-            $transaction->commit();
+            $dbTransaction->commit();
             Yii::$app->session->setFlash('success', 'Package has been updated successfully');
             return true;
         } catch (\Exception $e) {
-            $transaction->rollBack();
+            $dbTransaction->rollBack();
             Yii::$app->session->setFlash('error', $e->getMessage());
             return false;
         }
