@@ -9,23 +9,21 @@ use app\modules\account\services\InvoiceService;
 use app\modules\account\services\LedgerService;
 use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\Customer;
-use app\modules\sale\models\holiday\Holiday;
-use app\modules\sale\models\holiday\HolidayCategory;
-use app\modules\sale\models\holiday\HolidaySupplier;
+use app\modules\sale\models\visa\Visa;
+use app\modules\sale\models\visa\VisaSupplier;
 use app\modules\sale\models\Supplier;
-use app\modules\sale\repositories\HolidayRepository;
+use app\modules\sale\repositories\VisaRepository;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\db\Exception;
-use yii\helpers\ArrayHelper;
 
-class HolidayService
+class VisaService
 {
-    private HolidayRepository $holidayRepository;
+    private VisaRepository $visaRepository;
 
     public function __construct()
     {
-        $this->holidayRepository = new HolidayRepository();
+        $this->visaRepository = new VisaRepository();
     }
 
     private static function calculateNetProfit(mixed $quoteAmount, mixed $costOfSale)
@@ -33,45 +31,40 @@ class HolidayService
         return ($quoteAmount - $costOfSale);
     }
 
-    public function findHoliday(string $uid, $withArray = []): ActiveRecord
+    public function findVisa(string $uid, $withArray = []): ActiveRecord
     {
-        return $this->holidayRepository->findOne($uid, $withArray);
+        return $this->visaRepository->findOne($uid, $withArray);
     }
 
-    public function getCategories(): array
-    {
-        return ArrayHelper::map($this->holidayRepository->findCategories(), 'id', 'name');
-    }
-
-    public function storeHoliday(array $requestData): bool
+    public function storeVisa(array $requestData): bool
     {
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
-            if (!empty($requestData['Holiday']) || !empty($requestData['HolidaySupplier'])) {
+            if (!empty($requestData['Visa']) || !empty($requestData['VisaSupplier'])) {
                 $services = [];
                 $supplierLedgerArray = [];
-                $customer = Customer::findOne(['id' => $requestData['Holiday']['customerId']]);
-                $holiday = new Holiday();
-                if ($holiday->load($requestData)) {
-                    $holiday->type = ServiceConstant::TYPE['New'];
-                    $holiday->customerCategory = $customer->category;
-                    $holiday = $this->holidayRepository->store($holiday);
-                    if ($holiday->hasErrors()) {
-                        throw new Exception('Holiday create failed - ' . Helper::processErrorMessages($holiday->getErrors()));
+                $customer = Customer::findOne(['id' => $requestData['Visa']['customerId']]);
+                $visa = new Visa();
+                if ($visa->load($requestData)) {
+                    $visa->type = ServiceConstant::TYPE['New'];
+                    $visa->customerCategory = $customer->category;
+                    $visa = $this->visaRepository->store($visa);
+                    if ($visa->hasErrors()) {
+                        throw new Exception('Visa create failed - ' . Helper::processErrorMessages($visa->getErrors()));
                     }
 
-                    // Holiday Supplier data process
-                    $holidaySupplierProcessedData = self::holidaySupplierProcess($holiday, $requestData['HolidaySupplier']);
+                    // Visa Supplier data process
+                    $visaSupplierProcessedData = self::visaSupplierProcess($visa, $requestData['VisaSupplier']);
 
                     // Invoice details data process
                     $services[] = [
-                        'refId' => $holiday->id,
-                        'refModel' => Holiday::class,
-                        'dueAmount' => $holiday->quoteAmount,
+                        'refId' => $visa->id,
+                        'refModel' => Visa::class,
+                        'dueAmount' => $visa->quoteAmount,
                         'paidAmount' => 0,
-                        'supplierData' => $holidaySupplierProcessedData['serviceSupplierData']
+                        'supplierData' => $visaSupplierProcessedData['serviceSupplierData']
                     ];
-                    $supplierLedgerArray = $holidaySupplierProcessedData['supplierLedgerArray'];
+                    $supplierLedgerArray = $visaSupplierProcessedData['supplierLedgerArray'];
 
                     // Invoice process and create
                     $autoInvoiceCreateResponse = InvoiceService::autoInvoice($customer->id, $services, 1, Yii::$app->user);
@@ -86,15 +79,15 @@ class HolidayService
                         throw new Exception('Supplier Ledger creation failed - ' . $ledgerRequestResponse['message']);
                     }
                 } else {
-                    throw new Exception('Holiday data loading failed - ' . Helper::processErrorMessages($holiday->getErrors()));
+                    throw new Exception('Visa data loading failed - ' . Helper::processErrorMessages($visa->getErrors()));
                 }
 
                 $dbTransaction->commit();
-                Yii::$app->session->setFlash('success', 'Holiday added successfully');
+                Yii::$app->session->setFlash('success', 'Visa added successfully');
                 return true;
             }
             // Ticket and supplier data can not be empty
-            throw new Exception('Holiday and supplier data can not be empty.');
+            throw new Exception('Visa and supplier data can not be empty.');
 
         } catch (Exception $e) {
             $dbTransaction->rollBack();
@@ -103,39 +96,39 @@ class HolidayService
         }
     }
 
-    public function refundHoliday(array $requestData, ActiveRecord $motherHoliday): bool
+    public function refundVisa(array $requestData, ActiveRecord $motherVisa): bool
     {
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
-            if (!empty($requestData['Holiday']) || !empty($requestData['HolidaySupplier'])) {
+            if (!empty($requestData['Visa']) || !empty($requestData['VisaSupplier'])) {
                 $services = [];
                 $invoice = null;
-                $customer = Customer::findOne(['id' => $requestData['Holiday']['customerId']]);
-                $holiday = new Holiday();
-                if ($holiday->load($requestData)) {
-                    $holiday->customerCategory = $customer->category;
-                    $holiday = $this->holidayRepository->store($holiday);
-                    if ($holiday->hasErrors()) {
-                        throw new Exception('Holiday refund create failed - ' . Helper::processErrorMessages($holiday->getErrors()));
+                $customer = Customer::findOne(['id' => $requestData['Visa']['customerId']]);
+                $visa = new Visa();
+                if ($visa->load($requestData)) {
+                    $visa->customerCategory = $customer->category;
+                    $visa = $this->visaRepository->store($visa);
+                    if ($visa->hasErrors()) {
+                        throw new Exception('Visa refund create failed - ' . Helper::processErrorMessages($visa->getErrors()));
                     }
 
-                    // Holiday Supplier data process
-                    $holidaySupplierProcessedData = self::holidaySupplierProcess($holiday, $requestData['HolidaySupplier']);
+                    // Visa Supplier data process
+                    $visaSupplierProcessedData = self::visaSupplierProcess($visa, $requestData['VisaSupplier']);
 
                     // Invoice details data process
                     $services[] = [
-                        'invoiceId' => $motherHoliday->invoiceId ?? null,
-                        'refId' => $holiday->id,
-                        'refModel' => Holiday::class,
-                        'dueAmount' => ($holiday->quoteAmount - $holiday->receivedAmount),
-                        'paidAmount' => $holiday->receivedAmount,
-                        'supplierData' => $holidaySupplierProcessedData['serviceSupplierData']
+                        'invoiceId' => $motherVisa->invoiceId ?? null,
+                        'refId' => $visa->id,
+                        'refModel' => Visa::class,
+                        'dueAmount' => ($visa->quoteAmount - $visa->receivedAmount),
+                        'paidAmount' => $visa->receivedAmount,
+                        'supplierData' => $visaSupplierProcessedData['serviceSupplierData']
                     ];
-                    $supplierLedgerArray = $holidaySupplierProcessedData['supplierLedgerArray'];
+                    $supplierLedgerArray = $visaSupplierProcessedData['supplierLedgerArray'];
 
-                    if ($motherHoliday->invoiceId) {
+                    if ($motherVisa->invoiceId) {
                         // Invoice process
-                        $autoInvoiceCreateResponse = InvoiceService::autoInvoiceForRefund($motherHoliday->invoice, $services, Yii::$app->user);
+                        $autoInvoiceCreateResponse = InvoiceService::autoInvoiceForRefund($motherVisa->invoice, $services, Yii::$app->user);
                         if ($autoInvoiceCreateResponse['error']) {
                             throw new Exception('Auto Invoice creation failed - ' . $autoInvoiceCreateResponse['message']);
                         }
@@ -149,15 +142,15 @@ class HolidayService
                     }
 
                 } else {
-                    throw new Exception('Holiday data loading failed - ' . Helper::processErrorMessages($holiday->getErrors()));
+                    throw new Exception('Visa data loading failed - ' . Helper::processErrorMessages($visa->getErrors()));
                 }
 
                 $dbTransaction->commit();
-                Yii::$app->session->setFlash('success', 'Holiday added successfully');
+                Yii::$app->session->setFlash('success', 'Visa added successfully');
                 return true;
             }
             // Ticket and supplier data can not be empty
-            throw new Exception('Holiday and supplier data can not be empty.');
+            throw new Exception('Visa and supplier data can not be empty.');
 
         } catch (Exception $e) {
             $dbTransaction->rollBack();
@@ -166,41 +159,41 @@ class HolidayService
         }
     }
 
-    public function updateHoliday(array $requestData, ActiveRecord $holiday): bool
+    public function updateVisa(array $requestData, ActiveRecord $visa): bool
     {
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
-            $invoice = $holiday->invoice;
-            $oldQuoteAmount = $holiday->quoteAmount;
+            $invoice = $visa->invoice;
+            $oldQuoteAmount = $visa->quoteAmount;
 
             // Update Package
-            $holiday->setAttributes($requestData['Holiday']);
-            $holiday->netProfit = self::calculateNetProfit($holiday->quoteAmount, $holiday->costOfSale);
-            $holiday->paymentStatus = InvoiceService::checkAndDetectPaymentStatus($holiday->quoteAmount, $holiday->receivedAmount);
-            if (!$holiday->save()) {
-                throw new Exception('Holiday update failed - ' . Helper::processErrorMessages($holiday->getErrors()));
+            $visa->setAttributes($requestData['Visa']);
+            $visa->netProfit = self::calculateNetProfit($visa->quoteAmount, $visa->costOfSale);
+            $visa->paymentStatus = InvoiceService::checkAndDetectPaymentStatus($visa->quoteAmount, $visa->receivedAmount);
+            if (!$visa->save()) {
+                throw new Exception('Visa update failed - ' . Helper::processErrorMessages($visa->getErrors()));
             }
 
             //Create Package-Supplier Entity
-            $suppliers = $requestData['HolidaySupplier'];
+            $suppliers = $requestData['VisaSupplier'];
             if (!$suppliers) {
                 throw new Exception('At least 1 Supplier is required');
             }
-            $updateHolidaySupplierResponse = self::updateHolidaySupplier($holiday, $suppliers, $invoice);
-            if (!$updateHolidaySupplierResponse['status']) {
-                throw new Exception($updateHolidaySupplierResponse['message']);
+            $updateVisaSupplierResponse = self::updateVisaSupplier($visa, $suppliers, $invoice);
+            if (!$updateVisaSupplierResponse['status']) {
+                throw new Exception($updateVisaSupplierResponse['message']);
             }
 
-            if (!empty($invoice) && ($oldQuoteAmount != $holiday->quoteAmount)) {
+            if (!empty($invoice) && ($oldQuoteAmount != $visa->quoteAmount)) {
                 //Update Invoice Entity
                 $services[] = [
-                    'refId' => $holiday->id,
-                    'refModel' => get_class($holiday),
-                    'due' => ($holiday->quoteAmount - $holiday->receivedAmount),
-                    'amount' => $holiday->receivedAmount
+                    'refId' => $visa->id,
+                    'refModel' => get_class($visa),
+                    'due' => ($visa->quoteAmount - $visa->receivedAmount),
+                    'amount' => $visa->receivedAmount
                 ];
 
-                $updateServiceQuoteResponse = ServiceComponent::updatedServiceRelatedData($holiday, $services);
+                $updateServiceQuoteResponse = ServiceComponent::updatedServiceRelatedData($visa, $services);
                 if ($updateServiceQuoteResponse['error']) {
                     throw new Exception($updateServiceQuoteResponse['message']);
                 }
@@ -215,7 +208,7 @@ class HolidayService
         }
     }
 
-    private static function updateHolidaySupplier(ActiveRecord $holiday, mixed $suppliers, mixed $invoice)
+    private static function updateVisaSupplier(ActiveRecord $visa, mixed $suppliers, mixed $invoice)
     {
         $selectedPackageSuppliers = [];
         $deletedSuppliers = [];
@@ -306,35 +299,35 @@ class HolidayService
         return ['status' => true, 'message' => 'Package Supplier Saved Successfully'];
     }
 
-    private function holidaySupplierProcess(ActiveRecord $holiday, mixed $holidaySuppliers): array
+    private function visaSupplierProcess(ActiveRecord $visa, mixed $visaSuppliers): array
     {
         $serviceSupplierData = [];
         $supplierLedgerArray = [];
-        foreach ($holidaySuppliers as $singleSupplierArray) {
-            $holidaySupplier = new HolidaySupplier();
-            $holidaySupplier->load(['HolidaySupplier' => $singleSupplierArray]);
-            $holidaySupplier->holidayId = $holiday->id;
-            $holidaySupplier = $this->holidayRepository->store($holidaySupplier);
-            if ($holidaySupplier->hasErrors()) {
-                throw new Exception('Holiday Supplier refund creation failed - ' . Helper::processErrorMessages($holidaySupplier->getErrors()));
+        foreach ($visaSuppliers as $singleSupplierArray) {
+            $visaSupplier = new VisaSupplier();
+            $visaSupplier->load(['VisaSupplier' => $singleSupplierArray]);
+            $visaSupplier->visaId = $visa->id;
+            $visaSupplier = $this->visaRepository->store($visaSupplier);
+            if ($visaSupplier->hasErrors()) {
+                throw new Exception('Visa Supplier refund creation failed - ' . Helper::processErrorMessages($visaSupplier->getErrors()));
             }
 
             $serviceSupplierData[] = [
-                'refId' => $holidaySupplier->id,
-                'refModel' => HolidaySupplier::class,
+                'refId' => $visaSupplier->id,
+                'refModel' => VisaSupplier::class,
                 'subRefModel' => Invoice::class,
-                'dueAmount' => $holidaySupplier->costOfSale,
-                'paidAmount' => $holidaySupplier->paidAmount,
+                'dueAmount' => $visaSupplier->costOfSale,
+                'paidAmount' => $visaSupplier->paidAmount,
             ];
 
             // Supplier ledger data process
-            if (isset($supplierLedgerArray[$holidaySupplier->supplierId])) {
-                $supplierLedgerArray[$holidaySupplier->supplierId]['credit'] += $holidaySupplier->costOfSale;
+            if (isset($supplierLedgerArray[$visaSupplier->supplierId])) {
+                $supplierLedgerArray[$visaSupplier->supplierId]['credit'] += $visaSupplier->costOfSale;
             } else {
-                $supplierLedgerArray[$holidaySupplier->supplierId] = [
+                $supplierLedgerArray[$visaSupplier->supplierId] = [
                     'debit' => 0,
-                    'credit' => $holidaySupplier->costOfSale,
-                    'refId' => $holidaySupplier->supplierId,
+                    'credit' => $visaSupplier->costOfSale,
+                    'refId' => $visaSupplier->supplierId,
                     'refModel' => Supplier::class,
                     'subRefId' => null
                 ];

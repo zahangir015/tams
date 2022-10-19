@@ -10,6 +10,7 @@ use app\modules\account\models\ServicePaymentTimeline;
 use app\modules\account\repositories\InvoiceRepository;
 use app\modules\account\repositories\PaymentTimelineRepository;
 use app\modules\admin\models\User;
+use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\Customer;
 use yii\db\ActiveRecord;
 use yii\db\Exception;
@@ -200,5 +201,20 @@ class InvoiceService
         }
 
         return ['error' => false, 'data' => $invoiceDetail];
+    }
+
+    public static function checkAndDetectPaymentStatus($due, $amount): string
+    {
+        $paymentStatus = NULL;
+        $difference = abs(($due - $amount));
+        if ($difference <= GlobalConstant::GRACE_DISCOUNT) {
+            $paymentStatus = GlobalConstant::PAYMENT_STATUS['Full Paid'];
+        } elseif ($amount > 0 && $due > 0) {
+            $paymentStatus = GlobalConstant::PAYMENT_STATUS['Partially Paid'];
+        } elseif ($amount == 0 && $due > 0) {
+            $paymentStatus = GlobalConstant::PAYMENT_STATUS['Due'];
+        }
+
+        return $paymentStatus;
     }
 }

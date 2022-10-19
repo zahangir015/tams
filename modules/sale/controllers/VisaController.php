@@ -2,19 +2,29 @@
 
 namespace app\modules\sale\controllers;
 
+use app\models\History;
 use app\modules\sale\models\visa\Visa;
 use app\modules\sale\models\visa\VisaSupplier;
 use app\modules\sale\models\VisaSearch;
 use app\controllers\ParentController;
+use app\modules\sale\services\VisaService;
+use Yii;
 use yii\bootstrap4\ActiveForm;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * VisaController implements the CRUD actions for Visa model.
  */
 class VisaController extends ParentController
 {
+    public VisaService $visaService;
+
+    public function __construct($uid, $module, $config = [])
+    {
+        $this->visaService = new VisaService();
+        parent::__construct($uid, $module, $config);
+    }
+
     /**
      * Lists all Visa models.
      *
@@ -37,10 +47,12 @@ class VisaController extends ParentController
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id)
+    public function actionView(string $uid)
     {
+        $model = $this->visaService->findVisa($uid, ['visaSuppliers', 'customer']);
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
+            'histories' => History::find()->where(['tableName' => Visa::tableName(), 'tableId' => $model->id])->orderBy(['id' => SORT_DESC])->all()
         ]);
     }
 
@@ -53,10 +65,11 @@ class VisaController extends ParentController
     {
         $model = new Visa();
         $visaSupplier = new VisaSupplier();
-
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+            $requestData = Yii::$app->request->post();
+            $response = $this->visaService->storeVisa($requestData);
+            if ($response) {
+                return $this->redirect('index');
             }
         } else {
             $model->loadDefaultValues();
@@ -69,18 +82,47 @@ class VisaController extends ParentController
     }
 
     /**
+     * Creates a new Visa model.
+     * If creation is successful, the browser will be redirected to the 'refund list' page.
+     * @return string|Response
+     */
+    public function actionRefund(string $uid)
+    {
+        $model = new Visa();
+        $motherVisa = $this->visaService->findVisa($uid, ['visaSuppliers', 'invoice']);
+        if ($this->request->isPost) {
+            $requestData = Yii::$app->request->post();
+            $response = $this->visaService->refundVisa($requestData, $motherVisa);
+            if ($response) {
+                return $this->redirect('index');
+            }
+        } else {
+            $model->loadDefaultValues();
+        }
+
+        return $this->render('_refund', [
+            'model' => $model,
+            'motherVisa' => $motherVisa,
+        ]);
+    }
+
+    /**
      * Updates an existing Visa model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $id ID
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionUpdate(string $uid)
     {
-        $model = $this->findModel($id);
+        $model = $this->visaService->findVisa($uid, ['visaSuppliers', 'customer']);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($this->request->isPost) {
+            // Update Visa
+            $model = $this->visaService->updateVisa(Yii::$app->request->post(), $model);
+            if ($model) {
+                return $this->redirect(['view', 'uid' => $model->uid]);
+            }
         }
 
         return $this->render('update', [
@@ -91,31 +133,15 @@ class VisaController extends ParentController
     /**
      * Deletes an existing Visa model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id ID
+     * @param string $uid UID
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($id)
+    public function actionDelete(string $uid)
     {
-        $this->findModel($id)->delete();
+        $this->findVisa($uid)->delete();
 
         return $this->redirect(['index']);
-    }
-
-    /**
-     * Finds the Visa model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id ID
-     * @return Visa the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id)
-    {
-        if (($model = Visa::findOne(['id' => $id])) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
 
     public function actionAddSupplier($row): string
