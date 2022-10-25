@@ -12,7 +12,7 @@ class m221009_124429_alter_description_column_from_holiday_supplier_table extend
      */
     public function safeUp()
     {
-        $this->dropColumn('holiday_supplier', 'description');
+        $this->addColumn('holiday_supplier', 'description', $this->text());
     }
 
     /**

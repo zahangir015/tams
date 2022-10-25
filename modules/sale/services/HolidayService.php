@@ -93,7 +93,7 @@ class HolidayService
                 Yii::$app->session->setFlash('success', 'Holiday added successfully');
                 return true;
             }
-            // Ticket and supplier data can not be empty
+            // Holiday and supplier data can not be empty
             throw new Exception('Holiday and supplier data can not be empty.');
 
         } catch (Exception $e) {
@@ -156,7 +156,7 @@ class HolidayService
                 Yii::$app->session->setFlash('success', 'Holiday added successfully');
                 return true;
             }
-            // Ticket and supplier data can not be empty
+            // Holiday and supplier data can not be empty
             throw new Exception('Holiday and supplier data can not be empty.');
 
         } catch (Exception $e) {
@@ -170,41 +170,46 @@ class HolidayService
     {
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
-            $invoice = $holiday->invoice;
-            $oldQuoteAmount = $holiday->quoteAmount;
+            if (empty($requestData['Holiday']) || !empty($requestData['HolidaySupplier'])) {
+                throw new Exception('Holiday and supplier data can not be empty.');
+            }
 
-            // Update Package
-            $holiday->setAttributes($requestData['Holiday']);
+            $oldQuoteAmount = $holiday->quoteAmount;
+            $oldReceivedAmount = $holiday->receivedAmount;
+            $oldCustomerId = $holiday->customerId;
+
+            // Update Holiday Model
+            $holiday->load($requestData);
             $holiday->netProfit = self::calculateNetProfit($holiday->quoteAmount, $holiday->costOfSale);
             $holiday->paymentStatus = InvoiceService::checkAndDetectPaymentStatus($holiday->quoteAmount, $holiday->receivedAmount);
             if (!$holiday->save()) {
                 throw new Exception('Holiday update failed - ' . Helper::processErrorMessages($holiday->getErrors()));
             }
 
-            //Create Package-Supplier Entity
-            $suppliers = $requestData['HolidaySupplier'];
-            if (!$suppliers) {
-                throw new Exception('At least 1 Supplier is required');
-            }
-            $updateHolidaySupplierResponse = self::updateHolidaySupplier($holiday, $suppliers, $invoice);
-            if (!$updateHolidaySupplierResponse['status']) {
-                throw new Exception($updateHolidaySupplierResponse['message']);
+            // TODO Invoice update
+            // TODO Customer ledger update
+            // TODO Service Payment timeline update
+            $quoteAmountDiff = ($holiday->quoteAmount - $oldQuoteAmount);
+            if ($holiday->invoiceId && $quoteAmountDiff) {
+                $invoiceUpdateResponse = InvoiceService::updateInvoiceUpdate($holiday->invoice, $holiday, $quoteAmountDiff);
             }
 
-            if (!empty($invoice) && ($oldQuoteAmount != $holiday->quoteAmount)) {
-                //Update Invoice Entity
-                $services[] = [
-                    'refId' => $holiday->id,
-                    'refModel' => get_class($holiday),
-                    'due' => ($holiday->quoteAmount - $holiday->receivedAmount),
-                    'amount' => $holiday->receivedAmount
-                ];
+            // Update Holiday Supplier
+            // TODO Supplier ledger update
+            // TODO Bill update
+            $holidaySupplierProcessedData = self::updateHolidaySupplier($holiday, $requestData['HolidaySupplier']);
+            // Invoice details data process
+            $services[] = [
+                'invoiceId' => $motherHoliday->invoiceId ?? null,
+                'refId' => $holiday->id,
+                'refModel' => Holiday::class,
+                'dueAmount' => ($holiday->quoteAmount - $holiday->receivedAmount),
+                'paidAmount' => $holiday->receivedAmount,
+                'supplierData' => $holidaySupplierProcessedData['serviceSupplierData']
+            ];
+            $supplierLedgerArray = $holidaySupplierProcessedData['supplierLedgerArray'];
 
-                $updateServiceQuoteResponse = ServiceComponent::updatedServiceRelatedData($holiday, $services);
-                if ($updateServiceQuoteResponse['error']) {
-                    throw new Exception($updateServiceQuoteResponse['message']);
-                }
-            }
+
             $dbTransaction->commit();
             Yii::$app->session->setFlash('success', 'Package has been updated successfully');
             return true;
@@ -215,95 +220,10 @@ class HolidayService
         }
     }
 
-    private static function updateHolidaySupplier(ActiveRecord $holiday, mixed $suppliers, mixed $invoice)
+    private static function updateHolidaySupplier(ActiveRecord $holiday, array $suppliers)
     {
-        $selectedPackageSuppliers = [];
-        $deletedSuppliers = [];
-        $suppliersLedgerData = [];
 
-        foreach ($reqPackageSuppliers as $packageSupplier) {
-            $checkSupplier = Supplier::findOne(['id' => $packageSupplier['supplierId']]);
-            if (!$checkSupplier)
-                return ['status' => false, 'message' => 'Supplier not found'];
-
-            if (!empty($packageSupplier['id'])) {
-                $model = PackageSupplier::findOne(['id' => $packageSupplier['id']]);
-                $selectedPackageSuppliers[] = $model->id;
-            } else {
-                $model = new PackageSupplier();
-                $model->packageId = $package->id;
-                $model->identificationNo = $package->identificationNo;
-                $model->packageCategoryId = $package->packageCategoryId;
-                $model->status = Constant::ACTIVE_STATUS;
-                $model->paymentStatus = ServiceConstant::PAYMENT_STATUS['Due'];
-            }
-            $model->setAttributes($packageSupplier);
-            $model->type = $packageSupplier['type'] ?? ServiceConstant::TYPE['New'];
-            $model->supplierName = $checkSupplier->name;
-
-            if (!$model->save()) {
-                return ['status' => false, 'message' => 'Not saved Package Supplier Model- ' . Utils::processErrorMessages($model->getErrors())];
-            }
-            if (!empty($invoice)) {
-                // Supplier Ledger process
-                if (isset($suppliersLedgerData[$model->supplierId]['credit'])) {
-                    $suppliersLedgerData[$model->supplierId]['credit'] += $model->costOfSale;
-                } else {
-                    $suppliersLedgerData[$model->supplierId] = [
-                        'title' => 'Service Purchase',
-                        'reference' => 'Invoice Number - ' . $invoice->invoiceNumber,
-                        'refId' => $model->supplierId,
-                        'refModel' => Supplier::className(),
-                        'subRefId' => $invoice->id,
-                        'subRefModel' => $invoice::className(),
-                        'debit' => 0,
-                        'credit' => $model->costOfSale
-                    ];
-                }
-            }
-        }
-        $updateSuppliers = [];
-        if (!empty($invoice)) {
-            foreach ($package->packageSuppliers as $oldPackageSupplier) {
-                if (!in_array($oldPackageSupplier->id, $selectedPackageSuppliers)) {
-                    $suppliersLedgerData[$oldPackageSupplier->supplierId] = [
-                        'title' => 'Service Purchase Update',
-                        'reference' => 'Invoice Number - ' . $invoice->invoiceNumber,
-                        'refId' => $oldPackageSupplier->supplierId,
-                        'refModel' => Supplier::class,
-                        'subRefId' => $invoice->id,
-                        'subRefModel' => $invoice::className(),
-                        'debit' => 0,
-                        'credit' => 0
-                    ];
-                    $deletedSuppliers[] = $oldPackageSupplier->id;
-                } else {
-                    if (isset($updateSuppliers[$oldPackageSupplier->supplierId]['costOfSale'])) {
-                        $updateSuppliers[$oldPackageSupplier->supplierId]['costOfSale'] += $oldPackageSupplier->costOfSale;
-                    } else {
-                        $updateSuppliers[$oldPackageSupplier->supplierId]['costOfSale'] = $oldPackageSupplier->costOfSale;
-                    }
-                }
-            }
-            foreach ($suppliersLedgerData as $key => $supplierLedger) {
-                if (isset($updateSuppliers[$key]['costOfSale']) && ($updateSuppliers[$key]['costOfSale'] == $supplierLedger['credit'])) {
-                    continue;
-                }
-                $ledgerRequestResponse = LedgerComponent::updateLedger($supplierLedger);
-                if (!$ledgerRequestResponse['status']) {
-                    return ['status' => false, 'message' => $ledgerRequestResponse['message']];
-                }
-            }
-        }
-
-        // delete removed packageSuppliers
-        if (count($deletedSuppliers)) {
-            if (!PackageSupplier::updateAll(['status' => Constant::INACTIVE_STATUS, 'updatedBy' => Yii::$app->user->id, 'updatedAt' => Utils::convertToTimestamp(date('Y-m-d h:i:s'))], ['in', 'id', $deletedSuppliers])) {
-                return ['status' => false, 'message' => 'Package Supplier not deleted with given supplier id(s)'];
-            }
-        }
-
-        return ['status' => true, 'message' => 'Package Supplier Saved Successfully'];
+        return ['error' => true, 'message' => 'Package Supplier Saved Successfully'];
     }
 
     private function holidaySupplierProcess(ActiveRecord $holiday, mixed $holidaySuppliers): array

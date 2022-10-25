@@ -53,6 +53,7 @@ class HolidaySearch extends Holiday
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => ['defaultOrder' => ['issueDate' => SORT_DESC]],
         ]);
 
         $dataProvider->sort->attributes['invoice'] = [

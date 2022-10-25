@@ -11,6 +11,7 @@ use app\modules\sale\services\VisaService;
 use Yii;
 use yii\bootstrap4\ActiveForm;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 /**
  * VisaController implements the CRUD actions for Visa model.
@@ -59,7 +60,7 @@ class VisaController extends ParentController
     /**
      * Creates a new Visa model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
+     * @return string|Response
      */
     public function actionCreate()
     {
@@ -109,8 +110,8 @@ class VisaController extends ParentController
     /**
      * Updates an existing Visa model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id ID
-     * @return string|\yii\web\Response
+     * @param string $uid UID
+     * @return string|Response
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionUpdate(string $uid)
@@ -134,7 +135,7 @@ class VisaController extends ParentController
      * Deletes an existing Visa model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param string $uid UID
-     * @return \yii\web\Response
+     * @return Response
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionDelete(string $uid)

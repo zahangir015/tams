@@ -62,6 +62,10 @@ class TicketSearch extends Ticket
                 list($start_date, $end_date) = explode(' - ', $params['TicketSearch']['departureDate']);
                 $query->andFilterWhere(['between', 'departureDate', date('Y-m-d', strtotime($start_date)), date('Y-m-d', strtotime($end_date))]);
             }
+            if (!empty($params['TicketSearch']['refundRequestDate']) && str_contains($params['TicketSearch']['refundRequestDate'], '-')) {
+                list($start_date, $end_date) = explode(' - ', $params['TicketSearch']['refundRequestDate']);
+                $query->andFilterWhere(['between', 'refundRequestDate', date('Y-m-d', strtotime($start_date)), date('Y-m-d', strtotime($end_date))]);
+            }
         }
 
         // add conditions that should always apply here

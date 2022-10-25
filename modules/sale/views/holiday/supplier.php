@@ -63,6 +63,13 @@ use yii\bootstrap4\Html;
                 <?= $form->field($holidaySupplier, "[$row]serviceDetails")->textInput(['maxlength' => true]); ?>
             </div>
         </div>
+        <?php
+        if (!$model->isNewRecord) {
+            ?>
+            <?= $form->field($holidaySupplier, "[$row]id")->hiddenInput(['maxlength' => true, 'value' => $holidaySupplier->id])->label(false); ?>
+            <?php
+        }
+        ?>
         <?= (!$model->isNewRecord) ? Html::submitButton('<i class="fas fa-save"></i>Update', ['class' => 'btn btn-light-primary font-weight-bold float-right']) : '' ?>
     </div>
 </div>

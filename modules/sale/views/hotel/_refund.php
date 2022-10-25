@@ -14,11 +14,9 @@ use app\components\Helper;
 /* @var $form yii\bootstrap4\ActiveForm */
 
 
-$this->registerJs(
-    "var supplier = '" . Yii::$app->request->baseUrl . '/sale/hotel/add-supplier' . "';",
-    View::POS_HEAD,
-    'url'
-);
+$this->title = Yii::t('app', 'Refund Hotel');
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Hotels'), 'url' => ['refund-list']];
+$this->params['breadcrumbs'][] = $this->title;
 
 $this->registerJsFile(
     '@web/js/hotel.js',
@@ -49,10 +47,16 @@ $this->registerJsFile(
             <div class="card-body">
                 <div class="row">
                     <div class="col-md">
-                        <?= $form->field($model, 'customerId')->widget(Select2::class, Helper::ajaxDropDown('customerId', '/sale/customer/get-customers', true, 'customerId'))->label('Customer') ?>
+                        <?= $form->field($model, 'customerId')->dropdownList([$motherHoliday->customer->id => $motherHoliday->customer->company], ['readOnly' => 'readOnly'])->label('Customer') ?>
                     </div>
                     <div class="col-md">
-                        <?= $form->field($model, 'issueDate')->widget(DateRangePicker::class, Helper::dateFormat(false, true)) ?>
+                        <?= $form->field($model, 'holidayCategoryId')->dropdownList($holidayCategories, ['prompt' => '', 'readOnly' => 'readOnly', 'value' => $motherHoliday->holidayCategoryId])->label('Category') ?>
+                    </div>
+                    <div class="col-md">
+                        <?= $form->field($model, 'issueDate')->textInput(['value' => $motherHoliday->issueDate, 'readOnly' => 'readOnly']) ?>
+                    </div>
+                    <div class="col-md">
+                        <?= $form->field($model, 'refundRequestDate')->widget(DateRangePicker::class, Helper::dateFormat(false, true)) ?>
                     </div>
                     <div class="col-md">
                         <?= $form->field($model, 'voucherNumber')->textInput(['maxlength' => true]) ?>
