@@ -56,24 +56,28 @@ function calculateNetProfit() {
 
 function calculateQuoteAmount() {
     let totalQuoteAmount = 0;
-    if ($('.quantity').length > 0) {
-        $(".quantity").each(function (index) {
-            var quantity = parseFloat($(this).parents('.calcData').find('.quantity').val());
-            var perServicePrice = parseFloat($(this).parents('.calcData').find('.perServicePrice').val())
-            var holidayQuoteAmount = quantity * perServicePrice;
-            totalQuoteAmount += holidayQuoteAmount;
-        });
-        $('#holiday-quoteamount').val(totalQuoteAmount);
-    } else {
-        return false
-    }
-    calculateNetProfit();
+    var totalNights = parseFloat($(this).parents('.calcData').find('.totalNights').val())
+    var quantity = parseFloat($(this).parents('.calcData').find('.roomQuantity').val())
+    var perServicePrice = parseFloat($(this).parents('.calcData').find('.unitPrice').val())
+    console.log(totalNights)
+    console.log(quantity)
+    console.log(perServicePrice)
+    var holidayQuoteAmount = (quantity * totalNights) * perServicePrice;
+    totalQuoteAmount += holidayQuoteAmount;
+    $('#holiday-quoteamount').val(totalQuoteAmount);
+}
+
+else
+{
+    return false
+}
+calculateNetProfit();
 }
 
 function calculateCostOfSale() {
     let totalCostOfSale = 0;
-    if ($(document).find('.supplierCostOfSale').length) {
-        $(".supplierCostOfSale").each(function (index) {
+    if ($(document).find('.costOfSale').length) {
+        $(".costOfSale").each(function (index) {
             var costOfSale = parseFloat($(this).val());
             totalCostOfSale += costOfSale;
         });

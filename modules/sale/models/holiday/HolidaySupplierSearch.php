@@ -5,7 +5,6 @@ namespace app\modules\sale\models\holiday;
 use app\components\GlobalConstant;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\sale\models\holiday\HolidaySupplier;
 
 /**
  * HolidaySupplierSearch represents the model behind the search form of `app\modules\sale\models\holiday\HolidaySupplier`.
@@ -19,7 +18,7 @@ class HolidaySupplierSearch extends HolidaySupplier
     {
         return [
             [['id', 'holidayId', 'billId', 'supplierId', 'quantity', 'unitPrice', 'status', 'holidayCategoryId', 'motherId'], 'integer'],
-            [['uid', 'supplierRef', 'issueDate', 'departureDate', 'refundRequestDate', 'type', 'serviceDetails', 'paymentStatus', 'description'], 'safe'],
+            [['uid', 'supplierRef', 'issueDate', 'departureDate', 'refundRequestDate', 'type', 'serviceDetails', 'paymentStatus'], 'safe'],
             [['costOfSale', 'paidAmount'], 'number'],
         ];
     }
@@ -96,8 +95,7 @@ class HolidaySupplierSearch extends HolidaySupplier
         $query->andFilterWhere(['like', 'supplierRef', $this->supplierRef])
             ->andFilterWhere(['like', 'type', $this->type])
             ->andFilterWhere(['like', 'serviceDetails', $this->serviceDetails])
-            ->andFilterWhere(['like', 'paymentStatus', $this->paymentStatus])
-            ->andFilterWhere(['like', 'description', $this->description]);
+            ->andFilterWhere(['like', 'paymentStatus', $this->paymentStatus]);
 
         return $dataProvider;
     }

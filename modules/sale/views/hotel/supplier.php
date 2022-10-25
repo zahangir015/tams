@@ -42,16 +42,16 @@ use yii\bootstrap4\Html;
         </div>
         <div class="row calcData">
             <div class="col-md">
-                <?= $form->field($hotelSupplier, "[$row]numberOfNights")->textInput(['type' => 'number', 'value' => 0, 'onChange' => 'calculateQuoteAmount()', 'min' => 0, 'class' => 'form-control night'])->label('Number Of Nights') ?>
+                <?= $form->field($hotelSupplier, "[$row]numberOfNights")->textInput(['type' => 'number', 'value' => 0, 'onChange' => 'calculateQuoteAmount()', 'min' => 0, 'class' => 'form-control totalNights'])->label('Number Of Nights') ?>
             </div>
             <div class="col-md">
-                <?= $form->field($hotelSupplier, "[$row]qty")->textInput(['type' => 'number', 'value' => 0, 'onChange' => 'calculateQuoteAmount()', 'min' => 0, 'class' => 'form-control quantity'])->label('Number Of Rooms') ?>
+                <?= $form->field($hotelSupplier, "[$row]quantity")->textInput(['type' => 'number', 'value' => 0, 'onChange' => 'calculateQuoteAmount()', 'min' => 0, 'class' => 'form-control roomQuantity'])->label('Number Of Rooms') ?>
             </div>
             <div class="col-md">
-                <?= $form->field($hotelSupplier, "[$row]price")->textInput(['type' => 'number', 'value' => 0, 'onChange' => 'calculateQuoteAmount()', 'min' => 0, 'class' => 'form-control perServicePrice'])->label('Per Night Price') ?>
+                <?= $form->field($hotelSupplier, "[$row]unitPrice")->textInput(['type' => 'number', 'value' => 0, 'onChange' => 'calculateQuoteAmount()', 'min' => 0, 'class' => 'form-control unitPrice'])->label('Per Night Price') ?>
             </div>
             <div class="col-md">
-                <?= $form->field($hotelSupplier, "[$row]costOfSale")->textInput(['type' => 'number', 'value' => 0, 'onChange' => 'calculateCostOfSale()', 'min' => 0, 'class' => 'form-control supplierCostOfSale']) ?>
+                <?= $form->field($hotelSupplier, "[$row]costOfSale")->textInput(['type' => 'number', 'value' => 0, 'onChange' => 'calculateCostOfSale()', 'min' => 0, 'class' => 'form-control costOfSale']) ?>
             </div>
         </div>
         <?= (!$model->isNewRecord) ? Html::submitButton('<i class="fas fa-save"></i>Update', ['class' => 'btn btn-light-primary font-weight-bold float-right']) : '' ?>
