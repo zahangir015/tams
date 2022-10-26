@@ -2,6 +2,8 @@
 
 namespace app\modules\sale\models\hotel;
 
+use app\modules\account\models\Invoice;
+use app\modules\sale\models\Customer;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\sale\models\hotel\Hotel;
@@ -11,6 +13,9 @@ use app\modules\sale\models\hotel\Hotel;
  */
 class HotelSearch extends Hotel
 {
+    public $invoice;
+    public $customer;
+
     /**
      * {@inheritdoc}
      */
@@ -18,7 +23,7 @@ class HotelSearch extends Hotel
     {
         return [
             [['id', 'motherId', 'invoiceId', 'customerId', 'totalNights', 'isRefundable', 'isOnlineBooked', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
-            [['uid', 'identificationNumber', 'customerCategory', 'voucherNumber', 'reservationCode', 'type', 'issueDate', 'refundRequestDate', 'checkInDate', 'checkOutDate', 'freeCancellationDate', 'route', 'paymentStatus', 'reference'], 'safe'],
+            [['invoice', 'customer', 'identificationNumber', 'customerCategory', 'voucherNumber', 'reservationCode', 'type', 'issueDate', 'refundRequestDate', 'checkInDate', 'checkOutDate', 'freeCancellationDate', 'route', 'paymentStatus', 'reference'], 'safe'],
             [['quoteAmount', 'costOfSale', 'netProfit', 'receivedAmount'], 'number'],
         ];
     }
@@ -44,10 +49,22 @@ class HotelSearch extends Hotel
         $query = Hotel::find();
 
         // add conditions that should always apply here
+        $query->joinWith(['invoice', 'customer']);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => ['defaultOrder' => ['issueDate' => SORT_DESC]],
         ]);
+
+        $dataProvider->sort->attributes['invoice'] = [
+            'asc' => [Invoice::tableName() . '.invoiceNumber' => SORT_ASC],
+            'desc' => [Invoice::tableName() . '.invoiceNumber' => SORT_DESC],
+        ];
+
+        $dataProvider->sort->attributes['customer'] = [
+            'asc' => [Customer::tableName() . '.company' => SORT_ASC],
+            'desc' => [Customer::tableName() . '.company' => SORT_DESC],
+        ];
 
         $this->load($params);
 
@@ -83,6 +100,9 @@ class HotelSearch extends Hotel
         ]);
 
         $query->andFilterWhere(['like', 'uid', $this->uid])
+            ->andFilterWhere(['like', Invoice::tableName() . '.invoiceNumber', $this->invoice])
+            ->andFilterWhere(['like', Customer::tableName() . '.company', $this->customer])
+            ->orFilterWhere(['like', Customer::tableName() . '.customerCode', $this->customer])
             ->andFilterWhere(['like', 'identificationNumber', $this->identificationNumber])
             ->andFilterWhere(['like', 'customerCategory', $this->customerCategory])
             ->andFilterWhere(['like', 'voucherNumber', $this->voucherNumber])

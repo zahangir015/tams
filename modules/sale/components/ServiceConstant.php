@@ -32,7 +32,7 @@ final class ServiceConstant
         'Refund Requested' => 'Refund Requested',
     ];
 
-    const HOLIDAY_TYPE_FOR_CREATE = [
+    const SERVICE_TYPE_FOR_CREATE = [
         'New' => 'New',
         'Refund' => 'Refund'
     ];

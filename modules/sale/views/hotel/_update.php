@@ -28,13 +28,11 @@ $this->registerJsFile(
 
 <div class="hotel-form">
     <?php $form = ActiveForm::begin(['class' => 'form']); ?>
-
-    <?php if ($model->isNewRecord) : ?>
         <div class="card card-custom mb-5 sticky-top">
             <div class="card-header">
                 <div class="card-title">
                     <h5 class="card-label">
-                        Create Hotel
+                        Update Hotel
                     </h5>
                 </div>
                 <div class="card-toolbar float-right">
@@ -43,13 +41,13 @@ $this->registerJsFile(
                        data-row-number="1">
                         <i class="fa fa-plus-circle"></i> Add More
                     </a>
-                    <?= Html::submitButton(Yii::t('app', '<i class="fa fa-arrow-alt-circle-down"></i> Save'), ['class' => 'btn btn-primary']) ?>
+                    <?= Html::submitButton(Yii::t('app', '<i class="fa fa-arrow-alt-circle-down"></i> Update'), ['class' => 'btn btn-primary']) ?>
                 </div>
             </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-md">
-                        <?= $form->field($model, 'customerId')->widget(Select2::class, Helper::ajaxDropDown('customerId', '/sale/customer/get-customers', true, 'customerId'))->label('Customer') ?>
+                        <?= $form->field($model, 'customerId')->widget(Select2::class, Helper::ajaxDropDown('customerId', '/sale/customer/get-customers', true, 'customerId', 'customer', [$model->customer->id => $model->customer->company]))->label('Customer') ?>
                     </div>
                     <div class="col-md">
                         <?= $form->field($model, 'issueDate')->widget(DateRangePicker::class, Helper::dateFormat(false, true)) ?>
@@ -79,18 +77,18 @@ $this->registerJsFile(
                         </div>
                         <div class="row">
                             <div class="col-md">
-                                <?= $form->field($model, 'costOfSale')->textInput(['type' => 'number', 'value' => 0, 'min' => 0, 'step' => 'any', 'readOnly' => 'readOnly'])->label('Total Cost Of Sale') ?>
+                                <?= $form->field($model, 'costOfSale')->textInput(['type' => 'number', 'value' => $model->costOfSale, 'min' => 0, 'step' => 'any', 'readOnly' => 'readOnly'])->label('Total Cost Of Sale') ?>
                             </div>
                             <div class="col-md">
-                                <?= $form->field($model, 'quoteAmount')->textInput(['type' => 'number', 'value' => 0, 'min' => 0, 'step' => 'any', 'readOnly' => 'readOnly'])->label('Total Quote Amount') ?>
+                                <?= $form->field($model, 'quoteAmount')->textInput(['type' => 'number', 'value' => $model->quoteAmount, 'min' => 0, 'step' => 'any', 'readOnly' => 'readOnly'])->label('Total Quote Amount') ?>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md">
-                                <?= $form->field($model, 'netProfit')->textInput(['type' => 'number', 'value' => 0, 'step' => 'any', 'readOnly' => 'readOnly'])->label('Net Profit') ?>
+                                <?= $form->field($model, 'netProfit')->textInput(['type' => 'number', 'value' => $model->netProfit, 'step' => 'any', 'readOnly' => 'readOnly'])->label('Net Profit') ?>
                             </div>
                             <div class="col-md">
-                                <?= $form->field($model, 'totalNights')->textInput(['type' => 'number', 'value' => 0, 'step' => 'any', 'readOnly' => 'readOnly'])->label('Total Nights') ?>
+                                <?= $form->field($model, 'totalNights')->textInput(['type' => 'number', 'value' => $model->totalNights, 'step' => 'any', 'readOnly' => 'readOnly'])->label('Total Nights') ?>
                             </div>
                         </div>
                         <div class="row">
@@ -117,34 +115,20 @@ $this->registerJsFile(
                                 <?= $form->field($model, 'isRefundable')->dropDownList(GlobalConstant::YES_NO) ?>
                             </div>
                         </div>
-                        <div class="row">
-                            <?php
-                            if ($model->isNewRecord) {
-                                ?>
-                                <div class="col-md">
-                                    <div class="form-group">
-                                        <div class="custom-control custom-radio">
-                                            <input class="custom-control-input" type="radio" id="customRadio1"
-                                                   name="invoice" value="1">
-                                            <label for="customRadio1" class="custom-control-label">Create
-                                                Invoice</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <?php
-                            }
-                            ?>
-                        </div>
                     </div>
                 </div>
             </div>
             <div class="col-md-7 col-lg-8">
                 <div class="card-holder">
-                    <?= $this->render('supplier', ['row' => 0, 'model' => $model, 'hotelSupplier' => $model->hotelSupplier ?? $hotelSupplier, 'form' => $form]); ?>
+                    <?php
+                    foreach ($model->hotelSuppliers as $key => $hotelSupplier) {
+                        ?>
+                        <?= $this->render('supplier', ['row' => $key, 'model' => $model, 'hotelSupplier' => $hotelSupplier, 'form' => $form]); ?>
+                        <?php
+                    }
+                    ?>
                 </div>
             </div>
         </div>
-    <?php endif; ?>
-
     <?php ActiveForm::end(); ?>
 </div>

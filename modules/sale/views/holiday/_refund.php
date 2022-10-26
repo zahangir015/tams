@@ -87,7 +87,7 @@ $this->registerJsFile(
                             <?= $form->field($model, 'netProfit')->textInput(['type' => 'number', 'value' => $motherHoliday->netProfit, 'step' => 'any', 'readOnly' => 'readOnly'])->label('Net Profit') ?>
                         </div>
                         <div class="col-md">
-                            <?= $form->field($model, 'type')->dropdownList(ServiceConstant::HOLIDAY_TYPE_FOR_CREATE, ['value' => GlobalConstant::TICKET_TYPE_FOR_REFUND['Refund'], 'readOnly' => 'readOnly'])->label('Type') ?>
+                            <?= $form->field($model, 'type')->dropdownList(ServiceConstant::SERVICE_TYPE_FOR_CREATE, ['value' => ServiceConstant::SERVICE_TYPE_FOR_CREATE['Refund'], 'readOnly' => 'readOnly'])->label('Type') ?>
                             <?= $form->field($model, 'motherId')->hiddenInput(['value' => $motherHoliday->id])->label(false);?>
                         </div>
                     </div>

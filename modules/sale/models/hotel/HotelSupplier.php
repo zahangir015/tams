@@ -4,6 +4,7 @@ namespace app\modules\sale\models\hotel;
 
 use app\modules\account\models\Bill;
 use app\modules\sale\models\Supplier;
+use app\traits\BehaviorTrait;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
@@ -36,6 +37,7 @@ use yii\db\ActiveRecord;
  */
 class HotelSupplier extends ActiveRecord
 {
+    use BehaviorTrait;
     /**
      * {@inheritdoc}
      */
@@ -50,7 +52,7 @@ class HotelSupplier extends ActiveRecord
     public function rules(): array
     {
         return [
-            [['uid', 'hotelId', 'supplierId', 'supplierRef', 'issueDate', 'type', 'numberOfNights', 'quantity', 'unitPrice', 'costOfSale'], 'required'],
+            [['hotelId', 'supplierId', 'supplierRef', 'issueDate', 'type', 'numberOfNights', 'quantity', 'unitPrice', 'costOfSale'], 'required'],
             [['motherHotelSupplierId', 'hotelId', 'billId', 'supplierId', 'numberOfNights', 'quantity', 'status'], 'integer'],
             [['issueDate', 'refundRequestDate'], 'safe'],
             [['type', 'paymentStatus'], 'string'],

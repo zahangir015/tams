@@ -4,6 +4,8 @@ namespace app\modules\sale\models\hotel;
 
 use app\modules\account\models\Invoice;
 use app\modules\sale\models\Customer;
+use app\traits\BehaviorTrait;
+use app\traits\UniversalColumnTrait;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
@@ -48,6 +50,7 @@ use yii\db\ActiveRecord;
  */
 class Hotel extends ActiveRecord
 {
+    use BehaviorTrait;
     /**
      * {@inheritdoc}
      */
@@ -62,7 +65,7 @@ class Hotel extends ActiveRecord
     public function rules(): array
     {
         return [
-            [['uid', 'identificationNumber', 'customerId', 'customerCategory', 'issueDate', 'checkInDate', 'checkOutDate', 'totalNights', 'route', 'quoteAmount', 'costOfSale', 'netProfit', 'createdBy', 'createdAt'], 'required'],
+            [['identificationNumber', 'customerId', 'customerCategory', 'issueDate', 'checkInDate', 'checkOutDate', 'totalNights', 'route', 'quoteAmount', 'costOfSale', 'netProfit'], 'required'],
             [['motherId', 'invoiceId', 'customerId', 'totalNights', 'isRefundable', 'isOnlineBooked', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['type', 'paymentStatus'], 'string'],
             [['issueDate', 'refundRequestDate', 'checkInDate', 'checkOutDate', 'freeCancellationDate'], 'safe'],

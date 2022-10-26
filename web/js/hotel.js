@@ -56,19 +56,19 @@ function calculateNetProfit() {
 
 function calculateQuoteAmount() {
     let totalNights = 0;
-    let quantity = 0;
-    let unitPrice = 0;
-    $(".roomQuantity").each(function (index) {
-        quantity += parseFloat($(this).parents('.calcData').find('.roomQuantity').val())
+    let quote = 0;
+    $(".nights").each(function () {
+        var numberOfNights = parseFloat($('#nights' + $(this).attr('id').match(/\d+/)).val());
+        var rooms = parseFloat($('#roomQuantity' + $(this).attr('id').match(/\d+/)).val());
+        var unitPrice = parseFloat($('#unitPrice' + $(this).attr('id').match(/\d+/)).val());
+        if (!isNaN(numberOfNights) && !isNaN(rooms) && !isNaN(unitPrice)) {
+            var nights = parseFloat(numberOfNights * rooms);
+            quote += (nights * unitPrice);
+            totalNights += nights;
+        }
     });
-    $(".totalNights").each(function (index) {
-        totalNights += parseFloat($(this).parents('.calcData').find('.totalNights').val())
-    });
-    $(".unitPrice").each(function (index) {
-        unitPrice += parseFloat($(this).parents('.calcData').find('.unitPrice').val())
-    });
-    $('#hotel-quoteamount').val((quantity * totalNights) * unitPrice);
-    $('#hotel-totalnights').val((quantity * totalNights));
+    $('#hotel-quoteamount').val(quote);
+    $('#hotel-totalnights').val((totalNights));
 
     calculateNetProfit();
 }

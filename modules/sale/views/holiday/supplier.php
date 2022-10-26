@@ -20,10 +20,15 @@ use yii\bootstrap4\Html;
             <h5 class="card-label" id="card-label-<?= $row ?>">Holiday Supplier <?= ($row + 1) ?></h5>
         </div>
         <div class="card-toolbar float-right">
-            <a href="#" class="btn btn-danger btn-sm" onclick="remove(<?= $row ?>)">
-                    <span class="fa fa-times-circle">
-                </span>
-            </a>
+            <?php
+            if ($model->isNewRecord) {
+                ?>
+                <a href="#" class="btn btn-danger btn-sm" onclick="remove(<?= $row ?>)">
+                    <span class="fa fa-times-circle"></span>
+                </a>
+                <?php
+            }
+            ?>
         </div>
     </div>
     <div class="card-body">
@@ -57,7 +62,7 @@ use yii\bootstrap4\Html;
         </div>
         <div class="row">
             <div class="col-md-4">
-                <?= $form->field($holidaySupplier, "[$row]type")->textInput(['value' => ($holidaySupplier->isNewRecord) ? ServiceConstant::HOLIDAY_TYPE_FOR_CREATE['New'] : ServiceConstant::HOLIDAY_TYPE_FOR_CREATE['Refund'], 'readOnly' => 'readOnly']) ?>
+                <?= $form->field($holidaySupplier, "[$row]type")->textInput(['readOnly' => 'readOnly']) ?>
             </div>
             <div class="col-md-8">
                 <?= $form->field($holidaySupplier, "[$row]serviceDetails")->textInput(['maxlength' => true]); ?>

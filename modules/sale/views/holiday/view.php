@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+use yii\web\YiiAsset;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
@@ -9,7 +10,7 @@ use yii\widgets\DetailView;
 $this->title = $model->identificationNumber;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Holidays'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
-\yii\web\YiiAsset::register($this);
+YiiAsset::register($this);
 ?>
 <div class="holiday-view">
     <div class="card">
@@ -196,5 +197,4 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         </div>
     </div>
-
 </div>

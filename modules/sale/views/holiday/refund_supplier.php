@@ -57,7 +57,7 @@ use yii\bootstrap4\Html;
         </div>
         <div class="row">
             <div class="col-md-4">
-                <?= $form->field($holidaySupplier, "[$row]type")->dropdownList(ServiceConstant::HOLIDAY_TYPE_FOR_CREATE, ['value' => $holidaySupplier->type]) ?>
+                <?= $form->field($holidaySupplier, "[$row]type")->dropdownList(ServiceConstant::SERVICE_TYPE_FOR_CREATE, ['value' => $holidaySupplier->type]) ?>
             </div>
             <div class="col-md-8">
                 <?= $form->field($holidaySupplier, "[$row]serviceDetails")->textInput(['maxlength' => true]); ?>

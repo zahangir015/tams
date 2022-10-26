@@ -41,7 +41,7 @@ $this->registerJsFile(
                    data-row-number="1">
                     <i class="fa fa-plus-circle"></i> Add More
                 </a>
-                <?= Html::submitButton(Yii::t('app', '<i class="fa fa-arrow-alt-circle-down"></i> Save'), ['class' => 'btn btn-primary']) ?>
+                <?= Html::submitButton(Yii::t('app', '<i class="fa fa-arrow-alt-circle-down"></i> Update'), ['class' => 'btn btn-primary']) ?>
             </div>
         </div>
         <div class="card-body">
