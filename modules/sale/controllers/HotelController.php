@@ -90,7 +90,7 @@ class HotelController extends ParentController
     public function actionRefund(string $uid)
     {
         $model = new Hotel();
-        $motherHotel = $this->hotelService->findHotel($uid, ['hotelSuppliers', 'invoice']);
+        $motherHotel = $this->hotelService->findHotel($uid, ['hotelSuppliers', 'invoice', 'customer']);
         if ($this->request->isPost) {
             $requestData = Yii::$app->request->post();
             $response = $this->hotelService->refundHotel($requestData, $motherHotel);
