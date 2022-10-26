@@ -49,29 +49,28 @@ function updateSummery() {
 }
 
 function calculateNetProfit() {
-    let totalCostOfSale = parseFloat($('#holiday-costofsale').val());
-    let totalQuoteAmount = parseFloat($('#holiday-quoteamount').val());
-    $('#holiday-netprofit').val(totalQuoteAmount - totalCostOfSale);
+    let totalCostOfSale = parseFloat($('#hotel-costofsale').val());
+    let totalQuoteAmount = parseFloat($('#hotel-quoteamount').val());
+    $('#hotel-netprofit').val(totalQuoteAmount - totalCostOfSale);
 }
 
 function calculateQuoteAmount() {
-    let totalQuoteAmount = 0;
-    var totalNights = parseFloat($(this).parents('.calcData').find('.totalNights').val())
-    var quantity = parseFloat($(this).parents('.calcData').find('.roomQuantity').val())
-    var perServicePrice = parseFloat($(this).parents('.calcData').find('.unitPrice').val())
-    console.log(totalNights)
-    console.log(quantity)
-    console.log(perServicePrice)
-    var holidayQuoteAmount = (quantity * totalNights) * perServicePrice;
-    totalQuoteAmount += holidayQuoteAmount;
-    $('#holiday-quoteamount').val(totalQuoteAmount);
-}
+    let totalNights = 0;
+    let quantity = 0;
+    let unitPrice = 0;
+    $(".roomQuantity").each(function (index) {
+        quantity += parseFloat($(this).parents('.calcData').find('.roomQuantity').val())
+    });
+    $(".totalNights").each(function (index) {
+        totalNights += parseFloat($(this).parents('.calcData').find('.totalNights').val())
+    });
+    $(".unitPrice").each(function (index) {
+        unitPrice += parseFloat($(this).parents('.calcData').find('.unitPrice').val())
+    });
+    $('#hotel-quoteamount').val((quantity * totalNights) * unitPrice);
+    $('#hotel-totalnights').val((quantity * totalNights));
 
-else
-{
-    return false
-}
-calculateNetProfit();
+    calculateNetProfit();
 }
 
 function calculateCostOfSale() {
@@ -81,7 +80,7 @@ function calculateCostOfSale() {
             var costOfSale = parseFloat($(this).val());
             totalCostOfSale += costOfSale;
         });
-        $('#holiday-costofsale').val(totalCostOfSale);
+        $('#hotel-costofsale').val(totalCostOfSale);
     } else {
         return false;
     }
