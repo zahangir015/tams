@@ -8,7 +8,7 @@ use yii\db\ActiveRecord;
 
 class HotelRepository
 {
-    public function findOne(string $uid, mixed $withArray): array|ActiveRecord|null
+    public function findOne(string $uid, mixed $withArray): ActiveRecord
     {
         $query = Hotel::find();
         if (!empty($withArray)) {

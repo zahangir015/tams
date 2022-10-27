@@ -218,4 +218,9 @@ class InvoiceService
 
         return $paymentStatus;
     }
+
+    public function updateInvoice($invoice, $services)
+    {
+
+    }
 }
