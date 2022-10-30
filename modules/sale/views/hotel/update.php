@@ -4,7 +4,6 @@ use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $model app\modules\sale\models\hotel\Hotel */
-
 $this->title = Yii::t('app', 'Update Hotel: {name}', [
     'name' => $model->identificationNumber,
 ]);

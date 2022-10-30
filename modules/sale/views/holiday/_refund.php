@@ -88,7 +88,7 @@ $this->registerJsFile(
                         </div>
                         <div class="col-md">
                             <?= $form->field($model, 'type')->dropdownList(ServiceConstant::SERVICE_TYPE_FOR_CREATE, ['value' => ServiceConstant::SERVICE_TYPE_FOR_CREATE['Refund'], 'readOnly' => 'readOnly'])->label('Type') ?>
-                            <?= $form->field($model, 'motherId')->hiddenInput(['value' => $motherHoliday->id])->label(false);?>
+                            <?= $form->field($model, 'motherId')->hiddenInput(['value' => $motherHoliday->id])->label(false) ?>
                         </div>
                     </div>
                 </div>

@@ -69,6 +69,7 @@ use yii\bootstrap4\Html;
         if (!$model->isNewRecord) {
             ?>
             <?= $form->field($hotelSupplier, "[$row]id")->hiddenInput(['maxlength' => true, 'value' => $hotelSupplier->id])->label(false); ?>
+            <?= $form->field($holidaySupplier, "[$row]motherHotelId")->hiddenInput(['maxlength' => true, 'value' => $hotelSupplier->id])->label(false) ?>
             <?php
         }
         ?>

@@ -165,41 +165,47 @@ class HotelService
     {
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
-            $invoice = $hotel->invoice;
-            $oldQuoteAmount = $hotel->quoteAmount;
+            if (empty($requestData['Hotel']) || !empty($requestData['HotelSupplier'])) {
+                throw new Exception('Hotel and supplier data can not be empty.');
+            }
 
-            // Update Package
-            $hotel->setAttributes($requestData['Hotel']);
+            $oldQuoteAmount = $hotel->quoteAmount;
+            $oldReceivedAmount = $hotel->receivedAmount;
+            $oldCustomerId = $hotel->customerId;
+
+            // Update Hotel Model
+            $hotel->load($requestData);
             $hotel->netProfit = self::calculateNetProfit($hotel->quoteAmount, $hotel->costOfSale);
             $hotel->paymentStatus = InvoiceService::checkAndDetectPaymentStatus($hotel->quoteAmount, $hotel->receivedAmount);
             if (!$hotel->save()) {
                 throw new Exception('Hotel update failed - ' . Helper::processErrorMessages($hotel->getErrors()));
             }
 
-            //Create Package-Supplier Entity
-            $suppliers = $requestData['HotelSupplier'];
-            if (!$suppliers) {
-                throw new Exception('At least 1 Supplier is required');
+            // TODO Invoice update
+            $quoteAmountDiff = ($hotel->quoteAmount - $oldQuoteAmount);
+            if ($hotel->invoiceId && $quoteAmountDiff) {
+                $invoiceUpdateResponse = InvoiceService::updateInvoice($hotel->invoice, $hotel, $quoteAmountDiff);
             }
-            $updateHotelSupplierResponse = self::updateHotelSupplier($hotel, $suppliers, $invoice);
-            if (!$updateHotelSupplierResponse['status']) {
-                throw new Exception($updateHotelSupplierResponse['message']);
-            }
+            // TODO Customer ledger update
+            // TODO Service Payment timeline update
 
-            if (!empty($invoice) && ($oldQuoteAmount != $hotel->quoteAmount)) {
-                //Update Invoice Entity
-                $services[] = [
-                    'refId' => $hotel->id,
-                    'refModel' => get_class($hotel),
-                    'due' => ($hotel->quoteAmount - $hotel->receivedAmount),
-                    'amount' => $hotel->receivedAmount
-                ];
 
-                $updateServiceQuoteResponse = ServiceComponent::updatedServiceRelatedData($hotel, $services);
-                if ($updateServiceQuoteResponse['error']) {
-                    throw new Exception($updateServiceQuoteResponse['message']);
-                }
-            }
+            // Update Hotel Supplier
+            // TODO Supplier ledger update
+            // TODO Bill update
+            $hotelSupplierProcessedData = self::updateHotelSupplier($hotel, $requestData['HotelSupplier'], );
+            // Invoice details data process
+            $services[] = [
+                'invoiceId' => $motherHotel->invoiceId ?? null,
+                'refId' => $hotel->id,
+                'refModel' => Hotel::class,
+                'dueAmount' => ($hotel->quoteAmount - $hotel->receivedAmount),
+                'paidAmount' => $hotel->receivedAmount,
+                'supplierData' => $hotelSupplierProcessedData['serviceSupplierData']
+            ];
+            $supplierLedgerArray = $hotelSupplierProcessedData['supplierLedgerArray'];
+
+
             $dbTransaction->commit();
             Yii::$app->session->setFlash('success', 'Package has been updated successfully');
             return true;
@@ -216,19 +222,18 @@ class HotelService
         $deletedSuppliers = [];
         $suppliersLedgerData = [];
 
-        foreach ($reqPackageSuppliers as $packageSupplier) {
-            $checkSupplier = Supplier::findOne(['id' => $packageSupplier['supplierId']]);
+        foreach ($suppliers as $supplier) {
+            $checkSupplier = Supplier::findOne(['id' => $supplier['supplierId']]);
             if (!$checkSupplier)
                 return ['status' => false, 'message' => 'Supplier not found'];
 
             if (!empty($packageSupplier['id'])) {
-                $model = PackageSupplier::findOne(['id' => $packageSupplier['id']]);
+                $model = HotelSupplier::findOne(['id' => $packageSupplier['id']]);
                 $selectedPackageSuppliers[] = $model->id;
             } else {
-                $model = new PackageSupplier();
-                $model->packageId = $package->id;
-                $model->identificationNo = $package->identificationNo;
-                $model->packageCategoryId = $package->packageCategoryId;
+                $model = new HotelSupplier();
+                $model->packageId = $hotel->id;
+                $model->identificationNo = $hotel->identificationNumber;
                 $model->status = Constant::ACTIVE_STATUS;
                 $model->paymentStatus = ServiceConstant::PAYMENT_STATUS['Due'];
             }

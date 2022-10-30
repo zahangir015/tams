@@ -13,13 +13,6 @@ use app\components\Helper;
 /* @var $model app\modules\sale\models\hotel\Hotel */
 /* @var $form yii\bootstrap4\ActiveForm */
 
-
-$this->registerJs(
-    "var supplier = '" . Yii::$app->request->baseUrl . '/sale/hotel/add-supplier' . "';",
-    View::POS_HEAD,
-    'url'
-);
-
 $this->registerJsFile(
     '@web/js/hotel.js',
     ['depends' => [JqueryAsset::class]]
@@ -47,16 +40,19 @@ $this->registerJsFile(
         <div class="card-body">
             <div class="row">
                 <div class="col-md">
-                    <?= $form->field($model, 'customerId')->widget(Select2::class, Helper::ajaxDropDown('customerId', '/sale/customer/get-customers', true, 'customerId', 'customer', [$motherHotel->customer->id => $motherHotel->customer->company]))->label('Customer') ?>
+                    <?= $form->field($model, 'refundRequestDate')->widget(DateRangePicker::class, Helper::dateFormat(false, true)) ?>
                 </div>
                 <div class="col-md">
-                    <?= $form->field($model, 'issueDate')->widget(DateRangePicker::class, Helper::dateFormat(false, true)) ?>
+                    <?= $form->field($model, 'customerId')->dropdownList([$motherHotel->customer->id => $motherHotel->customer->company], ['readOnly' => 'readOnly'])->label('Customer') ?>
                 </div>
                 <div class="col-md">
-                    <?= $form->field($model, 'voucherNumber')->textInput(['maxlength' => true]) ?>
+                    <?= $form->field($model, 'issueDate')->textInput(['value' => $motherHotel->issueDate, 'readOnly' => 'readOnly']) ?>
                 </div>
                 <div class="col-md">
-                    <?= $form->field($model, 'reservationCode')->textInput(['maxlength' => true]) ?>
+                    <?= $form->field($model, 'voucherNumber')->textInput(['maxlength' => true, 'value' => $motherHotel->voucherNumber, 'readOnly' => 'readOnly']) ?>
+                </div>
+                <div class="col-md">
+                    <?= $form->field($model, 'reservationCode')->textInput(['maxlength' => true, 'value' => $motherHotel->reservationCode, 'readOnly' => 'readOnly']) ?>
                 </div>
             </div>
         </div>
@@ -72,7 +68,7 @@ $this->registerJsFile(
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($model, 'identificationNumber')->textInput(['value' => ($model->isNewRecord) ? Helper::hotelIdentificationNumber() : $model->identificationNumber, 'readOnly' => 'readOnly']) ?>
+                            <?= $form->field($model, 'identificationNumber')->textInput(['value' => Helper::hotelIdentificationNumber(), 'readOnly' => 'readOnly']) ?>
                         </div>
                     </div>
                     <div class="row">
@@ -93,27 +89,28 @@ $this->registerJsFile(
                     </div>
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($model, 'route')->textInput(['maxlength' => true]) ?>
+                            <?= $form->field($model, 'route')->textInput(['maxlength' => true, 'value' => $motherHotel->route, 'readOnly' => 'readOnly']) ?>
                         </div>
                         <div class="col-md">
-                            <?= $form->field($model, 'reference')->textInput(['maxlength' => true]) ?>
+                            <?= $form->field($model, 'reference')->textInput(['maxlength' => true, 'value' => $motherHotel->reference, 'readOnly' => 'readOnly']) ?>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($model, 'checkInDate')->widget(DateRangePicker::class, Helper::dateFormat(false, true)) ?>
+                            <?= $form->field($model, 'checkInDate')->textInput(['maxlength' => true, 'value' => $motherHotel->checkInDate, 'readOnly' => 'readOnly']) ?>
                         </div>
                         <div class="col-md">
-                            <?= $form->field($model, 'checkOutDate')->widget(DateRangePicker::class, Helper::dateFormat(false, true)) ?>
+                            <?= $form->field($model, 'checkOutDate')->textInput(['maxlength' => true, 'value' => $motherHotel->checkOutDate, 'readOnly' => 'readOnly']) ?>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($model, 'freeCancellationDate')->widget(DateRangePicker::class, Helper::dateFormat(false, true)) ?>
+                            <?= $form->field($model, 'freeCancellationDate')->textInput(['maxlength' => true, 'value' => $motherHotel->freeCancellationDate, 'readOnly' => 'readOnly']) ?>
                         </div>
                         <div class="col-md">
-                            <?= $form->field($model, 'isRefundable')->dropDownList(GlobalConstant::YES_NO) ?>
+                            <?= $form->field($model, 'isRefundable')->dropDownList(GlobalConstant::YES_NO, ['value' => $motherHotel->isRefundable, 'readOnly' => 'readOnly']) ?>
                         </div>
+                        <?= $form->field($model, 'motherId')->hiddenInput(['value' => $motherHotel->id])->label(false) ?>
                     </div>
                 </div>
             </div>
@@ -121,7 +118,7 @@ $this->registerJsFile(
         <div class="col-md-7 col-lg-8">
             <div class="card-holder">
                 <?php
-                foreach ($model->hotelSuppliers as $key => $hotelSupplier) {
+                foreach ($motherHotel->hotelSuppliers as $key => $hotelSupplier) {
                     ?>
                     <?= $this->render('refund_supplier', ['row' => $key, 'model' => $model, 'hotelSupplier' => $hotelSupplier, 'form' => $form]); ?>
                     <?php

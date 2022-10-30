@@ -45,7 +45,7 @@ use yii\bootstrap4\Html;
         </div>
         <div class="row">
             <div class="col-md-4">
-                <?= $form->field($hotelSupplier, "[$row]type")->textInput(['readOnly' => 'readOnly']) ?>
+                <?= $form->field($hotelSupplier, "[$row]type")->textInput(['readOnly' => 'readOnly', 'value' => ServiceConstant::ALL_HOLIDAY_TYPE['New']]) ?>
             </div>
             <div class="col-md-8">
                 <?= $form->field($hotelSupplier, "[$row]serviceDetails")->textInput(['maxlength' => true]); ?>
