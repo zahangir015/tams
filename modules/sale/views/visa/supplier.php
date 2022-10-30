@@ -37,15 +37,15 @@ use yii\bootstrap4\Html;
                 <?= $form->field($visaSupplier, "[$row]countryId")->dropDownList([], ['maxlength' => true]); ?>
             </div>
         </div>
-        <div class="row">
+        <div class="row calcData">
             <div class="col-md">
                 <?= $form->field($visaSupplier, "[$row]quantity")->textInput(['type' => 'number', 'value' => 0, 'onChange' => 'calculateQuoteAmount()', 'min' => 0, 'class' => 'form-control quantity'])->label('Number Of Visa') ?>
             </div>
             <div class="col-md">
-                <?= $form->field($visaSupplier, "[$row]unitPrice")->textInput(['type' => 'number', 'value' => 0, 'onChange' => 'calculateQuoteAmount()', 'min' => 0, 'class' => 'form-control perServicePrice'])->label('Per Visa Price') ?>
+                <?= $form->field($visaSupplier, "[$row]unitPrice")->textInput(['type' => 'number', 'value' => 0, 'onChange' => 'calculateQuoteAmount()', 'min' => 0, 'class' => 'form-control unitPrice'])->label('Per Visa Price') ?>
             </div>
             <div class="col-md">
-                <?= $form->field($visaSupplier, "[$row]costOfSale")->textInput(['type' => 'number', 'value' => 0, 'onChange' => 'calculateCostOfSale()', 'min' => 0, 'class' => 'form-control supplierCostOfSale']) ?>
+                <?= $form->field($visaSupplier, "[$row]costOfSale")->textInput(['type' => 'number', 'value' => 0, 'onChange' => 'calculateCostOfSale()', 'min' => 0, 'class' => 'form-control costOfSale']) ?>
             </div>
         </div>
         <div class="row">

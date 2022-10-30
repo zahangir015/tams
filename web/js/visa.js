@@ -18,20 +18,20 @@ function addSupplier() {
 }
 
 function totalRow() {
-    return $('#addButton').attr('data-row-number')
+    return $('#addButton').attr('data-row-number');
 }
 
 function remove(row) {
-    $('#card' + row).remove()
-    titleUpdate(row)
-    rowNum--
-    $('#addButton').attr('data-row-number', rowNum)
+    $('#card' + row).remove();
+    titleUpdate(row);
+    rowNum--;
+    $('#addButton').attr('data-row-number', rowNum);
 }
 
 function titleUpdate(row) {
     while (($('#card-label-' + (row + 1)).length !== 0)) {
-        $('#card-label-' + (row + 1)).text('Visa Supplier ' + (row + 1))
-        row++
+        $('#card-label-' + (row + 1)).text('Visa Supplier ' + (row + 1));
+        row++;
     }
 }
 
@@ -42,44 +42,38 @@ $('#supplierId').on('change', function (e) {
     $('.supplierId').val($(this).val());
 });
 
-function updateSummery() {
-    calculateQuoteAmount();
-    calculateCostOfSale();
-    calculateNetProfit();
-}
-
 function calculateNetProfit() {
-    let totalCostOfSale = parseFloat($('#holiday-costofsale').val());
-    let totalQuoteAmount = parseFloat($('#holiday-quoteamount').val());
-    $('#holiday-netprofit').val(totalQuoteAmount - totalCostOfSale);
+    let totalCostOfSale = parseFloat($('#visa-costofsale').val());
+    let totalQuoteAmount = parseFloat($('#visa-quoteamount').val());
+    $('#visa-netprofit').val(totalQuoteAmount - totalCostOfSale);
 }
 
 function calculateQuoteAmount() {
     let totalQuoteAmount = 0;
-    if ($('.quantity').length > 0) {
-        $(".quantity").each(function (index) {
-            var quantity = parseFloat($(this).parents('.calcData').find('.quantity').val());
-            var perServicePrice = parseFloat($(this).parents('.calcData').find('.perServicePrice').val())
-            var holidayQuoteAmount = quantity * perServicePrice;
-            totalQuoteAmount += holidayQuoteAmount;
-        });
-        $('#holiday-quoteamount').val(totalQuoteAmount);
-    } else {
-        return false
-    }
+    let totalQuantity = 0;
+    $(".quantity").each(function (index) {
+        var quantity = parseFloat($(this).parents('.calcData').find('.quantity').val());
+        var perServicePrice = parseFloat($(this).parents('.calcData').find('.unitPrice').val());
+        console.log(quantity);
+        console.log(perServicePrice);
+        if (!isNaN(quantity) && !isNaN(perServicePrice)) {
+            totalQuoteAmount += parseFloat(quantity * perServicePrice);
+            totalQuantity += quantity;
+        }
+    });
+    console.log(totalQuoteAmount);
+    console.log(totalQuantity);
+    $('#visa-quoteamount').val(totalQuoteAmount);
+    $('#visa-quantity').val(totalQuantity);
     calculateNetProfit();
 }
 
 function calculateCostOfSale() {
     let totalCostOfSale = 0;
-    if ($(document).find('.supplierCostOfSale').length) {
-        $(".supplierCostOfSale").each(function (index) {
-            var costOfSale = parseFloat($(this).val());
-            totalCostOfSale += costOfSale;
-        });
-        $('#holiday-costofsale').val(totalCostOfSale);
-    } else {
-        return false;
-    }
+    $(".costOfSale").each(function (index) {
+        var costOfSale = parseFloat($(this).val());
+        totalCostOfSale += costOfSale;
+    });
+    $('#visa-costofsale').val(totalCostOfSale);
     calculateNetProfit();
 }

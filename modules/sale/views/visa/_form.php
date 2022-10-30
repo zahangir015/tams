@@ -1,5 +1,6 @@
 <?php
 
+use app\modules\sale\components\ServiceConstant;
 use kartik\daterange\DateRangePicker;
 use kartik\select2\Select2;
 use yii\bootstrap4\ActiveForm;
@@ -56,6 +57,9 @@ $this->registerJsFile(
                     <div class="col-md">
                         <?= $form->field($model, 'identificationNumber')->textInput(['value' => ($model->isNewRecord) ? Helper::visaIdentificationNumber() : $model->identificationNumber, 'readOnly' => 'readOnly']) ?>
                     </div>
+                    <div class="col-md">
+                        <?= $form->field($model, 'processStatus')->dropdownList(ServiceConstant::VISA_PROCESS_STATUS) ?>
+                    </div>
                 </div>
             </div>
         </div>
@@ -70,15 +74,12 @@ $this->registerJsFile(
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md">
-                                <?= $form->field($model, 'processStatus')->textInput() ?>
-                            </div>
-                            <div class="col-md">
-                                <?= $form->field($model, 'totalQuantity')->textInput() ?>
+                                <?= $form->field($model, 'reference')->textInput(['maxlength' => true]) ?>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md">
-                                <?= $form->field($model, 'costOfSale')->textInput(['type' => 'number', 'value' => 0, 'min' => 0, 'step' => 'any', 'readOnly' => 'readOnly'])->label('Total Cost Of Sale') ?>
+                                <?= $form->field($model, 'totalQuantity')->textInput(['type' => 'number', 'value' => 0, 'min' => 0, 'step' => 'any', 'readOnly' => 'readOnly']) ?>
                             </div>
                             <div class="col-md">
                                 <?= $form->field($model, 'quoteAmount')->textInput(['type' => 'number', 'value' => 0, 'min' => 0, 'step' => 'any', 'readOnly' => 'readOnly'])->label('Total Quote Amount') ?>
@@ -86,10 +87,10 @@ $this->registerJsFile(
                         </div>
                         <div class="row">
                             <div class="col-md">
-                                <?= $form->field($model, 'netProfit')->textInput(['type' => 'number', 'value' => 0, 'step' => 'any', 'readOnly' => 'readOnly'])->label('Net Profit') ?>
+                                <?= $form->field($model, 'costOfSale')->textInput(['type' => 'number', 'value' => 0, 'min' => 0, 'step' => 'any', 'readOnly' => 'readOnly'])->label('Total Cost Of Sale') ?>
                             </div>
                             <div class="col-md">
-                                <?= $form->field($model, 'reference')->textInput(['maxlength' => true]) ?>
+                                <?= $form->field($model, 'netProfit')->textInput(['type' => 'number', 'value' => 0, 'step' => 'any', 'readOnly' => 'readOnly'])->label('Net Profit') ?>
                             </div>
                         </div>
                         <div class="row">
