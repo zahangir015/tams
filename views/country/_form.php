@@ -5,11 +5,11 @@ use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model app\modules\sale\models\holiday\HolidayCategory */
+/* @var $model app\models\Country */
 /* @var $form yii\bootstrap4\ActiveForm */
 ?>
 
-<div class="holiday-category-form">
+<div class="country-form">
     <div class="card">
         <div class="card-header bg-gray-dark">
             <?= Html::encode($this->title) ?>
@@ -21,6 +21,9 @@ use yii\bootstrap4\ActiveForm;
                     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
                 </div>
                 <div class="col-md">
+                    <?= $form->field($model, 'code')->textInput(['maxlength' => true]) ?>
+                </div>
+                <div class="col-md">
                     <?= $form->field($model, 'status')->dropdownList(GlobalConstant::DEFAULT_STATUS) ?>
                 </div>
             </div>
@@ -30,4 +33,5 @@ use yii\bootstrap4\ActiveForm;
             <?php ActiveForm::end(); ?>
         </div>
     </div>
+
 </div>

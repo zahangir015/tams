@@ -49,14 +49,14 @@ final class ServiceConstant
     const REFUND_METHOD = ['Credit/Debit Card' => 'Credit/Debit Card', 'Bank Account' => 'Bank Account', 'Refund Adjustment' => 'Refund Adjustment'];
     const TYPE = ['New' => 'New', 'Reissue' => 'Reissue', 'Refund' => 'Refund', 'EMD Voucher' => 'EMD Voucher', 'Refund Requested' => 'Refund Requested'];
     const VISA_PROCESS_STATUS = [
-        'Received' => 'Document Received',
-        'Passport Received' => 'Passport Received',
-        'Payment' => 'Payment',
-        'Review' => 'Review',
-        'Submitted' => 'Submitted',
-        'Collection' => 'Collection',
-        'Delivered' => 'Application Delivered',
-        'Passport Delivered - Success' => 'Passport Delivered - Success',
-        'Passport Delivered - Rejected' => 'Passport Delivered - Rejected'
+        'Document Received',
+        'Passport Received',
+        'Payment',
+        'Review',
+        'Submitted',
+        'Collection',
+        'Application Delivered',
+        'Passport Delivered - Success',
+        'Passport Delivered - Rejected'
     ];
 }

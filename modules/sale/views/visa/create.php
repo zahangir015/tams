@@ -10,12 +10,8 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Visas'), 'url' => ['
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="visa-create">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
     <?= $this->render('_form', [
         'model' => $model,
         'visaSupplier' => $visaSupplier,
     ]) ?>
-
 </div>

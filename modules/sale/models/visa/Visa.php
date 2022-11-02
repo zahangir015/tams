@@ -4,6 +4,7 @@ namespace app\modules\sale\models\visa;
 
 use app\modules\account\models\Invoice;
 use app\modules\sale\models\Customer;
+use app\traits\BehaviorTrait;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
@@ -22,7 +23,7 @@ use yii\db\ActiveRecord;
  * @property string $issueDate
  * @property string|null $refundRequestDate
  * @property int $totalQuantity
- * @property int|null $processStatus
+ * @property int $processStatus
  * @property float $quoteAmount
  * @property float $costOfSale
  * @property float $netProfit
@@ -42,6 +43,7 @@ use yii\db\ActiveRecord;
  */
 class Visa extends ActiveRecord
 {
+    use BehaviorTrait;
     /**
      * {@inheritdoc}
      */
@@ -56,7 +58,7 @@ class Visa extends ActiveRecord
     public function rules(): array
     {
         return [
-            [['uid', 'identificationNumber', 'customerId', 'customerCategory', 'issueDate', 'totalQuantity', 'quoteAmount', 'costOfSale', 'netProfit', 'createdBy', 'createdAt'], 'required'],
+            [['identificationNumber', 'customerId', 'customerCategory', 'issueDate', 'totalQuantity', 'quoteAmount', 'costOfSale', 'netProfit'], 'required'],
             [['motherId', 'invoiceId', 'customerId', 'totalQuantity', 'processStatus', 'isOnlineBooked', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['type', 'paymentStatus'], 'string'],
             [['issueDate', 'refundRequestDate'], 'safe'],

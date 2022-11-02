@@ -40,6 +40,8 @@ use hail812\adminlte\widgets\Menu;
             <?php
             echo Menu::widget([
                 'items' => [
+                    ['label' => 'GENERAL SETTINGS', 'header' => true],
+                    ['label' => 'Countries',  'icon' => 'globe', 'url' => ['/country']],
                     ['label' => 'USER MANAGEMENT', 'header' => true],
                     ['label' => 'Users',  'icon' => 'users', 'url' => ['/admin/user']],
                     ['label' => 'Create User', 'icon' => 'user-plus', 'url' => ['/admin/user/create']],

@@ -12,7 +12,6 @@ use Yii;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use yii\web\Response;
 
 /**
@@ -65,7 +64,6 @@ class SupplierController extends ParentController
                     Yii::$app->session->setFlash('success', 'Supplier created successfully.');
                     return $this->redirect(['view', 'uid' => $model->uid]);
                 }
-                dd($model->getErrors());
                 Yii::$app->session->setFlash('Error', Helper::processErrorMessages($model->getErrors()));
             }
         } else {

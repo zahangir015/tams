@@ -41,8 +41,8 @@ class VisaService
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
             if (!empty($requestData['Visa']) || !empty($requestData['VisaSupplier'])) {
+                dd($requestData);
                 $services = [];
-                $supplierLedgerArray = [];
                 $customer = Customer::findOne(['id' => $requestData['Visa']['customerId']]);
                 $visa = new Visa();
                 if ($visa->load($requestData)) {
@@ -307,9 +307,10 @@ class VisaService
             $visaSupplier = new VisaSupplier();
             $visaSupplier->load(['VisaSupplier' => $singleSupplierArray]);
             $visaSupplier->visaId = $visa->id;
+            $visaSupplier->type = $visa->type;
             $visaSupplier = $this->visaRepository->store($visaSupplier);
             if ($visaSupplier->hasErrors()) {
-                throw new Exception('Visa Supplier refund creation failed - ' . Helper::processErrorMessages($visaSupplier->getErrors()));
+                throw new Exception('Visa Supplier creation failed - ' . Helper::processErrorMessages($visaSupplier->getErrors()));
             }
 
             $serviceSupplierData[] = [

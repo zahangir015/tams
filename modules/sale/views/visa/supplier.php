@@ -34,7 +34,7 @@ use yii\bootstrap4\Html;
                 <?= $form->field($visaSupplier, "[$row]supplierRef")->textInput(['maxlength' => true]); ?>
             </div>
             <div class="col-md">
-                <?= $form->field($visaSupplier, "[$row]countryId")->dropDownList([], ['maxlength' => true]); ?>
+                <?= $form->field($visaSupplier, "[$row]countryId")->widget(Select2::class, Helper::ajaxDropDown('countryId', '/country/get-countries', true, 'countryId'.$row))->label('Country') ?>
             </div>
         </div>
         <div class="row calcData">
