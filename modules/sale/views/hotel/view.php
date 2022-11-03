@@ -13,7 +13,6 @@ $this->params['breadcrumbs'][] = $this->title;
 YiiAsset::register($this);
 ?>
 <div class="hotel-view">
-
     <div class="card">
         <div class="card-header">
             <div class="card-title">
@@ -205,7 +204,4 @@ YiiAsset::register($this);
             </div>
         </div>
     </div>
-
-
-
 </div>

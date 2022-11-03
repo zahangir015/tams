@@ -8,6 +8,7 @@ use app\modules\sale\models\visa\VisaSupplier;
 use app\modules\sale\models\VisaSearch;
 use app\controllers\ParentController;
 use app\modules\sale\services\VisaService;
+use app\modules\sale\models\visa\VisaSupplierSearch;
 use Yii;
 use yii\bootstrap4\ActiveForm;
 use yii\web\NotFoundHttpException;
@@ -39,6 +40,23 @@ class VisaController extends ParentController
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
+     * Lists all Visa Supplier models.
+     *
+     * @return string
+     */
+    public function actionVisaSupplierList()
+    {
+        $searchModel = new VisaSupplierSearch();
+        $dataProvider = $searchModel->search($this->request->queryParams);
+
+        return $this->render('holiday_supplier_list', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'holidayCategories' => $this->holidayService->getCategories()
         ]);
     }
 

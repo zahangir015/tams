@@ -2,6 +2,7 @@
 
 namespace app\modules\sale\models;
 
+use app\traits\BehaviorTrait;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\sale\models\visa\Visa;
@@ -11,10 +12,11 @@ use app\modules\sale\models\visa\Visa;
  */
 class VisaSearch extends Visa
 {
+    use BehaviorTrait;
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['id', 'motherId', 'invoiceId', 'customerId', 'totalQuantity', 'processStatus', 'isOnlineBooked', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
@@ -26,7 +28,7 @@ class VisaSearch extends Visa
     /**
      * {@inheritdoc}
      */
-    public function scenarios()
+    public function scenarios(): array
     {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
@@ -39,7 +41,7 @@ class VisaSearch extends Visa
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search(array $params): ActiveDataProvider
     {
         $query = Visa::find();
 

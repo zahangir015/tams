@@ -31,6 +31,11 @@ final class ServiceConstant
         'Refund' => 'Refund',
         'Refund Requested' => 'Refund Requested',
     ];
+    const ALL_VISA_TYPE = [
+        'New' => 'New',
+        'Refund' => 'Refund',
+        'Refund Requested' => 'Refund Requested',
+    ];
 
     const SERVICE_TYPE_FOR_CREATE = [
         'New' => 'New',

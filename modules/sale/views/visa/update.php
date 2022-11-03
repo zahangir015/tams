@@ -6,18 +6,14 @@ use yii\helpers\Html;
 /* @var $model app\modules\sale\models\visa\Visa */
 
 $this->title = Yii::t('app', 'Update Visa: {name}', [
-    'name' => $model->id,
+    'name' => $model->identificationNumber,
 ]);
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Visas'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
+$this->params['breadcrumbs'][] = ['label' => $model->identificationNumber, 'url' => ['view', 'uid' => $model->uid]];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 ?>
 <div class="visa-update">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <?= $this->render('_form', [
+    <?= $this->render('_update', [
         'model' => $model,
     ]) ?>
-
 </div>

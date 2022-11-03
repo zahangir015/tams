@@ -41,7 +41,6 @@ class VisaService
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
             if (!empty($requestData['Visa']) || !empty($requestData['VisaSupplier'])) {
-                dd($requestData);
                 $services = [];
                 $customer = Customer::findOne(['id' => $requestData['Visa']['customerId']]);
                 $visa = new Visa();
@@ -210,28 +209,27 @@ class VisaService
 
     private static function updateVisaSupplier(ActiveRecord $visa, mixed $suppliers, mixed $invoice)
     {
-        $selectedPackageSuppliers = [];
+        $selectedVisaSuppliers = [];
         $deletedSuppliers = [];
         $suppliersLedgerData = [];
 
-        foreach ($reqPackageSuppliers as $packageSupplier) {
-            $checkSupplier = Supplier::findOne(['id' => $packageSupplier['supplierId']]);
+        foreach ($suppliers as $supplier) {
+            $checkSupplier = Supplier::findOne(['id' => $supplier['supplierId']]);
             if (!$checkSupplier)
                 return ['status' => false, 'message' => 'Supplier not found'];
 
-            if (!empty($packageSupplier['id'])) {
-                $model = PackageSupplier::findOne(['id' => $packageSupplier['id']]);
-                $selectedPackageSuppliers[] = $model->id;
+            if (!empty($supplier['id'])) {
+                $model = VisaSupplier::findOne(['id' => $supplier['id']]);
+                $selectedVisaSuppliers[] = $model->id;
             } else {
-                $model = new PackageSupplier();
-                $model->packageId = $package->id;
-                $model->identificationNo = $package->identificationNo;
-                $model->packageCategoryId = $package->packageCategoryId;
-                $model->status = Constant::ACTIVE_STATUS;
+                $model = new VisaSupplier();
+                $model->packageId = $visa->id;
+                $model->identificationNo = $visa->identificationNo;
+                $model->status = GlobalConstant::ACTIVE_STATUS;
                 $model->paymentStatus = ServiceConstant::PAYMENT_STATUS['Due'];
             }
-            $model->setAttributes($packageSupplier);
-            $model->type = $packageSupplier['type'] ?? ServiceConstant::TYPE['New'];
+            $model->setAttributes($supplier);
+            $model->type = $supplier['type'] ?? ServiceConstant::TYPE['New'];
             $model->supplierName = $checkSupplier->name;
 
             if (!$model->save()) {
@@ -257,24 +255,24 @@ class VisaService
         }
         $updateSuppliers = [];
         if (!empty($invoice)) {
-            foreach ($package->packageSuppliers as $oldPackageSupplier) {
-                if (!in_array($oldPackageSupplier->id, $selectedPackageSuppliers)) {
-                    $suppliersLedgerData[$oldPackageSupplier->supplierId] = [
+            foreach ($visa->packageSuppliers as $oldVisaSupplier) {
+                if (!in_array($oldVisaSupplier->id, $selectedVisaSuppliers)) {
+                    $suppliersLedgerData[$oldVisaSupplier->supplierId] = [
                         'title' => 'Service Purchase Update',
                         'reference' => 'Invoice Number - ' . $invoice->invoiceNumber,
-                        'refId' => $oldPackageSupplier->supplierId,
+                        'refId' => $oldVisaSupplier->supplierId,
                         'refModel' => Supplier::class,
                         'subRefId' => $invoice->id,
                         'subRefModel' => $invoice::className(),
                         'debit' => 0,
                         'credit' => 0
                     ];
-                    $deletedSuppliers[] = $oldPackageSupplier->id;
+                    $deletedSuppliers[] = $oldVisaSupplier->id;
                 } else {
-                    if (isset($updateSuppliers[$oldPackageSupplier->supplierId]['costOfSale'])) {
-                        $updateSuppliers[$oldPackageSupplier->supplierId]['costOfSale'] += $oldPackageSupplier->costOfSale;
+                    if (isset($updateSuppliers[$oldVisaSupplier->supplierId]['costOfSale'])) {
+                        $updateSuppliers[$oldVisaSupplier->supplierId]['costOfSale'] += $oldVisaSupplier->costOfSale;
                     } else {
-                        $updateSuppliers[$oldPackageSupplier->supplierId]['costOfSale'] = $oldPackageSupplier->costOfSale;
+                        $updateSuppliers[$oldVisaSupplier->supplierId]['costOfSale'] = $oldVisaSupplier->costOfSale;
                     }
                 }
             }
@@ -291,7 +289,7 @@ class VisaService
 
         // delete removed packageSuppliers
         if (count($deletedSuppliers)) {
-            if (!PackageSupplier::updateAll(['status' => Constant::INACTIVE_STATUS, 'updatedBy' => Yii::$app->user->id, 'updatedAt' => Utils::convertToTimestamp(date('Y-m-d h:i:s'))], ['in', 'id', $deletedSuppliers])) {
+            if (!VisaSupplier::updateAll(['status' => Constant::INACTIVE_STATUS, 'updatedBy' => Yii::$app->user->id, 'updatedAt' => Utils::convertToTimestamp(date('Y-m-d h:i:s'))], ['in', 'id', $deletedSuppliers])) {
                 return ['status' => false, 'message' => 'Package Supplier not deleted with given supplier id(s)'];
             }
         }

@@ -2,6 +2,7 @@
 
 namespace app\modules\sale\models\visa;
 
+use app\models\Country;
 use app\modules\account\models\Bill;
 use app\modules\sale\models\Supplier;
 use app\traits\BehaviorTrait;
@@ -115,6 +116,16 @@ class VisaSupplier extends ActiveRecord
     public function getSupplier(): ActiveQuery
     {
         return $this->hasOne(Supplier::class, ['id' => 'supplierId']);
+    }
+
+    /**
+     * Gets query for [[Country]].
+     *
+     * @return ActiveQuery
+     */
+    public function getCountry(): ActiveQuery
+    {
+        return $this->hasOne(Country::class, ['id' => 'countryId']);
     }
 
     /**
