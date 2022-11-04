@@ -8,6 +8,7 @@ use app\modules\sale\models\hotel\HotelSearch;
 use app\controllers\ParentController;
 use app\modules\sale\models\hotel\HotelSupplier;
 use app\modules\sale\services\HotelService;
+use app\modules\sales\models\hotel\HotelSupplierSearch;
 use Yii;
 use yii\bootstrap4\ActiveForm;
 use yii\web\NotFoundHttpException;
@@ -37,6 +38,22 @@ class HotelController extends ParentController
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
+     * Lists all HotelSupplier models.
+     *
+     * @return string
+     */
+    public function actionHotelSupplierList()
+    {
+        $searchModel = new HotelSupplierSearch();
+        $dataProvider = $searchModel->search($this->request->queryParams);
+
+        return $this->render('hotel_supplier_list', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);

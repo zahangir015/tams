@@ -44,7 +44,7 @@ class VisaController extends ParentController
     }
 
     /**
-     * Lists all Visa Supplier models.
+     * Lists all VisaSupplier models.
      *
      * @return string
      */
@@ -53,10 +53,9 @@ class VisaController extends ParentController
         $searchModel = new VisaSupplierSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
-        return $this->render('holiday_supplier_list', [
+        return $this->render('visa_supplier_list', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'holidayCategories' => $this->holidayService->getCategories()
         ]);
     }
 

@@ -2,6 +2,7 @@
 
 namespace app\modules\sale\models;
 
+use app\modules\account\models\Invoice;
 use app\traits\BehaviorTrait;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
@@ -12,7 +13,9 @@ use app\modules\sale\models\visa\Visa;
  */
 class VisaSearch extends Visa
 {
-    use BehaviorTrait;
+    public $invoice;
+    public $customer;
+
     /**
      * {@inheritdoc}
      */
@@ -20,7 +23,7 @@ class VisaSearch extends Visa
     {
         return [
             [['id', 'motherId', 'invoiceId', 'customerId', 'totalQuantity', 'processStatus', 'isOnlineBooked', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
-            [['uid', 'identificationNumber', 'customerCategory', 'type', 'issueDate', 'refundRequestDate', 'paymentStatus', 'reference'], 'safe'],
+            [['invoice', 'customer', 'identificationNumber', 'customerCategory', 'type', 'issueDate', 'refundRequestDate', 'paymentStatus', 'reference'], 'safe'],
             [['quoteAmount', 'costOfSale', 'netProfit', 'receivedAmount'], 'number'],
         ];
     }
@@ -46,10 +49,22 @@ class VisaSearch extends Visa
         $query = Visa::find();
 
         // add conditions that should always apply here
+        $query->joinWith(['invoice', 'customer']);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => ['defaultOrder' => ['issueDate' => SORT_DESC]],
         ]);
+
+        $dataProvider->sort->attributes['invoice'] = [
+            'asc' => [Invoice::tableName() . '.invoiceNumber' => SORT_ASC],
+            'desc' => [Invoice::tableName() . '.invoiceNumber' => SORT_DESC],
+        ];
+
+        $dataProvider->sort->attributes['customer'] = [
+            'asc' => [Customer::tableName() . '.company' => SORT_ASC],
+            'desc' => [Customer::tableName() . '.company' => SORT_DESC],
+        ];
 
         $this->load($params);
 
@@ -82,6 +97,9 @@ class VisaSearch extends Visa
         ]);
 
         $query->andFilterWhere(['like', 'uid', $this->uid])
+            ->andFilterWhere(['like', Invoice::tableName() . '.invoiceNumber', $this->invoice])
+            ->andFilterWhere(['like', Customer::tableName() . '.company', $this->customer])
+            ->orFilterWhere(['like', Customer::tableName() . '.customerCode', $this->customer])
             ->andFilterWhere(['like', 'identificationNumber', $this->identificationNumber])
             ->andFilterWhere(['like', 'customerCategory', $this->customerCategory])
             ->andFilterWhere(['like', 'type', $this->type])

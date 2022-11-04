@@ -36,6 +36,11 @@ class VisaService
         return $this->visaRepository->findOne($uid, $withArray);
     }
 
+    public function findVisaSupplier(string $uid, $withArray = []): ActiveRecord
+    {
+        return $this->visaRepository->findSupplier($uid, $withArray);
+    }
+
     public function storeVisa(array $requestData): bool
     {
         $dbTransaction = Yii::$app->db->beginTransaction();

@@ -3,6 +3,7 @@
 namespace app\modules\sale\repositories;
 
 use app\modules\sale\models\visa\Visa;
+use app\modules\sale\models\visa\VisaSupplier;
 use Yii;
 use yii\db\ActiveRecord;
 
@@ -11,6 +12,16 @@ class VisaRepository
     public function findOne(string $uid, mixed $withArray): array|ActiveRecord|null
     {
         $query = Visa::find();
+        if (!empty($withArray)) {
+            $query->with($withArray);
+        }
+
+        return $query->where(['uid' => $uid])->one();
+    }
+
+    public function findSupplier(string $uid, mixed $withArray): array|ActiveRecord|null
+    {
+        $query = VisaSupplier::find();
         if (!empty($withArray)) {
             $query->with($withArray);
         }
