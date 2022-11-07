@@ -26,12 +26,7 @@ final class ServiceConstant
         'Refund Requested' => 'Refund Requested',
     ];
 
-    const ALL_HOLIDAY_TYPE = [
-        'New' => 'New',
-        'Refund' => 'Refund',
-        'Refund Requested' => 'Refund Requested',
-    ];
-    const ALL_VISA_TYPE = [
+    const ALL_SERVICE_TYPE = [
         'New' => 'New',
         'Refund' => 'Refund',
         'Refund Requested' => 'Refund Requested',

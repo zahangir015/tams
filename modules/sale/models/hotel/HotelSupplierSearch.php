@@ -1,31 +1,30 @@
 <?php
 
-namespace app\modules\sale\models\visa;
+namespace app\modules\sale\models\hotel;
 
-use app\models\Country;
 use app\modules\account\models\Bill;
 use app\modules\sale\models\Supplier;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
 /**
- * VisaSupplierSearch represents the model behind the search form of `app\modules\sale\models\visa\VisaSupplier`.
+ * HotelSupplierSearch represents the model behind the search form of `app\modules\sale\models\hotel\HotelSupplier`.
  */
-class VisaSupplierSearch extends VisaSupplier
+class HotelSupplierSearch extends HotelSupplier
 {
     public $bill;
     public $supplier;
-    public $visa;
-    public $country;
+    public $hotel;
+
     /**
      * {@inheritdoc}
      */
-    public function rules():array
+    public function rules(): array
     {
         return [
-            [['id', 'motherVisaSupplierId', 'visaId', 'billId', 'countryId', 'supplierId', 'quantity', 'status', 'motherId'], 'integer'],
-            [['bill', 'supplier', 'visa', 'country', 'supplierRef', 'paxName', 'issueDate', 'refundRequestDate', 'type', 'serviceDetails', 'paymentStatus'], 'safe'],
-            [['unitPrice', 'costOfSale', 'securityDeposit', 'paidAmount'], 'number'],
+            [['id', 'motherHotelSupplierId', 'hotelId', 'billId', 'supplierId', 'numberOfNights', 'quantity', 'status', 'motherId'], 'integer'],
+            [['bill', 'supplier', 'hotel', 'supplierRef', 'issueDate', 'refundRequestDate', 'type', 'serviceDetails', 'paymentStatus'], 'safe'],
+            [['unitPrice', 'costOfSale', 'paidAmount'], 'number'],
         ];
     }
 
@@ -47,10 +46,10 @@ class VisaSupplierSearch extends VisaSupplier
      */
     public function search(array $params): ActiveDataProvider
     {
-        $query = VisaSupplier::find();
+        $query = HotelSupplier::find();
 
         // add conditions that should always apply here
-        $query->joinWith(['bill', 'supplier', 'country', 'visa']);
+        $query->joinWith(['bill', 'supplier', 'hotel']);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -67,14 +66,9 @@ class VisaSupplierSearch extends VisaSupplier
             'desc' => [Supplier::tableName() . '.company' => SORT_DESC],
         ];
 
-        $dataProvider->sort->attributes['visa'] = [
-            'asc' => [Visa::tableName() . '.identificationNumber' => SORT_ASC],
-            'desc' => [Visa::tableName() . '.identificationNumber' => SORT_DESC],
-        ];
-
-        $dataProvider->sort->attributes['country'] = [
-            'asc' => [Country::tableName() . '.name' => SORT_ASC],
-            'desc' => [Country::tableName() . '.name' => SORT_DESC],
+        $dataProvider->sort->attributes['hotel'] = [
+            'asc' => [Hotel::tableName() . '.identificationNumber' => SORT_ASC],
+            'desc' => [Hotel::tableName() . '.identificationNumber' => SORT_DESC],
         ];
 
         $this->load($params);
@@ -87,28 +81,25 @@ class VisaSupplierSearch extends VisaSupplier
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'motherVisaSupplierId' => $this->motherVisaSupplierId,
-            'visaId' => $this->visaId,
+            'id' => $this->id,
+            'hotelId' => $this->hotelId,
             'billId' => $this->billId,
-            'countryId' => $this->countryId,
             'supplierId' => $this->supplierId,
             'issueDate' => $this->issueDate,
             'refundRequestDate' => $this->refundRequestDate,
+            'numberOfNights' => $this->numberOfNights,
             'quantity' => $this->quantity,
             'unitPrice' => $this->unitPrice,
             'costOfSale' => $this->costOfSale,
-            'securityDeposit' => $this->securityDeposit,
             'paidAmount' => $this->paidAmount,
             'status' => $this->status,
             'motherId' => $this->motherId,
         ]);
 
-        $query->andFilterWhere(['like', 'supplierRef', $this->supplierRef])
-            ->andFilterWhere(['like', Bill::tableName() . '.billNumber', $this->bill])
+        $query->andFilterWhere(['like', Bill::tableName() . '.billNumber', $this->bill])
             ->andFilterWhere(['like', Supplier::tableName() . '.company', $this->supplier])
-            ->andFilterWhere(['like', Country::tableName() . '.name', $this->country])
-            ->andFilterWhere(['like', Visa::tableName() . '.identificationNumber', $this->visa])
-            ->andFilterWhere(['like', 'paxName', $this->paxName])
+            ->andFilterWhere(['like', Hotel::tableName() . '.identificationNumber', $this->hotel])
+            ->andFilterWhere(['like', 'supplierRef', $this->supplierRef])
             ->andFilterWhere(['like', 'type', $this->type])
             ->andFilterWhere(['like', 'serviceDetails', $this->serviceDetails])
             ->andFilterWhere(['like', 'paymentStatus', $this->paymentStatus]);

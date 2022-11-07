@@ -59,7 +59,7 @@ use yii\bootstrap4\Html;
                 <?= $form->field($visaSupplier, "[$row]issueDate")->widget(DateRangePicker::class, Helper::dateFormat(false, true)); ?>
             </div>
             <div class="col-md">
-                <?= $form->field($visaSupplier, "[$row]type")->textInput(['readOnly' => 'readOnly', 'value' => ServiceConstant::ALL_VISA_TYPE['New']]) ?>
+                <?= $form->field($visaSupplier, "[$row]type")->textInput(['readOnly' => 'readOnly', 'value' => ServiceConstant::ALL_SERVICE_TYPE['New']]) ?>
             </div>
             <div class="col-md">
                 <?= $form->field($visaSupplier, "[$row]paxName")->textInput(['maxlength' => true]); ?>

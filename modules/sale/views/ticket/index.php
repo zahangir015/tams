@@ -1,13 +1,10 @@
 <?php
 
 use app\components\GlobalConstant;
-use app\components\Helper;
 use app\modules\sale\components\ServiceConstant;
-use app\modules\sale\models\ticket\Ticket;
 use kartik\daterange\DateRangePicker;
 use yii\helpers\Html;
 use yii\helpers\Url;
-use kartik\grid\ActionColumn;
 use kartik\grid\GridView;
 
 /* @var $this yii\web\View */
@@ -23,7 +20,11 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'kartik\grid\SerialColumn'],
-            'motherTicketId',
+            [
+                'attribute' => 'motherTicketId',
+                'value' => 'motherTicketId',
+                'label' => 'Mother'
+            ],
             [
                 'attribute' => 'airline',
                 'value' => function ($model) {
@@ -59,7 +60,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 'filter' => GlobalConstant::CUSTOMER_CATEGORY
             ],
             'paxName',
-            'paxType',
+            [
+                'attribute' => 'paxType',
+                'value' => function($model){
+                    return ServiceConstant::PAX_TYPE[$model->paxType];
+                },
+                'filter' => ServiceConstant::PAX_TYPE
+            ],
             [
                 'attribute' => 'issueDate',
                 'label' => 'ISSUE',
@@ -103,44 +110,73 @@ $this->params['breadcrumbs'][] = $this->title;
             'pnrCode',
             [
                 'attribute' => 'type',
-                'value' => 'type',
-                'filter' => GlobalConstant::TICKET_TYPE_FOR_CREATE
+                'value' => function($model){
+                    return ServiceConstant::ALL_TICKET_TYPE[$model->type];
+                },
+                'filter' => ServiceConstant::ALL_TICKET_TYPE
             ],
             [
                 'attribute' => 'tripType',
-                'value' => 'tripType',
-                'filter' => GlobalConstant::TRIP_TYPE
+                'value' => function($model){
+                    return ServiceConstant::TRIP_TYPE[$model->tripType];
+                },
+                'filter' => ServiceConstant::TRIP_TYPE
             ],
             [
                 'attribute' => 'bookedOnline',
-                'value' => 'bookedOnline',
-                'filter' => GlobalConstant::BOOKING_TYPE
+                'value' => function($model){
+                    return ServiceConstant::BOOKING_TYPE[$model->bookedOnline];
+                },
+                'filter' => ServiceConstant::BOOKING_TYPE
             ],
             [
                 'attribute' => 'flightType',
-                'value' => 'flightType',
-                'filter' => GlobalConstant::FLIGHT_TYPE
+                'value' => function($model){
+                    return ServiceConstant::FLIGHT_TYPE[$model->flightType];
+                },
+                'filter' => ServiceConstant::FLIGHT_TYPE
             ],
             'seatClass',
             //'codeShare',
             'reference',
             'route',
-            'numberOfSegment',
+            [
+                'attribute' => 'numberOfSegment',
+                'value' => 'numberOfSegment',
+                'label' => 'Segments'
+            ],
             'baseFare',
             'tax',
             'otherTax',
-            //'commission',
-            'commissionReceived',
-            //'incentive',
-            'incentiveReceived',
-            'govTax',
+            [
+                'attribute' => 'commissionReceived',
+                'value' => 'commissionReceived',
+                'label' => 'Commission'
+            ],
+            [
+                'attribute' => 'incentiveReceived',
+                'value' => 'incentiveReceived',
+                'label' => 'Incentive'
+            ],
             'serviceCharge',
             'ait',
-            'quoteAmount',
-            'receivedAmount',
-            'paymentStatus',
-            'costOfSale',
+            [
+                'attribute' => 'quoteAmount',
+                'value' => 'quoteAmount',
+                'label' => 'Quote'
+            ],
+            [
+                'attribute' => 'costOfSale',
+                'value' => 'costOfSale',
+                'label' => 'Cost'
+            ],
+            [
+                'attribute' => 'receivedAmount',
+                'value' => 'receivedAmount',
+                'label' => 'Received'
+            ],
             'netProfit',
+            'paymentStatus',
             //'baggage',
             //'status',
             'createdBy',

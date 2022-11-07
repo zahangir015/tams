@@ -81,7 +81,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'type',
                 'value' => 'type',
-                'filter' => ServiceConstant::ALL_VISA_TYPE
+                'filter' => ServiceConstant::ALL_SERVICE_TYPE
             ],
             'serviceDetails',
             'quantity',
@@ -104,7 +104,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'title' => Yii::t('app', 'Add Category'),
                         'class' => 'btn btn-success'
                     ]) . ' ' .
-                    Html::a('<i class="fas fa-redo"></i>', ['/sale/visa/index'], [
+                    Html::a('<i class="fas fa-redo"></i>', ['/sale/visa-supplier/index'], [
                         'class' => 'btn btn-primary',
                         'title' => Yii::t('app', 'Reset Grid')
                     ]),

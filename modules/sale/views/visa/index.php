@@ -48,7 +48,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'type',
                 'value' => 'type',
-                'filter' => ServiceConstant::ALL_VISA_TYPE
+                'filter' => ServiceConstant::ALL_SERVICE_TYPE
             ],
             [
                 'attribute' => 'issueDate',

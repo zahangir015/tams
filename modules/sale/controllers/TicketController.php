@@ -2,8 +2,10 @@
 
 namespace app\modules\sale\controllers;
 
+use app\models\History;
 use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\Airline;
+use app\modules\sale\models\holiday\Holiday;
 use app\modules\sale\models\ticket\RefundTicketSearch;
 use app\modules\sale\models\ticket\Ticket;
 use app\modules\sale\models\ticket\TicketSearch;
@@ -71,8 +73,10 @@ class TicketController extends ParentController
      */
     public function actionView(string $uid)
     {
+        $model = $this->flightService->findTicket($uid, ['customer', 'ticketSupplier', 'airline', 'provider']);
         return $this->render('view', [
-            'model' => $this->flightService->findTicket($uid, ['customer', 'ticketSupplier', 'airline', 'provider']),
+            'model' => $model,
+            'histories' => History::find()->where(['tableName' => Ticket::tableName(), 'tableId' => $model->id])->orderBy(['id' => SORT_DESC])->all()
         ]);
     }
 

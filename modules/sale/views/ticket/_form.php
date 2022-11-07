@@ -32,9 +32,9 @@ $this->registerJsFile(
         <div class="card card-custom mb-5 sticky-top">
             <div class="card-header">
                 <div class="card-title">
-                    <h3 class="card-label">
-                        Create Ticket <i class="mr-2"></i><small class="">try to scroll the page</small>
-                    </h3>
+                    <h5 class="card-label">
+                        Create Ticket
+                    </h5>
                 </div>
                 <div class="card-toolbar float-right">
                     <a href="#" id="addButton" class="btn btn-success font-weight-bolder mr-2"

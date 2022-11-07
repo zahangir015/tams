@@ -23,7 +23,11 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'kartik\grid\SerialColumn'],
-            'motherTicketId',
+            [
+                'attribute' => 'motherTicketId',
+                'value' => 'motherTicketId',
+                'label' => 'Mother'
+            ],
             [
                 'attribute' => 'airline',
                 'value' => function ($model) {
@@ -59,7 +63,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 'filter' => GlobalConstant::CUSTOMER_CATEGORY
             ],
             'paxName',
-            'paxType',
+            [
+                'attribute' => 'paxType',
+                'value' => function($model){
+                    return ServiceConstant::PAX_TYPE[$model->paxType];
+                },
+                'filter' => ServiceConstant::PAX_TYPE
+            ],
             [
                 'attribute' => 'issueDate',
                 'label' => 'ISSUE',
@@ -103,44 +113,146 @@ $this->params['breadcrumbs'][] = $this->title;
             'pnrCode',
             [
                 'attribute' => 'type',
-                'value' => 'type',
-                'filter' => GlobalConstant::TICKET_TYPE_FOR_CREATE
+                'value' => function($model){
+                    return ServiceConstant::ALL_TICKET_TYPE[$model->type];
+                },
+                'filter' => ServiceConstant::ALL_TICKET_TYPE
             ],
             [
                 'attribute' => 'tripType',
-                'value' => 'tripType',
-                'filter' => GlobalConstant::TRIP_TYPE
+                'value' => function($model){
+                    return ServiceConstant::TRIP_TYPE[$model->tripType];
+                },
+                'filter' => ServiceConstant::TRIP_TYPE
             ],
             [
                 'attribute' => 'bookedOnline',
-                'value' => 'bookedOnline',
-                'filter' => GlobalConstant::BOOKING_TYPE
+                'value' => function($model){
+                    return ServiceConstant::BOOKING_TYPE[$model->bookedOnline];
+                },
+                'filter' => ServiceConstant::BOOKING_TYPE
             ],
             [
                 'attribute' => 'flightType',
-                'value' => 'flightType',
-                'filter' => GlobalConstant::FLIGHT_TYPE
+                'value' => function($model){
+                    return ServiceConstant::FLIGHT_TYPE[$model->flightType];
+                },
+                'filter' => ServiceConstant::FLIGHT_TYPE
             ],
             'seatClass',
             //'codeShare',
             'reference',
             'route',
-            'numberOfSegment',
+            [
+                'attribute' => 'numberOfSegment',
+                'value' => 'numberOfSegment',
+                'label' => 'Segments'
+            ],
             'baseFare',
             'tax',
             'otherTax',
-            //'commission',
-            'commissionReceived',
-            //'incentive',
-            'incentiveReceived',
-            'govTax',
+            [
+                'attribute' => 'commissionReceived',
+                'value' => 'commissionReceived',
+                'label' => 'Commission'
+            ],
+            [
+                'attribute' => 'incentiveReceived',
+                'value' => 'incentiveReceived',
+                'label' => 'Incentive'
+            ],
             'serviceCharge',
             'ait',
-            'quoteAmount',
-            'receivedAmount',
-            'paymentStatus',
-            'costOfSale',
+            [
+                'attribute' => 'quoteAmount',
+                'value' => 'quoteAmount',
+                'label' => 'Quote'
+            ],
+            [
+                'attribute' => 'costOfSale',
+                'value' => 'costOfSale',
+                'label' => 'Cost'
+            ],
+            [
+                'attribute' => 'receivedAmount',
+                'value' => 'receivedAmount',
+                'label' => 'Received'
+            ],
             'netProfit',
+            'paymentStatus',
+            [
+                'attribute' => 'isRefunded',
+                'value' => function ($model) {
+                    return GlobalConstant::YES_NO[$model->ticketRefund->isRefunded];
+                },
+                'filter' => GlobalConstant::YES_NO
+            ],
+            /*[
+                'attribute' => 'refundFromSupplierStatus',
+                'label' => 'Refund From Supplier Status',
+                'value' => function ($model) {
+                    return $model->ticketRefund->refundFromSupplierStatus;
+                }
+            ],*/
+            [
+                'attribute' => 'refundStatus',
+                'label' => 'Refund Status',
+                'value' => function ($model) {
+                    return $model->ticketRefund->refundStatus;
+                },
+                'filter' => ServiceConstant::REFUND_STATUS
+            ],
+            [
+                'attribute' => 'refundMedium',
+                'label' => 'Medium',
+                'value' => function ($model) {
+                    return $model->ticketRefund->refundMedium;
+                },
+                'filter' => ServiceConstant::REFUND_MEDIUM
+            ],
+            [
+                'attribute' => 'refundMethod',
+                'label' => 'Method',
+                'value' => function ($model) {
+                    return $model->ticketRefund->refundMethod;
+                },
+                'filter' => ServiceConstant::REFUND_METHOD
+            ],
+            [
+                'attribute' => 'refundDate',
+                'label' => 'Refund Date',
+                'value' => function ($model) {
+                    return $model->ticketRefund->refundDate;
+                }
+            ],
+            [
+                'attribute' => 'refundedAmount',
+                'label' => 'Refunded Amount',
+                'value' => function ($model) {
+                    return $model->ticketRefund->refundedAmount;
+                }
+            ],
+            [
+                'attribute' => 'serviceCharge',
+                'label' => 'Service Charge',
+                'value' => function ($model) {
+                    return $model->ticketRefund->serviceCharge;
+                }
+            ],
+            [
+                'attribute' => 'airlineRefundCharge',
+                'label' => 'Airline Charge',
+                'value' => function ($model) {
+                    return $model->ticketRefund->airlineRefundCharge;
+                }
+            ],
+            [
+                'attribute' => 'supplierRefundCharge',
+                'label' => 'Supplier Charge',
+                'value' => function ($model) {
+                    return $model->ticketRefund->supplierRefundCharge;
+                }
+            ],
             //'baggage',
             //'status',
             'createdBy',
@@ -152,6 +264,20 @@ $this->params['breadcrumbs'][] = $this->title;
                 'urlCreator' => function ($action, $model) {
                     return Url::to([$action, 'uid' => $model->uid]);
                 },
+                'template' => '{view} {update} {delete} {refund}',
+                'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
+                //'updateOptions' => ['role' => 'modal-remote', 'title' => 'Update', 'data-toggle' => 'tooltip'],
+                'buttons' => [
+                    'refund' => function ($url, $model) {
+                        if ($model->type === ServiceConstant::TYPE['Refund'] || $model->type === ServiceConstant::TYPE['Refund Requested']) {
+                            return false;
+                        }
+                        return Html::a('<span class="fas fa-minus-square"></span>', ['/sale/ticket/refund', 'uid' => $model->uid], [
+                            'title' => 'Refund',
+                            'data-toggle' => 'tooltip'
+                        ]);
+                    },
+                ]
             ]
         ],
         'toolbar' => [

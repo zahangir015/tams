@@ -205,6 +205,14 @@ class FlightService
                 throw new Exception('New Refund Ticket store failed - ' . Helper::processErrorMessages($newRefundTicket->getErrors()));
             }
 
+            // Mother Ticket update
+            $motherTicket->type = ServiceConstant::TICKET_TYPE_FOR_REFUND['Refund Requested'];
+            $motherTicket->refundRequestDate = $newRefundTicket->refundRequestDate;
+            $motherTicket = $this->flightRepository->store($motherTicket);
+            if ($motherTicket->hasErrors()) {
+                throw new Exception('Mother ticket update failed - ' . Helper::processErrorMessages($motherTicket->getErrors()));
+            }
+
             // Ticket Supplier data process
             $ticketSupplier = self::storeTicketSupplier($newRefundTicket, $requestData);
             if ($ticketSupplier->hasErrors()) {
@@ -230,12 +238,12 @@ class FlightService
                 throw new Exception('Supplier Ledger creation failed - ' . $processSupplierLedgerResponse['message']);
             }
 
-
             // Create Service Payment Detail for refund
-            $servicePaymentDetailData = PaymentTimelineService::storeServicePaymentDetailData(['refundService' => $newRefundTicket, 'parentService' => $motherTicket], $invoiceDetail);
+            /*$servicePaymentDetailData = PaymentTimelineService::storeServicePaymentDetailData(['refundService' => $newRefundTicket, 'parentService' => $motherTicket], $invoiceDetail);
             if ($servicePaymentDetailData['error']) {
                 throw new Exception('Service payment detail process failed - ' . $servicePaymentDetailData['message']);
-            }
+            }*/
+            //dd($servicePaymentDetailData);
 
             $dbTransaction->commit();
             Yii::$app->session->setFlash('success', ' Refund Ticket added successfully');
@@ -254,8 +262,6 @@ class FlightService
         $newRefundTicket->load(['Ticket' => $motherTicketData]);
         $newRefundTicket->load($requestData);
         $newRefundTicket->netProfit = ($newRefundTicket->quoteAmount - $newRefundTicket->costOfSale);
-        $newRefundTicket->motherTicketId = $motherTicket->id;
-        $newRefundTicket->type = ServiceConstant::TYPE['Refund'];
         $newRefundTicket->serviceCharge = isset($requestData['TicketRefund']['refundCharge']) ? (double)$requestData['TicketRefund']['supplierRefundCharge'] : (double)$requestData['Ticket']['costOfSale'];
 
         if (($newRefundTicket->baseFare != 0) || ($newRefundTicket->tax != 0) || ($newRefundTicket->otherTax != 0)) {
@@ -264,6 +270,7 @@ class FlightService
             $newRefundTicket->commissionReceived = ($newRefundTicket->baseFare * $newRefundTicket->commission);
             $newRefundTicket->incentiveReceived = (($newRefundTicket->baseFare - $newRefundTicket->commissionReceived) * ($newRefundTicket->incentive));
         }
+
         return $this->flightRepository->store($newRefundTicket);
     }
 
@@ -467,7 +474,7 @@ class FlightService
         if (empty($international)) {
             return 1;
         }
-        return 2;
+        return 0;
     }
 
     private static function calculateCommissionReceived($baseFare, $commission): float

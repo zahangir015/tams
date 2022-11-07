@@ -1,6 +1,7 @@
 <?php
 
 namespace app\modules\sale\models\ticket;
+
 use app\modules\account\models\Invoice;
 use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\Airline;
@@ -18,7 +19,16 @@ class RefundTicketSearch extends Ticket
     public $provider;
     public $customer;
     public $invoice;
-    public $ticketRefund;
+    public $isRefunded;
+    public $refundedAmount;
+    public $refundFromSupplierStatus;
+    public $refundStatus;
+    public $refundDate;
+    public $serviceCharge;
+    public $airlineRefundCharge;
+    public $supplierRefundCharge;
+    public $refundMedium;
+    public $refundMethod;
 
     /**
      * {@inheritdoc}
@@ -27,8 +37,8 @@ class RefundTicketSearch extends Ticket
     {
         return [
             [['id', 'motherTicketId', 'airlineId', 'providerId', 'invoiceId', 'customerId', 'bookedOnline', 'flightType', 'codeShare', 'numberOfSegment', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
-            [['uid', 'customerCategory', 'paxName', 'paxType', 'eTicket', 'pnrCode', 'type', 'tripType', 'seatClass', 'reference', 'issueDate', 'departureDate', 'refundRequestDate', 'route', 'paymentStatus', 'baggage', 'customer', 'airline', 'provider', 'invoice', 'ticketRefund'], 'safe'],
-            [['baseFare', 'tax', 'otherTax', 'commission', 'commissionReceived', 'incentive', 'incentiveReceived', 'govTax', 'serviceCharge', 'ait', 'quoteAmount', 'receivedAmount', 'costOfSale', 'netProfit'], 'number'],
+            [['customerCategory', 'paxName', 'paxType', 'eTicket', 'pnrCode', 'type', 'tripType', 'seatClass', 'reference', 'issueDate', 'departureDate', 'refundRequestDate', 'route', 'paymentStatus', 'baggage', 'customer', 'airline', 'provider', 'invoice', 'refundFromSupplierStatus', 'isRefunded', 'refundStatus', 'refundDate', 'refundMedium', 'refundMethod'], 'safe'],
+            [['baseFare', 'tax', 'otherTax', 'commission', 'commissionReceived', 'incentive', 'incentiveReceived', 'govTax', 'serviceCharge', 'ait', 'quoteAmount', 'receivedAmount', 'costOfSale', 'netProfit', 'refundedAmount', 'serviceCharge', 'airlineRefundCharge', 'supplierRefundCharge'], 'number'],
         ];
     }
 
@@ -69,8 +79,10 @@ class RefundTicketSearch extends Ticket
         }
 
         // add conditions that should always apply here
-        $query->joinWith(['airline', 'customer', 'provider', 'invoice', 'ticketRefund'])
-            ->where(['type' => ServiceConstant::TYPE['Refund']]);
+        $query->joinWith(['airline', 'customer', 'provider', 'invoice','ticketSupplier',
+            'ticketRefund' => function ($query) {
+                $query->where(['LIKE', 'refModel', 'Customer']);
+            }])->where([self::tableName().'.type' => ServiceConstant::TYPE['Refund']]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -78,20 +90,70 @@ class RefundTicketSearch extends Ticket
         ]);
 
         $dataProvider->sort->attributes['customer'] = [
-            'asc' => [Customer::tableName().'.company' => SORT_ASC],
-            'desc' => [Customer::tableName().'.company' => SORT_DESC],
+            'asc' => [Customer::tableName() . '.company' => SORT_ASC],
+            'desc' => [Customer::tableName() . '.company' => SORT_DESC],
         ];
         $dataProvider->sort->attributes['provider'] = [
-            'asc' => [Provider::tableName().'.name' => SORT_ASC],
-            'desc' => [Provider::tableName().'.name' => SORT_DESC],
+            'asc' => [Provider::tableName() . '.name' => SORT_ASC],
+            'desc' => [Provider::tableName() . '.name' => SORT_DESC],
         ];
         $dataProvider->sort->attributes['airline'] = [
-            'asc' => [Airline::tableName().'.name' => SORT_ASC],
-            'desc' => [Airline::tableName().'.name' => SORT_DESC],
+            'asc' => [Airline::tableName() . '.name' => SORT_ASC],
+            'desc' => [Airline::tableName() . '.name' => SORT_DESC],
         ];
         $dataProvider->sort->attributes['invoice'] = [
-            'asc' => [Invoice::tableName().'.invoiceNumber' => SORT_ASC],
-            'desc' => [Invoice::tableName().'.invoiceNumber' => SORT_DESC],
+            'asc' => [Invoice::tableName() . '.invoiceNumber' => SORT_ASC],
+            'desc' => [Invoice::tableName() . '.invoiceNumber' => SORT_DESC],
+        ];
+
+        $dataProvider->sort->attributes['isRefunded'] = [
+            'asc' => [TicketRefund::tableName() . '.isRefunded' => SORT_ASC],
+            'desc' => [TicketRefund::tableName() . '.isRefunded' => SORT_DESC],
+        ];
+
+        /*$dataProvider->sort->attributes['refundFromSupplierStatus'] = [
+            'asc' => [TicketRefund::tableName() . '.refundFromSupplierStatus' => SORT_ASC],
+            'desc' => [TicketRefund::tableName() . '.refundFromSupplierStatus' => SORT_DESC],
+        ];*/
+
+        $dataProvider->sort->attributes['refundStatus'] = [
+            'asc' => [TicketRefund::tableName() . '.refundStatus' => SORT_ASC],
+            'desc' => [TicketRefund::tableName() . '.refundStatus' => SORT_DESC],
+        ];
+
+        $dataProvider->sort->attributes['refundMedium'] = [
+            'asc' => [TicketRefund::tableName() . '.refundMedium' => SORT_ASC],
+            'desc' => [TicketRefund::tableName() . '.refundMedium' => SORT_DESC],
+        ];
+
+        $dataProvider->sort->attributes['refundMethod'] = [
+            'asc' => [TicketRefund::tableName() . '.refundMethod' => SORT_ASC],
+            'desc' => [TicketRefund::tableName() . '.refundMethod' => SORT_DESC],
+        ];
+
+        $dataProvider->sort->attributes['refundDate'] = [
+            'asc' => [TicketRefund::tableName() . '.refundDate' => SORT_ASC],
+            'desc' => [TicketRefund::tableName() . '.refundDate' => SORT_DESC],
+        ];
+
+        $dataProvider->sort->attributes['refundedAmount'] = [
+            'asc' => [TicketRefund::tableName() . '.refundedAmount' => SORT_ASC],
+            'desc' => [TicketRefund::tableName() . '.refundedAmount' => SORT_DESC],
+        ];
+
+        $dataProvider->sort->attributes['serviceCharge'] = [
+            'asc' => [TicketRefund::tableName() . '.serviceCharge' => SORT_ASC],
+            'desc' => [TicketRefund::tableName() . '.serviceCharge' => SORT_DESC],
+        ];
+
+        $dataProvider->sort->attributes['airlineRefundCharge'] = [
+            'asc' => [TicketRefund::tableName() . '.airlineRefundCharge' => SORT_ASC],
+            'desc' => [TicketRefund::tableName() . '.airlineRefundCharge' => SORT_DESC],
+        ];
+
+        $dataProvider->sort->attributes['supplierRefundCharge'] = [
+            'asc' => [TicketRefund::tableName() . '.supplierRefundCharge' => SORT_ASC],
+            'desc' => [TicketRefund::tableName() . '.supplierRefundCharge' => SORT_DESC],
         ];
 
         $this->load($params);
@@ -104,46 +166,55 @@ class RefundTicketSearch extends Ticket
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id' => $this->id,
-            'motherTicketId' => $this->motherTicketId,
-            'airlineId' => $this->airlineId,
-            'providerId' => $this->providerId,
-            'invoiceId' => $this->invoiceId,
-            'customerId' => $this->customerId,
-            'bookedOnline' => $this->bookedOnline,
-            'flightType' => $this->flightType,
-            'codeShare' => $this->codeShare,
-            'issueDate' => $this->issueDate,
-            'departureDate' => $this->departureDate,
-            'refundRequestDate' => $this->refundRequestDate,
-            'numberOfSegment' => $this->numberOfSegment,
-            'baseFare' => $this->baseFare,
-            'tax' => $this->tax,
-            'otherTax' => $this->otherTax,
-            'commission' => $this->commission,
-            'commissionReceived' => $this->commissionReceived,
-            'incentive' => $this->incentive,
-            'incentiveReceived' => $this->incentiveReceived,
-            'govTax' => $this->govTax,
-            'serviceCharge' => $this->serviceCharge,
-            'ait' => $this->ait,
-            'quoteAmount' => $this->quoteAmount,
-            'receivedAmount' => $this->receivedAmount,
-            'costOfSale' => $this->costOfSale,
-            'netProfit' => $this->netProfit,
-            'status' => $this->status,
+            self::tableName() . '.motherTicketId' => $this->motherTicketId,
+            self::tableName() . '.airlineId' => $this->airlineId,
+            self::tableName() . '.providerId' => $this->providerId,
+            self::tableName() . '.invoiceId' => $this->invoiceId,
+            self::tableName() . '.customerId' => $this->customerId,
+            self::tableName() . '.bookedOnline' => $this->bookedOnline,
+            self::tableName() . '.flightType' => $this->flightType,
+            self::tableName() . '.codeShare' => $this->codeShare,
+            self::tableName() . '.issueDate' => $this->issueDate,
+            self::tableName() . '.departureDate' => $this->departureDate,
+            self::tableName() . '.refundRequestDate' => $this->refundRequestDate,
+            self::tableName() . '.numberOfSegment' => $this->numberOfSegment,
+            self::tableName() . '.baseFare' => $this->baseFare,
+            self::tableName() . '.tax' => $this->tax,
+            self::tableName() . '.otherTax' => $this->otherTax,
+            self::tableName() . '.commission' => $this->commission,
+            self::tableName() . '.commissionReceived' => $this->commissionReceived,
+            self::tableName() . '.incentive' => $this->incentive,
+            self::tableName() . '.incentiveReceived' => $this->incentiveReceived,
+            self::tableName() . '.govTax' => $this->govTax,
+            self::tableName() . '.serviceCharge' => $this->serviceCharge,
+            self::tableName() . '.ait' => $this->ait,
+            self::tableName() . '.quoteAmount' => $this->quoteAmount,
+            self::tableName() . '.receivedAmount' => $this->receivedAmount,
+            self::tableName() . '.costOfSale' => $this->costOfSale,
+            self::tableName() . '.netProfit' => $this->netProfit,
+            self::tableName() . '.status' => $this->status,
+            TicketRefund::tableName() . '.isRefunded' => $this->isRefunded,
+            TicketRefund::tableName() . '.refundedAmount' => $this->refundedAmount,
+            //TicketRefund::tableName() . '.refundFromSupplierStatus' => $this->refundFromSupplierStatus,
+            TicketRefund::tableName() . '.refundStatus' => $this->refundStatus,
+            TicketRefund::tableName() . '.refundDate' => $this->refundDate,
+            TicketRefund::tableName() . '.serviceCharge' => $this->serviceCharge,
+            TicketRefund::tableName() . '.airlineRefundCharge' => $this->airlineRefundCharge,
+            TicketRefund::tableName() . '.supplierRefundCharge' => $this->supplierRefundCharge,
+            TicketRefund::tableName() . '.refundMedium' => $this->refundMedium,
+            TicketRefund::tableName() . '.refundMethod' => $this->refundMethod,
             /*'createdBy' => $this->createdBy,
             'createdAt' => $this->createdAt,
             'updatedBy' => $this->updatedBy,
             'updatedAt' => $this->updatedAt,*/
         ]);
 
-        $query->andFilterWhere(['like', Customer::tableName().'.company', $this->customer])
-            ->orFilterWhere(['like', Customer::tableName().'.customerCode', $this->customer])
-            ->andFilterWhere(['like', Airline::tableName().'.name', $this->airline])
-            ->orFilterWhere(['like', Airline::tableName().'.code', $this->airline])
-            ->andFilterWhere(['like', Provider::tableName().'.name', $this->provider])
-            ->andFilterWhere(['like', Invoice::tableName().'.invoiceNumber', $this->invoice])
+        $query->andFilterWhere(['like', Customer::tableName() . '.company', $this->customer])
+            ->orFilterWhere(['like', Customer::tableName() . '.customerCode', $this->customer])
+            ->andFilterWhere(['like', Airline::tableName() . '.name', $this->airline])
+            ->orFilterWhere(['like', Airline::tableName() . '.code', $this->airline])
+            ->andFilterWhere(['like', Provider::tableName() . '.name', $this->provider])
+            ->andFilterWhere(['like', Invoice::tableName() . '.invoiceNumber', $this->invoice])
             ->andFilterWhere(['like', 'customerCategory', $this->customerCategory])
             ->andFilterWhere(['like', 'paxName', $this->paxName])
             ->andFilterWhere(['like', 'paxType', $this->paxType])
