@@ -58,7 +58,7 @@ class Invoice extends ActiveRecord
             [['invoiceNumber'], 'string', 'max' => 64],
             [['uid'], 'unique'],
             [['invoiceNumber'], 'unique'],
-            [['customerId'], 'exist', 'skipOnError' => true, 'targetClass' => Customer::className(), 'targetAttribute' => ['customerId' => 'id']],
+            [['customerId'], 'exist', 'skipOnError' => true, 'targetClass' => Customer::class, 'targetAttribute' => ['customerId' => 'id']],
         ];
     }
 
@@ -94,7 +94,7 @@ class Invoice extends ActiveRecord
      */
     public function getCustomer(): ActiveQuery
     {
-        return $this->hasOne(Customer::className(), ['id' => 'customerId']);
+        return $this->hasOne(Customer::class, ['id' => 'customerId']);
     }
 
     /**
@@ -104,7 +104,7 @@ class Invoice extends ActiveRecord
      */
     public function getTickets(): ActiveQuery
     {
-        return $this->hasMany(Ticket::className(), ['invoiceId' => 'id']);
+        return $this->hasMany(Ticket::class, ['invoiceId' => 'id']);
     }
 
     /**
@@ -114,6 +114,16 @@ class Invoice extends ActiveRecord
      */
     public function getDetails(): ActiveQuery
     {
-        return $this->hasMany(InvoiceDetail::className(), ['invoiceId' => 'id']);
+        return $this->hasMany(InvoiceDetail::class, ['invoiceId' => 'id']);
+    }
+
+    /**
+     * Gets query for [[InvoiceDetail]].
+     *
+     * @return ActiveQuery
+     */
+    public function getTransactions(): ActiveQuery
+    {
+        return $this->hasMany(Transaction::class, ['refId' => 'id'])->onCondition(['refModel' => Invoice::class]);
     }
 }

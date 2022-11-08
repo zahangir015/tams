@@ -1,37 +1,28 @@
 <?php
 
-namespace app\modules\account\controllers;
+namespace app\controllers;
 
-use app\modules\account\models\Invoice;
-use app\modules\account\models\search\InvoiceSearch;
+use app\components\Attachment;
+use app\components\AttachmentFile;
+use app\models\Company;
+use app\models\CompanySearch;
 use app\controllers\ParentController;
-use app\modules\account\repositories\InvoiceRepository;
-use app\modules\account\services\InvoiceService;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * InvoiceController implements the CRUD actions for Invoice model.
+ * CompanyController implements the CRUD actions for Company model.
  */
-class InvoiceController extends ParentController
+class CompanyController extends ParentController
 {
-    public InvoiceService $invoiceService;
-    public InvoiceRepository $invoiceRepository;
-
-    public function __construct($uid, $module, $config = [])
-    {
-        $this->invoiceService = new InvoiceService();
-        $this->invoiceRepository = new InvoiceRepository();
-        parent::__construct($uid, $module, $config);
-    }
     /**
-     * Lists all Invoice models.
+     * Lists all Company models.
      *
      * @return string
      */
     public function actionIndex()
     {
-        $searchModel = new InvoiceSearch();
+        $searchModel = new CompanySearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
@@ -41,29 +32,33 @@ class InvoiceController extends ParentController
     }
 
     /**
-     * Displays a single Invoice model.
-     * @param string $uid UID
+     * Displays a single Company model.
+     * @param int $id ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView(string $uid)
+    public function actionView($id)
     {
         return $this->render('view', [
-            'model' => $this->invoiceRepository->findOne(['uid' => $uid], Invoice::class, ['details', 'customer', 'transactions']),
+            'model' => $this->findModel($id),
         ]);
     }
 
     /**
-     * Creates a new Invoice model.
+     * Creates a new Company model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
     public function actionCreate()
     {
-        $model = new Invoice();
+        $model = new Company();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
+            if ($model->load($this->request->post())) {
+                $logo = Attachment::uploads($model, 'logo');
+                if ($logo) {
+                    $model->logo = $logo[0];
+                }
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {
@@ -76,15 +71,15 @@ class InvoiceController extends ParentController
     }
 
     /**
-     * Updates an existing Invoice model.
+     * Updates an existing Company model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param string $uid UID
+     * @param int $id ID
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($uid)
+    public function actionUpdate($id)
     {
-        $model = $this->findModel($uid);
+        $model = $this->findModel($id);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -96,29 +91,29 @@ class InvoiceController extends ParentController
     }
 
     /**
-     * Deletes an existing Invoice model.
+     * Deletes an existing Company model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param string $uid UID
+     * @param int $id ID
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($uid)
+    public function actionDelete($id)
     {
-        $this->findModel($uid)->delete();
+        $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
     }
 
     /**
-     * Finds the Invoice model based on its primary key value.
+     * Finds the Company model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param string $uid UID
-     * @return Invoice the loaded model
+     * @param int $id ID
+     * @return Company the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($uid)
+    protected function findModel($id)
     {
-        if (($model = Invoice::findOne(['id' => $uid])) !== null) {
+        if (($model = Company::findOne(['id' => $id])) !== null) {
             return $model;
         }
 

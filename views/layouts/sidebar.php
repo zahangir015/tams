@@ -42,6 +42,7 @@ use hail812\adminlte\widgets\Menu;
                 'items' => [
                     ['label' => 'GENERAL SETTINGS', 'header' => true],
                     ['label' => 'Countries',  'icon' => 'globe', 'url' => ['/country']],
+                    ['label' => 'Company',  'icon' => 'building', 'url' => ['/company']],
                     ['label' => 'USER MANAGEMENT', 'header' => true],
                     ['label' => 'Users',  'icon' => 'users', 'url' => ['/admin/user']],
                     ['label' => 'Create User', 'icon' => 'user-plus', 'url' => ['/admin/user/create']],

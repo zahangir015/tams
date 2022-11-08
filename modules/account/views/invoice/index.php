@@ -37,27 +37,21 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'QuoteAmount',
                 'label' => 'Quoted',
                 'value' => function ($model) {
-                    return ($model->amount + $model->due);
+                    return ($model->paidAmount + $model->dueAmount);
                 },
                 'format' => ['decimal', 2],
                 'pageSummary' => true,
                 'pageSummaryFunc' => GridView::F_SUM
             ],
             [
-                'attribute' => 'amount',
-                'value' => function ($model) {
-                    return $model->amount;
-                },
+                'attribute' => 'paidAmount',
                 'label' => 'Paid',
                 'format' => ['decimal', 2],
                 'pageSummary' => true,
                 'pageSummaryFunc' => GridView::F_SUM
             ],
             [
-                'attribute' => 'due',
-                'value' => function ($model) {
-                    return $model->due;
-                },
+                'attribute' => 'dueAmount',
                 'format' => ['decimal', 2],
                 'pageSummary' => true,
                 'pageSummaryFunc' => GridView::F_SUM
@@ -65,9 +59,6 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'adjustmentAmount',
                 'label' => 'Adjustment',
-                'value' => function ($model) {
-                    return $model->adjustmentAmount;
-                },
                 'format' => ['decimal', 2],
                 'pageSummary' => true,
                 'pageSummaryFunc' => GridView::F_SUM
@@ -75,20 +66,12 @@ $this->params['breadcrumbs'][] = $this->title;
             'expectedDate',
             'date',
             'discount',
-            [
-                'attribute' => 'reference',
-                'value' => function ($model) {
-                    $chequeNumbers = ArrayHelper::map($model->transactionStatement, 'id', 'chequeNumber');
-                    return !empty($chequeNumbers) ? implode(',', $chequeNumbers) : null;
-                },
-                'label' => 'Payment Ref'
-            ],
             'comment:ntext',
             'createdAt:date',
             'createdBy',
             'updatedBy',
             [
-                'class' => 'app\grid\ActionColumn',
+                'class' => 'kartik\grid\ActionColumn',
                 'dropdown' => true,
                 'vAlign' => 'middle',
                 'urlCreator' => function ($action, $model, $key, $index) {
@@ -114,7 +97,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         ]);
                     },
                     'payment' => function ($url, $model, $key) {
-                        if ($model->due > 0) {
+                        if ($model->dueAmount == 0) {
                             return Html::a('<i class="fa fa-credit-card"></i>', ['pay', 'uid' => $model->uid],
                                 [
                                     'title' => Yii::t('app', 'pay'),

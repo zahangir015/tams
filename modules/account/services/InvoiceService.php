@@ -12,6 +12,7 @@ use app\modules\account\repositories\PaymentTimelineRepository;
 use app\modules\admin\models\User;
 use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\Customer;
+use app\modules\sale\repositories\HolidayRepository;
 use PhpParser\Node\Expr\Cast\Double;
 use yii\db\ActiveRecord;
 use yii\db\Exception;
@@ -20,6 +21,13 @@ use yii\helpers\ArrayHelper;
 
 class InvoiceService
 {
+    private InvoiceRepository $invoiceRepository;
+
+    public function __construct()
+    {
+        $this->invoiceRepository = new InvoiceRepository();
+    }
+
     public static function autoInvoice(int $customerId, array $services, int $group, mixed $user): array
     {
         $invoice = new Invoice();

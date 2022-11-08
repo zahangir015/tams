@@ -4,6 +4,7 @@ namespace app\modules\account\models;
 
 use app\traits\BehaviorTrait;
 use Yii;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
 /**
@@ -56,5 +57,15 @@ class  InvoiceDetail extends ActiveRecord
             'dueAmount' => Yii::t('app', 'Due Amount'),
             'status' => Yii::t('app', 'Status'),
         ];
+    }
+
+    public function getService(): ActiveQuery
+    {
+        return $this->hasOne($this->refModel::className(), ['id' => 'refId']);
+    }
+
+    public function getIdentificationNumber($service): string
+    {
+        return !empty($service->identificationNumber) ? $service->identificationNumber : $service->eTicket;
     }
 }
