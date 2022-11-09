@@ -1,11 +1,11 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+use yii\bootstrap4\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Company */
-/* @var $form yii\widgets\ActiveForm */
+/* @var $form yii\bootstrap4\ActiveForm */
 ?>
 
 <div class="company-form">
@@ -34,7 +34,7 @@ use yii\widgets\ActiveForm;
                     <?= $form->field($model, 'address')->textInput(['maxlength' => true]) ?>
                 </div>
                 <div class="col-md">
-                    <?= $form->field($model, 'logo')->fileInput(['maxlength' => true]) ?>
+                    <?= $form->field($model, 'logo')->fileInput(['maxlength' => true, 'class' => 'form-control']) ?>
                 </div>
             </div>
             <div class="form-group">

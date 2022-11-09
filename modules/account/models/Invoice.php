@@ -35,6 +35,8 @@ use yii\db\ActiveRecord;
 class Invoice extends ActiveRecord
 {
     use BehaviorTrait;
+    public $dateRange;
+    public $invoiceFile;
     /**
      * {@inheritdoc}
      */

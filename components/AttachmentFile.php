@@ -9,9 +9,8 @@ use yii\db\Exception;
 use yii\db\Expression;
 use yii\helpers\StringHelper;
 use yii\web\UploadedFile;
-use app\modules\configuration\models\Attachment;
 
-class Attachment
+class AttachmentFile
 {
     /**
      * @param $getModel
@@ -53,7 +52,7 @@ class Attachment
         }
         $list = array_column($row, 'name');
 
-        $response = Yii::$app->db->createCommand()->batchInsert(Attachment::tableName(), ['uid', 'name', 'referenceModel', 'ref', 'docType', 'createdBy', 'updatedBy', 'createdAt', 'updatedAt'], $row)->execute();
+        $response = Yii::$app->db->createCommand()->batchInsert(AttachmentFile::tableName(), ['uid', 'name', 'referenceModel', 'ref', 'docType', 'createdBy', 'updatedBy', 'createdAt', 'updatedAt'], $row)->execute();
         return $response && !empty($list) ? $list : false;
     }
 
@@ -67,7 +66,7 @@ class Attachment
     public static function uniqueFileName($modelName): string
     {
         $name = StringHelper::basename(strtolower($modelName));
-        return substr($name . Utils::uniqueCode(36), 0, 32);
+        return substr($name . Helper::uniqueCode(36), 0, 32);
     }
 
     public static function uploadsById($model, $fieldName, $path = NULL)
@@ -101,7 +100,7 @@ class Attachment
         }
         $list = array_column($row,'name');
 
-        $response= Yii::$app->db->createCommand()->batchInsert(Attachment::tableName(), ['uid','name','referenceModel','ref','docType','createdBy','updatedBy','createdAt','updatedAt'], $row)->execute();
+        $response= Yii::$app->db->createCommand()->batchInsert(AttachmentFile::tableName(), ['uid','name','referenceModel','ref','docType','createdBy','updatedBy','createdAt','updatedAt'], $row)->execute();
         return $response && !empty($list) ? $list : false;
     }
 }

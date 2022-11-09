@@ -25,7 +25,9 @@
         "codemix/yii2-configloader": "^0.11.0",
         "kartik-v/yii2-widget-select2": "v2.2.3",
         "kartik-v/yii2-widget-datepicker": "v1.4.8",
-        "kartik-v/yii2-date-range": "v1.7.3"
+        "kartik-v/yii2-date-range": "v1.7.3",
+        "frostealth/yii2-aws-s3": "2.1.1",
+        "kartik-v/yii2-widget-fileinput": "v1.1.1"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

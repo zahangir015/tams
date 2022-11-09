@@ -3,8 +3,13 @@
 namespace app\modules\sale\models;
 
 use app\components\GlobalConstant;
+use app\modules\sale\models\holiday\Holiday;
+use app\modules\sale\models\hotel\Hotel;
+use app\modules\sale\models\ticket\Ticket;
+use app\modules\sale\models\visa\Visa;
 use app\traits\BehaviorTrait;
 use Yii;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
 /**
@@ -89,5 +94,45 @@ class Customer extends ActiveRecord
             ->orWhere(['like', 'email', $query])
             ->andWhere(['status' => GlobalConstant::ACTIVE_STATUS])
             ->all();
+    }
+
+    /**
+     * Gets query for [[Customer]] from [[Ticket]].
+     *
+     * @return ActiveQuery
+     */
+    public function getTickets(): ActiveQuery
+    {
+        return $this->hasMany(Ticket::className(), ['customerId' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Customer]] from [[Visa]].
+     *
+     * @return ActiveQuery
+     */
+    public function getVisas(): ActiveQuery
+    {
+        return $this->hasMany(Visa::className(), ['customerId' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Customer]] from [[Hotel]].
+     *
+     * @return ActiveQuery
+     */
+    public function getHotels(): ActiveQuery
+    {
+        return $this->hasMany(Hotel::className(), ['customerId' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Customer]] from [[Holiday]].
+     *
+     * @return ActiveQuery
+     */
+    public function getPackages(): ActiveQuery
+    {
+        return $this->hasMany(Holiday::className(), ['customerId' => 'id']);
     }
 }

@@ -125,11 +125,11 @@ $this->params['breadcrumbs'][] = $this->title;
         'toolbar' => [
             [
                 'content' =>
-                    Html::a('<i class="fas fa-plus"></i>', ['/sale/ticket/create'], [
+                    Html::a('<i class="fas fa-plus"></i>', ['/account/invoice/create'], [
                         'title' => Yii::t('app', 'Add Category'),
                         'class' => 'btn btn-success'
                     ]) . ' ' .
-                    Html::a('<i class="fas fa-redo"></i>', ['/sale/ticket/index'], [
+                    Html::a('<i class="fas fa-redo"></i>', ['/account/invoice/index'], [
                         'class' => 'btn btn-primary',
                         'title' => Yii::t('app', 'Reset Grid')
                     ]),

@@ -341,6 +341,19 @@ class Helper
         ];
     }
 
+    public static function fileInputWidget(): array
+    {
+        return [
+            'options' => ['accept' => 'image/*'],
+            'pluginOptions' => [
+                'showPreview' => true,
+                'showCaption' => true,
+                'showRemove' => true,
+                'showUpload' => false,
+            ]
+        ];
+    }
+
     public static function depDropConfigurationGenerate($model, $id, $depandedId, $endPoint): array
     {
         return [

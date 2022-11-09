@@ -2,7 +2,6 @@
 
 namespace app\controllers;
 
-use app\components\Attachment;
 use app\components\AttachmentFile;
 use app\models\Company;
 use app\models\CompanySearch;
@@ -55,7 +54,7 @@ class CompanyController extends ParentController
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
-                $logo = Attachment::uploads($model, 'logo');
+                $logo = AttachmentFile::uploads($model, 'logo');
                 if ($logo) {
                     $model->logo = $logo[0];
                 }
