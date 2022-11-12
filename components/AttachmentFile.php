@@ -3,6 +3,7 @@
 
 namespace app\components;
 
+use app\models\Attachment;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\Exception;
@@ -23,36 +24,37 @@ class AttachmentFile
      */
     public static function uploads($getModel, $fieldName, $uid = null, $path = NULL): bool|array
     {
-        $files = UploadedFile::getInstances($getModel,$fieldName);
+        $files = UploadedFile::getInstances($getModel, $fieldName);
         $referenceModel = get_class($getModel);
 
-        $ref = !empty($uid) ? $uid : $getModel->uid;
+        $refId = !empty($uid) ? $uid : $getModel->id;
 
         $row = [];
         foreach ($files as $file) {
             if (!empty($file)) {
                 $getFileName = self::uniqueFileName($referenceModel) . '.' . $file->getExtension();
                 $fileName = $file->name = $path ? $path . DIRECTORY_SEPARATOR . $getFileName : $getFileName;
-                $uploadResponse = Uploader::processFile($file, true);
-                if ($uploadResponse) {
+                $uploadResponse = Uploader::processFile($file, false);
+                if (!$uploadResponse['error']) {
                     Uploader::deleteLocalFile($fileName);
                     $row[] = [
                         'uid' => new Expression('UUID()'),
                         'name' => $uploadResponse,
-                        'referenceModel' => $referenceModel,
-                        'ref' => $ref,
-                        'docType' => StringHelper::basename($referenceModel),
+                        'refModel' => $referenceModel,
+                        'refId' => $refId,
                         'createdBy' => Yii::$app->user->identity->id,
                         'updatedBy' => Yii::$app->user->identity->id,
                         'createdAt' => time(),
                         'updatedAt' => time()
                     ];
+                } else {
+                    break;
                 }
             }
         }
         $list = array_column($row, 'name');
 
-        $response = Yii::$app->db->createCommand()->batchInsert(AttachmentFile::tableName(), ['uid', 'name', 'referenceModel', 'ref', 'docType', 'createdBy', 'updatedBy', 'createdAt', 'updatedAt'], $row)->execute();
+        $response = Yii::$app->db->createCommand()->batchInsert(Attachment::tableName(), ['name', 'refModel', 'refId', 'cdnUrl', 'createdBy', 'updatedBy', 'createdAt', 'updatedAt'], $row)->execute();
         return $response && !empty($list) ? $list : false;
     }
 
@@ -75,14 +77,12 @@ class AttachmentFile
         $referenceModel = get_class($model);
 
         $row = [];
-        foreach ($files as $file)
-        {
-            if (!empty($file))
-            {
-                $getFileName = self::uniqueFileName($referenceModel).'.'.$file->getExtension();
-                $fileName = $file->name = $path ? $path.DIRECTORY_SEPARATOR.$getFileName : $getFileName;
-                $uploadResponse = Uploader::processFile($file,true);
-                if($uploadResponse) {
+        foreach ($files as $file) {
+            if (!empty($file)) {
+                $getFileName = self::uniqueFileName($referenceModel) . '.' . $file->getExtension();
+                $fileName = $file->name = $path ? $path . DIRECTORY_SEPARATOR . $getFileName : $getFileName;
+                $uploadResponse = Uploader::processFile($file, true);
+                if ($uploadResponse) {
                     Uploader::deleteLocalFile($fileName);
                     $row[] = [
                         'uid' => new Expression('UUID()'),
@@ -98,9 +98,9 @@ class AttachmentFile
                 }
             }
         }
-        $list = array_column($row,'name');
+        $list = array_column($row, 'name');
 
-        $response= Yii::$app->db->createCommand()->batchInsert(AttachmentFile::tableName(), ['uid','name','referenceModel','ref','docType','createdBy','updatedBy','createdAt','updatedAt'], $row)->execute();
+        $response = Yii::$app->db->createCommand()->batchInsert(AttachmentFile::tableName(), ['uid', 'name', 'referenceModel', 'ref', 'docType', 'createdBy', 'updatedBy', 'createdAt', 'updatedAt'], $row)->execute();
         return $response && !empty($list) ? $list : false;
     }
 }

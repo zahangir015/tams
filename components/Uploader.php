@@ -25,9 +25,13 @@ class Uploader
         self::checkDir($originUploadPath);
         $baseFileName = basename($fileName);
         if ($file->saveAs($originUploadPath . $baseFileName)) {
-            return $cdnEnable ? self::uploadCDN($fileName, $uploadPath . $baseFileName) : $fileName;
+            if ($cdnEnable){
+                return ['error' => false, 'cdnUrl' => self::uploadCDN($fileName, $uploadPath . $baseFileName), 'name' => $baseFileName, 'message' => 'File uploaded'];
+            }else{
+                return ['error' => false, 'cdnUrl' => null, 'name' => $baseFileName, 'message' => 'File uploaded'];
+            }
         } else {
-            return false;
+            return ['error' => true, 'cdnUrl' => null, 'name' => null, 'message' => 'File upload failed'];
         }
     }
 
@@ -42,7 +46,7 @@ class Uploader
     {
         $s3 = Yii::$app->get('s3');
         $result = $s3->upload(empty($cdnDir) ? $filename : $cdnDir . $filename, $path);
-        return $result ? $result['ObjectURL'] : false;
+        return $result ? $result['ObjectURL'] : null;
     }
 
     /**
