@@ -127,6 +127,34 @@ class InvoiceController extends ParentController
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
 
+    /**
+     * Payment an existing Invoices model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param string $uid
+     * @return mixed
+     * @throws NotFoundHttpException
+     * @throws Exception
+     */
+    public function actionPay(string $uid)
+    {
+        $model = $this->findModel($uid);
+        $model->scenario = 'invoicePay';
+        if (Yii::$app->request->isPost) {
+            $invoicePaymentResponse = InvoiceService::offlineInvoicePayment($model, Yii::$app->request->post());
+            Yii::$app->session->setFlash($invoicePaymentResponse['error'] ? 'error' : 'success', $invoicePaymentResponse['message']);
+            if (!$invoicePaymentResponse['error']) {
+                return $this->render('view', [
+                    'model' => $model,
+                ]);
+            }
+        }
+        return $this->render('payment', [
+            'model' => $model,
+            'refundList' => ArrayHelper::map(RefundComponent::getRefundTransactionList(Customer::class, $model->customerId), 'id', 'name'),
+            'bankList' => ArrayHelper::map(BankAccount::find()->where(['like', 'tag', BankAccount::STATUS['Invoice']])->all(), 'id', 'bankName')
+        ]);
+    }
+
     public function actionPending(): array
     {
         $data = Yii::$app->request->get();

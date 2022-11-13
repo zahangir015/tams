@@ -2,7 +2,6 @@
 
 namespace app\modules\sale\services;
 
-use app\components\GlobalConstant;
 use app\components\Helper;
 use app\modules\account\models\Invoice;
 use app\modules\account\services\InvoiceService;
@@ -10,7 +9,6 @@ use app\modules\account\services\LedgerService;
 use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\Customer;
 use app\modules\sale\models\holiday\Holiday;
-use app\modules\sale\models\holiday\HolidayCategory;
 use app\modules\sale\models\holiday\HolidaySupplier;
 use app\modules\sale\models\Supplier;
 use app\modules\sale\repositories\HolidayRepository;
@@ -123,19 +121,20 @@ class HolidayService
                     $holidaySupplierProcessedData = self::holidaySupplierProcess($holiday, $requestData['HolidaySupplier']);
 
                     // Invoice details data process
-                    $services[] = [
+                    $service = [
                         'invoiceId' => $motherHoliday->invoiceId ?? null,
                         'refId' => $holiday->id,
                         'refModel' => Holiday::class,
                         'dueAmount' => ($holiday->quoteAmount - $holiday->receivedAmount),
                         'paidAmount' => $holiday->receivedAmount,
+                        'motherId' => $motherHoliday->id,
                         'supplierData' => $holidaySupplierProcessedData['serviceSupplierData']
                     ];
                     $supplierLedgerArray = $holidaySupplierProcessedData['supplierLedgerArray'];
 
                     if ($motherHoliday->invoiceId) {
                         // Invoice process
-                        $autoInvoiceCreateResponse = InvoiceService::autoInvoiceForRefund($motherHoliday->invoice, $services, Yii::$app->user);
+                        $autoInvoiceCreateResponse = InvoiceService::autoInvoiceForRefund($motherHoliday->invoice, $service, Yii::$app->user);
                         if ($autoInvoiceCreateResponse['error']) {
                             throw new Exception('Auto Invoice creation failed - ' . $autoInvoiceCreateResponse['message']);
                         }
