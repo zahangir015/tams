@@ -69,9 +69,9 @@ class Holiday extends ActiveRecord
             [['customerCategory'], 'string', 'max' => 10],
             [['route'], 'string', 'max' => 255],
             [['uid'], 'unique'],
-            [['customerId'], 'exist', 'skipOnError' => true, 'targetClass' => Customer::className(), 'targetAttribute' => ['customerId' => 'id']],
-            [['holidayCategoryId'], 'exist', 'skipOnError' => true, 'targetClass' => HolidayCategory::className(), 'targetAttribute' => ['holidayCategoryId' => 'id']],
-            [['invoiceId'], 'exist', 'skipOnError' => true, 'targetClass' => Invoice::className(), 'targetAttribute' => ['invoiceId' => 'id']],
+            [['customerId'], 'exist', 'skipOnError' => true, 'targetClass' => Customer::class, 'targetAttribute' => ['customerId' => 'id']],
+            [['holidayCategoryId'], 'exist', 'skipOnError' => true, 'targetClass' => HolidayCategory::class, 'targetAttribute' => ['holidayCategoryId' => 'id']],
+            [['invoiceId'], 'exist', 'skipOnError' => true, 'targetClass' => Invoice::class, 'targetAttribute' => ['invoiceId' => 'id']],
         ];
     }
 
@@ -115,7 +115,7 @@ class Holiday extends ActiveRecord
      */
     public function getCustomer(): ActiveQuery
     {
-        return $this->hasOne(Customer::className(), ['id' => 'customerId']);
+        return $this->hasOne(Customer::class, ['id' => 'customerId']);
     }
 
     /**
@@ -125,7 +125,7 @@ class Holiday extends ActiveRecord
      */
     public function getHolidayCategory(): ActiveQuery
     {
-        return $this->hasOne(HolidayCategory::className(), ['id' => 'holidayCategoryId']);
+        return $this->hasOne(HolidayCategory::class, ['id' => 'holidayCategoryId']);
     }
 
     /**
@@ -135,7 +135,17 @@ class Holiday extends ActiveRecord
      */
     public function getHolidaySuppliers(): ActiveQuery
     {
-        return $this->hasMany(HolidaySupplier::className(), ['holidayId' => 'id']);
+        return $this->hasMany(HolidaySupplier::class, ['holidayId' => 'id']);
+    }
+
+    /**
+     * Gets query for [[HolidayRefund]].
+     *
+     * @return ActiveQuery
+     */
+    public function getHolidayRefund(): ActiveQuery
+    {
+        return $this->hasOne(HolidayRefund::class, ['holidayId' => 'id']);
     }
 
     /**
@@ -145,6 +155,6 @@ class Holiday extends ActiveRecord
      */
     public function getInvoice(): ActiveQuery
     {
-        return $this->hasOne(Invoice::className(), ['id' => 'invoiceId']);
+        return $this->hasOne(Invoice::class, ['id' => 'invoiceId']);
     }
 }

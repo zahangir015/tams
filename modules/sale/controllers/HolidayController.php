@@ -6,9 +6,11 @@ use app\components\GlobalConstant;
 use app\models\History;
 use app\modules\sale\models\holiday\Holiday;
 use app\modules\sale\models\holiday\HolidayCategory;
+use app\modules\sale\models\holiday\HolidayRefund;
 use app\modules\sale\models\holiday\HolidaySearch;
 use app\controllers\ParentController;
 use app\modules\sale\models\holiday\HolidaySupplierSearch;
+use app\modules\sale\models\holiday\RefundHolidaySearch;
 use app\modules\sale\services\HolidayService;
 use app\modules\sale\models\holiday\HolidaySupplier;
 use Yii;
@@ -59,6 +61,23 @@ class HolidayController extends ParentController
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('holiday_supplier_list', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'holidayCategories' => $this->holidayService->getCategories()
+        ]);
+    }
+
+    /**
+     * Lists all Ticket models.
+     *
+     * @return string
+     */
+    public function actionRefundList(): string
+    {
+        $searchModel = new RefundHolidaySearch();
+        $dataProvider = $searchModel->search($this->request->queryParams);
+
+        return $this->render('refund_list', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'holidayCategories' => $this->holidayService->getCategories()
@@ -128,6 +147,7 @@ class HolidayController extends ParentController
         return $this->render('_refund', [
             'model' => $model,
             'motherHoliday' => $motherHoliday,
+            'holidayRefund' => new HolidayRefund(),
             'holidayCategories' => $this->holidayService->getCategories()
         ]);
     }

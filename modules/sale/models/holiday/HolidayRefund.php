@@ -2,7 +2,9 @@
 
 namespace app\modules\sale\models\holiday;
 
+use app\modules\account\models\RefundTransaction;
 use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%holiday_refund}}".
@@ -27,7 +29,7 @@ use Yii;
  *
  * @property RefundTransaction $refundTransaction
  */
-class HolidayRefund extends \yii\db\ActiveRecord
+class HolidayRefund extends ActiveRecord
 {
     /**
      * {@inheritdoc}

@@ -42,6 +42,7 @@ $('#supplierId').on('change', function (e) {
     $('.supplierId').val($(this).val());
 });
 
+
 function updateSummery() {
     calculateQuoteAmount();
     calculateCostOfSale();
@@ -59,13 +60,13 @@ function calculateQuoteAmount() {
     if ($('.quantity').length > 0) {
         $(".quantity").each(function (index) {
             var quantity = parseFloat($(this).parents('.calcData').find('.quantity').val());
-            var perServicePrice = parseFloat($(this).parents('.calcData').find('.perServicePrice').val())
+            var perServicePrice = parseFloat($(this).parents('.calcData').find('.perServicePrice').val());
             var holidayQuoteAmount = quantity * perServicePrice;
             totalQuoteAmount += holidayQuoteAmount;
         });
-        $('#holiday-quoteamount').val(totalQuoteAmount);
+        $('#holiday-quoteamount').val((totalQuoteAmount + supplierRefundCharge));
     } else {
-        return false
+        return false;
     }
     calculateNetProfit();
 }

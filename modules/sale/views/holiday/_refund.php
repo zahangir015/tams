@@ -79,16 +79,41 @@ $this->registerJsFile(
                             <?= $form->field($model, 'costOfSale')->textInput(['type' => 'number', 'value' => $motherHoliday->costOfSale, 'min' => 0, 'step' => 'any', 'readOnly' => 'readOnly'])->label('Total Cost Of Sale') ?>
                         </div>
                         <div class="col-md">
-                            <?= $form->field($model, 'quoteAmount')->textInput(['type' => 'number', 'value' => $motherHoliday->quoteAmount, 'min' => 0, 'step' => 'any', 'readOnly' => 'readOnly'])->label('Total Quote Amount') ?>
+                            <?= $form->field($holidayRefund, 'supplierServiceCharge')->textInput(['type' => 'number', 'value' => 0, 'min' => 0, 'step' => 'any']) ?>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md">
+                            <?= $form->field($model, 'quoteAmount')->textInput(['type' => 'number', 'value' => $motherHoliday->quoteAmount, 'min' => 0, 'step' => 'any', 'readOnly' => 'readOnly'])->label('Total Quote Amount') ?>
+                        </div>
+                        <div class="col-md">
                             <?= $form->field($model, 'netProfit')->textInput(['type' => 'number', 'value' => $motherHoliday->netProfit, 'step' => 'any', 'readOnly' => 'readOnly'])->label('Net Profit') ?>
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md">
                             <?= $form->field($model, 'type')->dropdownList(ServiceConstant::SERVICE_TYPE_FOR_CREATE, ['value' => ServiceConstant::SERVICE_TYPE_FOR_CREATE['Refund'], 'readOnly' => 'readOnly'])->label('Type') ?>
                             <?= $form->field($model, 'motherId')->hiddenInput(['value' => $motherHoliday->id])->label(false) ?>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md">
+                            <?= $form->field($holidayRefund, 'refundStatus')->dropDownList(ServiceConstant::REFUND_STATUS, ['prompt' => 'Select refund status...']) ?>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md">
+                            <?= $form->field($holidayRefund, 'refundMedium')->dropdownList(ServiceConstant::REFUND_MEDIUM, ['prompt' => 'Select refund medium...']) ?>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md">
+                            <?= $form->field($holidayRefund, 'refundMethod')->dropdownList(ServiceConstant::REFUND_METHOD, ['prompt' => 'Select refund method...']) ?>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md">
+                            <?= $form->field($holidayRefund, 'remarks')->textarea() ?>
                         </div>
                     </div>
                 </div>

@@ -9,6 +9,7 @@ use app\modules\account\services\LedgerService;
 use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\Customer;
 use app\modules\sale\models\holiday\Holiday;
+use app\modules\sale\models\holiday\HolidayRefund;
 use app\modules\sale\models\holiday\HolidaySupplier;
 use app\modules\sale\models\Supplier;
 use app\modules\sale\repositories\HolidayRepository;
@@ -24,21 +25,6 @@ class HolidayService
     public function __construct()
     {
         $this->holidayRepository = new HolidayRepository();
-    }
-
-    private static function calculateNetProfit(mixed $quoteAmount, mixed $costOfSale)
-    {
-        return ($quoteAmount - $costOfSale);
-    }
-
-    public function findHoliday(string $uid, $withArray = []): ActiveRecord
-    {
-        return $this->holidayRepository->findOne($uid, $withArray);
-    }
-
-    public function getCategories(): array
-    {
-        return ArrayHelper::map($this->holidayRepository->findCategories(), 'id', 'name');
     }
 
     public function storeHoliday(array $requestData): bool
@@ -112,13 +98,28 @@ class HolidayService
                 $holiday = new Holiday();
                 if ($holiday->load($requestData)) {
                     $holiday->customerCategory = $customer->category;
+                    $holiday->invoiceId = $motherHoliday->invoiceId;
                     $holiday = $this->holidayRepository->store($holiday);
                     if ($holiday->hasErrors()) {
                         throw new Exception('Holiday refund create failed - ' . Helper::processErrorMessages($holiday->getErrors()));
                     }
 
+                    // Mother Holiday update
+                    $motherHoliday->type = ServiceConstant::TICKET_TYPE_FOR_REFUND['Refund Requested'];
+                    $motherHoliday->refundRequestDate = $holiday->refundRequestDate;
+                    $motherHoliday = $this->holidayRepository->store($motherHoliday);
+                    if ($motherHoliday->hasErrors()) {
+                        throw new Exception('Mother holiday update failed - ' . Helper::processErrorMessages($motherHoliday->getErrors()));
+                    }
+
                     // Holiday Supplier data process
                     $holidaySupplierProcessedData = self::holidaySupplierProcess($holiday, $requestData['HolidaySupplier']);
+
+                    // Create refund for customer and supplier
+                    $refundDataProcessResponse = self::processRefundModelData($holiday, $requestData);
+                    if ($refundDataProcessResponse['error']) {
+                        throw new Exception('Holiday refund creation failed - ' . $refundDataProcessResponse['message']);
+                    }
 
                     // Invoice details data process
                     $service = [
@@ -134,17 +135,10 @@ class HolidayService
 
                     if ($motherHoliday->invoiceId) {
                         // Invoice process
-                        $autoInvoiceCreateResponse = InvoiceService::autoInvoiceForRefund($motherHoliday->invoice, $service, Yii::$app->user);
-                        if ($autoInvoiceCreateResponse['error']) {
-                            throw new Exception('Auto Invoice creation failed - ' . $autoInvoiceCreateResponse['message']);
+                        $autoInvoiceDetailCreateResponse = InvoiceService::autoInvoiceForRefund($motherHoliday->invoice, $service, Yii::$app->user);
+                        if ($autoInvoiceDetailCreateResponse['error']) {
+                            throw new Exception('Auto Invoice detail creation failed - ' . $autoInvoiceDetailCreateResponse['message']);
                         }
-                        $invoice = $autoInvoiceCreateResponse['data'];
-                    }
-
-                    // Supplier Ledger process
-                    $ledgerRequestResponse = LedgerService::batchInsert($invoice, $supplierLedgerArray);
-                    if ($ledgerRequestResponse['error']) {
-                        throw new Exception('Supplier Ledger creation failed - ' . $ledgerRequestResponse['message']);
                     }
 
                 } else {
@@ -221,7 +215,6 @@ class HolidayService
 
     private static function updateHolidaySupplier(ActiveRecord $holiday, array $suppliers)
     {
-
         return ['error' => true, 'message' => 'Package Supplier Saved Successfully'];
     }
 
@@ -262,4 +255,62 @@ class HolidayService
 
         return ['serviceSupplierData' => $serviceSupplierData, 'supplierLedgerArray' => $supplierLedgerArray];
     }
+
+
+    private function processRefundModelData(ActiveRecord $holiday, array $requestData): array
+    {
+        $referenceData = [
+            [
+                'refId' => $holiday->customerId,
+                'refModel' => Customer::class,
+                'serviceCharge' => $holiday->quoteAmount,
+                'holidayId' => $holiday->id,
+                'refundRequestDate' => $holiday->refundRequestDate,
+            ],
+            [
+                'refId' => $holiday->holidaySupplier->supplierId,
+                'refModel' => Supplier::class,
+                'serviceCharge' => $holiday->holidaySupplier->costOfSale,
+                'holidayId' => $holiday->id,
+                'refundRequestDate' => $holiday->refundRequestDate,
+            ]
+        ];
+
+        $holidayRefundBatchData = [];
+        // Customer Holiday refund data process
+        foreach ($referenceData as $ref) {
+            $holidayRefund = new HolidayRefund();
+            if (!$holidayRefund->load($requestData) || !$holidayRefund->load(['HolidayRefund' => $ref]) || !$holidayRefund->validate()) {
+                return ['error' => true, 'message' => 'Holiday Refund validation failed - ' . Helper::processErrorMessages($holidayRefund->getErrors())];
+            }
+            $holidayRefundBatchData[] = $holidayRefund->getAttributes(null, ['id']);
+        }
+
+        // Holiday Refund batch insert process
+        if (empty($holidayRefundBatchData)) {
+            return ['error' => true, 'message' => 'Holiday Refund batch data process failed.'];
+        }
+
+        if (!$this->holidayRepository->batchStore('holiday_refund', array_keys($holidayRefundBatchData[0]), $holidayRefundBatchData)) {
+            return ['error' => true, 'message' => 'Holiday Refund batch insert failed'];
+        }
+
+        return ['error' => false, 'message' => 'Holiday Refund process done.'];
+    }
+
+    private static function calculateNetProfit(mixed $quoteAmount, mixed $costOfSale)
+    {
+        return ($quoteAmount - $costOfSale);
+    }
+
+    public function findHoliday(string $uid, $withArray = []): ActiveRecord
+    {
+        return $this->holidayRepository->findOne($uid, $withArray);
+    }
+
+    public function getCategories(): array
+    {
+        return ArrayHelper::map($this->holidayRepository->findCategories(), 'id', 'name');
+    }
+
 }

@@ -19,12 +19,6 @@ use yii\bootstrap4\Html;
             <span class="card-icon"><i class="flaticon2-paper-plane text-primary"></i></span>
             <h5 class="card-label" id="card-label-<?= $row ?>">Holiday Supplier <?= ($row + 1) ?></h5>
         </div>
-        <div class="card-toolbar float-right">
-            <a href="#" class="btn btn-danger btn-sm" onclick="remove(<?= $row ?>)">
-                    <span class="fa fa-times-circle">
-                </span>
-            </a>
-        </div>
     </div>
     <div class="card-body">
         <div class="row">

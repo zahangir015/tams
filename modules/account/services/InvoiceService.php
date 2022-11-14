@@ -96,7 +96,7 @@ class InvoiceService
 
         // Invoice due update
         $invoiceDue = InvoiceDetail::find()
-            ->select([new Expression('SUM(due) AS due')])
+            ->select([new Expression('SUM(dueAmount) AS dueAmount')])
             ->where(['status' => GlobalConstant::ACTIVE_STATUS])
             ->andWhere(['invoiceId' => $invoiceDetail->invoiceId])
             ->asArray()->all();
@@ -104,9 +104,9 @@ class InvoiceService
             return ['status' => false, 'message' => 'Mother Invoice details update failed'];
         }
 
-        $invoice->due = $invoiceDue[0]['due'];
+        $invoice->dueAmount = $invoiceDue[0]['dueAmount'];
         if (!$invoice->save()) {
-            return ['status' => false, 'message' => 'Invoice due update failed - ' . Helper::processErrorMessages($invoice->getErrors())];
+            return ['error' => false, 'message' => 'Invoice due update failed - ' . Helper::processErrorMessages($invoice->getErrors())];
         }
 
         // Customer Ledger process
@@ -114,18 +114,18 @@ class InvoiceService
             'title' => 'Service Refund',
             'reference' => 'Invoice Number - ' . $invoice->invoiceNumber,
             'refId' => $invoice->customerId,
-            'refModel' => Customer::className(),
+            'refModel' => Customer::class,
             'subRefId' => $invoice->id,
-            'subRefModel' => $invoice::className(),
-            'debit' => ($invoiceDetail->due > 0) ? $invoiceDetail->due : 0,
-            'credit' => ($invoiceDetail->due > 0) ? 0 : $invoiceDetail->due
+            'subRefModel' => $invoice::class,
+            'debit' => ($invoiceDetail->dueAmount > 0) ? $invoiceDetail->dueAmount : 0,
+            'credit' => ($invoiceDetail->dueAmount > 0) ? 0 : $invoiceDetail->dueAmount
         ];
         $ledgerRequestResponse = LedgerService::store($ledgerRequestData);
         if ($ledgerRequestResponse['error']) {
             return ['error' => true, 'message' => 'Customer Ledger creation failed - ' . $ledgerRequestResponse['message']];
         }
 
-        return ['status' => true, 'data' => $invoiceDetail];
+        return ['error' => false, 'data' => $invoiceDetail];
     }
 
     private static function serviceProcess(Invoice $invoice, array $services): array
