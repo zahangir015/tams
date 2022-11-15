@@ -3,6 +3,7 @@
 namespace app\modules\sale\models\holiday;
 
 use app\modules\account\models\RefundTransaction;
+use app\traits\BehaviorTrait;
 use Yii;
 use yii\db\ActiveRecord;
 
@@ -31,6 +32,7 @@ use yii\db\ActiveRecord;
  */
 class HolidayRefund extends ActiveRecord
 {
+    use BehaviorTrait;
     /**
      * {@inheritdoc}
      */

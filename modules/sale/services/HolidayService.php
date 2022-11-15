@@ -92,8 +92,6 @@ class HolidayService
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
             if (!empty($requestData['Holiday']) || !empty($requestData['HolidaySupplier'])) {
-                $services = [];
-                $invoice = null;
                 $customer = Customer::findOne(['id' => $requestData['Holiday']['customerId']]);
                 $holiday = new Holiday();
                 if ($holiday->load($requestData)) {
@@ -101,7 +99,7 @@ class HolidayService
                     $holiday->invoiceId = $motherHoliday->invoiceId;
                     $holiday = $this->holidayRepository->store($holiday);
                     if ($holiday->hasErrors()) {
-                        throw new Exception('Holiday refund create failed - ' . Helper::processErrorMessages($holiday->getErrors()));
+                        throw new Exception('Holiday refund creation failed - ' . Helper::processErrorMessages($holiday->getErrors()));
                     }
 
                     // Mother Holiday update
@@ -226,6 +224,7 @@ class HolidayService
             $holidaySupplier = new HolidaySupplier();
             $holidaySupplier->load(['HolidaySupplier' => $singleSupplierArray]);
             $holidaySupplier->holidayId = $holiday->id;
+            $holidaySupplier->refundRequestDate = $holiday->refundRequestDate;
             $holidaySupplier = $this->holidayRepository->store($holidaySupplier);
             if ($holidaySupplier->hasErrors()) {
                 throw new Exception('Holiday Supplier refund creation failed - ' . Helper::processErrorMessages($holidaySupplier->getErrors()));
@@ -256,7 +255,6 @@ class HolidayService
         return ['serviceSupplierData' => $serviceSupplierData, 'supplierLedgerArray' => $supplierLedgerArray];
     }
 
-
     private function processRefundModelData(ActiveRecord $holiday, array $requestData): array
     {
         $referenceData = [
@@ -266,15 +264,22 @@ class HolidayService
                 'serviceCharge' => $holiday->quoteAmount,
                 'holidayId' => $holiday->id,
                 'refundRequestDate' => $holiday->refundRequestDate,
+                'isRefunded' => 0,
             ],
-            [
-                'refId' => $holiday->holidaySupplier->supplierId,
-                'refModel' => Supplier::class,
-                'serviceCharge' => $holiday->holidaySupplier->costOfSale,
-                'holidayId' => $holiday->id,
-                'refundRequestDate' => $holiday->refundRequestDate,
-            ]
         ];
+
+        foreach ($holiday->holidaySuppliers as $singleSupplier) {
+            if ($singleSupplier->type == ServiceConstant::SERVICE_TYPE_FOR_CREATE['Refund']) {
+                $referenceData[] = [
+                    'refId' => $singleSupplier->supplierId,
+                    'refModel' => Supplier::class,
+                    'serviceCharge' => $singleSupplier->costOfSale,
+                    'holidayId' => $singleSupplier->id,
+                    'refundRequestDate' => $singleSupplier->refundRequestDate,
+                    'isRefunded' => 0,
+                ];
+            }
+        }
 
         $holidayRefundBatchData = [];
         // Customer Holiday refund data process

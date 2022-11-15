@@ -293,6 +293,7 @@ class FlightService
                 'serviceCharge' => $newRefundTicket->quoteAmount,
                 'ticketId' => $newRefundTicket->id,
                 'refundRequestDate' => $newRefundTicket->refundRequestDate,
+                'isRefunded' => 0,
             ],
             [
                 'refId' => $newRefundTicket->ticketSupplier->supplierId,
@@ -300,6 +301,7 @@ class FlightService
                 'serviceCharge' => $newRefundTicket->ticketSupplier->costOfSale,
                 'ticketId' => $newRefundTicket->id,
                 'refundRequestDate' => $newRefundTicket->refundRequestDate,
+                'isRefunded' => 0,
             ]
         ];
 

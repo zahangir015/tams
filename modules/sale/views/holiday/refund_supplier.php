@@ -55,7 +55,7 @@ use yii\bootstrap4\Html;
             </div>
             <div class="col-md-8">
                 <?= $form->field($holidaySupplier, "[$row]serviceDetails")->textInput(['maxlength' => true]); ?>
-                <?= $form->field($holidaySupplier, "[$row]motherHolidayId")->hiddenInput(['maxlength' => true, 'value' => $holidaySupplier->id])->label(false) ?>
+                <?= $form->field($holidaySupplier, "[$row]motherId")->hiddenInput(['maxlength' => true, 'value' => $holidaySupplier->id])->label(false) ?>
             </div>
         </div>
         <?= (!$model->isNewRecord) ? Html::submitButton('<i class="fas fa-save"></i>Update', ['class' => 'btn btn-light-primary font-weight-bold float-right']) : '' ?>

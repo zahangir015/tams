@@ -11,6 +11,7 @@ use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\Customer;
 use app\modules\sale\models\hotel\Hotel;
 use app\modules\sale\models\hotel\HotelCategory;
+use app\modules\sale\models\hotel\HotelRefund;
 use app\modules\sale\models\hotel\HotelSupplier;
 use app\modules\sale\models\Supplier;
 use app\modules\sale\repositories\HotelRepository;
@@ -103,57 +104,67 @@ class HotelService
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
             if (!empty($requestData['Hotel']) || !empty($requestData['HotelSupplier'])) {
-                $services = [];
-                $invoice = null;
                 $customer = Customer::findOne(['id' => $requestData['Hotel']['customerId']]);
                 $hotel = new Hotel();
                 if ($hotel->load($requestData)) {
                     $hotel->customerCategory = $customer->category;
+                    $hotel->invoiceId = $motherHotel->invoiceId;
                     $hotel = $this->hotelRepository->store($hotel);
                     if ($hotel->hasErrors()) {
-                        throw new Exception('Hotel refund create failed - ' . Helper::processErrorMessages($hotel->getErrors()));
+                        throw new Exception('Hotel refund creation failed - ' . Helper::processErrorMessages($hotel->getErrors()));
+                    }
+
+                    // Mother Hotel update
+                    $motherHotel->type = ServiceConstant::TICKET_TYPE_FOR_REFUND['Refund Requested'];
+                    $motherHotel->refundRequestDate = $hotel->refundRequestDate;
+                    $motherHotel = $this->hotelRepository->store($motherHotel);
+                    if ($motherHotel->hasErrors()) {
+                        throw new Exception('Mother hotel update failed - ' . Helper::processErrorMessages($motherHotel->getErrors()));
                     }
 
                     // Hotel Supplier data process
                     $hotelSupplierProcessedData = self::hotelSupplierProcess($hotel, $requestData['HotelSupplier']);
 
+                    // Create refund for customer and supplier
+                    $refundDataProcessResponse = self::processRefundModelData($hotel, $requestData);
+                    if ($refundDataProcessResponse['error']) {
+                        throw new Exception('Hotel refund creation failed - ' . $refundDataProcessResponse['message']);
+                    }
+
                     // Invoice details data process
-                    $services[] = [
+                    $service = [
                         'invoiceId' => $motherHotel->invoiceId ?? null,
                         'refId' => $hotel->id,
                         'refModel' => Hotel::class,
                         'dueAmount' => ($hotel->quoteAmount - $hotel->receivedAmount),
                         'paidAmount' => $hotel->receivedAmount,
+                        'motherId' => $motherHotel->id,
                         'supplierData' => $hotelSupplierProcessedData['serviceSupplierData']
                     ];
                     $supplierLedgerArray = $hotelSupplierProcessedData['supplierLedgerArray'];
 
                     if ($motherHotel->invoiceId) {
                         // Invoice process
-                        $autoInvoiceCreateResponse = InvoiceService::autoInvoiceForRefund($motherHotel->invoice, $services, Yii::$app->user);
+                        $autoInvoiceCreateResponse = InvoiceService::autoInvoiceForRefund($motherHotel->invoice, $service, Yii::$app->user);
                         if ($autoInvoiceCreateResponse['error']) {
-                            throw new Exception('Auto Invoice creation failed - ' . $autoInvoiceCreateResponse['message']);
+                            throw new Exception('Auto Invoice detail creation failed - ' . $autoInvoiceCreateResponse['message']);
                         }
-                        $invoice = $autoInvoiceCreateResponse['data'];
                     }
 
                     // Supplier Ledger process
-                    $ledgerRequestResponse = LedgerService::batchInsert($invoice, $supplierLedgerArray);
+                    /*$ledgerRequestResponse = LedgerService::batchInsert($invoice, $supplierLedgerArray);
                     if ($ledgerRequestResponse['error']) {
                         throw new Exception('Supplier Ledger creation failed - ' . $ledgerRequestResponse['message']);
-                    }
-
+                    }*/
+                    $dbTransaction->commit();
+                    Yii::$app->session->setFlash('success', 'Hotel added successfully');
+                    return true;
                 } else {
                     throw new Exception('Hotel data loading failed - ' . Helper::processErrorMessages($hotel->getErrors()));
                 }
-
-                $dbTransaction->commit();
-                Yii::$app->session->setFlash('success', 'Hotel added successfully');
-                return true;
             }
             // Ticket and supplier data can not be empty
             throw new Exception('Hotel and supplier data can not be empty.');
-
         } catch (Exception $e) {
             $dbTransaction->rollBack();
             Yii::$app->session->setFlash('danger', $e->getMessage() . ' - in file - ' . $e->getFile() . ' - in line -' . $e->getLine());
@@ -193,7 +204,7 @@ class HotelService
             // Update Hotel Supplier
             // TODO Supplier ledger update
             // TODO Bill update
-            $hotelSupplierProcessedData = self::updateHotelSupplier($hotel, $requestData['HotelSupplier'], );
+            $hotelSupplierProcessedData = self::updateHotelSupplier($hotel, $requestData['HotelSupplier'],);
             // Invoice details data process
             $services[] = [
                 'invoiceId' => $motherHotel->invoiceId ?? null,
@@ -342,5 +353,53 @@ class HotelService
         }
 
         return ['serviceSupplierData' => $serviceSupplierData, 'supplierLedgerArray' => $supplierLedgerArray];
+    }
+
+    private function processRefundModelData(ActiveRecord $hotel, array $requestData): array
+    {
+        $referenceData = [
+            [
+                'refId' => $hotel->customerId,
+                'refModel' => Customer::class,
+                'serviceCharge' => $hotel->quoteAmount,
+                'hotelId' => $hotel->id,
+                'refundRequestDate' => $hotel->refundRequestDate,
+                'isRefunded' => 0,
+            ],
+        ];
+
+        foreach ($hotel->hotelSuppliers as $singleSupplier) {
+            if ($singleSupplier->type == ServiceConstant::SERVICE_TYPE_FOR_CREATE['Refund']) {
+                $referenceData[] = [
+                    'refId' => $singleSupplier->supplierId,
+                    'refModel' => Supplier::class,
+                    'serviceCharge' => $singleSupplier->costOfSale,
+                    'hotelId' => $singleSupplier->id,
+                    'refundRequestDate' => $singleSupplier->refundRequestDate,
+                    'isRefunded' => 0,
+                ];
+            }
+        }
+
+        $hotelRefundBatchData = [];
+        // Customer Hotel refund data process
+        foreach ($referenceData as $ref) {
+            $hotelRefund = new HotelRefund();
+            if (!$hotelRefund->load($requestData) || !$hotelRefund->load(['HotelRefund' => $ref]) || !$hotelRefund->validate()) {
+                return ['error' => true, 'message' => 'Hotel Refund validation failed - ' . Helper::processErrorMessages($hotelRefund->getErrors())];
+            }
+            $hotelRefundBatchData[] = $hotelRefund->getAttributes(null, ['id']);
+        }
+
+        // Hotel Refund batch insert process
+        if (empty($hotelRefundBatchData)) {
+            return ['error' => true, 'message' => 'Hotel Refund batch data process failed.'];
+        }
+
+        if (!$this->hotelRepository->batchStore('hotel_refund', array_keys($hotelRefundBatchData[0]), $hotelRefundBatchData)) {
+            return ['error' => true, 'message' => 'Hotel Refund batch insert failed'];
+        }
+
+        return ['error' => false, 'message' => 'Hotel Refund process done.'];
     }
 }

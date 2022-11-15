@@ -1,6 +1,7 @@
 <?php
 
 use app\components\GlobalConstant;
+use app\modules\sale\components\ServiceConstant;
 use kartik\daterange\DateRangePicker;
 use kartik\select2\Select2;
 use yii\helpers\Html;
@@ -12,6 +13,10 @@ use app\components\Helper;
 /* @var $this yii\web\View */
 /* @var $model app\modules\sale\models\hotel\Hotel */
 /* @var $form yii\bootstrap4\ActiveForm */
+
+$this->title = Yii::t('app', 'Refund Hotel');
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Hotel'), 'url' => ['refund-list']];
+$this->params['breadcrumbs'][] = $this->title;
 
 $this->registerJsFile(
     '@web/js/hotel.js',
@@ -29,12 +34,7 @@ $this->registerJsFile(
                 </h5>
             </div>
             <div class="card-toolbar float-right">
-                <a href="#" id="addButton" class="btn btn-success font-weight-bolder mr-2"
-                   onclick="addSupplier()"
-                   data-row-number="1">
-                    <i class="fa fa-plus-circle"></i> Add More
-                </a>
-                <?= Html::submitButton(Yii::t('app', '<i class="fa fa-arrow-alt-circle-down"></i> Update'), ['class' => 'btn btn-primary']) ?>
+                <?= Html::submitButton(Yii::t('app', '<i class="fa fa-arrow-alt-circle-down"></i> Save'), ['class' => 'btn btn-primary']) ?>
             </div>
         </div>
         <div class="card-body">
@@ -73,18 +73,18 @@ $this->registerJsFile(
                     </div>
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($model, 'costOfSale')->textInput(['type' => 'number', 'value' => $model->costOfSale, 'min' => 0, 'step' => 'any', 'readOnly' => 'readOnly'])->label('Total Cost Of Sale') ?>
+                            <?= $form->field($model, 'costOfSale')->textInput(['type' => 'number', 'value' => $motherHotel->costOfSale, 'min' => 0, 'step' => 'any', 'readOnly' => 'readOnly'])->label('Total Cost Of Sale') ?>
                         </div>
                         <div class="col-md">
-                            <?= $form->field($model, 'quoteAmount')->textInput(['type' => 'number', 'value' => $model->quoteAmount, 'min' => 0, 'step' => 'any', 'readOnly' => 'readOnly'])->label('Total Quote Amount') ?>
+                            <?= $form->field($model, 'quoteAmount')->textInput(['type' => 'number', 'value' => $motherHotel->quoteAmount, 'min' => 0, 'step' => 'any', 'readOnly' => 'readOnly'])->label('Total Quote Amount') ?>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($model, 'netProfit')->textInput(['type' => 'number', 'value' => $model->netProfit, 'step' => 'any', 'readOnly' => 'readOnly'])->label('Net Profit') ?>
+                            <?= $form->field($model, 'netProfit')->textInput(['type' => 'number', 'value' => $motherHotel->netProfit, 'step' => 'any', 'readOnly' => 'readOnly'])->label('Net Profit') ?>
                         </div>
                         <div class="col-md">
-                            <?= $form->field($model, 'totalNights')->textInput(['type' => 'number', 'value' => $model->totalNights, 'step' => 'any', 'readOnly' => 'readOnly'])->label('Total Nights') ?>
+                            <?= $form->field($model, 'totalNights')->textInput(['type' => 'number', 'value' => $motherHotel->totalNights, 'step' => 'any', 'readOnly' => 'readOnly'])->label('Total Nights') ?>
                         </div>
                     </div>
                     <div class="row">
@@ -110,7 +110,28 @@ $this->registerJsFile(
                         <div class="col-md">
                             <?= $form->field($model, 'isRefundable')->dropDownList(GlobalConstant::YES_NO, ['value' => $motherHotel->isRefundable, 'readOnly' => 'readOnly']) ?>
                         </div>
-                        <?= $form->field($model, 'motherId')->hiddenInput(['value' => $motherHotel->id])->label(false) ?>
+                    </div>
+                    <div class="row">
+                        <div class="col-md">
+                            <?= $form->field($hotelRefund, 'refundStatus')->dropDownList(ServiceConstant::OTHER_SERVICE_REFUND_STATUS, ['prompt' => 'Select refund status...']) ?>
+                        </div>
+                        <div class="col-md">
+                            <?= $form->field($hotelRefund, 'refundMedium')->dropdownList(ServiceConstant::REFUND_MEDIUM, ['prompt' => 'Select refund medium...']) ?>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md">
+                            <?= $form->field($model, 'type')->dropdownList(ServiceConstant::SERVICE_TYPE_FOR_CREATE, ['value' => ServiceConstant::SERVICE_TYPE_FOR_CREATE['Refund'], 'readOnly' => 'readOnly'])->label('Type') ?>
+                        </div>
+                        <div class="col-md">
+                            <?= $form->field($hotelRefund, 'refundMethod')->dropdownList(ServiceConstant::REFUND_METHOD, ['prompt' => 'Select refund method...']) ?>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md">
+                            <?= $form->field($hotelRefund, 'remarks')->textarea() ?>
+                            <?= $form->field($model, 'motherId')->hiddenInput(['value' => $motherHotel->id])->label(false) ?>
+                        </div>
                     </div>
                 </div>
             </div>

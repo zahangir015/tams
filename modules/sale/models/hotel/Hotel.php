@@ -141,6 +141,16 @@ class Hotel extends ActiveRecord
     }
 
     /**
+     * Gets query for [[HotelRefund]].
+     *
+     * @return ActiveQuery
+     */
+    public function getHotelRefund(): ActiveQuery
+    {
+        return $this->hasOne(HotelRefund::class, ['hotelId' => 'id']);
+    }
+
+    /**
      * Gets query for [[Invoice]].
      *
      * @return ActiveQuery

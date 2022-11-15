@@ -68,7 +68,7 @@ class HolidayController extends ParentController
     }
 
     /**
-     * Lists all Ticket models.
+     * Lists all Holiday models.
      *
      * @return string
      */

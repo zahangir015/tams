@@ -2,19 +2,22 @@
 
 use app\components\GlobalConstant;
 use app\modules\sale\components\ServiceConstant;
-use app\modules\sale\models\holiday\Holiday;
+use app\modules\sale\models\hotel\Hotel;
 use kartik\daterange\DateRangePicker;
 use yii\helpers\Html;
 use yii\helpers\Url;
+use kartik\grid\ActionColumn;
 use kartik\grid\GridView;
+use yii\widgets\Pjax;
+
 /* @var $this yii\web\View */
-/* @var $searchModel app\modules\sale\models\holiday\HolidaySearch */
+/* @var $searchModel app\modules\sale\models\hotel\HotelSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Refund Holidays');
+$this->title = Yii::t('app', 'Hotels');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="holiday-index">
+<div class="hotel-index">
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
@@ -27,14 +30,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     return $model->invoice->invoiceNumber;
                 },
                 'label' => 'Invoice',
-            ],
-            [
-                'attribute' => 'holidayCategoryId',
-                'value' => function ($model) {
-                    return $model->holidayCategory->name;
-                },
-                'label' => 'Category',
-                'filter' => $holidayCategories
             ],
             [
                 'attribute' => 'identificationNumber',
@@ -60,25 +55,17 @@ $this->params['breadcrumbs'][] = $this->title;
                 'filter' => GlobalConstant::TICKET_TYPE_FOR_CREATE
             ],
             [
+                'attribute' => 'voucherNumber',
+                'label' => 'voucher#',
+            ],
+            'reservationCode',
+            [
                 'attribute' => 'issueDate',
-                'label' => 'ISSUE',
+                'label' => 'Issue',
                 'format' => 'date',
                 'filter' => DateRangePicker::widget([
                     'model' => $searchModel,
                     'attribute' => 'issueDate',
-                    'pluginOptions' => [
-                        'format' => 'Y-m-d',
-                        'autoUpdateInput' => false
-                    ]
-                ])
-            ],
-            [
-                'attribute' => 'departureDate',
-                'label' => 'Departure',
-                'format' => 'date',
-                'filter' => DateRangePicker::widget([
-                    'model' => $searchModel,
-                    'attribute' => 'departureDate',
                     'pluginOptions' => [
                         'format' => 'Y-m-d',
                         'autoUpdateInput' => false
@@ -98,19 +85,44 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]
                 ])
             ],
-            'quoteAmount',
-            'costOfSale',
+            [
+                'attribute' => 'checkInDate',
+                'label' => 'Check In',
+            ],
+            [
+                'attribute' => 'checkOutDate',
+                'label' => 'Check Out',
+            ],
+            [
+                'attribute' => 'freeCancellationDate',
+                'label' => 'Cancellation Date',
+            ],
+            'totalNights',
+            'route',
+            'isRefundable',
+            [
+                'attribute' => 'quoteAmount',
+                'label' => 'Quote',
+            ],
+            [
+                'attribute' => 'costOfSale',
+                'label' => 'Cost',
+            ],
             'netProfit',
-            'receivedAmount',
+            [
+                'attribute' => 'receivedAmount',
+                'label' => 'Received',
+            ],
             'paymentStatus',
             [
                 'attribute' => 'isOnlineBooked',
-                'value' => function($model){
+                'label' => 'Booked',
+                'value' => function ($model) {
                     return GlobalConstant::BOOKING_TYPE[$model->isOnlineBooked];
                 },
                 'filter' => GlobalConstant::BOOKING_TYPE
             ],
-            'route',
+            'reference',
             [
                 'attribute' => 'isRefunded',
                 'value' => function ($model) {
@@ -196,11 +208,11 @@ $this->params['breadcrumbs'][] = $this->title;
         'toolbar' => [
             [
                 'content' =>
-                    Html::a('<i class="fas fa-plus"></i>', ['/sale/holiday/create'], [
-                        'title' => Yii::t('app', 'Add Holiday'),
+                    Html::a('<i class="fas fa-plus"></i>', ['/sale/hotel/create'], [
+                        'title' => Yii::t('app', 'Add Category'),
                         'class' => 'btn btn-success'
                     ]) . ' ' .
-                    Html::a('<i class="fas fa-redo"></i>', ['/sale/holiday/refund-list'], [
+                    Html::a('<i class="fas fa-redo"></i>', ['/sale/hotel/refund-list'], [
                         'class' => 'btn btn-primary',
                         'title' => Yii::t('app', 'Reset Grid')
                     ]),
@@ -220,4 +232,5 @@ $this->params['breadcrumbs'][] = $this->title;
             'type' => GridView::TYPE_DARK
         ],
     ]); ?>
+
 </div>

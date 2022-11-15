@@ -43,6 +43,9 @@ $this->registerJsFile(
         <div class="card-body">
             <div class="row">
                 <div class="col-md">
+                    <?= $form->field($model, 'refundRequestDate')->widget(DateRangePicker::class, Helper::dateFormat(false, true)) ?>
+                </div>
+                <div class="col-md">
                     <?= $form->field($model, 'customerId')->dropdownList([$motherHoliday->customer->id => $motherHoliday->customer->company], ['readOnly' => 'readOnly'])->label('Customer') ?>
                 </div>
                 <div class="col-md">
@@ -50,9 +53,6 @@ $this->registerJsFile(
                 </div>
                 <div class="col-md">
                     <?= $form->field($model, 'issueDate')->textInput(['value' => $motherHoliday->issueDate, 'readOnly' => 'readOnly']) ?>
-                </div>
-                <div class="col-md">
-                    <?= $form->field($model, 'refundRequestDate')->widget(DateRangePicker::class, Helper::dateFormat(false, true)) ?>
                 </div>
             </div>
         </div>
@@ -98,7 +98,7 @@ $this->registerJsFile(
                     </div>
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($holidayRefund, 'refundStatus')->dropDownList(ServiceConstant::REFUND_STATUS, ['prompt' => 'Select refund status...']) ?>
+                            <?= $form->field($holidayRefund, 'refundStatus')->dropDownList(ServiceConstant::OTHER_SERVICE_REFUND_STATUS, ['prompt' => 'Select refund status...']) ?>
                         </div>
                     </div>
                     <div class="row">

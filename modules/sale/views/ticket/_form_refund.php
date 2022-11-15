@@ -106,13 +106,13 @@ $this->registerJsFile(
             </div>
             <div class="row">
                 <div class="col-md">
-                    <?= $form->field($ticketRefund, 'supplierRefundCharge')->textInput(['type' => 'number', 'value' => $ticketRefund->supplierRefundCharge ?? $model->ticketSupplier->supplier->refundCharge, 'min' => 0, 'class' => 'quotePart form-control', 'type' => 'number']) ?>
+                    <?= $form->field($ticketRefund, 'supplierRefundCharge')->textInput(['type' => 'number', 'value' => $ticketRefund->supplierRefundCharge ?? $model->ticketSupplier->supplier->refundCharge, 'min' => 0, 'class' => 'quotePart form-control']) ?>
                 </div>
                 <div class="col-md">
-                    <?= $form->field($ticketRefund, 'airlineRefundCharge')->textInput(['type' => 'number', 'value' => $ticketRefund->airlineRefundCharge ?? $model->airline->serviceCharge, 'min' => 0, 'class' => 'quotePart form-control', 'type' => 'number']) ?>
+                    <?= $form->field($ticketRefund, 'airlineRefundCharge')->textInput(['type' => 'number', 'value' => $ticketRefund->airlineRefundCharge ?? $model->airline->serviceCharge, 'min' => 0, 'class' => 'quotePart form-control']) ?>
                 </div>
                 <div class="col-md">
-                    <?= $form->field($ticketRefund, 'refundCharge')->textInput(['type' => 'number', 'value' => $ticketRefund->isNewRecord ? 0 : $ticketRefund->refundCharge, 'min' => 0, 'class' => 'quotePart serviceCharge form-control', 'type' => 'number']) ?>
+                    <?= $form->field($ticketRefund, 'refundCharge')->textInput(['type' => 'number', 'value' => $ticketRefund->isNewRecord ? 0 : $ticketRefund->refundCharge, 'min' => 0, 'class' => 'quotePart serviceCharge form-control']) ?>
                 </div>
                 <div class="col-md">
                     <?= $form->field($model, 'costOfSale')->textInput(['type' => 'number', 'value' => $ticketRefund->isNewRecord ? ($model->ticketSupplier->supplier->refundCharge + $model->airline->serviceCharge) : $model->costOfSale, 'readonly' => 'readonly']) ?>

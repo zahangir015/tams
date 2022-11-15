@@ -4,10 +4,12 @@ namespace app\modules\sale\controllers;
 
 use app\models\History;
 use app\modules\sale\models\hotel\Hotel;
+use app\modules\sale\models\hotel\HotelRefund;
 use app\modules\sale\models\hotel\HotelSearch;
 use app\controllers\ParentController;
 use app\modules\sale\models\hotel\HotelSupplier;
 use app\modules\sale\models\hotel\HotelSupplierSearch;
+use app\modules\sale\models\hotel\RefundHotelSearch;
 use app\modules\sale\services\HotelService;
 use Yii;
 use yii\bootstrap4\ActiveForm;
@@ -54,6 +56,22 @@ class HotelController extends ParentController
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('hotel_supplier_list', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
+     * Lists all Hotel models.
+     *
+     * @return string
+     */
+    public function actionRefundList(): string
+    {
+        $searchModel = new RefundHotelSearch();
+        $dataProvider = $searchModel->search($this->request->queryParams);
+
+        return $this->render('refund_list', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
@@ -121,6 +139,7 @@ class HotelController extends ParentController
         return $this->render('_refund', [
             'model' => $model,
             'motherHotel' => $motherHotel,
+            'hotelRefund' => new HotelRefund(),
         ]);
     }
 

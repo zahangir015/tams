@@ -14,7 +14,7 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property string $uid
- * @property int|null $motherHotelSupplierId
+ * @property int|null $motherId
  * @property int $hotelId
  * @property int|null $billId
  * @property int $supplierId
@@ -53,7 +53,7 @@ class HotelSupplier extends ActiveRecord
     {
         return [
             [['hotelId', 'supplierId', 'supplierRef', 'issueDate', 'type', 'numberOfNights', 'quantity', 'unitPrice', 'costOfSale'], 'required'],
-            [['motherHotelSupplierId', 'hotelId', 'billId', 'supplierId', 'numberOfNights', 'quantity', 'status'], 'integer'],
+            [['motherId', 'hotelId', 'billId', 'supplierId', 'numberOfNights', 'quantity', 'status'], 'integer'],
             [['issueDate', 'refundRequestDate'], 'safe'],
             [['type', 'paymentStatus'], 'string'],
             [['unitPrice', 'costOfSale', 'paidAmount'], 'number'],
@@ -74,7 +74,7 @@ class HotelSupplier extends ActiveRecord
         return [
             'id' => Yii::t('app', 'ID'),
             'uid' => Yii::t('app', 'Uid'),
-            'motherHotelSupplierId' => Yii::t('app', 'Mother Hotel Supplier ID'),
+            'motherId' => Yii::t('app', 'Mother Hotel Supplier ID'),
             'hotelId' => Yii::t('app', 'Hotel ID'),
             'billId' => Yii::t('app', 'Bill ID'),
             'supplierId' => Yii::t('app', 'Supplier ID'),

@@ -3,6 +3,7 @@
 namespace app\modules\sale\models\hotel;
 
 use app\modules\account\models\RefundTransaction;
+use app\traits\BehaviorTrait;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
@@ -32,6 +33,7 @@ use yii\db\ActiveRecord;
  */
 class HotelRefund extends ActiveRecord
 {
+    use BehaviorTrait;
     /**
      * {@inheritdoc}
      */

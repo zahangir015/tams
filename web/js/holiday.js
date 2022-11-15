@@ -64,7 +64,7 @@ function calculateQuoteAmount() {
             var holidayQuoteAmount = quantity * perServicePrice;
             totalQuoteAmount += holidayQuoteAmount;
         });
-        $('#holiday-quoteamount').val((totalQuoteAmount + supplierRefundCharge));
+        $('#holiday-quoteamount').val(totalQuoteAmount);
     } else {
         return false;
     }
