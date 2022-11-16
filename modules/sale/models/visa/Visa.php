@@ -136,4 +136,14 @@ class Visa extends ActiveRecord
     {
         return $this->hasMany(VisaSupplier::class, ['visaId' => 'id']);
     }
+
+    /**
+     * Gets query for [[VisaRefund]].
+     *
+     * @return ActiveQuery
+     */
+    public function getVisaRefund(): ActiveQuery
+    {
+        return $this->hasOne(VisaRefund::class, ['visaId' => 'id']);
+    }
 }

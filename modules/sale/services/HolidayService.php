@@ -275,7 +275,7 @@ class HolidayService
                     'refModel' => Supplier::class,
                     'serviceCharge' => $singleSupplier->costOfSale,
                     'holidayId' => $singleSupplier->id,
-                    'refundRequestDate' => $singleSupplier->refundRequestDate,
+                    'refundRequestDate' => $holiday->refundRequestDate,
                     'isRefunded' => 0,
                 ];
             }

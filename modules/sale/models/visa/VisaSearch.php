@@ -1,18 +1,20 @@
 <?php
 
-namespace app\modules\sale\models;
+namespace app\modules\sale\models\visa;
 
 use app\modules\account\models\Invoice;
+use app\modules\sale\models\Customer;
 use app\traits\BehaviorTrait;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\sale\models\visa\Visa;
 
 /**
  * VisaSearch represents the model behind the search form of `app\modules\sale\models\visa\Visa`.
  */
 class VisaSearch extends Visa
 {
+    use BehaviorTrait;
+
     public $invoice;
     public $customer;
 

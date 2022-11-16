@@ -26,21 +26,6 @@ class VisaService
         $this->visaRepository = new VisaRepository();
     }
 
-    private static function calculateNetProfit(mixed $quoteAmount, mixed $costOfSale)
-    {
-        return ($quoteAmount - $costOfSale);
-    }
-
-    public function findVisa(string $uid, $withArray = []): ActiveRecord
-    {
-        return $this->visaRepository->findOne($uid, $withArray);
-    }
-
-    public function findVisaSupplier(string $uid, $withArray = []): ActiveRecord
-    {
-        return $this->visaRepository->findSupplier($uid, $withArray);
-    }
-
     public function storeVisa(array $requestData): bool
     {
         $dbTransaction = Yii::$app->db->beginTransaction();
@@ -105,19 +90,32 @@ class VisaService
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
             if (!empty($requestData['Visa']) || !empty($requestData['VisaSupplier'])) {
-                $services = [];
-                $invoice = null;
                 $customer = Customer::findOne(['id' => $requestData['Visa']['customerId']]);
                 $visa = new Visa();
                 if ($visa->load($requestData)) {
                     $visa->customerCategory = $customer->category;
+                    $visa->invoiceId = $motherVisa->invoiceId;
                     $visa = $this->visaRepository->store($visa);
                     if ($visa->hasErrors()) {
                         throw new Exception('Visa refund create failed - ' . Helper::processErrorMessages($visa->getErrors()));
                     }
 
+                    // Mother Hotel update
+                    $motherVisa->type = ServiceConstant::TICKET_TYPE_FOR_REFUND['Refund Requested'];
+                    $motherVisa->refundRequestDate = $visa->refundRequestDate;
+                    $motherVisa = $this->visaRepository->store($motherVisa);
+                    if ($motherVisa->hasErrors()) {
+                        throw new Exception('Mother visa update failed - ' . Helper::processErrorMessages($motherVisa->getErrors()));
+                    }
+
                     // Visa Supplier data process
                     $visaSupplierProcessedData = self::visaSupplierProcess($visa, $requestData['VisaSupplier']);
+
+                    // Create refund for customer and supplier
+                    $refundDataProcessResponse = self::processRefundModelData($visa, $requestData);
+                    if ($refundDataProcessResponse['error']) {
+                        throw new Exception('Hotel refund creation failed - ' . $refundDataProcessResponse['message']);
+                    }
 
                     // Invoice details data process
                     $services[] = [
@@ -339,5 +337,70 @@ class VisaService
         }
 
         return ['serviceSupplierData' => $serviceSupplierData, 'supplierLedgerArray' => $supplierLedgerArray];
+    }
+
+    private function processRefundModelData($visa, array $requestData): array
+    {
+        $referenceData = [
+            [
+                'refId' => $visa->customerId,
+                'refModel' => Customer::class,
+                'serviceCharge' => $visa->quoteAmount,
+                'visaId' => $visa->id,
+                'refundRequestDate' => $visa->refundRequestDate,
+                'isRefunded' => 0,
+            ],
+        ];
+
+        foreach ($visa->visaSuppliers as $singleSupplier) {
+            if ($singleSupplier->type == ServiceConstant::SERVICE_TYPE_FOR_CREATE['Refund']) {
+                $referenceData[] = [
+                    'refId' => $singleSupplier->supplierId,
+                    'refModel' => Supplier::class,
+                    'serviceCharge' => $singleSupplier->costOfSale,
+                    'visaId' => $singleSupplier->id,
+                    'refundRequestDate' => $visa->refundRequestDate,
+                    'isRefunded' => 0,
+                ];
+            }
+        }
+
+        $visaRefundBatchData = [];
+        // Customer Hotel refund data process
+        foreach ($referenceData as $ref) {
+            $visaRefund = new HotelRefund();
+            $visaRefund->load($requestData);
+            $visaRefund->load(['HotelRefund' => $ref]);
+            if (!$visaRefund->validate()) {
+                return ['error' => true, 'message' => 'Hotel Refund validation failed - ' . Helper::processErrorMessages($visaRefund->getErrors())];
+            }
+            $visaRefundBatchData[] = $visaRefund->getAttributes(null, ['id']);
+        }
+
+        // Hotel Refund batch insert process
+        if (empty($visaRefundBatchData)) {
+            return ['error' => true, 'message' => 'Hotel Refund batch data process failed.'];
+        }
+
+        if (!$this->visaRepository->batchStore('visa_refund', array_keys($visaRefundBatchData[0]), $visaRefundBatchData)) {
+            return ['error' => true, 'message' => 'Hotel Refund batch insert failed'];
+        }
+
+        return ['error' => false, 'message' => 'Hotel Refund process done.'];
+    }
+
+    private static function calculateNetProfit(mixed $quoteAmount, mixed $costOfSale)
+    {
+        return ($quoteAmount - $costOfSale);
+    }
+
+    public function findVisa(string $uid, $withArray = []): ActiveRecord
+    {
+        return $this->visaRepository->findOne($uid, $withArray);
+    }
+
+    public function findVisaSupplier(string $uid, $withArray = []): ActiveRecord
+    {
+        return $this->visaRepository->findSupplier($uid, $withArray);
     }
 }

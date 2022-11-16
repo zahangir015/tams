@@ -22,7 +22,7 @@ class HotelSupplierSearch extends HotelSupplier
     public function rules(): array
     {
         return [
-            [['id', 'motherHotelSupplierId', 'hotelId', 'billId', 'supplierId', 'numberOfNights', 'quantity', 'status', 'motherId'], 'integer'],
+            [['id', 'motherId', 'hotelId', 'billId', 'supplierId', 'numberOfNights', 'quantity', 'status', 'motherId'], 'integer'],
             [['bill', 'supplier', 'hotel', 'supplierRef', 'issueDate', 'refundRequestDate', 'type', 'serviceDetails', 'paymentStatus'], 'safe'],
             [['unitPrice', 'costOfSale', 'paidAmount'], 'number'],
         ];

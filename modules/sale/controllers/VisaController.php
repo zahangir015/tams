@@ -4,8 +4,9 @@ namespace app\modules\sale\controllers;
 
 use app\models\History;
 use app\modules\sale\models\visa\Visa;
+use app\modules\sale\models\visa\VisaRefund;
 use app\modules\sale\models\visa\VisaSupplier;
-use app\modules\sale\models\VisaSearch;
+use app\modules\sale\models\visa\VisaSearch;
 use app\controllers\ParentController;
 use app\modules\sale\services\VisaService;
 use app\modules\sale\models\visa\VisaSupplierSearch;
@@ -38,6 +39,22 @@ class VisaController extends ParentController
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
+     * Lists all Hotel models.
+     *
+     * @return string
+     */
+    public function actionRefundList(): string
+    {
+        $searchModel = new RefundVisaSearch();
+        $dataProvider = $searchModel->search($this->request->queryParams);
+
+        return $this->render('refund_list', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
@@ -107,7 +124,7 @@ class VisaController extends ParentController
     public function actionRefund(string $uid)
     {
         $model = new Visa();
-        $motherVisa = $this->visaService->findVisa($uid, ['visaSuppliers', 'invoice']);
+        $motherVisa = $this->visaService->findVisa($uid, ['visaSuppliers', 'invoice', 'customer']);
         if ($this->request->isPost) {
             $requestData = Yii::$app->request->post();
             $response = $this->visaService->refundVisa($requestData, $motherVisa);
@@ -118,9 +135,10 @@ class VisaController extends ParentController
             $model->loadDefaultValues();
         }
 
-        return $this->render('_refund', [
+        return $this->render('_form_refund', [
             'model' => $model,
             'motherVisa' => $motherVisa,
+            'visaRefund' => new VisaRefund(),
         ]);
     }
 

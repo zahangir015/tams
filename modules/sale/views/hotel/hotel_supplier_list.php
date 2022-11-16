@@ -6,13 +6,13 @@ use yii\helpers\Html;
 use kartik\grid\GridView;
 
 /** @var yii\web\View $this */
-/** @var app\modules\sale\models\holiday\HolidaySupplierSearch $searchModel */
+/** @var app\modules\sale\models\hotel\HotelSupplierSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = Yii::t('app', 'Holiday Suppliers');
+$this->title = Yii::t('app', 'Hotel Suppliers');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="holiday-supplier-index">
+<div class="hotel-supplier-index">
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
@@ -121,5 +121,4 @@ $this->params['breadcrumbs'][] = $this->title;
             'type' => GridView::TYPE_DARK
         ],
     ]); ?>
-
 </div>

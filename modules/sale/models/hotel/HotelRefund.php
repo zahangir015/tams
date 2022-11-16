@@ -48,7 +48,7 @@ class HotelRefund extends ActiveRecord
     public function rules(): array
     {
         return [
-            [['uid', 'hotelId', 'refId', 'refModel', 'refundRequestDate'], 'required'],
+            [['hotelId', 'refId', 'refModel', 'refundRequestDate'], 'required'],
             [['hotelId', 'refundTransactionId', 'refId', 'isRefunded', 'status'], 'integer'],
             [['refundRequestDate', 'refundDate'], 'safe'],
             [['refundStatus', 'refundMedium', 'refundMethod', 'remarks'], 'string'],

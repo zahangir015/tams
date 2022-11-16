@@ -2,22 +2,18 @@
 
 use app\components\GlobalConstant;
 use app\modules\sale\components\ServiceConstant;
-use app\modules\sale\models\hotel\Hotel;
 use kartik\daterange\DateRangePicker;
 use yii\helpers\Html;
 use yii\helpers\Url;
-use kartik\grid\ActionColumn;
 use kartik\grid\GridView;
-use yii\widgets\Pjax;
-
 /* @var $this yii\web\View */
-/* @var $searchModel app\modules\sale\models\hotel\HotelSearch */
+/* @var $searchModel app\modules\sale\models\VisaSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Hotels');
+$this->title = Yii::t('app', 'Visas');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="hotel-index">
+<div class="visa-index">
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
@@ -52,13 +48,8 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'type',
                 'value' => 'type',
-                'filter' => GlobalConstant::TICKET_TYPE_FOR_CREATE
+                'filter' => ServiceConstant::ALL_SERVICE_TYPE
             ],
-            [
-                'attribute' => 'voucherNumber',
-                'label' => 'voucher#',
-            ],
-            'reservationCode',
             [
                 'attribute' => 'issueDate',
                 'label' => 'Issue',
@@ -85,21 +76,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]
                 ])
             ],
-            [
-                'attribute' => 'checkInDate',
-                'label' => 'Check In',
-            ],
-            [
-                'attribute' => 'checkOutDate',
-                'label' => 'Check Out',
-            ],
-            [
-                'attribute' => 'freeCancellationDate',
-                'label' => 'Cancellation Date',
-            ],
-            'totalNights',
-            'route',
-            'isRefundable',
+            'totalQuantity',
+            'processStatus',
             [
                 'attribute' => 'quoteAmount',
                 'label' => 'Quote',
@@ -113,7 +91,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'receivedAmount',
                 'label' => 'Received',
             ],
-            'paymentStatus',
             [
                 'attribute' => 'isOnlineBooked',
                 'label' => 'Booked',
@@ -123,73 +100,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 'filter' => GlobalConstant::BOOKING_TYPE
             ],
             'reference',
-            [
-                'attribute' => 'isRefunded',
-                'value' => function ($model) {
-                    return  GlobalConstant::YES_NO[$model->hotelRefund->isRefunded];
-                },
-                'filter' => GlobalConstant::YES_NO
-            ],
-            /*[
-                'attribute' => 'refundFromSupplierStatus',
-                'label' => 'Refund From Supplier Status',
-                'value' => function ($model) {
-                    return $model->hotelRefund->refundFromSupplierStatus;
-                }
-            ],*/
-            [
-                'attribute' => 'refundStatus',
-                'label' => 'Refund Status',
-                'value' => function ($model) {
-                    return $model->hotelRefund->refundStatus;
-                },
-                'filter' => ServiceConstant::REFUND_STATUS
-            ],
-            [
-                'attribute' => 'refundMedium',
-                'label' => 'Medium',
-                'value' => function ($model) {
-                    return $model->hotelRefund->refundMedium;
-                },
-                'filter' => ServiceConstant::REFUND_MEDIUM
-            ],
-            [
-                'attribute' => 'refundMethod',
-                'label' => 'Method',
-                'value' => function ($model) {
-                    return $model->hotelRefund->refundMethod;
-                },
-                'filter' => ServiceConstant::REFUND_METHOD
-            ],
-            [
-                'attribute' => 'refundDate',
-                'label' => 'Refund Date',
-                'value' => function ($model) {
-                    return $model->hotelRefund->refundDate;
-                }
-            ],
-            [
-                'attribute' => 'refundedAmount',
-                'label' => 'Refunded Amount',
-                'value' => function ($model) {
-                    return $model->hotelRefund->refundedAmount;
-                }
-            ],
-            [
-                'attribute' => 'serviceCharge',
-                'label' => 'Service Charge',
-                'value' => function ($model) {
-                    return $model->hotelRefund->serviceCharge;
-                }
-            ],
-            [
-                'attribute' => 'supplierRefundCharge',
-                'label' => 'Supplier Charge',
-                'value' => function ($model) {
-                    return $model->hotelRefund->supplierRefundCharge;
-                }
-            ],
-            //'baggage',
             //'status',
             //'createdBy',
             //'createdAt',
@@ -200,19 +110,30 @@ $this->params['breadcrumbs'][] = $this->title;
                 'urlCreator' => function ($action, $model) {
                     return Url::to([$action, 'uid' => $model->uid]);
                 },
-                'template' => '{view} {update} {delete}',
+                'template' => '{view} {update} {delete} {refund}',
                 'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
                 'updateOptions' => ['role' => 'modal-remote', 'title' => 'Update', 'data-toggle' => 'tooltip'],
+                'buttons' => [
+                    'refund' => function ($url, $model) {
+                        if ($model->type === ServiceConstant::TYPE['Refund'] || $model->type === ServiceConstant::TYPE['Refund Requested']) {
+                            return false;
+                        }
+                        return Html::a('<span class="fas fa-minus-square"></span>', ['/sale/visa/refund', 'uid' => $model->uid], [
+                            'title' => 'Refund',
+                            'data-toggle' => 'tooltip'
+                        ]);
+                    },
+                ]
             ],
         ],
         'toolbar' => [
             [
                 'content' =>
-                    Html::a('<i class="fas fa-plus"></i>', ['/sale/hotel/create'], [
+                    Html::a('<i class="fas fa-plus"></i>', ['/sale/visa/create'], [
                         'title' => Yii::t('app', 'Add Category'),
                         'class' => 'btn btn-success'
                     ]) . ' ' .
-                    Html::a('<i class="fas fa-redo"></i>', ['/sale/hotel/refund-list'], [
+                    Html::a('<i class="fas fa-redo"></i>', ['/sale/visa/index'], [
                         'class' => 'btn btn-primary',
                         'title' => Yii::t('app', 'Reset Grid')
                     ]),

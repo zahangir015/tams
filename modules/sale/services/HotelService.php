@@ -375,7 +375,7 @@ class HotelService
                     'refModel' => Supplier::class,
                     'serviceCharge' => $singleSupplier->costOfSale,
                     'hotelId' => $singleSupplier->id,
-                    'refundRequestDate' => $singleSupplier->refundRequestDate,
+                    'refundRequestDate' => $hotel->refundRequestDate,
                     'isRefunded' => 0,
                 ];
             }
@@ -385,7 +385,9 @@ class HotelService
         // Customer Hotel refund data process
         foreach ($referenceData as $ref) {
             $hotelRefund = new HotelRefund();
-            if (!$hotelRefund->load($requestData) || !$hotelRefund->load(['HotelRefund' => $ref]) || !$hotelRefund->validate()) {
+            $hotelRefund->load($requestData);
+            $hotelRefund->load(['HotelRefund' => $ref]);
+            if (!$hotelRefund->validate()) {
                 return ['error' => true, 'message' => 'Hotel Refund validation failed - ' . Helper::processErrorMessages($hotelRefund->getErrors())];
             }
             $hotelRefundBatchData[] = $hotelRefund->getAttributes(null, ['id']);

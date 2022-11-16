@@ -1,5 +1,6 @@
 <?php
 
+use app\components\GlobalConstant;
 use app\modules\sale\components\ServiceConstant;
 use kartik\daterange\DateRangePicker;
 use kartik\select2\Select2;
@@ -12,6 +13,10 @@ use yii\web\View;
 /* @var $this yii\web\View */
 /* @var $model app\modules\sale\models\visa\Visa */
 /* @var $form yii\bootstrap4\ActiveForm */
+
+$this->title = Yii::t('app', 'Refund Visa');
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Visa'), 'url' => ['refund-list']];
+$this->params['breadcrumbs'][] = $this->title;
 
 $this->registerJs(
     "var supplier = '" . Yii::$app->request->baseUrl . '/sale/visa/add-supplier' . "';",
@@ -32,28 +37,20 @@ $this->registerJsFile(
             <div class="card-header">
                 <div class="card-title">
                     <h5 class="card-label">
-                        Create Visa
+                        Refund Visa
                     </h5>
-                </div>
-                <div class="card-toolbar float-right">
-                    <a href="#" id="addButton" class="btn btn-success font-weight-bolder mr-2"
-                       onclick="addSupplier()"
-                       data-row-number="1">
-                        <i class="fa fa-plus-circle"></i> Add More
-                    </a>
-                    <?= Html::submitButton(Yii::t('app', '<i class="fa fa-arrow-alt-circle-down"></i> Save'), ['class' => 'btn btn-primary']) ?>
                 </div>
             </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-md">
-                        <?= $form->field($model, 'customerId')->widget(Select2::class, Helper::ajaxDropDown('customerId', '/sale/customer/get-customers', true, 'customerId', 'customer', [$model->customer->id => $model->customer->company]))->label('Customer') ?>
+                        <?= $form->field($model, 'refundRequestDate')->widget(DateRangePicker::class, Helper::dateFormat(false, true)) ?>
                     </div>
                     <div class="col-md">
-                        <?= $form->field($model, 'issueDate')->widget(DateRangePicker::class, Helper::dateFormat(false, true)) ?>
+                        <?= $form->field($model, 'customerId')->dropdownList([$motherVisa->customer->id => $motherVisa->customer->company], ['readOnly' => 'readOnly'])->label('Customer') ?>
                     </div>
                     <div class="col-md">
-                        <?= $form->field($model, 'identificationNumber')->textInput(['value' => ($model->isNewRecord) ? Helper::visaIdentificationNumber() : $model->identificationNumber, 'readOnly' => 'readOnly']) ?>
+                        <?= $form->field($model, 'issueDate')->textInput(['value' => $motherVisa->issueDate, 'readOnly' => 'readOnly']) ?>
                     </div>
                     <div class="col-md">
                         <?= $form->field($model, 'processStatus')->dropdownList(ServiceConstant::VISA_PROCESS_STATUS) ?>
@@ -71,6 +68,9 @@ $this->registerJsFile(
                     </div>
                     <div class="card-body">
                         <div class="row">
+                            <div class="col-md">
+                                <?= $form->field($model, 'identificationNumber')->textInput(['value' => ($model->isNewRecord) ? Helper::visaIdentificationNumber() : $model->identificationNumber, 'readOnly' => 'readOnly']) ?>
+                            </div>
                             <div class="col-md">
                                 <?= $form->field($model, 'reference')->textInput(['maxlength' => true]) ?>
                             </div>
@@ -91,6 +91,22 @@ $this->registerJsFile(
                                 <?= $form->field($model, 'netProfit')->textInput(['type' => 'number', 'value' => $model->netProfit, 'step' => 'any', 'readOnly' => 'readOnly'])->label('Net Profit') ?>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md">
+                                <?= $form->field($visaRefund, 'isRefunded')->dropDownList(GlobalConstant::YES_NO) ?>
+                            </div>
+                            <div class="col-md">
+                                <?= $form->field($visaRefund, 'refundStatus')->dropDownList(ServiceConstant::OTHER_SERVICE_REFUND_STATUS, ['prompt' => 'Select refund status...']) ?>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md">
+                                <?= $form->field($visaRefund, 'refundMedium')->dropdownList(ServiceConstant::REFUND_MEDIUM, ['prompt' => 'Select refund medium...']) ?>
+                            </div>
+                            <div class="col-md">
+                                <?= $form->field($visaRefund, 'refundMethod')->dropdownList(ServiceConstant::REFUND_METHOD, ['prompt' => 'Select refund method...']) ?>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -99,7 +115,7 @@ $this->registerJsFile(
                     <?php
                     foreach ($model->visaSuppliers as $key => $visaSupplier) {
                         ?>
-                        <?= $this->render('supplier', ['row' => $key, 'model' => $model, 'visaSupplier' => $visaSupplier, 'form' => $form]); ?>
+                        <?= $this->render('refund_supplier', ['row' => $key, 'model' => $model, 'visaSupplier' => $visaSupplier, 'form' => $form]); ?>
                         <?php
                     }
                     ?>
