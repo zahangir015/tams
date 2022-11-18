@@ -10,7 +10,7 @@ use kartik\grid\GridView;
 /* @var $searchModel app\modules\sale\models\VisaSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Visas');
+$this->title = Yii::t('app', 'Visa Refund List');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="visa-index">

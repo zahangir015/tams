@@ -3,6 +3,7 @@
 namespace app\modules\sale\controllers;
 
 use app\models\History;
+use app\modules\sale\models\visa\RefundVisaSearch;
 use app\modules\sale\models\visa\Visa;
 use app\modules\sale\models\visa\VisaRefund;
 use app\modules\sale\models\visa\VisaSupplier;

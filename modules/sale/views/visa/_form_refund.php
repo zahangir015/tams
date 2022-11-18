@@ -40,6 +40,9 @@ $this->registerJsFile(
                         Refund Visa
                     </h5>
                 </div>
+                <div class="card-toolbar float-right">
+                    <?= Html::submitButton(Yii::t('app', '<i class="fa fa-arrow-alt-circle-down"></i> Save'), ['class' => 'btn btn-primary']) ?>
+                </div>
             </div>
             <div class="card-body">
                 <div class="row">
@@ -47,14 +50,17 @@ $this->registerJsFile(
                         <?= $form->field($model, 'refundRequestDate')->widget(DateRangePicker::class, Helper::dateFormat(false, true)) ?>
                     </div>
                     <div class="col-md">
+                        <?= $form->field($model, 'reference')->textInput(['maxlength' => true]) ?>
+                    </div>
+                    <div class="col-md">
                         <?= $form->field($model, 'customerId')->dropdownList([$motherVisa->customer->id => $motherVisa->customer->company], ['readOnly' => 'readOnly'])->label('Customer') ?>
                     </div>
                     <div class="col-md">
                         <?= $form->field($model, 'issueDate')->textInput(['value' => $motherVisa->issueDate, 'readOnly' => 'readOnly']) ?>
                     </div>
-                    <div class="col-md">
-                        <?= $form->field($model, 'processStatus')->dropdownList(ServiceConstant::VISA_PROCESS_STATUS) ?>
-                    </div>
+                    <?= $form->field($model, 'motherId')->hiddenInput(['value' => $motherVisa->id])->label(false) ?>
+                    <?= $form->field($model, 'processStatus')->hiddenInput(['value' => $motherVisa->processStatus])->label(false) ?>
+                    <?= $form->field($model, 'type')->hiddenInput(['value' => ServiceConstant::ALL_SERVICE_TYPE['Refund']])->label(false) ?>
                 </div>
             </div>
         </div>
@@ -71,24 +77,21 @@ $this->registerJsFile(
                             <div class="col-md">
                                 <?= $form->field($model, 'identificationNumber')->textInput(['value' => ($model->isNewRecord) ? Helper::visaIdentificationNumber() : $model->identificationNumber, 'readOnly' => 'readOnly']) ?>
                             </div>
+                        </div>
+                        <div class="row">
                             <div class="col-md">
-                                <?= $form->field($model, 'reference')->textInput(['maxlength' => true]) ?>
+                                <?= $form->field($model, 'totalQuantity')->textInput(['type' => 'number', 'value' => $motherVisa->totalQuantity, 'min' => 0, 'step' => 'any', 'readOnly' => 'readOnly']) ?>
+                            </div>
+                            <div class="col-md">
+                                <?= $form->field($model, 'quoteAmount')->textInput(['type' => 'number', 'value' => $motherVisa->quoteAmount, 'min' => 0, 'step' => 'any', 'readOnly' => 'readOnly'])->label('Total Quote Amount') ?>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md">
-                                <?= $form->field($model, 'totalQuantity')->textInput(['type' => 'number', 'value' => $model->totalQuantity, 'min' => 0, 'step' => 'any', 'readOnly' => 'readOnly']) ?>
+                                <?= $form->field($model, 'costOfSale')->textInput(['type' => 'number', 'value' => $motherVisa->costOfSale, 'min' => 0, 'step' => 'any', 'readOnly' => 'readOnly'])->label('Total Cost Of Sale') ?>
                             </div>
                             <div class="col-md">
-                                <?= $form->field($model, 'quoteAmount')->textInput(['type' => 'number', 'value' => $model->quoteAmount, 'min' => 0, 'step' => 'any', 'readOnly' => 'readOnly'])->label('Total Quote Amount') ?>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md">
-                                <?= $form->field($model, 'costOfSale')->textInput(['type' => 'number', 'value' => $model->costOfSale, 'min' => 0, 'step' => 'any', 'readOnly' => 'readOnly'])->label('Total Cost Of Sale') ?>
-                            </div>
-                            <div class="col-md">
-                                <?= $form->field($model, 'netProfit')->textInput(['type' => 'number', 'value' => $model->netProfit, 'step' => 'any', 'readOnly' => 'readOnly'])->label('Net Profit') ?>
+                                <?= $form->field($model, 'netProfit')->textInput(['type' => 'number', 'value' => $motherVisa->netProfit, 'min' => 0, 'step' => 'any', 'readOnly' => 'readOnly'])->label('Net Profit') ?>
                             </div>
                         </div>
                         <div class="row">
@@ -113,7 +116,7 @@ $this->registerJsFile(
             <div class="col-md-7 col-lg-8">
                 <div class="card-holder">
                     <?php
-                    foreach ($model->visaSuppliers as $key => $visaSupplier) {
+                    foreach ($motherVisa->visaSuppliers as $key => $visaSupplier) {
                         ?>
                         <?= $this->render('refund_supplier', ['row' => $key, 'model' => $model, 'visaSupplier' => $visaSupplier, 'form' => $form]); ?>
                         <?php

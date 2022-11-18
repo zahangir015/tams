@@ -10,6 +10,7 @@ use app\modules\account\services\LedgerService;
 use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\Customer;
 use app\modules\sale\models\visa\Visa;
+use app\modules\sale\models\visa\VisaRefund;
 use app\modules\sale\models\visa\VisaSupplier;
 use app\modules\sale\models\Supplier;
 use app\modules\sale\repositories\VisaRepository;
@@ -100,7 +101,7 @@ class VisaService
                         throw new Exception('Visa refund create failed - ' . Helper::processErrorMessages($visa->getErrors()));
                     }
 
-                    // Mother Hotel update
+                    // Mother Visa update
                     $motherVisa->type = ServiceConstant::TICKET_TYPE_FOR_REFUND['Refund Requested'];
                     $motherVisa->refundRequestDate = $visa->refundRequestDate;
                     $motherVisa = $this->visaRepository->store($motherVisa);
@@ -114,34 +115,34 @@ class VisaService
                     // Create refund for customer and supplier
                     $refundDataProcessResponse = self::processRefundModelData($visa, $requestData);
                     if ($refundDataProcessResponse['error']) {
-                        throw new Exception('Hotel refund creation failed - ' . $refundDataProcessResponse['message']);
+                        throw new Exception('Visa refund creation failed - ' . $refundDataProcessResponse['message']);
                     }
 
                     // Invoice details data process
-                    $services[] = [
+                    $service = [
                         'invoiceId' => $motherVisa->invoiceId ?? null,
                         'refId' => $visa->id,
                         'refModel' => Visa::class,
                         'dueAmount' => ($visa->quoteAmount - $visa->receivedAmount),
                         'paidAmount' => $visa->receivedAmount,
+                        'motherId' => $motherVisa->id,
                         'supplierData' => $visaSupplierProcessedData['serviceSupplierData']
                     ];
                     $supplierLedgerArray = $visaSupplierProcessedData['supplierLedgerArray'];
 
                     if ($motherVisa->invoiceId) {
                         // Invoice process
-                        $autoInvoiceCreateResponse = InvoiceService::autoInvoiceForRefund($motherVisa->invoice, $services, Yii::$app->user);
+                        $autoInvoiceCreateResponse = InvoiceService::autoInvoiceForRefund($motherVisa->invoice, $service, Yii::$app->user);
                         if ($autoInvoiceCreateResponse['error']) {
                             throw new Exception('Auto Invoice creation failed - ' . $autoInvoiceCreateResponse['message']);
                         }
-                        $invoice = $autoInvoiceCreateResponse['data'];
                     }
 
                     // Supplier Ledger process
-                    $ledgerRequestResponse = LedgerService::batchInsert($invoice, $supplierLedgerArray);
+                    /*$ledgerRequestResponse = LedgerService::batchInsert($invoice, $supplierLedgerArray);
                     if ($ledgerRequestResponse['error']) {
                         throw new Exception('Supplier Ledger creation failed - ' . $ledgerRequestResponse['message']);
-                    }
+                    }*/
 
                 } else {
                     throw new Exception('Visa data loading failed - ' . Helper::processErrorMessages($visa->getErrors()));
@@ -308,7 +309,6 @@ class VisaService
             $visaSupplier = new VisaSupplier();
             $visaSupplier->load(['VisaSupplier' => $singleSupplierArray]);
             $visaSupplier->visaId = $visa->id;
-            $visaSupplier->type = $visa->type;
             $visaSupplier = $this->visaRepository->store($visaSupplier);
             if ($visaSupplier->hasErrors()) {
                 throw new Exception('Visa Supplier creation failed - ' . Helper::processErrorMessages($visaSupplier->getErrors()));
@@ -366,27 +366,27 @@ class VisaService
         }
 
         $visaRefundBatchData = [];
-        // Customer Hotel refund data process
+        // Customer Visa refund data process
         foreach ($referenceData as $ref) {
-            $visaRefund = new HotelRefund();
+            $visaRefund = new VisaRefund();
             $visaRefund->load($requestData);
-            $visaRefund->load(['HotelRefund' => $ref]);
+            $visaRefund->load(['VisaRefund' => $ref]);
             if (!$visaRefund->validate()) {
-                return ['error' => true, 'message' => 'Hotel Refund validation failed - ' . Helper::processErrorMessages($visaRefund->getErrors())];
+                return ['error' => true, 'message' => 'Visa Refund validation failed - ' . Helper::processErrorMessages($visaRefund->getErrors())];
             }
             $visaRefundBatchData[] = $visaRefund->getAttributes(null, ['id']);
         }
 
-        // Hotel Refund batch insert process
+        // Visa Refund batch insert process
         if (empty($visaRefundBatchData)) {
-            return ['error' => true, 'message' => 'Hotel Refund batch data process failed.'];
+            return ['error' => true, 'message' => 'Visa Refund batch data process failed.'];
         }
 
         if (!$this->visaRepository->batchStore('visa_refund', array_keys($visaRefundBatchData[0]), $visaRefundBatchData)) {
-            return ['error' => true, 'message' => 'Hotel Refund batch insert failed'];
+            return ['error' => true, 'message' => 'Visa Refund batch insert failed'];
         }
 
-        return ['error' => false, 'message' => 'Hotel Refund process done.'];
+        return ['error' => false, 'message' => 'Visa Refund process done.'];
     }
 
     private static function calculateNetProfit(mixed $quoteAmount, mixed $costOfSale)

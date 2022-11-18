@@ -3,6 +3,7 @@
 namespace app\modules\sale\models\visa;
 
 use app\modules\account\models\RefundTransaction;
+use app\traits\BehaviorTrait;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
@@ -32,6 +33,7 @@ use yii\db\ActiveRecord;
  */
 class VisaRefund extends ActiveRecord
 {
+    use BehaviorTrait;
     /**
      * {@inheritdoc}
      */
@@ -46,7 +48,7 @@ class VisaRefund extends ActiveRecord
     public function rules(): array
     {
         return [
-            [['uid', 'visaId', 'refId', 'refModel', 'refundRequestDate'], 'required'],
+            [['visaId', 'refId', 'refModel', 'refundRequestDate'], 'required'],
             [['visaId', 'refundTransactionId', 'refId', 'isRefunded', 'status'], 'integer'],
             [['refundRequestDate', 'refundDate'], 'safe'],
             [['refundStatus', 'refundMedium', 'refundMethod', 'remarks'], 'string'],

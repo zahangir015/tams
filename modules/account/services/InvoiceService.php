@@ -82,9 +82,11 @@ class InvoiceService
         // Invoice Details process
         $invoiceDetail = new InvoiceDetail();
         if ($invoiceDetail->load(['InvoiceDetail' => $service])) {
-            if (!$invoiceDetail->save()){
+            if (!$invoiceDetail->save()) {
                 return ['error' => true, 'message' => 'Invoice Detail create failed - ' . Helper::processErrorMessages($invoiceDetail->getErrors())];
             }
+        } else {
+            return ['error' => true, 'message' => 'Invoice Detail loading failed - ' . Helper::processErrorMessages($invoiceDetail->getErrors())];
         }
 
         // Mother Invoice Detail status update
