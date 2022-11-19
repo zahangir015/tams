@@ -225,6 +225,57 @@ class InvoiceService
         return ['error' => false, 'data' => $invoiceDetail];
     }
 
+    public static function addReissueServiceToInvoice(ActiveRecord $newReissueService): array
+    {
+        $invoiceDetail = new InvoiceDetail();
+        $invoiceDetail->invoiceId = $newReissueService->invoiceId;
+        $invoiceDetail->dueAmount = ($newReissueService->quoteAmount - $newReissueService->receivedAmount);
+        $invoiceDetail->paidAmount = $newReissueService->receivedAmount;
+        $invoiceDetail->refId = $newReissueService->id;
+        $invoiceDetail->refModel = $newReissueService::class;
+        $invoiceDetail->status = GlobalConstant::ACTIVE_STATUS;
+        $invoiceDetail = InvoiceRepository::store($invoiceDetail);
+        if ($invoiceDetail->hasErrors()) {
+            return ['error' => true, 'message' => 'Invoice Detail creation failed - ' . Helper::processErrorMessages($invoiceDetail->getErrors())];
+        }
+
+        // Mother Invoice Detail status update
+        $motherInvoiceDetail = InvoiceRepository::findOne(['refId' => $newReissueService->motherTicketId, 'refModel' => $newReissueService::class], InvoiceDetail::class, []);
+        $motherInvoiceDetail->status = 3;
+        $motherInvoiceDetail = InvoiceRepository::store($motherInvoiceDetail);
+        if ($motherInvoiceDetail->hasErrors()) {
+            return ['error' => true, 'message' => 'Mother Invoice details update failed - ' . Helper::processErrorMessages($motherInvoiceDetail->getErrors())];
+        }
+
+        // Invoice due update
+        $invoice = InvoiceRepository::findOne(['id' => $newReissueService->invoiceId], Invoice::class, ['details']);
+        $invoiceDetailArray = ArrayHelper::toArray($invoice->details);
+        $invoice->dueAmount = (double)array_sum(array_column($invoiceDetailArray, 'dueAmount'));
+        $invoice = InvoiceRepository::store($invoice);
+        if ($invoice->hasErrors()) {
+            return ['error' => true, 'message' => 'Invoice due update failed - ' . Helper::processErrorMessages($invoice->getErrors())];
+        }
+
+        // Customer Ledger process
+        $ledgerRequestData = [
+            'title' => 'Service Refund',
+            'reference' => 'Invoice Number - ' . $invoice->invoiceNumber,
+            'refId' => $invoice->customerId,
+            'refModel' => Customer::class,
+            'subRefId' => $invoice->id,
+            'subRefModel' => Invoice::class,
+            'debit' => ($invoiceDetail->dueAmount > 0) ? $invoiceDetail->dueAmount : 0,
+            'credit' => ($invoiceDetail->dueAmount > 0) ? 0 : $invoiceDetail->dueAmount
+        ];
+
+        $ledgerRequestResponse = LedgerService::store($ledgerRequestData);
+        if ($ledgerRequestResponse['error']) {
+            return ['error' => $ledgerRequestResponse['error'], 'message' => 'Customer Ledger creation failed - ' . $ledgerRequestResponse['message']];
+        }
+
+        return ['error' => false, 'data' => $invoiceDetail];
+    }
+
     public static function checkAndDetectPaymentStatus($due, $amount): string
     {
         $paymentStatus = NULL;

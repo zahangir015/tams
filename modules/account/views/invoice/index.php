@@ -34,16 +34,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 'label' => 'invoice#'
             ],
             [
-                'attribute' => 'QuoteAmount',
-                'label' => 'Quoted',
-                'value' => function ($model) {
-                    return ($model->paidAmount + $model->dueAmount);
-                },
-                'format' => ['decimal', 2],
-                'pageSummary' => true,
-                'pageSummaryFunc' => GridView::F_SUM
-            ],
-            [
                 'attribute' => 'paidAmount',
                 'label' => 'Paid',
                 'format' => ['decimal', 2],
@@ -72,7 +62,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'updatedBy',
             [
                 'class' => 'kartik\grid\ActionColumn',
-                'dropdown' => true,
+                //'dropdown' => true,
                 'vAlign' => 'middle',
                 'urlCreator' => function ($action, $model, $key, $index) {
                     return \yii\helpers\Url::to([$action, 'uid' => $model->uid]);
@@ -97,11 +87,10 @@ $this->params['breadcrumbs'][] = $this->title;
                         ]);
                     },
                     'payment' => function ($url, $model, $key) {
-                        if ($model->dueAmount == 0) {
+                        if ($model->dueAmount != 0) {
                             return Html::a('<i class="fa fa-credit-card"></i>', ['pay', 'uid' => $model->uid],
                                 [
                                     'title' => Yii::t('app', 'pay'),
-                                    'class' => 'btn btn-light-primary btn-icon btn-sm m-2',
                                     'data-pjax' => '0',
                                 ]);
                         } else {
@@ -111,7 +100,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     'delete' => function ($url, $model, $key) {
                         return Html::a(Utils::svgDeleteIcon(), ['delete', 'uid' => $model->uid], [
                             'title' => 'delete',
-                            'class' => 'btn btn-light btn-hover-primary btn-icon btn-sm m-2',
                             'data-pjax' => '0',
                             'data' => [
                                 'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
