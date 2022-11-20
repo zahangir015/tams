@@ -51,13 +51,13 @@ use yii\bootstrap4\Html;
                 <?= $form->field($ticketSupplier, "[$row]paidAmount")->hiddenInput(['id' => 'paidAmount' . $row, 'class' => 'paidAmount', 'value' => 0])->label(false) ?>
             </div>
             <div class="col-md">
+                <?= $form->field($model, "[$row]providerId")->widget(Select2::className(), Helper::ajaxDropDown('providerId', '/sale/provider/get-providers', true, 'providerId' . $row, 'providerId' . $row, (!$model->isNewRecord && $model->provider) ? [$model->provider->id => $model->provider->name] : []))->label('Select GDS'); ?>
+            </div>
+            <div class="col-md">
                 <?= $form->field($model, "[$row]type")->dropDownList(GlobalConstant::TICKET_TYPE_FOR_CREATE, ['disabled' => !$model->isNewRecord ? 'disabled' : false, 'class' => 'form-control type']) ?>
             </div>
             <div class="col-md">
                 <?= $form->field($model, "[$row]motherTicketId")->widget(Select2::classname(), Helper::ajaxDropDown('motherTicketId', 'get-mother-ticket', true, 'motherTicketId' . $row, 'motherTicket', (!$model->isNewRecord && $model->motherTicket) ? [$model->motherTicket => $model->motherTicket->eTicket . ' | ' . $model->motherTicket->pnrCode] : [], true))->label('Parent') ?>
-            </div>
-            <div class="col-md">
-                <?= $form->field($model, "[$row]numberOfSegment")->textInput(['maxlength' => true]) ?>
             </div>
         </div>
         <div class="row">
@@ -73,22 +73,19 @@ use yii\bootstrap4\Html;
             <div class="col-md">
                 <?= $form->field($model, "[$row]paxType")->dropDownList(GlobalConstant::PAX_TYPE, ['prompt' => '']) ?>
             </div>
-            <div class="col-md">
-                <?= $form->field($model, "[$row]seatClass")->textInput() ?>
-            </div>
         </div>
         <div class="row">
-            <div class="col-md">
-                <?= $form->field($model, "[$row]providerId")->widget(Select2::className(), Helper::ajaxDropDown('providerId', '/sale/provider/get-providers', true, 'providerId' . $row, 'providerId' . $row, (!$model->isNewRecord && $model->provider) ? [$model->provider->id => $model->provider->name] : []))->label('Select GDS'); ?>
-            </div>
-            <div class="col-md">
-                <?= $form->field($model, "[$row]route")->textInput(['maxlength' => true]) ?>
-            </div>
             <div class="col-md">
                 <?= $form->field($model, "[$row]issueDate")->widget(DatePicker::className(), Helper::getDatewidget('issueDate' . $row))->label('Issue'); ?>
             </div>
             <div class="col-md">
                 <?= $form->field($model, "[$row]departureDate")->widget(DatePicker::className(), Helper::getDatewidget('departureDate' . $row))->label('Departure'); ?>
+            </div>
+            <div class="col-md">
+                <?= $form->field($model, "[$row]route")->textInput(['maxlength' => true]) ?>
+            </div>
+            <div class="col-md">
+                <?= $form->field($model, "[$row]numberOfSegment")->textInput(['maxlength' => true]) ?>
             </div>
         </div>
         <div class="row">
@@ -104,8 +101,17 @@ use yii\bootstrap4\Html;
             <div class="col-md">
                 <?= $form->field($model, "[$row]quoteAmount")->textInput(['type' => 'number', 'step' => 'any']) ?>
             </div>
+            <div class="col-md">
+                <?= $form->field($model, "[$row]baggage")->textInput(['maxlength' => true]) ?>
+            </div>
         </div>
         <div class="row">
+            <div class="col-md">
+                <?= $form->field($model, "[$row]reference")->textInput(['maxlength' => true]) ?>
+            </div>
+            <div class="col-md">
+                <?= $form->field($model, "[$row]seatClass")->textInput() ?>
+            </div>
             <div class="col-md">
                 <?= $form->field($model, "[$row]tripType")->dropDownList(GlobalConstant::TRIP_TYPE) ?>
             </div>
@@ -114,12 +120,6 @@ use yii\bootstrap4\Html;
             </div>
             <div class="col-md">
                 <?= $form->field($model, "[$row]codeShare")->dropDownList(GlobalConstant::YES_NO, ['value' => 0]) ?>
-            </div>
-            <div class="col-md">
-                <?= $form->field($model, "[$row]baggage")->textInput(['maxlength' => true]) ?>
-            </div>
-            <div class="col-md">
-                <?= $form->field($model, "[$row]reference")->textInput(['maxlength' => true]) ?>
             </div>
             <?= $form->field($model, "[$row]customerId")->hiddenInput(['id' => 'customerId' . $row, 'class' => 'customerId'])->label(false) ?>
         </div>

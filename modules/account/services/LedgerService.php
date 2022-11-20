@@ -13,17 +13,17 @@ use app\modules\sale\models\Supplier;
 
 class LedgerService
 {
-    public static function batchInsert(Invoice $invoice, array $ledgerArray): array
+    public static function batchInsert($invoice, array $ledgerArray): array
     {
         foreach ($ledgerArray as $key => $value) {
-            $invoiceNumber = ($invoice) ? ' - '.$invoice->invoiceNumber : '';
+            $invoiceNumber = !$invoice ? '' : ' - '.$invoice->invoiceNumber;
             $ledgerRequestData = [
                 'title' => 'Service Purchase'.$invoiceNumber,
                 'reference' => 'Invoice Number' . $invoiceNumber,
                 'refId' => $value['refId'],
                 'refModel' => $value['refModel'],
-                'subRefId' => ($value['subRefId']) ?? ($invoice) ? $invoice->id : null,
-                'subRefModel' => ($value['subRefModel']) ?? ($invoice) ? Invoice::class : null,
+                'subRefId' => ($value['subRefId']) ?: (($invoice) ? $invoice->id : null),
+                'subRefModel' => ($value['subRefModel']) ?: (($invoice) ? Invoice::class : null),
                 'debit' => $value['debit'],
                 'credit' => $value['credit']
             ];

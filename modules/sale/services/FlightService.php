@@ -47,7 +47,7 @@ class FlightService
                     $ticket = new Ticket();
                     $ticket->scenario = 'create';
 
-                    if(($ticketData['type'] == ServiceConstant::TICKET_TYPE_FOR_CREATE['Reissue']) && !isset($ticketData['motherTicketId'])){
+                    if (($ticketData['type'] == ServiceConstant::TICKET_TYPE_FOR_CREATE['Reissue']) && !isset($ticketData['motherTicketId'])) {
                         throw new Exception('Ticket create failed - Mother ticket is required.');
                     }
 
@@ -97,7 +97,8 @@ class FlightService
                                 'credit' => $ticketSupplier->costOfSale,
                                 'refId' => $ticketSupplier->supplier->id,
                                 'refModel' => Supplier::class,
-                                'subRefId' => null
+                                'subRefId' => $ticket->id,
+                                'subRefModel' => Ticket::class
                             ];
                         }
                     } else {
@@ -106,15 +107,25 @@ class FlightService
                 }
 
                 // Invoice process and create
-                if (!empty($tickets)){
-                    $autoInvoiceCreateResponse = InvoiceService::autoInvoice($customer->id, $tickets, $requestData['group'], Yii::$app->user);
-                    if ($autoInvoiceCreateResponse['error']) {
-                        $dbTransaction->rollBack();
-                        throw new Exception('Invoice - ' . $autoInvoiceCreateResponse['message']);
+                if (!empty($tickets)) {
+                    if ($requestData['group'] == 1) {
+                        $autoInvoiceCreateResponse = InvoiceService::autoInvoice($customer->id, $tickets);
+                        if ($autoInvoiceCreateResponse['error']) {
+                            $dbTransaction->rollBack();
+                            throw new Exception('Invoice - ' . $autoInvoiceCreateResponse['message']);
+                        }
+                        $invoice = $autoInvoiceCreateResponse['data'];
+                    } else {
+                        foreach ($tickets as $ticket) {
+                            $autoInvoiceCreateResponse = InvoiceService::autoInvoice($customer->id, [$ticket]);
+                            if ($autoInvoiceCreateResponse['error']) {
+                                $dbTransaction->rollBack();
+                                throw new Exception('Invoice - ' . $autoInvoiceCreateResponse['message']);
+                            }
+                            $invoice = $autoInvoiceCreateResponse['data'];
+                        }
                     }
-                    $invoice = $autoInvoiceCreateResponse['data'];
                 }
-
 
                 // Supplier Ledger process
                 $ledgerRequestResponse = LedgerService::batchInsert($invoice, $supplierLedgerArray);
