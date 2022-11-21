@@ -4,6 +4,9 @@ namespace app\modules\sale\components;
 
 final class ServiceConstant
 {
+    const INVOICE_DETAIL_REISSUE_STATUS = 3;
+    const INVOICE_DETAIL_REFUND_STATUS = 2;
+
     const ALL_TICKET_TYPE = [
         'New' => 'New',
         'Reissue' => 'Reissue',
@@ -61,4 +64,5 @@ final class ServiceConstant
         'Passport Delivered - Rejected'
     ];
     const OTHER_SERVICE_REFUND_STATUS = ['Full Paid' => 'Full Paid', 'Partially Paid' => 'Partially Paid', 'Due' => 'Due', 'Refund Adjustment' => 'Refund Adjustment'];
+
 }

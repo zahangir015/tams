@@ -70,7 +70,14 @@ class FlightService
                         }
 
                         // Invoice details data process
-                        if (isset($requestData['invoice']) || ($ticket->type == ServiceConstant::TICKET_TYPE_FOR_CREATE['Reissue'])) {
+                        if (($ticket->type == ServiceConstant::TICKET_TYPE_FOR_CREATE['Reissue']) && isset($ticket->mother->invoiceId)) {
+                            $autoInvoiceCreateResponse = InvoiceService::addReissueServiceToInvoice($ticket);
+                            if ($autoInvoiceCreateResponse['error']) {
+                                $dbTransaction->rollBack();
+                                throw new Exception('Invoice - ' . $autoInvoiceCreateResponse['message']);
+                            }
+                            $invoice = $autoInvoiceCreateResponse['data'];
+                        } elseif (isset($requestData['invoice']) && ($ticket->type != ServiceConstant::TICKET_TYPE_FOR_CREATE['Reissue'])) {
                             $tickets[] = [
                                 'refId' => $ticket->id,
                                 'refModel' => Ticket::class,

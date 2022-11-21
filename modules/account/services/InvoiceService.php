@@ -281,7 +281,7 @@ class InvoiceService
     public static function addReissueServiceToInvoice(ActiveRecord $newReissueService): array
     {
         $invoiceDetail = new InvoiceDetail();
-        $invoiceDetail->invoiceId = $newReissueService->invoiceId;
+        $invoiceDetail->invoiceId = $newReissueService->mother->invoiceId;
         $invoiceDetail->dueAmount = ($newReissueService->quoteAmount - $newReissueService->receivedAmount);
         $invoiceDetail->paidAmount = $newReissueService->receivedAmount;
         $invoiceDetail->refId = $newReissueService->id;
@@ -294,16 +294,15 @@ class InvoiceService
 
         // Mother Invoice Detail status update
         $motherInvoiceDetail = InvoiceRepository::findOne(['refId' => $newReissueService->motherTicketId, 'refModel' => $newReissueService::class], InvoiceDetail::class, []);
-        $motherInvoiceDetail->status = 3;
+        $motherInvoiceDetail->status = ServiceConstant::INVOICE_DETAIL_REISSUE_STATUS;
         $motherInvoiceDetail = InvoiceRepository::store($motherInvoiceDetail);
         if ($motherInvoiceDetail->hasErrors()) {
             return ['error' => true, 'message' => 'Mother Invoice details update failed - ' . Helper::processErrorMessages($motherInvoiceDetail->getErrors())];
         }
 
         // Invoice due update
-        $invoice = InvoiceRepository::findOne(['id' => $newReissueService->invoiceId], Invoice::class, ['details']);
-        $invoiceDetailArray = ArrayHelper::toArray($invoice->details);
-        $invoice->dueAmount = (double)array_sum(array_column($invoiceDetailArray, 'dueAmount'));
+        $invoice = InvoiceRepository::findOne(['id' => $newReissueService->mother->invoiceId], Invoice::class);
+        $invoice->dueAmount += $invoiceDetail->dueAmount;
         $invoice = InvoiceRepository::store($invoice);
         if ($invoice->hasErrors()) {
             return ['error' => true, 'message' => 'Invoice due update failed - ' . Helper::processErrorMessages($invoice->getErrors())];
@@ -311,7 +310,7 @@ class InvoiceService
 
         // Customer Ledger process
         $ledgerRequestData = [
-            'title' => 'Service Refund',
+            'title' => 'Service Reissue',
             'reference' => 'Invoice Number - ' . $invoice->invoiceNumber,
             'refId' => $invoice->customerId,
             'refModel' => Customer::class,
