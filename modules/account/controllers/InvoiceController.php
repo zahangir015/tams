@@ -3,6 +3,7 @@
 namespace app\modules\account\controllers;
 
 use app\components\Constant;
+use app\models\Company;
 use app\modules\account\models\Invoice;
 use app\modules\account\models\search\InvoiceSearch;
 use app\controllers\ParentController;
@@ -52,6 +53,7 @@ class InvoiceController extends ParentController
     {
         return $this->render('view', [
             'model' => $this->invoiceRepository->findOne(['uid' => $uid], Invoice::class, ['details', 'customer', 'transactions']),
+            'company' => Company::findOne(['id' => 1]),
         ]);
     }
 

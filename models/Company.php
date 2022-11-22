@@ -19,7 +19,7 @@ use Yii;
  */
 class Company extends \yii\db\ActiveRecord
 {
-    use BehaviorTrait;
+    //use BehaviorTrait;
 
     /**
      * {@inheritdoc}

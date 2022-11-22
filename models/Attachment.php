@@ -2,7 +2,9 @@
 
 namespace app\models;
 
+use app\traits\BehaviorTrait;
 use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%attachment}}".
@@ -18,8 +20,9 @@ use Yii;
  * @property int|null $updatedBy
  * @property int|null $updatedAt
  */
-class Attachment extends \yii\db\ActiveRecord
+class Attachment extends ActiveRecord
 {
+    use BehaviorTrait;
     /**
      * {@inheritdoc}
      */

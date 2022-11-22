@@ -26,7 +26,7 @@ class Uploader
         $baseFileName = basename($fileName);
         if ($file->saveAs($originUploadPath . $baseFileName)) {
             if ($cdnEnable){
-                return ['error' => false, 'cdnUrl' => self::uploadCDN($fileName, $uploadPath . $baseFileName), 'name' => $baseFileName, 'message' => 'File uploaded'];
+                return ['error' => false, 'cdnUrl' => self::uploadCDN($fileName, $uploadPath . $baseFileName), 'name' => $baseFileName['name'], 'message' => 'File uploaded'];
             }else{
                 return ['error' => false, 'cdnUrl' => null, 'name' => $baseFileName, 'message' => 'File uploaded'];
             }

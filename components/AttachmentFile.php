@@ -26,7 +26,7 @@ class AttachmentFile
     {
         $files = UploadedFile::getInstances($getModel, $fieldName);
         $referenceModel = get_class($getModel);
-
+        dd($getModel);
         $refId = !empty($uid) ? $uid : $getModel->id;
 
         $row = [];
@@ -38,10 +38,10 @@ class AttachmentFile
                 if (!$uploadResponse['error']) {
                     Uploader::deleteLocalFile($fileName);
                     $row[] = [
-                        'uid' => new Expression('UUID()'),
-                        'name' => $uploadResponse,
+                        'name' => $uploadResponse['name'],
                         'refModel' => $referenceModel,
                         'refId' => $refId,
+                        'cdnUrl' => null,
                         'createdBy' => Yii::$app->user->identity->id,
                         'updatedBy' => Yii::$app->user->identity->id,
                         'createdAt' => time(),
@@ -53,7 +53,6 @@ class AttachmentFile
             }
         }
         $list = array_column($row, 'name');
-
         $response = Yii::$app->db->createCommand()->batchInsert(Attachment::tableName(), ['name', 'refModel', 'refId', 'cdnUrl', 'createdBy', 'updatedBy', 'createdAt', 'updatedAt'], $row)->execute();
         return $response && !empty($list) ? $list : false;
     }

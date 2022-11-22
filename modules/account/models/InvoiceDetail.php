@@ -64,6 +64,12 @@ class  InvoiceDetail extends ActiveRecord
         return $this->hasOne($this->refModel::className(), ['id' => 'refId']);
     }
 
+    public function getInvoice(): ActiveQuery
+    {
+        return $this->hasOne(Invoice::class, ['id' => 'invoiceId']);
+    }
+
+
     public function getIdentificationNumber($service): string
     {
         return !empty($service->identificationNumber) ? $service->identificationNumber : $service->eTicket;

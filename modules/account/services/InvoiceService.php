@@ -280,8 +280,9 @@ class InvoiceService
 
     public static function addReissueServiceToInvoice(ActiveRecord $newReissueService): array
     {
+        // Invoice detail process
         $invoiceDetail = new InvoiceDetail();
-        $invoiceDetail->invoiceId = $newReissueService->mother->invoiceId;
+        $invoiceDetail->invoiceId = $newReissueService->invoiceId;
         $invoiceDetail->dueAmount = ($newReissueService->quoteAmount - $newReissueService->receivedAmount);
         $invoiceDetail->paidAmount = $newReissueService->receivedAmount;
         $invoiceDetail->refId = $newReissueService->id;
@@ -301,7 +302,7 @@ class InvoiceService
         }
 
         // Invoice due update
-        $invoice = InvoiceRepository::findOne(['id' => $newReissueService->mother->invoiceId], Invoice::class);
+        $invoice = InvoiceRepository::findOne(['id' => $newReissueService->invoiceId], Invoice::class);
         $invoice->dueAmount += $invoiceDetail->dueAmount;
         $invoice = InvoiceRepository::store($invoice);
         if ($invoice->hasErrors()) {
@@ -325,7 +326,7 @@ class InvoiceService
             return ['error' => $ledgerRequestResponse['error'], 'message' => 'Customer Ledger creation failed - ' . $ledgerRequestResponse['message']];
         }
 
-        return ['error' => false, 'data' => $invoiceDetail];
+        return ['error' => false, 'data' => $invoiceDetail->invoice];
     }
 
     public static function checkAndDetectPaymentStatus($due, $amount): string

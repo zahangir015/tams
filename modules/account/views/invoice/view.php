@@ -18,46 +18,63 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="row">
                 <div class="col-md">
                     <div class="row">
-                        <div class="col-md">
-                            <a href="#">
-                                <img alt="Logo" height="60" width="150" src="">
-                            </a>
+                        <div class="col-12">
+                            <h4>
+                                <img alt="Logo" height="60" width="150" src=""> <?= $company->name ?>
+                                <small class="float-right">Date: 2/10/2014</small>
+                            </h4>
                         </div>
                     </div>
-                    <div class="col-md-12 mt-10">
-                        <h4>Invoice# <?= $model->invoiceNumber ?></h4>
-                    </div>
-                    <div class="row p-5">
-                        <div class="col-md-6">
-                            <div class="font-weight-bold fs-7 text-gray-600 mb-1">Issue Date:</div>
-                            <div class="font-weight-bolder fs-6 text-gray-800"><?= date('jS \of F Y', strtotime($model->createdAt)) ?></div>
+                    <div class="row invoice-info">
+                        <div class="col-sm-4 invoice-col">
+                            From
+                            <address>
+                                <strong><?= $company->name ?></strong><br>
+                                <?= $company->address ?><br>
+                                Phone: <?= $company->phone ?><br>
+                                Email: <?= $company->email ?>
+                            </address>
                         </div>
-                        <div class="col-md-6">
-                            <div class="font-weight-bolder fs-7 text-gray-600 mb-1">Due Date:</div>
-                            <div class="font-weight-bolder fs-6 text-gray-800">
-                                <span class="pe-2"><?= date('l jS \of F Y', strtotime($model->expectedPaymentDate)) ?></span>
-                            </div>
+
+                        <div class="col-sm-4 invoice-col">
+                            To
+                            <address>
+                                <strong><?= $model->customer->company ?></strong><br>
+                                <?= $model->customer->address ?><br>
+                                Phone: <?= $model->customer->phone ?><br>
+                                Email: <?= $model->customer->email ?>
+                            </address>
                         </div>
+
+                        <div class="col-sm-4 invoice-col">
+                            Details
+                            <address>
+                                <b>Invoice #<?= $model->invoiceNumber ?></b><br>
+                                <b>Payment Due:</b> <?= date('l jS \of F Y', strtotime($model->expectedPaymentDate)) ?>
+                                <br>
+                                <b>Created By:</b> <?= $model->createdBy ?><br>
+                                <b>Issue Date:</b> <?= $model->updatedBy ?><br>
+                            </address>
+                        </div>
+
                     </div>
-                    <div class="row p-5">
-                        <div class="col-md">
+                    <!--<div class="col-md">
                             <label class="control-label font-weight-bold" for="customer">Issue For:</label>
                             <p class="text-black well well-sm no-shadow" style="margin-top: 10px;">
-                                <span style="font-weight: bold">Name: </span> <?= $model->customer->name ?><br>
-                                <span style="font-weight: bold">Email: </span> <?= $model->customer->email ?><br>
-                                <span style="font-weight: bold">Phone: </span> <?= $model->customer->phone ?><br>
+                                <span style="font-weight: bold">Name: </span> <? /*= $model->customer->name */ ?><br>
+                                <span style="font-weight: bold">Email: </span> <? /*= $model->customer->email */ ?><br>
+                                <span style="font-weight: bold">Phone: </span> <? /*= $model->customer->phone */ ?><br>
                             </p>
                         </div>
                         <div class="col-md">
                             <label class="control-label font-weight-bold" for="dateRange">Issued By:</label>
                             <p class="text-black well well-sm no-shadow" style="margin-top: 10px;">
-                                <span style="font-weight: bold">Due date: </span><?= date('l jS \of F Y', strtotime($model->expectedPaymentDate)) ?>
+                                <span style="font-weight: bold">Due date: </span><? /*= date('l jS \of F Y', strtotime($model->expectedPaymentDate)) */ ?>
                                 <br>
-                                <span style="font-weight: bold">Created By: </span><?= $model->createdBy ?><br>
-                                <span style="font-weight: bold">Received By: </span><?= $model->updatedBy ?>
+                                <span style="font-weight: bold">Created By: </span><? /*= $model->createdBy */ ?><br>
+                                <span style="font-weight: bold">Received By: </span><? /*= $model->updatedBy */ ?>
                             </p>
-                        </div>
-                    </div>
+                        </div>-->
                     <div class="row p-5">
                         <div class="col-md-12">
                             <div class="table-responsive">
@@ -92,7 +109,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                                 <td><?= $invoiceDetail->service->receivedAmount ?></td>
                                                 <td><?= $invoiceDetail->service->paymentStatus ?></td>
                                                 <td><?php
-                                                    $url = '/sale/'. \app\components\Helper::getServiceName($invoiceDetail->refModel).'/view';
+                                                    $url = '/sale/' . \app\components\Helper::getServiceName($invoiceDetail->refModel) . '/view';
                                                     echo Html::a('<i class="fa fa-desktop"></i>', [$url, 'uid' => $invoiceDetail->service->uid],
                                                         [
                                                             'title' => Yii::t('app', 'View More'),
@@ -150,7 +167,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 </table>
                             </div>
                         <?php
-                        endif;?>
+                        endif; ?>
                     </div>
                     <?php if (!empty($refundTransactions['total_payable']) && !empty($refundTransactions['total_receivable'])) : ?>
                         <div class="col-md">

@@ -225,9 +225,9 @@ class Ticket extends ActiveRecord
         return $this->hasOne(TicketSupplier::className(), ['ticketId' => 'id']);
     }
 
-    public function getMother(): ActiveQuery
+    public function getMotherTicket(): ActiveQuery
     {
-        return $this->hasOne(self::class, ['id' => 'motherTicketId']);
+        return $this->hasOne(self::class, ['motherTicketId' => 'id']);
     }
 
     public static function query($query): array

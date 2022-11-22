@@ -52,6 +52,7 @@ class FlightService
                     }
 
                     if ($ticket->load(['Ticket' => $ticketData])) {
+                        // Ticket data process
                         $ticket = self::processTicketData($ticket);
                         $ticket = $this->flightRepository->store($ticket);
                         if ($ticket->hasErrors()) {
@@ -70,7 +71,7 @@ class FlightService
                         }
 
                         // Invoice details data process
-                        if (($ticket->type == ServiceConstant::TICKET_TYPE_FOR_CREATE['Reissue']) && isset($ticket->mother->invoiceId)) {
+                        if (($ticket->type == ServiceConstant::TICKET_TYPE_FOR_CREATE['Reissue']) && ($ticket->invoiceId)) {
                             $autoInvoiceCreateResponse = InvoiceService::addReissueServiceToInvoice($ticket);
                             if ($autoInvoiceCreateResponse['error']) {
                                 $dbTransaction->rollBack();
@@ -443,6 +444,7 @@ class FlightService
 
     protected static function processTicketData(Ticket $ticket): Ticket
     {
+
         $commissionReceived = self::calculateCommissionReceived($ticket->baseFare, $ticket->commission);
         $incentiveReceived = self::calculateIncentiveReceived($ticket->baseFare, $ticket->commission, $ticket->incentive);
         $ait = self::calculateAIT($ticket->baseFare, $ticket->tax, $ticket->govTax);
@@ -459,6 +461,9 @@ class FlightService
             $ticket->paymentStatus = GlobalConstant::PAYMENT_STATUS['Due'];
             $ticket->receivedAmount = 0;
             $ticket->status = GlobalConstant::ACTIVE_STATUS;
+        }
+        if ($ticket->type == ServiceConstant::TICKET_TYPE_FOR_CREATE['Reissue']){
+            $ticket->invoiceId = Ticket::findOne(['id' => $ticket->motherTicketId])->invoiceId;
         }
         return $ticket;
     }
