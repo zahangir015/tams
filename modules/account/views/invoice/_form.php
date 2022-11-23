@@ -33,7 +33,7 @@ $this->registerJsFile(
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($model, 'customerId')->widget(Select2::classname(), Helper::ajaxDropDown('customerId', '/sales/customer/get-customers', true, 'customerId', 'customer'))->label('Invoice To'); ?>
+                            <?= $form->field($model, 'customerId')->widget(Select2::classname(), Helper::ajaxDropDown('customerId', '/sale/customer/get-customers', true, 'customerId', 'customer'))->label('Invoice To'); ?>
                         </div>
                         <div class="col-md">
                             <label class="control-label" for="dateRange">Issue Date</label>

@@ -6,6 +6,8 @@ use app\components\AttachmentFile;
 use app\models\Company;
 use app\models\CompanySearch;
 use app\controllers\ParentController;
+use yii\base\InvalidConfigException;
+use yii\db\Exception;
 use yii\db\Expression;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -55,13 +57,13 @@ class CompanyController extends ParentController
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
-                $model->uid = new Expression('SELECT UUID()');
                 $logo = AttachmentFile::uploads($model, 'logo', null, 'uploads/company');
                 if ($logo) {
                     $model->logo = $logo[0];
                 }
                 return $this->redirect(['view', 'id' => $model->id]);
             }
+            dd($model->getErrors());
         } else {
             $model->loadDefaultValues();
         }

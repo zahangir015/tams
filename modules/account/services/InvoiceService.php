@@ -32,6 +32,63 @@ class InvoiceService
     {
         $this->invoiceRepository = new InvoiceRepository();
     }
+    public static function storeInvoice($requestData, ActiveRecord $invoice): array
+    {
+        if (!$invoice->load(['Invoice' => $requestData['Invoice']])) {
+            return ['error' => true, 'message' => 'Invoice loading failed'];
+        }
+        $totalDue = 0;
+        $totalReceived = 0;
+        $user = User::findOne(Yii::$app->user->id);
+        foreach ($requestData['services'] as $service) {
+            $serviceObj = json_decode($service);
+            $totalDue += $serviceObj->due;
+            $totalReceived += $serviceObj->amount;
+        }
+
+        $invoice->due = $totalDue;
+        $invoice->amount = $totalReceived;
+        $invoice->date = date('Y-m-d');
+        $invoice->invoiceNumber = Helper::invoiceNumber();
+
+        if ($invoice->save()) {
+            AttachmentFile::uploadsById($invoice, 'invoiceFile');
+            $serviceData = [];
+            foreach ($requestData['services'] as $key => $service) {
+                $serviceObj = json_decode($service);
+                $serviceData[$key]['refModel'] = $serviceObj->refModel;
+                $serviceData[$key]['refId'] = $serviceObj->refId;
+                $serviceData[$key]['subRefModel'] = Invoice::className();
+                $serviceData[$key]['subRefId'] = $invoice->id;
+                $serviceData[$key]['amount'] = 0;
+                $serviceData[$key]['due'] = $serviceObj->amount;
+            }
+            $serviceDataProcessResponse = ServiceComponent::serviceDataProcessForInvoice($invoice, $serviceData, $user);
+            if ($serviceDataProcessResponse['error']) {
+                return ['error' => true, 'message' => 'Service Data process failed - ' . $serviceDataProcessResponse['message']];
+            }
+
+            // Customer Ledger process
+            $ledgerRequestData = [
+                'title' => 'Service Purchase',
+                'reference' => 'Invoice Number - ' . $invoice->invoiceNumber,
+                'refId' => $invoice->customerId,
+                'refModel' => Customer::className(),
+                'subRefId' => $invoice->id,
+                'subRefModel' => $invoice::className(),
+                'debit' => $invoice->amount,
+                'credit' => 0
+            ];
+            $ledgerRequestResponse = LedgerComponent::createNewLedger($ledgerRequestData);
+            if ($ledgerRequestResponse['error']) {
+                return ['error' => true, 'message' => 'Customer Ledger creation failed - ' . $ledgerRequestResponse['message']];
+            }
+
+            return ['error' => false, 'message' => 'Invoice created successfully'];
+        } else {
+            return ['error' => true, 'message' => Utils::processErrorMessages($invoice->getErrors())];
+        }
+    }
 
     public static function autoInvoice(int $customerId, array $services): array
     {

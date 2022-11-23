@@ -19,7 +19,7 @@ use Yii;
  */
 class Company extends \yii\db\ActiveRecord
 {
-    //use BehaviorTrait;
+    use BehaviorTrait;
 
     /**
      * {@inheritdoc}
@@ -35,7 +35,7 @@ class Company extends \yii\db\ActiveRecord
     public function rules(): array
     {
         return [
-            [['uid', 'name', 'shortName', 'phone', 'email', 'address', 'logo'], 'required'],
+            [['name', 'shortName', 'phone', 'email', 'address'], 'required'],
             [['uid'], 'string', 'max' => 36],
             [['name'], 'string', 'max' => 120],
             [['shortName'], 'string', 'max' => 10],
