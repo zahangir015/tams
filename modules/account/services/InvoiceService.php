@@ -16,6 +16,7 @@ use app\modules\admin\models\User;
 use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\Customer;
 use app\modules\sale\repositories\HolidayRepository;
+use app\modules\sale\services\SaleService;
 use app\modules\sales\models\ServicePaymentDetail;
 use PhpParser\Node\Expr\Cast\Double;
 use Yii;
@@ -32,38 +33,42 @@ class InvoiceService
     {
         $this->invoiceRepository = new InvoiceRepository();
     }
+
     public static function storeInvoice($requestData, ActiveRecord $invoice): array
     {
-        if (!$invoice->load(['Invoice' => $requestData['Invoice']])) {
-            return ['error' => true, 'message' => 'Invoice loading failed'];
+        if (!array_key_exists('services', $requestData)) {
+            return ['error' => true, 'message' => 'Service select is required.'];
         }
+
+        if (!$invoice->load(['Invoice' => $requestData['Invoice']])) {
+            return ['error' => true, 'message' => 'Invoice loading failed.'];
+        }
+
         $totalDue = 0;
         $totalReceived = 0;
         $user = User::findOne(Yii::$app->user->id);
-        foreach ($requestData['services'] as $service) {
+        $serviceData = [];
+
+        foreach ($requestData['services'] as $key => $service) {
             $serviceObj = json_decode($service);
-            $totalDue += $serviceObj->due;
-            $totalReceived += $serviceObj->amount;
+            $totalDue += $serviceObj->dueAmount;
+            $totalReceived += $serviceObj->paidAmount;
+            $serviceData[$key]['refModel'] = $serviceObj->refModel;
+            $serviceData[$key]['refId'] = $serviceObj->refId;
+            $serviceData[$key]['subRefModel'] = Invoice::class;
+            $serviceData[$key]['subRefId'] = $invoice->id;
+            $serviceData[$key]['paidAmount'] = 0;
+            $serviceData[$key]['dueAmount'] = $serviceObj->amount;
         }
 
-        $invoice->due = $totalDue;
-        $invoice->amount = $totalReceived;
+        $invoice->dueAmount = $totalDue;
+        $invoice->paidAmount = $totalReceived;
         $invoice->date = date('Y-m-d');
         $invoice->invoiceNumber = Helper::invoiceNumber();
 
         if ($invoice->save()) {
             AttachmentFile::uploadsById($invoice, 'invoiceFile');
-            $serviceData = [];
-            foreach ($requestData['services'] as $key => $service) {
-                $serviceObj = json_decode($service);
-                $serviceData[$key]['refModel'] = $serviceObj->refModel;
-                $serviceData[$key]['refId'] = $serviceObj->refId;
-                $serviceData[$key]['subRefModel'] = Invoice::className();
-                $serviceData[$key]['subRefId'] = $invoice->id;
-                $serviceData[$key]['amount'] = 0;
-                $serviceData[$key]['due'] = $serviceObj->amount;
-            }
-            $serviceDataProcessResponse = ServiceComponent::serviceDataProcessForInvoice($invoice, $serviceData, $user);
+            $serviceDataProcessResponse = SaleService::serviceDataProcessForInvoice($invoice, $serviceData, $user);
             if ($serviceDataProcessResponse['error']) {
                 return ['error' => true, 'message' => 'Service Data process failed - ' . $serviceDataProcessResponse['message']];
             }

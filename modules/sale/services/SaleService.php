@@ -36,30 +36,30 @@ class SaleService
         return ['status' => true, 'message' => 'Services updated.', 'data' => $updatedService];
     }
 
-    public static function serviceDataProcessForInvoice(Invoice $invoice, array $services, mixed $user)
+    public static function serviceDataProcessForInvoice(Invoice $invoice, array $services, mixed $user): array
     {
         foreach ($services as $service) {
             // Invoice details entry
-            $invoiceDetailResponse = InvoiceDetail::storeOrUpdateInvoiceDetail($invoice->id, $service['refModel'], $service['refId'], $service['amount'], $service['due'], $user);
+            $invoiceDetailResponse = InvoiceDetail::storeOrUpdateInvoiceDetail($invoice->id, $service['refModel'], $service['refId'], $service['paidAmount'], $service['dueAmount'], $user);
             if ($invoiceDetailResponse['error']) {
                 return ['error' => true, 'message' => $invoiceDetailResponse['message']];
             }
 
             // Service Payment Details entry   for customer
-            $servicePaymentDetailResponse = ServicePaymentDetail::storeServicePaymentDetail($service['refModel'], $service['refId'], $invoice::className(), $invoice->id, $service['amount'], $service['due'], $user);
+            /*$servicePaymentDetailResponse = ServicePaymentDetail::storeServicePaymentDetail($service['refModel'], $service['refId'], $invoice::className(), $invoice->id, $service['paidAmount'], $service['dueAmount'], $user);
             if ($servicePaymentDetailResponse['error']) {
                 return ['error' => true, 'message' => $servicePaymentDetailResponse['message']];
-            }
+            }*/
 
             // Service Payment Details entry  for Supplier
-            if (!empty($service['supplierData'])) {
+            /*if (!empty($service['supplierData'])) {
                 foreach ($service['supplierData'] as $supplierDatum) {
-                    $servicePaymentDetailResponse = ServicePaymentDetail::storeServicePaymentDetail($supplierDatum['refModel'], $supplierDatum['refId'], $supplierDatum['subRefModel'] ?? null, $supplierDatum['subRefId'] ?? null, $supplierDatum['amount'], $supplierDatum['due'], $user);
+                    $servicePaymentDetailResponse = ServicePaymentDetail::storeServicePaymentDetail($supplierDatum['refModel'], $supplierDatum['refId'], $supplierDatum['subRefModel'] ?? null, $supplierDatum['subRefId'] ?? null, $supplierDatum['paidAmount'], $supplierDatum['dueAmount'], $user);
                     if ($servicePaymentDetailResponse['error']) {
                         return ['error' => true, 'message' => $servicePaymentDetailResponse['message']];
                     }
                 }
-            }
+            }*/
 
             // Update InvoiceId column in Service (Ticket/Hotel/Visa/Package etc) Model
             $AllServices = $service['refModel']::find()->where(['id' => $service['refId']])->all();
@@ -120,8 +120,8 @@ class SaleService
             'refModel' => $model::className(),
             'subRefId' => $model->invoiceId,
             'subRefModel' => Invoice::class,
-            'due' => $model->quoteAmount,
-            'amount' => 0
+            'dueAmount' => $model->quoteAmount,
+            'paidAmount' => 0
         ];
         $servicePaymentDetailUpdateResponse = PaymentTimelineService::updateServicePaymentDetail($servicePaymentUpdateData);
         if (!$servicePaymentDetailUpdateResponse['status']) {

@@ -51,7 +51,7 @@ class Invoice extends ActiveRecord
     public function rules(): array
     {
         return [
-            [['customerId', 'invoiceNumber', 'date'], 'required'],
+            [['customerId'], 'required'],
             [['customerId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['date', 'expectedPaymentDate'], 'safe'],
             [['paidAmount', 'dueAmount', 'discountedAmount', 'refundAdjustmentAmount'], 'number'],

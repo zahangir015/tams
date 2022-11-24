@@ -103,7 +103,7 @@ class Customer extends ActiveRecord
      */
     public function getTickets(): ActiveQuery
     {
-        return $this->hasMany(Ticket::className(), ['customerId' => 'id']);
+        return $this->hasMany(Ticket::class, ['customerId' => 'id']);
     }
 
     /**
@@ -113,7 +113,7 @@ class Customer extends ActiveRecord
      */
     public function getVisas(): ActiveQuery
     {
-        return $this->hasMany(Visa::className(), ['customerId' => 'id']);
+        return $this->hasMany(Visa::class, ['customerId' => 'id']);
     }
 
     /**
@@ -123,7 +123,7 @@ class Customer extends ActiveRecord
      */
     public function getHotels(): ActiveQuery
     {
-        return $this->hasMany(Hotel::className(), ['customerId' => 'id']);
+        return $this->hasMany(Hotel::class, ['customerId' => 'id']);
     }
 
     /**
@@ -131,8 +131,8 @@ class Customer extends ActiveRecord
      *
      * @return ActiveQuery
      */
-    public function getPackages(): ActiveQuery
+    public function getHolidays(): ActiveQuery
     {
-        return $this->hasMany(Holiday::className(), ['customerId' => 'id']);
+        return $this->hasMany(Holiday::class, ['customerId' => 'id']);
     }
 }

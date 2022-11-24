@@ -21,14 +21,14 @@ $this->registerJs(
 
 $this->registerJsFile(
     '@web/js/invoice.js',
-    ['depends' => [JqueryAsset::className()]]
+    ['depends' => [JqueryAsset::class]]
 );
 ?>
 
 <div class="invoice-form">
     <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
     <div class="row">
-        <div class="col-md-9">
+        <div class="col-md-8">
             <div class="card">
                 <div class="card-body">
                     <div class="row">
@@ -39,10 +39,7 @@ $this->registerJsFile(
                             <label class="control-label" for="dateRange">Issue Date</label>
                             <?= $form->field($model, 'dateRange', [
                                 'options' => ['class' => 'drp-container mb-2']
-                            ])->widget(DateRangePicker::className(), Helper::getDateRangeWidgetOptions())->label(false) ?>
-                        </div>
-                        <div class="col-md">
-                            <?= $form->field($model, 'expectedPaymentDate')->widget(DatePicker::className(), Helper::getDatewidget('expectedPaymentDate', 'expectedPaymentDate', false))->label('Due Date') ?>
+                            ])->widget(DateRangePicker::class, Helper::getDateRangeWidgetOptions())->label(false) ?>
                         </div>
                     </div>
                     <div class="separator separator-dashed my-10"></div>
@@ -76,8 +73,8 @@ $this->registerJsFile(
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card card-custom card-sticky mb-5" id="kt_page_sticky_card">
+        <div class="col-md-4">
+            <div class="card card-custom" id="kt_page_sticky_card">
                 <div class="card-body">
                     <h4>Payment details</h4>
                     <table class="table g-5 gs-0 mb-0 fw-bolder text-gray-700 mb-10">
@@ -89,6 +86,7 @@ $this->registerJsFile(
                         <tr>
                             <td>Total Due:</td>
                             <td id="totalPayable"></td>
+                            <?= $form->field($model, 'dueAmount')->hiddenInput(['value' => 0, 'id' => 'invoiceAmount'])->label(false) ?>
                         </tr>
                         <tr>
                             <td>Total Selected:</td>
@@ -96,6 +94,20 @@ $this->registerJsFile(
                         </tr>
                         </tbody>
                     </table>
+                </div>
+            </div>
+            <div class="card card-custom">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md">
+                            <?= $form->field($model, 'date')->widget(DatePicker::class, Helper::getDatewidget('date', 'date', false)) ?>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md">
+                            <?= $form->field($model, 'expectedPaymentDate')->widget(DatePicker::class, Helper::getDatewidget('expectedPaymentDate', 'expectedPaymentDate', false)) ?>
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col-md">
                             <?php echo $form->field($model, 'invoiceFile')->widget(FileInput::classname(), Helper::fileInputWidget())->label('Upload File'); ?>
@@ -105,8 +117,8 @@ $this->registerJsFile(
                         <div class="col-md" id="comment">
                             <?= $form->field($model, 'remarks')->textarea() ?>
                         </div>
-                        <?= $form->field($model, 'dueAmount')->hiddenInput(['value' => 0, 'id' => 'invoiceAmount'])->label(false) ?>
                     </div>
+
                     <div class="row mt-10">
                         <div class="col-md-12">
                             <div class="form-group">
@@ -118,5 +130,5 @@ $this->registerJsFile(
             </div>
         </div>
     </div>
-
+    <?php ActiveForm::end(); ?>
 </div>

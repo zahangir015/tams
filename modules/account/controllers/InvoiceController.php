@@ -9,9 +9,12 @@ use app\modules\account\models\search\InvoiceSearch;
 use app\controllers\ParentController;
 use app\modules\account\repositories\InvoiceRepository;
 use app\modules\account\services\InvoiceService;
+use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\Customer;
+use Yii;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Response;
 
 /**
  * InvoiceController implements the CRUD actions for Invoice model.
@@ -69,7 +72,8 @@ class InvoiceController extends ParentController
 
         if ($this->request->isPost) {
             // Store ticket data
-            $storeResponse = $this->invoiceService->storeInvoice(Yii::$app->request->post());
+            $requestData = Yii::$app->request->post();
+            $storeResponse = $this->invoiceService->storeInvoice($requestData);
             if ($storeResponse) {
                 return $this->redirect(['index']);
             }
@@ -163,8 +167,8 @@ class InvoiceController extends ParentController
     public function actionPending(): array
     {
         $data = Yii::$app->request->get();
+        Yii::$app->response->format = Response::FORMAT_JSON;
         $customerId = $data['customerId'];
-
         if (empty($customerId)) {
             return false;
         }
@@ -179,28 +183,28 @@ class InvoiceController extends ParentController
             ->with([
                 'tickets' => function ($query) use ($start_date, $end_date) {
                     $query
-                        ->where(['<>', 'paymentStatus', Constant::PAYMENT_STATUS['Full Paid']])
+                        ->where(['<>', 'paymentStatus', ServiceConstant::PAYMENT_STATUS['Full Paid']])
                         ->andWhere(['IS', 'invoiceId', NULL]);
                     if ($start_date && $end_date) {
                         $query->andWhere(['between', 'issueDate', $start_date, $end_date])->orderBy(['issueDate' => SORT_ASC]);
                     }
                 },
                 'visas' => function ($query) use ($start_date, $end_date) {
-                    $query->where(['<>', 'paymentStatus', Constant::PAYMENT_STATUS['Full Paid']])
+                    $query->where(['<>', 'paymentStatus', ServiceConstant::PAYMENT_STATUS['Full Paid']])
                         ->andWhere(['IS', 'invoiceId', NULL]);
                     if ($start_date && $end_date) {
                         $query->andWhere(['between', 'issueDate', $start_date, $end_date])->orderBy(['issueDate' => SORT_ASC]);
                     }
                 },
                 'hotels' => function ($query) use ($start_date, $end_date) {
-                    $query->where(['<>', 'paymentStatus', Constant::PAYMENT_STATUS['Full Paid']])
+                    $query->where(['<>', 'paymentStatus', ServiceConstant::PAYMENT_STATUS['Full Paid']])
                         ->andWhere(['IS', 'invoiceId', NULL]);
                     if ($start_date && $end_date) {
                         $query->andWhere(['between', 'issueDate', $start_date, $end_date])->orderBy(['issueDate' => SORT_ASC]);
                     }
                 },
                 'holidays' => function ($query) use ($start_date, $end_date) {
-                    $query->where(['<>', 'paymentStatus', Constant::PAYMENT_STATUS['Full Paid']])
+                    $query->where(['<>', 'paymentStatus', ServiceConstant::PAYMENT_STATUS['Full Paid']])
                         ->andWhere(['IS', 'invoiceId', NULL]);
                     if ($start_date && $end_date) {
                         $query->andWhere(['between', 'issueDate', $start_date, $end_date])->orderBy(['issueDate' => SORT_ASC]);
@@ -219,8 +223,8 @@ class InvoiceController extends ParentController
                 $html .= '<td><input type="checkbox" class="chk" id="chk' . $key . '" name="services[]" value="' . htmlspecialchars(json_encode([
                         'refId' => $pending->id,
                         'refModel' => get_class($pending),
-                        'amount' => $pending->receivedAmount,
-                        'due' => ($pending->quoteAmount - $pending->receivedAmount),
+                        'paidAmount' => $pending->receivedAmount,
+                        'dueAmount' => ($pending->quoteAmount - $pending->receivedAmount),
                     ])) . '"></td>';
                 $html .= '<td>' . $pending->formName() . '</td>';
                 $html .= '<td><span class="badge bg-green">' . $pending->eTicket . '</span></td>';
@@ -237,8 +241,8 @@ class InvoiceController extends ParentController
                 $html .= '<td><input type="checkbox" class="chk" id="chk' . $key . '" name="services[]" value="' . htmlspecialchars(json_encode([
                         'refId' => $pending->id,
                         'refModel' => get_class($pending),
-                        'amount' => $pending->receivedAmount,
-                        'due' => ($pending->quoteAmount - $pending->receivedAmount),
+                        'paidAmount' => $pending->receivedAmount,
+                        'dueAmount' => ($pending->quoteAmount - $pending->receivedAmount),
                     ])) . '"></td>';
                 $html .= '<td>' . $pending->formName() . '</td>';
                 $html .= '<td><span class="badge bg-green">' . $pending->voucherId . '</span></td>';
@@ -255,8 +259,8 @@ class InvoiceController extends ParentController
                 $html .= '<td><input type="checkbox" class="chk" id="chk' . $key . '" name="services[]" value="' . htmlspecialchars(json_encode([
                         'refId' => $pending->id,
                         'refModel' => get_class($pending),
-                        'amount' => $pending->receivedAmount,
-                        'due' => ($pending->quoteAmount - $pending->receivedAmount),
+                        'paidAmount' => $pending->receivedAmount,
+                        'dueAmount' => ($pending->quoteAmount - $pending->receivedAmount),
                     ])) . '"></td>';
                 $html .= '<td>' . $pending->formName() . '</td>';
                 $html .= '<td><span class="badge bg-green">' . $pending->identificationNo ?? 'N/A' . '</span></td>';
@@ -273,8 +277,8 @@ class InvoiceController extends ParentController
                 $html .= '<td><input type="checkbox" class="chk" id="chk' . $key . '" name="services[]" value="' . htmlspecialchars(json_encode([
                         'refId' => $pending->id,
                         'refModel' => get_class($pending),
-                        'amount' => $pending->receivedAmount,
-                        'due' => ($pending->quoteAmount - $pending->receivedAmount),
+                        'paidAmount' => $pending->receivedAmount,
+                        'dueAmount' => ($pending->quoteAmount - $pending->receivedAmount),
                     ])) . '"></td>';
                 $html .= '<td>' . $pending->formName() . '</td>';
                 $html .= '<td><span class="badge bg-green">' . $pending->identificationNo ?? 'NA' . '</span></td>';
