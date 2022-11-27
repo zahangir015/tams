@@ -72,7 +72,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
                 'buttons' => [
                     'view' => function ($url, $model) {
-                        return Html::a('<i class="fa fa-eye"></i>', ['view', 'uid' => $model->uid], [
+                        return Html::a('<i class="fa fa-info-circle"></i>', ['view', 'uid' => $model->uid], [
                             'title' => 'view', 'data-pjax' => '0',
                         ]);
                     },

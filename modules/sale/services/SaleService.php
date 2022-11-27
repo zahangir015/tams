@@ -12,66 +12,28 @@ use yii\db\ActiveRecord;
 
 class SaleService
 {
-    public static function serviceUpdate(array $data, array $updatedService = NULL): array
+    public static function serviceUpdate(array $services): array
     {
-        foreach ($data as $datum) {
-            if (empty($datum['refModel']) || empty($datum['query'])) {
-                return ['status' => false, 'message' => "refModel or query not found"];
+        foreach ($services as $serviceArray) {
+            if (empty($serviceArray['refModel']) || empty($serviceArray['query'])) {
+                return ['error' => true, 'message' => "refModel or query not found"];
             }
-            $model = $datum['refModel']::find()->where($datum['query'])->one();
+            $serviceObject = $serviceArray['refModel']::find()->where($serviceArray['query'])->one();
 
-            if (!$model) {
-                return ['status' => false, 'message' => "The requested data does not exist with reference model: {$datum['refModel']} and id : {$datum['query']}"];
+            if (!$serviceObject) {
+                return ['error' => true, 'message' => "The requested data does not exist with reference service object: {$serviceArray['refModel']} and id : {$serviceArray['query']}"];
             }
 
-            if (empty($datum['data']['paymentStatus'])) {
-                $datum['data']['paymentStatus'] = $model->paymentStatus;
+            if (empty($serviceArray['data']['paymentStatus'])) {
+                $serviceArray['data']['paymentStatus'] = $serviceObject->paymentStatus;
             }
-            $model->setAttributes($datum['data']);
-            if (!$model->save()) {
-                return ['status' => false, 'message' => Helper::processErrorMessages($model->errors)];
+            $serviceObject->setAttributes($serviceArray['data']);
+            if (!$serviceObject->save()) {
+                return ['error' => true, 'message' => "Service update failed reference service object: {$serviceArray['refModel']} - ".Helper::processErrorMessages($serviceObject->errors)];
             }
         }
 
-        return ['status' => true, 'message' => 'Services updated.', 'data' => $updatedService];
-    }
-
-    public static function serviceDataProcessForInvoice(Invoice $invoice, array $services, mixed $user): array
-    {
-        foreach ($services as $service) {
-            // Invoice details entry
-            $invoiceDetailResponse = InvoiceDetail::storeOrUpdateInvoiceDetail($invoice->id, $service['refModel'], $service['refId'], $service['paidAmount'], $service['dueAmount'], $user);
-            if ($invoiceDetailResponse['error']) {
-                return ['error' => true, 'message' => $invoiceDetailResponse['message']];
-            }
-
-            // Service Payment Details entry   for customer
-            /*$servicePaymentDetailResponse = ServicePaymentDetail::storeServicePaymentDetail($service['refModel'], $service['refId'], $invoice::className(), $invoice->id, $service['paidAmount'], $service['dueAmount'], $user);
-            if ($servicePaymentDetailResponse['error']) {
-                return ['error' => true, 'message' => $servicePaymentDetailResponse['message']];
-            }*/
-
-            // Service Payment Details entry  for Supplier
-            /*if (!empty($service['supplierData'])) {
-                foreach ($service['supplierData'] as $supplierDatum) {
-                    $servicePaymentDetailResponse = ServicePaymentDetail::storeServicePaymentDetail($supplierDatum['refModel'], $supplierDatum['refId'], $supplierDatum['subRefModel'] ?? null, $supplierDatum['subRefId'] ?? null, $supplierDatum['paidAmount'], $supplierDatum['dueAmount'], $user);
-                    if ($servicePaymentDetailResponse['error']) {
-                        return ['error' => true, 'message' => $servicePaymentDetailResponse['message']];
-                    }
-                }
-            }*/
-
-            // Update InvoiceId column in Service (Ticket/Hotel/Visa/Package etc) Model
-            $AllServices = $service['refModel']::find()->where(['id' => $service['refId']])->all();
-            foreach ($AllServices as $storedService) {
-                $storedService->invoiceId = $invoice->id;
-                if (!$storedService->save()) {
-                    return ['error' => true, 'message' => Utils::processErrorMessages($storedService->getErrors())];
-                }
-            }
-        }
-
-        return ['error' => false, 'message' => 'Service data processed successfully'];
+        return ['error' => false, 'message' => 'Services updated.'];
     }
 
     public static function servicePaymentTimelineProcess(Invoice $invoice, array $serviceData)

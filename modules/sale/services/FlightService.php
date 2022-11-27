@@ -119,7 +119,6 @@ class FlightService
                     if ($requestData['group'] == 1) {
                         $autoInvoiceCreateResponse = InvoiceService::autoInvoice($customer->id, $tickets);
                         if ($autoInvoiceCreateResponse['error']) {
-                            $dbTransaction->rollBack();
                             throw new Exception('Invoice - ' . $autoInvoiceCreateResponse['message']);
                         }
                         $invoice = $autoInvoiceCreateResponse['data'];
@@ -127,7 +126,6 @@ class FlightService
                         foreach ($tickets as $ticket) {
                             $autoInvoiceCreateResponse = InvoiceService::autoInvoice($customer->id, [$ticket]);
                             if ($autoInvoiceCreateResponse['error']) {
-                                $dbTransaction->rollBack();
                                 throw new Exception('Invoice - ' . $autoInvoiceCreateResponse['message']);
                             }
                             $invoice = $autoInvoiceCreateResponse['data'];
@@ -138,7 +136,6 @@ class FlightService
                 // Supplier Ledger process
                 $ledgerRequestResponse = LedgerService::batchInsert($invoice, $supplierLedgerArray);
                 if ($ledgerRequestResponse['error']) {
-                    $dbTransaction->rollBack();
                     throw new Exception('Supplier Ledger creation failed - ' . $ledgerRequestResponse['message']);
                 }
 

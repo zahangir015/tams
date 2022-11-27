@@ -34,43 +34,50 @@ class InvoiceService
         $this->invoiceRepository = new InvoiceRepository();
     }
 
-    public static function storeInvoice($requestData, ActiveRecord $invoice): array
+    public function storeInvoice($requestData, ActiveRecord $invoice): bool
     {
-        if (!array_key_exists('services', $requestData)) {
-            return ['error' => true, 'message' => 'Service select is required.'];
-        }
+        $dbTransaction = Yii::$app->db->beginTransaction();
+        try {
+            if (!array_key_exists('services', $requestData)) {
+                throw new Exception('Service select is required.');
+            }
 
-        if (!$invoice->load(['Invoice' => $requestData['Invoice']])) {
-            return ['error' => true, 'message' => 'Invoice loading failed.'];
-        }
+            if (!$invoice->load(['Invoice' => $requestData['Invoice']])) {
+                throw new Exception('Invoice loading failed.');
+            }
 
-        $totalDue = 0;
-        $totalReceived = 0;
-        $user = User::findOne(Yii::$app->user->id);
-        $serviceData = [];
+            $totalDue = 0;
+            $totalReceived = 0;
+            $user = User::findOne(Yii::$app->user->id);
 
-        foreach ($requestData['services'] as $key => $service) {
-            $serviceObj = json_decode($service);
-            $totalDue += $serviceObj->dueAmount;
-            $totalReceived += $serviceObj->paidAmount;
-            $serviceData[$key]['refModel'] = $serviceObj->refModel;
-            $serviceData[$key]['refId'] = $serviceObj->refId;
-            $serviceData[$key]['subRefModel'] = Invoice::class;
-            $serviceData[$key]['subRefId'] = $invoice->id;
-            $serviceData[$key]['paidAmount'] = 0;
-            $serviceData[$key]['dueAmount'] = $serviceObj->amount;
-        }
+            // Invoice detail data process
+            $serviceData = [];
+            foreach ($requestData['services'] as $key => $service) {
+                $serviceObj = json_decode($service);
+                $totalDue += $serviceObj->dueAmount;
+                $totalReceived += $serviceObj->paidAmount;
+                $serviceData[$key]['refModel'] = $serviceObj->refModel;
+                $serviceData[$key]['refId'] = $serviceObj->refId;
+                $serviceData[$key]['subRefModel'] = Invoice::class;
+                $serviceData[$key]['subRefId'] = $invoice->id;
+                $serviceData[$key]['paidAmount'] = 0;
+                $serviceData[$key]['dueAmount'] = $serviceObj->dueAmount;
+            }
 
-        $invoice->dueAmount = $totalDue;
-        $invoice->paidAmount = $totalReceived;
-        $invoice->date = date('Y-m-d');
-        $invoice->invoiceNumber = Helper::invoiceNumber();
+            // Invoice data process
+            $invoice->dueAmount = $totalDue;
+            $invoice->paidAmount = $totalReceived;
+            $invoice->invoiceNumber = Helper::invoiceNumber();
+            $invoice = $this->invoiceRepository->store($invoice);
+            if ($invoice->hasErrors()) {
+                throw new Exception('Supplier Ledger creation failed - ' . Helper::processErrorMessages($invoice->getErrors()));
+            }
 
-        if ($invoice->save()) {
-            AttachmentFile::uploadsById($invoice, 'invoiceFile');
-            $serviceDataProcessResponse = SaleService::serviceDataProcessForInvoice($invoice, $serviceData, $user);
+            //AttachmentFile::uploadsById($invoice, 'invoiceFile');
+            // Service Data process
+            $serviceDataProcessResponse = self::serviceDataProcessForInvoice($invoice, $serviceData, $user);
             if ($serviceDataProcessResponse['error']) {
-                return ['error' => true, 'message' => 'Service Data process failed - ' . $serviceDataProcessResponse['message']];
+                throw new Exception('Service Data process failed - ' . $serviceDataProcessResponse['message']);
             }
 
             // Customer Ledger process
@@ -78,24 +85,29 @@ class InvoiceService
                 'title' => 'Service Purchase',
                 'reference' => 'Invoice Number - ' . $invoice->invoiceNumber,
                 'refId' => $invoice->customerId,
-                'refModel' => Customer::className(),
+                'refModel' => Customer::class,
                 'subRefId' => $invoice->id,
-                'subRefModel' => $invoice::className(),
-                'debit' => $invoice->amount,
+                'subRefModel' => $invoice::class,
+                'debit' => $invoice->paidAmount,
                 'credit' => 0
             ];
-            $ledgerRequestResponse = LedgerComponent::createNewLedger($ledgerRequestData);
+            $ledgerRequestResponse = LedgerService::store($ledgerRequestData);
             if ($ledgerRequestResponse['error']) {
-                return ['error' => true, 'message' => 'Customer Ledger creation failed - ' . $ledgerRequestResponse['message']];
+                throw new Exception('Customer Ledger creation failed - ' . $ledgerRequestResponse['message']);
             }
 
-            return ['error' => false, 'message' => 'Invoice created successfully'];
-        } else {
-            return ['error' => true, 'message' => Utils::processErrorMessages($invoice->getErrors())];
+            $dbTransaction->commit();
+            Yii::$app->session->setFlash('success', 'Invoice created successfully.');
+            return true;
+        } catch (Exception $e) {
+            $dbTransaction->rollBack();
+            Yii::$app->session->setFlash('danger', $e->getMessage() . ' - in file - ' . $e->getFile() . ' - in line -' . $e->getLine());
+            return false;
         }
     }
 
-    public static function autoInvoice(int $customerId, array $services): array
+    public
+    static function autoInvoice(int $customerId, array $services): array
     {
         $invoice = new Invoice();
         $invoice->date = date('Y-m-d');
@@ -139,7 +151,8 @@ class InvoiceService
         return ['error' => false, 'message' => 'Invoice created successfully', 'data' => $invoice];
     }
 
-    public static function autoInvoiceForRefund(Invoice $invoice, array $service, $user): array
+    public
+    static function autoInvoiceForRefund(Invoice $invoice, array $service, $user): array
     {
         // Invoice Details process
         $invoiceDetail = new InvoiceDetail();
@@ -192,7 +205,8 @@ class InvoiceService
         return ['error' => false, 'data' => $invoiceDetail];
     }
 
-    public static function autoInvoiceForReissue(Invoice $invoice, array $service, $user): array
+    public
+    static function autoInvoiceForReissue(Invoice $invoice, array $service, $user): array
     {
         // Invoice Details process
         $invoiceDetail = new InvoiceDetail();
@@ -245,7 +259,8 @@ class InvoiceService
         return ['error' => false, 'data' => $invoiceDetail];
     }
 
-    private static function serviceProcess(Invoice $invoice, array $services): array
+    private
+    static function serviceProcess(Invoice $invoice, array $services): array
     {
         $invoiceDetailBatchData = [];
         $paymentTimelineBatchData = [];
@@ -289,7 +304,8 @@ class InvoiceService
         return ['error' => false, 'message' => 'Service process done.'];
     }
 
-    public static function addRefundServiceToInvoice(ActiveRecord $newRefundService): array
+    public
+    static function addRefundServiceToInvoice(ActiveRecord $newRefundService): array
     {
         $invoiceDetail = new InvoiceDetail();
         $invoiceDetail->invoiceId = $newRefundService->invoiceId;
@@ -340,7 +356,8 @@ class InvoiceService
         return ['error' => false, 'data' => $invoiceDetail];
     }
 
-    public static function addReissueServiceToInvoice(ActiveRecord $newReissueService): array
+    public
+    static function addReissueServiceToInvoice(ActiveRecord $newReissueService): array
     {
         // Invoice detail process
         $invoiceDetail = new InvoiceDetail();
@@ -391,7 +408,8 @@ class InvoiceService
         return ['error' => false, 'data' => $invoiceDetail->invoice];
     }
 
-    public static function checkAndDetectPaymentStatus($due, $amount): string
+    public
+    static function checkAndDetectPaymentStatus($due, $amount): string
     {
         $paymentStatus = NULL;
         $difference = abs(($due - $amount));
@@ -406,11 +424,11 @@ class InvoiceService
         return $paymentStatus;
     }
 
-    public static function offlineInvoicePayment(Invoice $invoice, array $requestData): array
+    public static function payment(Invoice $invoice, array $requestData): array
     {
-        $transaction = Yii::$app->db->beginTransaction();
+        $dbTransaction = Yii::$app->db->beginTransaction();
         try {
-            if ($invoice->due <= 0) {
+            if ($invoice->dueAmount <= 0) {
                 throw  new Exception('You are not allowed to perform this action. This invoice is already paid.');
             }
             $oldPaymentCharge = $invoice->paymentCharge;
@@ -485,9 +503,9 @@ class InvoiceService
                 'title' => 'Payment received',
                 'reference' => 'Invoice Number - ' . $invoice->invoiceNumber,
                 'refId' => $invoice->customerId,
-                'refModel' => Customer::className(),
+                'refModel' => Customer::class,
                 'subRefId' => $invoice->id,
-                'subRefModel' => $invoice::className(),
+                'subRefModel' => $invoice::class,
                 'debit' => 0,
                 'credit' => $distributionAmount
             ];
@@ -501,13 +519,12 @@ class InvoiceService
                 'title' => 'Service Payment received',
                 'reference' => 'Invoice Number - ' . $invoice->invoiceNumber,
                 'refId' => $bank->id,
-                'refModel' => $bank::className(),
+                'refModel' => $bank::class,
                 'subRefId' => $invoice->id,
-                'subRefModel' => $invoice::className(),
+                'subRefModel' => $invoice::class,
                 'debit' => $distributionAmount,
                 'credit' => 0
             ];
-
             $bankLedgerRequestResponse = LedgerComponent::createNewLedger($bankLedgerRequestData);
             if ($bankLedgerRequestResponse['error']) {
                 throw new Exception('Bank Ledger creation failed - ' . $bankLedgerRequestResponse['message']);
@@ -515,22 +532,21 @@ class InvoiceService
 
             // Transaction statement process
             $requestData['Invoice']['paymentDate'] = $requestData['Invoice']['date'];
-            $transactionRequestData = TransactionStatementComponent::formDataForTransactionStatement($requestData['Invoice'], $invoice->id, $invoice::className(), $invoice->customerId, Customer::class, Yii::$app->user->id);
+            $transactionRequestData = TransactionStatementComponent::formDataForTransactionStatement($requestData['Invoice'], $invoice->id, $invoice::class, $invoice->customerId, Customer::class, Yii::$app->user->id);
             $transactionStatementStoreResponse = TransactionStatementComponent::store($transactionRequestData);
             if ($transactionStatementStoreResponse['error']) {
                 throw new Exception('Transaction Statement creation failed - ' . $transactionStatementStoreResponse['message']);
             }
-            $transaction->commit();
-
+            $dbTransaction->commit();
             return ['error' => false, 'message' => 'Invoice paid successfully.'];
         } catch (\Exception $e) {
-            $transaction->rollBack();
-
+            $dbTransaction->rollBack();
             return ['error' => true, 'message' => $e->getMessage() . ' - ' . $e->getFile() . ' - ' . $e->getLine()];
         }
     }
 
-    public static function distributeAmountToServices($invoiceDetails, $amount, $user): array
+    public
+    static function distributeAmountToServices($invoiceDetails, $amount, $user): array
     {
         foreach ($invoiceDetails as $invoiceDetail) {
             if ($amount <= 0) {
@@ -573,8 +589,78 @@ class InvoiceService
         return ['error' => false, 'message' => "Distribution has been made successfully"];
     }
 
-    public function updateInvoice($invoice, $services): void
+    private
+    static function serviceDataProcessForInvoice(ActiveRecord $invoice, array $services, mixed $user): array
     {
+        $updatableServices = [];
+        foreach ($services as $service) {
+            // Invoice details entry
+            $invoiceDetailResponse = (new InvoiceService)->storeOrUpdateInvoiceDetail($invoice, $service, $user);
+            if ($invoiceDetailResponse['error']) {
+                return $invoiceDetailResponse;
+            }
 
+            // Service Payment Details entry   for customer
+            /*$servicePaymentDetailResponse = ServicePaymentDetail::storeServicePaymentDetail($service['refModel'], $service['refId'], $invoice::class, $invoice->id, $service['paidAmount'], $service['dueAmount'], $user);
+            if ($servicePaymentDetailResponse['error']) {
+                return ['error' => true, 'message' => $servicePaymentDetailResponse['message']];
+            }*/
+
+            // Service Payment Details entry  for Supplier
+            /*if (!empty($service['supplierData'])) {
+                foreach ($service['supplierData'] as $supplierDatum) {
+                    $servicePaymentDetailResponse = ServicePaymentDetail::storeServicePaymentDetail($supplierDatum['refModel'], $supplierDatum['refId'], $supplierDatum['subRefModel'] ?? null, $supplierDatum['subRefId'] ?? null, $supplierDatum['paidAmount'], $supplierDatum['dueAmount'], $user);
+                    if ($servicePaymentDetailResponse['error']) {
+                        return ['error' => true, 'message' => $servicePaymentDetailResponse['message']];
+                    }
+                }
+            }*/
+
+            // Update InvoiceId column in Service (Ticket/Hotel/Visa/Package etc) Model
+            /*$AllServices = $service['refModel']::find()->where(['id' => $service['refId']])->all();
+            foreach ($AllServices as $storedService) {
+                $storedService->invoiceId = $invoice->id;
+                if (!$storedService->save()) {
+                    return ['error' => true, 'message' => Utils::processErrorMessages($storedService->getErrors())];
+                }
+            }*/
+            $updatableServices[] = [
+                'refModel' => $service['refModel'],
+                'query' => ['id' => $service['refId']],
+                'data' => ['invoiceId' => $invoice->id]
+            ];
+        }
+
+        if (!empty($updatableServices)) {
+            $serviceUpdateResponse = SaleService::serviceUpdate($updatableServices);
+            if ($serviceUpdateResponse['error']) {
+                return $serviceUpdateResponse;
+            }
+        }
+
+        return ['error' => false, 'message' => 'Service data processed successfully'];
     }
+
+    protected function storeOrUpdateInvoiceDetail(ActiveRecord $invoice, $service, $user): array
+    {
+        $invoiceDetail = $this->invoiceRepository->findOne(['refModel' => $service['refModel'], 'refId' => $service['refId'], 'invoiceId' => $invoice->id], InvoiceDetail::class);
+        if (!empty($invoiceDetail)) {
+            $invoiceDetail->dueAmount = $service['dueAmount'];
+            $invoiceDetail->paidAmount = $service['paidAmount'];
+        } else {
+            $invoiceDetail = new InvoiceDetail();
+            $invoiceDetail->load(['InvoiceDetail' => $service]);
+            $invoiceDetail->invoiceId = $invoice->id;
+            $invoiceDetail->status = GlobalConstant::ACTIVE_STATUS;
+        }
+
+        $invoiceDetail = $this->invoiceRepository->store($invoiceDetail);
+        if ($invoiceDetail->hasErrors()) {
+            return ['error' => true, 'message' => 'Invoice Details store failed - ' . Helper::processErrorMessages($invoiceDetail->getErrors())];
+        }
+
+        return ['error' => false, 'message' => 'Success'];
+    }
+
+
 }

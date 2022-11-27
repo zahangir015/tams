@@ -73,7 +73,7 @@ class InvoiceController extends ParentController
         if ($this->request->isPost) {
             // Store ticket data
             $requestData = Yii::$app->request->post();
-            $storeResponse = $this->invoiceService->storeInvoice($requestData);
+            $storeResponse = $this->invoiceService->storeInvoice($requestData, $model);
             if ($storeResponse) {
                 return $this->redirect(['index']);
             }
@@ -121,22 +121,6 @@ class InvoiceController extends ParentController
     }
 
     /**
-     * Finds the Invoice model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param string $uid UID
-     * @return Invoice the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($uid)
-    {
-        if (($model = Invoice::findOne(['id' => $uid])) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
-    }
-
-    /**
      * Payment an existing Invoices model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param string $uid
@@ -146,10 +130,10 @@ class InvoiceController extends ParentController
      */
     public function actionPay(string $uid)
     {
-        $model = $this->findModel($uid);
+        $model = $this->invoiceRepository->findOne(['uid' => $uid], Invoice::class, ['details', 'customer', 'transactions']);
         $model->scenario = 'invoicePay';
         if (Yii::$app->request->isPost) {
-            $invoicePaymentResponse = InvoiceService::offlineInvoicePayment($model, Yii::$app->request->post());
+            $invoicePaymentResponse = $this->invoiceRepository->Payment($model, Yii::$app->request->post());
             Yii::$app->session->setFlash($invoicePaymentResponse['error'] ? 'error' : 'success', $invoicePaymentResponse['message']);
             if (!$invoicePaymentResponse['error']) {
                 return $this->render('view', [

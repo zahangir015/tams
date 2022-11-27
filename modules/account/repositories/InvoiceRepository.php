@@ -23,7 +23,7 @@ class InvoiceRepository
         return false;
     }
 
-    public static function findOne(array $queryArray, string $model, array $withArray = [], $asArray = false): ActiveRecord
+    public static function findOne(array $queryArray, string $model, array $withArray = [], $asArray = false): array|ActiveRecord|null
     {
         $query = $model::find();
         if (!empty($withArray)) {

@@ -80,15 +80,14 @@ class AttachmentFile
             if (!empty($file)) {
                 $getFileName = self::uniqueFileName($referenceModel) . '.' . $file->getExtension();
                 $fileName = $file->name = $path ? $path . DIRECTORY_SEPARATOR . $getFileName : $getFileName;
-                $uploadResponse = Uploader::processFile($file, true);
+                $uploadResponse = Uploader::processFile($file, false);
                 if ($uploadResponse) {
                     Uploader::deleteLocalFile($fileName);
                     $row[] = [
-                        'uid' => new Expression('UUID()'),
-                        'name' => $uploadResponse,
-                        'referenceModel' => $referenceModel,
-                        'ref' => $model->id,
-                        'docType' => StringHelper::basename($referenceModel),
+                        'name' => $uploadResponse['name'],
+                        'refModel' => $referenceModel,
+                        'refId' => $model->id,
+                        'cdnUrl' => null,
                         'createdBy' => Yii::$app->user->identity->id,
                         'updatedBy' => Yii::$app->user->identity->id,
                         'createdAt' => time(),
