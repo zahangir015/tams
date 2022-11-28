@@ -49,13 +49,30 @@ $this->registerJsFile(
                                 <thead>
                                 <tr class="border-bottom fs-7 fw-bolder text-gray-700 text-uppercase">
                                     <th>Service</th>
-                                    <th>Identification Number</th>
-                                    <th>Issue Date</th>
-                                    <th>Amount Due</th>
+                                    <th>Identification#</th>
+                                    <th>Issue</th>
+                                    <th>Quote</th>
+                                    <th>Received</th>
+                                    <th>Payment Status</th>
                                 </tr>
                                 </thead>
                                 <tbody id="t-body">
-
+                                <?php foreach ($model->details as $invoiceDetail) {
+                                    if (!$invoiceDetail->service) {
+                                        continue;
+                                    }
+                                    ?>
+                                    <tr>
+                                        <td><?= $invoiceDetail->service->formName() ?></td>
+                                        <td><?= $invoiceDetail->getIdentificationNumber($invoiceDetail->service) ?></td>
+                                        <td><?= $invoiceDetail->service->issueDate ?></td>
+                                        <td><?= $invoiceDetail->service->quoteAmount ?></td>
+                                        <td><?= $invoiceDetail->service->receivedAmount ?></td>
+                                        <td><?= $invoiceDetail->service->paymentStatus ?></td>
+                                    </tr>
+                                    <?php
+                                }
+                                ?>
                                 </tbody>
                                 <tfoot>
                                 <tr class="align-top fw-bolder text-gray-700">
