@@ -9,9 +9,11 @@ use app\modules\account\models\search\InvoiceSearch;
 use app\controllers\ParentController;
 use app\modules\account\repositories\InvoiceRepository;
 use app\modules\account\services\InvoiceService;
+use app\modules\account\services\RefundTransactionService;
 use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\Customer;
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
@@ -22,10 +24,12 @@ use yii\web\Response;
 class InvoiceController extends ParentController
 {
     public InvoiceService $invoiceService;
+    public RefundTransactionService $refundTransactionService;
     public InvoiceRepository $invoiceRepository;
 
     public function __construct($uid, $module, $config = [])
     {
+        $this->refundTransactionService = new RefundTransactionService();
         $this->invoiceService = new InvoiceService();
         $this->invoiceRepository = new InvoiceRepository();
         parent::__construct($uid, $module, $config);
@@ -143,8 +147,8 @@ class InvoiceController extends ParentController
         }
         return $this->render('payment', [
             'model' => $model,
-            'refundList' => ArrayHelper::map(RefundComponent::getRefundTransactionList(Customer::class, $model->customerId), 'id', 'name'),
-            'bankList' => ArrayHelper::map(BankAccount::find()->where(['like', 'tag', BankAccount::STATUS['Invoice']])->all(), 'id', 'bankName')
+            'refundList' => $this->refundTransactionService->getRefundList(Customer::class, $model->customerId),
+            'bankList' => $this->invoiceService->getBankList()
         ]);
     }
 

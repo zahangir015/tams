@@ -662,5 +662,9 @@ class InvoiceService
         return ['error' => false, 'message' => 'Success'];
     }
 
+    public function getBankList(): array
+    {
+        return ArrayHelper::map(BankAccount::findAll(['status' => GlobalConstant::ACTIVE_STATUS]), 'id', 'name');
+    }
 
 }

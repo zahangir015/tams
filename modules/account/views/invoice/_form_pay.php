@@ -33,7 +33,7 @@ $this->registerJsFile(
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($model, 'customerId')->widget(Select2::classname(), Helper::ajaxDropDown('customerId', '/sale/customer/get-customers', true, 'customerId', 'customer'))->label('Invoice To'); ?>
+                            <?= $form->field($model, 'customerId')->dropdownList([$model->customerId => $model->customer->name.' | '.$model->customer->company.' | '.$model->customer->email], ['readOnly' => 'readOnly'])->label('Invoice To'); ?>
                         </div>
                         <div class="col-md">
                             <label class="control-label" for="dateRange">Issue Date</label>
@@ -48,7 +48,6 @@ $this->registerJsFile(
                             <table class="table g-5 gs-0 mb-0 fw-bolder text-gray-700 mb-10">
                                 <thead>
                                 <tr class="border-bottom fs-7 fw-bolder text-gray-700 text-uppercase">
-                                    <th style="width: 10px"><input type="checkbox" id="all"></th>
                                     <th>Service</th>
                                     <th>Identification Number</th>
                                     <th>Issue Date</th>
@@ -62,8 +61,7 @@ $this->registerJsFile(
                                 <tr class="align-top fw-bolder text-gray-700">
                                     <th></th>
                                     <th colspan="3" class="fs-4 ps-0">Total</th>
-                                    <th colspan="2" class="text-end fs-4 text-nowrap">BDT <span
-                                                id="grand-total">0.00</span></th>
+                                    <th colspan="2" class="text-end fs-4 text-nowrap">BDT <span id="grand-total">0.00</span></th>
                                 </tr>
                                 </tfoot>
                             </table>
