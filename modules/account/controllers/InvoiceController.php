@@ -7,6 +7,8 @@ use app\models\Company;
 use app\modules\account\models\Invoice;
 use app\modules\account\models\search\InvoiceSearch;
 use app\controllers\ParentController;
+use app\modules\account\models\Transaction;
+use app\modules\account\models\TransactionStatement;
 use app\modules\account\repositories\InvoiceRepository;
 use app\modules\account\services\InvoiceService;
 use app\modules\account\services\RefundTransactionService;
@@ -135,9 +137,10 @@ class InvoiceController extends ParentController
     public function actionPay(string $uid)
     {
         $model = $this->invoiceRepository->findOne(['uid' => $uid], Invoice::class, ['details', 'customer', 'transactions']);
+        $transaction = new Transaction();
         $model->scenario = 'invoicePay';
         if (Yii::$app->request->isPost) {
-            $invoicePaymentResponse = $this->invoiceRepository->Payment($model, Yii::$app->request->post());
+            $invoicePaymentResponse = $this->invoiceService->payment($model, Yii::$app->request->post());
             Yii::$app->session->setFlash($invoicePaymentResponse['error'] ? 'error' : 'success', $invoicePaymentResponse['message']);
             if (!$invoicePaymentResponse['error']) {
                 return $this->render('view', [
@@ -147,6 +150,7 @@ class InvoiceController extends ParentController
         }
         return $this->render('payment', [
             'model' => $model,
+            'transaction' => $transaction,
             'refundList' => $this->refundTransactionService->getRefundList(Customer::class, $model->customerId),
             'bankList' => $this->invoiceService->getBankList()
         ]);

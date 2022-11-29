@@ -428,16 +428,14 @@ class InvoiceService
     {
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
+            // If invoice is already paid
             if ($invoice->dueAmount <= 0) {
                 throw  new Exception('You are not allowed to perform this action. This invoice is already paid.');
             }
             $oldPaymentCharge = $invoice->paymentCharge;
             $oldAmount = $invoice->amount;
-
             $invoice->load($requestData);
-
             $customer = $invoice->customer;
-
             // Distribution amount set if coupon found
             /*if ($invoice->paymentMode == Constant::PAYMENT_MODE['Coupon']) {
                 $couponCode = $invoice->chequeNumber;

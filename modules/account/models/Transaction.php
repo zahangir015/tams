@@ -2,7 +2,10 @@
 
 namespace app\modules\account\models;
 
+use app\traits\BehaviorTrait;
 use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%transaction}}".
@@ -28,12 +31,16 @@ use Yii;
  *
  * @property BankAccount $bank
  */
-class Transaction extends \yii\db\ActiveRecord
+class Transaction extends ActiveRecord
 {
+    use BehaviorTrait;
+
+    public $refundIds;
+
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%transaction}}';
     }
@@ -41,10 +48,10 @@ class Transaction extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            [['uid', 'transactionNumber', 'refId', 'refModel', 'subRefId', 'subRefModel', 'bankId', 'reference', 'paidAmount', 'paymentCharge', 'paymentDate', 'createdBy', 'createdAt'], 'required'],
+            [['transactionNumber', 'refId', 'refModel', 'subRefId', 'subRefModel', 'bankId', 'reference', 'paidAmount', 'paymentCharge', 'paymentDate', 'paymentMode'], 'required'],
             [['refId', 'subRefId', 'bankId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['paidAmount', 'paymentCharge'], 'number'],
             [['paymentDate'], 'safe'],
@@ -61,7 +68,7 @@ class Transaction extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),
@@ -88,10 +95,10 @@ class Transaction extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Bank]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getBank()
+    public function getBank(): ActiveQuery
     {
-        return $this->hasOne(BankAccount::className(), ['id' => 'bankId']);
+        return $this->hasOne(BankAccount::class, ['id' => 'bankId']);
     }
 }

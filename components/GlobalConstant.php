@@ -59,7 +59,18 @@ final class GlobalConstant
     const TRIP_TYPE = ['One Way' => 'One Way', 'Return' => 'Return'];
     const BOOKING_TYPE = ['Offline', 'Online'];
     const FLIGHT_TYPE = ['Domestic', 'International'];
-    const PAYMENT_STATUS = ['Due' => 'Due', 'Partially Paid' => 'Partially Paid', 'Full Paid' => 'Full Paid0'];
+    const PAYMENT_STATUS = ['Due' => 'Due', 'Partially Paid' => 'Partially Paid', 'Full Paid' => 'Full Paid'];
+    const PAYMENT_MODE = [
+        'Cheque' => 'Cheque',
+        'Cash' => 'Cash',
+        'POS' => 'POS',
+        'Online Payment' => 'Online Payment',
+        'Credit/Debit Card' => 'Credit/Debit Card',
+        'Adjustment' => 'Adjustment',
+        'Advance Adjustment' => 'Advance Adjustment',
+        'Coupon' => 'Coupon',
+    ];
+    
     const REFUND_STATUS = ['NO SHOW' => 'NO SHOW', 'NOT NO SHOW' => 'NOT NO SHOW', 'TAX REFUND' => 'TAX REFUND', 'HALF PORTION REFUND' => 'HALF PORTION REFUND', 'FULL REFUND' => 'FULL REFUND', 'VOID' => 'VOID', 'HALF PORTION TAX REFUND' => 'HALF PORTION TAX REFUND'];
     const REFUND_MEDIUM = ['GDS' => 'GDS', 'BSP' => 'BSP', 'SUPPLIER' => 'SUPPLIER'];
     const REFUND_METHOD = ['Credit/Debit Card' => 'Credit/Debit Card', 'Bank Account' => 'Bank Account', 'Refund Adjustment' => 'Refund Adjustment'];
