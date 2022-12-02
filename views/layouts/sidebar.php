@@ -127,6 +127,7 @@ use hail812\adminlte\widgets\Menu;
                     ['label' => 'Bank Accounts', 'icon' => 'building', 'url' => ['/account/bank-account']],
                     ['label' => 'Invoice', 'icon' => 'file-invoice-dollar', 'url' => ['/account/invoice/index']],
                     ['label' => 'Bill', 'icon' => 'money-bill', 'url' => ['/account/bill/index']],
+                    ['label' => 'Refund Transactions', 'icon' => 'money-bill', 'url' => ['/account/refund-transaction/index']],
                     ['label' => 'Ledger', 'icon' => 'book', 'url' => ['/account/ledger/index']],
                     ['label' => 'Payment Timeline', 'icon' => 'list', 'url' => ['/account/service-payment-timeline/index']],
                     ['label' => 'Simple Link', 'icon' => 'th', 'badge' => '<span class="right badge badge-danger">New</span>'],

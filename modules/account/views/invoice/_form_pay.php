@@ -10,6 +10,7 @@ use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
 use yii\web\JqueryAsset;
+use yii\web\View;
 
 /* @var $this yii\web\View */
 /* @var $model app\modules\account\models\Invoice */
@@ -17,7 +18,7 @@ use yii\web\JqueryAsset;
 
 $this->registerJs(
     "var ajaxUrl = '" . Yii::$app->request->baseUrl . '/account/invoice/pending' . "';",
-    \yii\web\View::POS_HEAD,
+    View::POS_HEAD,
     'url'
 );
 
@@ -30,25 +31,15 @@ $this->registerJsFile(
 <div class="invoice-form">
     <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
     <div class="row">
-        <div class="col-md">
+        <div class="col-md-7">
             <div class="card">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-sm invoice-col">
-                            To
-                            <address>
-                                <strong><?= $model->customer->company ?></strong><br>
-                                <?= $model->customer->address ?><br>
-                                Phone: <?= $model->customer->phone ?><br>
-                                Email: <?= $model->customer->email ?>
-                            </address>
-                        </div>
-                        <div class="col-sm invoice-col">
                             Details
                             <address>
-                                <b>Due
-                                    Date:</b> <?= date('l jS \of F Y', strtotime($model->expectedPaymentDate)) ?>
-                                <br>
+                                <b>Client:</b> <?= $model->customer->company ?><br>
+                                <b>Due Date:</b> <?= date('l jS \of F Y', strtotime($model->expectedPaymentDate)) ?><br>
                                 <b>Created By:</b> <?= $model->createdBy ?><br>
                                 <b>Issue Date:</b> <?= $model->updatedBy ?><br>
                             </address>
@@ -64,9 +55,9 @@ $this->registerJsFile(
                                         <th>Service</th>
                                         <th>Identification#</th>
                                         <th>Issue</th>
+                                        <th>Status</th>
                                         <th>Quote</th>
                                         <th>Received</th>
-                                        <th>Payment Status</th>
                                     </tr>
                                     </thead>
                                     <tbody id="t-body">
@@ -79,13 +70,37 @@ $this->registerJsFile(
                                             <td><?= $invoiceDetail->service->formName() ?></td>
                                             <td><?= $invoiceDetail->getIdentificationNumber($invoiceDetail->service) ?></td>
                                             <td><?= $invoiceDetail->service->issueDate ?></td>
+                                            <td><?= $invoiceDetail->service->paymentStatus ?></td>
                                             <td><?= $invoiceDetail->service->quoteAmount ?></td>
                                             <td><?= $invoiceDetail->service->receivedAmount ?></td>
-                                            <td><?= $invoiceDetail->service->paymentStatus ?></td>
                                         </tr>
                                         <?php
                                     }
                                     ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <tbody>
+                                    <tr>
+                                        <th>Paid Amount</th>
+                                        <td><?= number_format($model->paidAmount) ?></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Due Amount</th>
+                                        <td><?= number_format($model->dueAmount) ?></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Discounted Amount</th>
+                                        <td><?= number_format($model->discountedAmount) ?></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Refund Adjustment Amount</th>
+                                        <td><?= number_format($model->refundAdjustmentAmount) ?></td>
+                                    </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -224,37 +239,10 @@ $this->registerJsFile(
                 </div>
             </div>
         </div>
-        <div class="col-md">
+        <div class="col-md-5">
             <div class="card">
                 <div class="card-body">
                     <h4>Payment Details</h4>
-                    <hr>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <tbody>
-                                    <tr>
-                                        <th>Paid:</th>
-                                        <td><?= number_format($model->paidAmount) ?></td>
-                                    </tr>
-                                    <tr>
-                                        <th>Due:</th>
-                                        <td><?= number_format($model->dueAmount) ?></td>
-                                    </tr>
-                                    <tr>
-                                        <th>Discounted:</th>
-                                        <td><?= number_format($model->discountedAmount) ?></td>
-                                    </tr>
-                                    <tr>
-                                        <th>Refund Adjustment Amount:</th>
-                                        <td><?= number_format($model->refundAdjustmentAmount) ?></td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
                     <hr>
                     <div class="row">
                         <div class="col-md">
@@ -308,11 +296,6 @@ $this->registerJsFile(
                         </div>
                         <div class="col-md">
                             <?= $form->field($transaction, 'paymentDate')->widget(DatePicker::class, Helper::getDateWidget('date')); ?>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md">
-                            <?= $form->field($transaction, 'remarks')->textarea(['rows' => 3]) ?>
                         </div>
                     </div>
                     <div class="row">

@@ -2,7 +2,10 @@
 
 namespace app\modules\account\models;
 
+use app\modules\sale\models\ticket\TicketRefund;
 use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%refund_transaction}}".
@@ -26,12 +29,12 @@ use Yii;
  *
  * @property TicketRefund[] $ticketRefunds
  */
-class RefundTransaction extends \yii\db\ActiveRecord
+class RefundTransaction extends ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%refund_transaction}}';
     }
@@ -39,7 +42,7 @@ class RefundTransaction extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['uid', 'refId', 'refModel', 'createdBy', 'createdAt'], 'required'],
@@ -55,7 +58,7 @@ class RefundTransaction extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),
@@ -80,9 +83,9 @@ class RefundTransaction extends \yii\db\ActiveRecord
     /**
      * Gets query for [[TicketRefunds]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getTicketRefunds()
+    public function getTicketRefunds(): ActiveQuery
     {
         return $this->hasMany(TicketRefund::className(), ['refundTransactionId' => 'id']);
     }

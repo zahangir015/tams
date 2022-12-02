@@ -52,8 +52,7 @@ $(function () {
             $('#invoiceAmount').val(sum.toFixed(2));
         }
     });
-
-
+    
     function sumAllSelectedReceivingAmount() {
         var sum = 0;
         $(".amount").each(function () {
@@ -83,17 +82,6 @@ $(function () {
         }
     });
 
-    function calculateAdjustmentAmount() {
-        let adjustmentAmount = 0;
-        let amounts = $("#refundId :selected").map(function (i, el) {
-            return $(el).text().split(" | ")[1];
-        }).get();
-        for (let i = 0; i < amounts.length; i++) {
-            adjustmentAmount += parseFloat(amounts[i]);
-        }
-        return adjustmentAmount;
-    }
-
     var payAmount = 0;
     if ($("#invoice-amount").length) {
         payAmount = parseFloat($('#invoice-amount').val());
@@ -122,6 +110,17 @@ $(function () {
         var clientId = $(this).val();
         groupAjaxCall(clientId);
     });
+
+    function calculateAdjustmentAmount() {
+        let adjustmentAmount = 0;
+        let amounts = $("#refundId :selected").map(function (i, el) {
+            return $(el).text().split(" | ")[1];
+        }).get();
+        for (let i = 0; i < amounts.length; i++) {
+            adjustmentAmount += parseFloat(amounts[i]);
+        }
+        return adjustmentAmount;
+    }
 
     function groupAjaxCall(clientId) {
         $.ajax({
