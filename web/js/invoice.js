@@ -83,8 +83,8 @@ $(function () {
     });
 
     var payAmount = 0;
-    if ($("#invoice-amount").length) {
-        payAmount = parseFloat($('#invoice-amount').val());
+    if ($("#transaction-amount").length) {
+        payAmount = parseFloat($('#transaction-amount').val());
     }
     if ($("#groupinvoice-amount").length) {
         payAmount = parseFloat($('#groupinvoice-amount').val()) || 0;
@@ -92,9 +92,7 @@ $(function () {
 
     $('#refundId').on('change', function () {
         let adjustmentAmount = calculateAdjustmentAmount();
-        $('#invoice-adjustmentamount, #groupinvoice-adjustmentamount').val(adjustmentAmount);
-
-        $('#invoice-amount, #groupinvoice-amount').val((payAmount - adjustmentAmount));
+        $('#transaction-amount, #groupinvoice-amount').val(adjustmentAmount);
     });
 
 
@@ -102,7 +100,7 @@ $(function () {
         var discount = parseFloat($(this).val());
         if (!isNaN(discount)) {
             var amount = parseFloat($('#invoice-due').val()) || 0;
-            $('#invoice-amount').val(amount - discount);
+            $('#transaction-amount').val(amount - discount);
         }
     });
 

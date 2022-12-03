@@ -4,7 +4,6 @@ use app\components\GlobalConstant;
 use app\components\Helper;
 use app\models\Attachment;
 use kartik\date\DatePicker;
-use kartik\daterange\DateRangePicker;
 use kartik\file\FileInput;
 use kartik\select2\Select2;
 use yii\helpers\Html;
@@ -283,7 +282,7 @@ $this->registerJsFile(
                     </div>
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($transaction, 'paidAmount')->textInput(['value' => $model->paidAmount]) ?>
+                            <?= $form->field($transaction, 'paidAmount')->textInput(['value' => $model->dueAmount, 'max' => $model->dueAmount, 'min' => 1]) ?>
                         </div>
                         <div class="col-md">
                             <?= $form->field($transaction, 'paymentCharge')->textInput(['value' => 0]) ?>

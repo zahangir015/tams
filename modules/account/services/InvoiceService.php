@@ -9,7 +9,9 @@ use app\components\Helper;
 use app\modules\account\models\BankAccount;
 use app\modules\account\models\Invoice;
 use app\modules\account\models\InvoiceDetail;
+use app\modules\account\models\RefundTransaction;
 use app\modules\account\models\ServicePaymentTimeline;
+use app\modules\account\models\Transaction;
 use app\modules\account\repositories\InvoiceRepository;
 use app\modules\account\repositories\PaymentTimelineRepository;
 use app\modules\admin\models\User;
@@ -28,6 +30,8 @@ use yii\helpers\ArrayHelper;
 class InvoiceService
 {
     private InvoiceRepository $invoiceRepository;
+    private TransactionService $transactionService;
+    private RefundTransactionService $refundTransactionService;
 
     public function __construct()
     {
@@ -424,7 +428,7 @@ class InvoiceService
         return $paymentStatus;
     }
 
-    public static function payment(Invoice $invoice, array $requestData): array
+    public function payment(Invoice $invoice, array $requestData): array
     {
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
@@ -432,60 +436,40 @@ class InvoiceService
             if ($invoice->dueAmount <= 0) {
                 throw  new Exception('You are not allowed to perform this action. This invoice is already paid.');
             }
-            $oldPaymentCharge = $invoice->paymentCharge;
-            $oldAmount = $invoice->amount;
-            $invoice->load($requestData);
+
             $customer = $invoice->customer;
-            // Distribution amount set if coupon found
-            /*if ($invoice->paymentMode == Constant::PAYMENT_MODE['Coupon']) {
-                $couponCode = $invoice->chequeNumber;
-                $couponValidationResponse = InvoiceService::couponCodeCheck($customer, $couponCode);
-                if ($couponValidationResponse->code == 'SUCCESS') {
-                    $invoice->amount += $couponValidationResponse->response->discount;
-                } else {
-                    throw new Exception($couponValidationResponse->message);
-                }
-            }*/
-
-            // Distribution amount set if Refund Adjustment found
-            if (Yii::$app->request->post('Invoice')['refundId']) {
-                $invoice->amount += $invoice->adjustmentAmount;
+            // Process Transaction Data
+            $transactionStatementStoreResponse = $this->transactionService->store($invoice, $customer, $requestData);
+            if ($transactionStatementStoreResponse['error']) {
+                throw new Exception('Transaction Statement Data process failed - ' . $transactionStatementStoreResponse['message']);
             }
+            $transaction = $transactionStatementStoreResponse['data'];
 
-            $distributionAmount = $invoice->amount;
-            $invoice->due = $invoice->due - $distributionAmount;
-            $invoice->paymentCharge = $invoice->paymentCharge + $oldPaymentCharge;
-            $invoice->amount = $distributionAmount + $oldAmount;
-            $invoice->updatedBy = Yii::$app->user->id;
-            $invoice->updatedAt = time();
-
-            //process bank account
-            $bank = BankAccount::findOne(['id' => Yii::$app->request->post('Invoice')['bankId']]);
-            if (!$bank) {
-                throw new Exception('Bank Not found');
-            }
-
+            $distributionAmount = $transaction->paidAmount;
+            $invoice->dueAmount -= $distributionAmount;
+            $invoice->paidAmount += $distributionAmount;
             if (!$invoice->save()) {
                 throw new Exception('Invoice not saved  ' . Helper::processErrorMessages($invoice->getErrors()));
             }
 
             // Refund status update
-            if ($invoice->refundId) {
-                $refund = RefundTransaction::findOne(['id' => (int)$invoice->refundId]);
-                if (!$refund) {
+            if ($requestData['Transaction']['refundIds']) {
+                $refundTransactions = RefundTransaction::find()->where(['id' => $requestData['Transaction']['refundIds']])->all();
+                if (empty($refundTransactions)) {
                     throw new Exception('Refund Adjustment Failed');
                 }
-                $refund->adjustAmount = $invoice->adjustmentAmount;
-                $refund->adjusted = 1;
-                if (!$refund->save()) {
-                    throw new Exception('Refund Adjustment not save' . Utils::processErrorMessages($refund->getErrors()));
-                }
 
+                foreach ($refundTransactions as $key => $singleRefundTransaction){
+                    $singleRefundTransaction->adjustedAmount = $singleRefundTransaction->adjustmentAmount;
+                    $singleRefundTransaction->isAdjusted = 1;
+                    if (!$singleRefundTransaction->save()) {
+                        throw new Exception('Refund Adjustment not save' . Helper::processErrorMessages($singleRefundTransaction->getErrors()));
+                    }
+                }
             }
 
             AttachmentFile::uploadsById($invoice, 'invoiceFile');
             // Amount distributions
-
             $invoiceDetails = InvoiceDetail::find()->select(['refId', 'refModel'])->where(['invoiceId' => $invoice->id])->all();
 
             if (!count($invoiceDetails)) {

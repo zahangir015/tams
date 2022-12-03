@@ -56,6 +56,7 @@ class Transaction extends ActiveRecord
             [['paidAmount', 'paymentCharge'], 'number'],
             [['paymentDate'], 'safe'],
             [['paymentMode'], 'string'],
+            ['transactionNumber', 'unique'],
             [['uid'], 'string', 'max' => 36],
             [['transactionNumber'], 'string', 'max' => 64],
             [['refModel', 'subRefModel'], 'string', 'max' => 150],
