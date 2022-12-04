@@ -43,9 +43,15 @@ trait BehaviorTrait
 
     public function beforeSave($insert): bool
     {
-        /*if ($this->isNewRecord && isset(Yii::$app->controller->action)) {
+        if ($this->isNewRecord && $this->hasAttribute('createdBy')) {
+            $this->createdBy = Yii::$app->user->id ?? 1;
+        } elseif(!$this->isNewRecord && $this->hasAttribute('updatedBy')) {
+            $this->updatedBy = Yii::$app->user->id ?? 1;
+        }
+
+        if ($this->isNewRecord && isset(Yii::$app->controller->action)) {
             $this->uid = Yii::$app->db->createCommand('select UUID()')->queryScalar();
-        }*/
+        }
 
         if (!$this->isNewRecord) {
             $history = new History();

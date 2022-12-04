@@ -36,6 +36,8 @@ class InvoiceService
     public function __construct()
     {
         $this->invoiceRepository = new InvoiceRepository();
+        $this->transactionService = new TransactionService();
+        $this->refundTransactionService = new RefundTransactionService();
     }
 
     public function storeInvoice($requestData, ActiveRecord $invoice): bool
@@ -449,7 +451,7 @@ class InvoiceService
             $invoice->dueAmount -= $distributionAmount;
             $invoice->paidAmount += $distributionAmount;
             if (!$invoice->save()) {
-                throw new Exception('Invoice not saved  ' . Helper::processErrorMessages($invoice->getErrors()));
+                throw new Exception('Invoice update failed for payment - ' . Helper::processErrorMessages($invoice->getErrors()));
             }
 
             // Refund status update
@@ -459,7 +461,8 @@ class InvoiceService
                     throw new Exception('Refund Adjustment Failed');
                 }
 
-                foreach ($refundTransactions as $key => $singleRefundTransaction){
+                // TODO check the refund adjustment calculation
+                foreach ($refundTransactions as $key => $singleRefundTransaction) {
                     $singleRefundTransaction->adjustedAmount = $singleRefundTransaction->adjustmentAmount;
                     $singleRefundTransaction->isAdjusted = 1;
                     if (!$singleRefundTransaction->save()) {
@@ -470,12 +473,12 @@ class InvoiceService
 
             AttachmentFile::uploadsById($invoice, 'invoiceFile');
             // Amount distributions
-            $invoiceDetails = InvoiceDetail::find()->select(['refId', 'refModel'])->where(['invoiceId' => $invoice->id])->all();
+            /*$invoiceDetails = InvoiceDetail::find()->select(['refId', 'refModel'])->where(['invoiceId' => $invoice->id])->all();
 
             if (!count($invoiceDetails)) {
                 throw new Exception('No invoice details found');
-            }
-            $amountDistributionResponse = InvoiceService::distributeAmountToServices($invoiceDetails, $distributionAmount, $invoice->creator);
+            }*/
+            $amountDistributionResponse = self::distributePaidAmountToServices($invoice, $distributionAmount);
             if ($amountDistributionResponse['error']) {
                 throw new Exception($amountDistributionResponse['message']);
             }
@@ -527,10 +530,9 @@ class InvoiceService
         }
     }
 
-    public
-    static function distributeAmountToServices($invoiceDetails, $amount, $user): array
+    private function distributePaidAmountToServices($invoice, $amount): array
     {
-        foreach ($invoiceDetails as $invoiceDetail) {
+        foreach ($invoice->details as $invoiceDetail) {
             if ($amount <= 0) {
                 break;
             }
@@ -544,27 +546,29 @@ class InvoiceService
             $due = $service->quoteAmount - $service->receivedAmount;
             if ($due <= $amount) {
                 $service->receivedAmount += $due;
-                $service->paymentStatus = \app\modules\sales\components\Constant::PAYMENT_STATUS['Full Paid'];
-                $paidAmountThisTime = $due;
+                $service->paymentStatus = ServiceConstant::PAYMENT_STATUS['Full Paid'];
+                //$paidAmountThisTime = $due;
                 $amount -= $due;
             } else {
                 $service->receivedAmount += $amount;
-                $service->paymentStatus = \app\modules\sales\components\Constant::PAYMENT_STATUS['Partially Paid'];
-                $paidAmountThisTime = $amount;
+                $service->paymentStatus = ServiceConstant::PAYMENT_STATUS['Partially Paid'];
+                //$paidAmountThisTime = $amount;
                 $amount = 0;
             }
             $amountDue = $service->quoteAmount - $service->receivedAmount;
             if (!$service->save()) {
-                return ['error' => true, 'message' => "{$invoiceDetail->refModel} not updated with id {$invoiceDetail->refId}"];
+                return ['error' => true, 'message' => "{$invoiceDetail->refModel} Model with id {$invoiceDetail->refId} update failed - "];
             }
-            $servicePaymentDetailsStoreResponse = ServicePaymentDetail::storeServicePaymentDetail($invoiceDetail->refModel, $invoiceDetail->refId, Invoice::class, $service->invoiceId, $paidAmountThisTime, $amountDue, $user);
-            if ($servicePaymentDetailsStoreResponse['error']) {
-                return ['error' => true, 'message' => $servicePaymentDetailsStoreResponse['message']];
-            }
+
             $invoiceDetailsResponse = InvoiceDetail::storeOrUpdateInvoiceDetail($service->invoiceId, $invoiceDetail->refModel, $invoiceDetail->refId, $service->receivedAmount, $amountDue);
             if ($invoiceDetailsResponse['error']) {
                 return ['error' => true, 'message' => $invoiceDetailsResponse['message']];
             }
+
+            /*$servicePaymentDetailsStoreResponse = ServicePaymentDetail::storeServicePaymentDetail($invoiceDetail->refModel, $invoiceDetail->refId, Invoice::class, $service->invoiceId, $paidAmountThisTime, $amountDue, $user);
+            if ($servicePaymentDetailsStoreResponse['error']) {
+                return ['error' => true, 'message' => $servicePaymentDetailsStoreResponse['message']];
+            }*/
 
         }
 
