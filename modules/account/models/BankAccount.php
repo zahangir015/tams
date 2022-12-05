@@ -4,6 +4,7 @@ namespace app\modules\account\models;
 
 use app\traits\BehaviorTrait;
 use Yii;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "{{%bank_account}}".
@@ -35,7 +36,7 @@ class BankAccount extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%bank_account}}';
     }
@@ -43,10 +44,10 @@ class BankAccount extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            [['name', 'shortName', 'accountName', 'accountNumber', 'branch', 'createdBy'], 'required'],
+            [['name', 'shortName', 'accountName', 'accountNumber', 'branch'], 'required'],
             [['paymentCharge'], 'number'],
             [['tag'], 'safe'],
             [['status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
@@ -63,7 +64,7 @@ class BankAccount extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),
@@ -90,9 +91,9 @@ class BankAccount extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Transactions]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getTransactions()
+    public function getTransactions(): ActiveQuery
     {
         return $this->hasMany(Transaction::className(), ['bankId' => 'id']);
     }

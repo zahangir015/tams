@@ -447,7 +447,7 @@ class InvoiceService
             $invoice->dueAmount -= $distributionAmount;
             $invoice->paidAmount += $distributionAmount;
             if (!$invoice->save()) {
-                throw new Exception('Invoice not saved  ' . Helper::processErrorMessages($invoice->getErrors()));
+                throw new Exception('Invoice update failed for payment - ' . Helper::processErrorMessages($invoice->getErrors()));
             }
 
             // Refund status update
@@ -457,6 +457,7 @@ class InvoiceService
                     throw new Exception('Refund Adjustment Failed');
                 }
 
+                // TODO check the refund adjustment calculation
                 foreach ($refundTransactions as $key => $singleRefundTransaction) {
                     $singleRefundTransaction->adjustedAmount = $singleRefundTransaction->adjustmentAmount;
                     $singleRefundTransaction->isAdjusted = 1;
@@ -471,8 +472,12 @@ class InvoiceService
             /*$invoiceDetails = InvoiceDetail::find()->select(['refId', 'refModel'])->where(['invoiceId' => $invoice->id])->all();
             if (!count($invoiceDetails)) {
                 throw new Exception('No invoice details found');
-            }*/
+            }
             $amountDistributionResponse = self::distributeAmountToServices($invoice, $distributionAmount);
+            if (!count($invoiceDetails)) {
+                throw new Exception('No invoice details found');
+            }*/
+            $amountDistributionResponse = self::distributePaidAmountToServices($invoice, $distributionAmount);
             if ($amountDistributionResponse['error']) {
                 throw new Exception($amountDistributionResponse['message']);
             }
@@ -516,8 +521,7 @@ class InvoiceService
             return ['error' => true, 'message' => $e->getMessage() . ' - ' . $e->getFile() . ' - ' . $e->getLine()];
         }
     }
-
-    public function distributeAmountToServices(ActiveRecord $invoice, $amount): array
+    private function distributePaidAmountToServices($invoice, $amount): array
     {
         foreach ($invoice->details as $invoiceDetail) {
             if ($amount <= 0) {
