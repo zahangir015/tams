@@ -23,10 +23,12 @@ use yii\helpers\ArrayHelper;
 class HotelService
 {
     private HotelRepository $hotelRepository;
+    private InvoiceService $invoiceService;
 
     public function __construct()
     {
         $this->hotelRepository = new HotelRepository();
+        $this->invoiceService = new InvoiceService();
     }
 
     private static function calculateNetProfit(mixed $quoteAmount, mixed $costOfSale)
@@ -36,7 +38,7 @@ class HotelService
 
     public function findHotel(string $uid, $withArray = []): ActiveRecord
     {
-        return $this->hotelRepository->findOne($uid, $withArray);
+        return $this->hotelRepository->findOne($uid, Hotel::class, $withArray);
     }
 
     public function storeHotel(array $requestData): bool
@@ -70,7 +72,7 @@ class HotelService
                     $supplierLedgerArray = $hotelSupplierProcessedData['supplierLedgerArray'];
 
                     // Invoice process and create
-                    $autoInvoiceCreateResponse = InvoiceService::autoInvoice($customer->id, $services, 1, Yii::$app->user);
+                    $autoInvoiceCreateResponse = $this->invoiceService->autoInvoice($customer->id, $services, 1, Yii::$app->user);
                     if ($autoInvoiceCreateResponse['error']) {
                         throw new Exception('Auto Invoice creation failed - ' . $autoInvoiceCreateResponse['message']);
                     }
@@ -145,7 +147,7 @@ class HotelService
 
                     if ($motherHotel->invoiceId) {
                         // Invoice process
-                        $autoInvoiceCreateResponse = InvoiceService::autoInvoiceForRefund($motherHotel->invoice, $service, Yii::$app->user);
+                        $autoInvoiceCreateResponse = $this->invoiceService->autoInvoiceForRefund($motherHotel->invoice, $service, Yii::$app->user);
                         if ($autoInvoiceCreateResponse['error']) {
                             throw new Exception('Auto Invoice detail creation failed - ' . $autoInvoiceCreateResponse['message']);
                         }

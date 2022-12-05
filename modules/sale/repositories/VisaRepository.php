@@ -2,44 +2,22 @@
 
 namespace app\modules\sale\repositories;
 
+use app\components\GlobalConstant;
 use app\modules\sale\models\visa\Visa;
 use app\modules\sale\models\visa\VisaSupplier;
+use ParentRepository;
 use Yii;
 use yii\db\ActiveRecord;
 
-class VisaRepository
+class VisaRepository extends ParentRepository
 {
-    public function findOne(string $uid, mixed $withArray): array|ActiveRecord|null
+    public function findAllVisa(string $query): array
     {
-        $query = Visa::find();
-        if (!empty($withArray)) {
-            $query->with($withArray);
-        }
-
-        return $query->where(['uid' => $uid])->one();
-    }
-
-    public function findSupplier(string $uid, mixed $withArray): array|ActiveRecord|null
-    {
-        $query = VisaSupplier::find();
-        if (!empty($withArray)) {
-            $query->with($withArray);
-        }
-
-        return $query->where(['uid' => $uid])->one();
-    }
-
-    public function batchStore($table, $columns, $rows): bool
-    {
-        if (Yii::$app->db->createCommand()->batchInsert($table, $columns, $rows)->execute()) {
-            return true;
-        }
-        return false;
-    }
-
-    public function store(ActiveRecord $object): ActiveRecord
-    {
-        $object->save();
-        return $object;
+        return Visa::find()
+            ->select(['id', 'identificationNumber', 'reference'])
+            ->where(['like', 'identificationNumber', $query])
+            ->orWhere(['like', 'reference', $query])
+            ->andWhere(['status' => GlobalConstant::ACTIVE_STATUS])
+            ->all();
     }
 }

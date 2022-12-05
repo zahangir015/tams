@@ -27,10 +27,12 @@ use yii\web\UploadedFile;
 class FlightService
 {
     private FlightRepository $flightRepository;
+    private InvoiceService $invoiceService;
 
     public function __construct()
     {
         $this->flightRepository = new FlightRepository();
+        $this->invoiceService = new InvoiceService();
     }
 
     public function storeTicket(array $requestData): bool
@@ -72,7 +74,7 @@ class FlightService
 
                         // Invoice details data process
                         if (($ticket->type == ServiceConstant::TICKET_TYPE_FOR_CREATE['Reissue']) && ($ticket->invoiceId)) {
-                            $autoInvoiceCreateResponse = InvoiceService::addReissueServiceToInvoice($ticket);
+                            $autoInvoiceCreateResponse = $this->invoiceService->addReissueServiceToInvoice($ticket);
                             if ($autoInvoiceCreateResponse['error']) {
                                 $dbTransaction->rollBack();
                                 throw new Exception('Invoice - ' . $autoInvoiceCreateResponse['message']);
@@ -117,14 +119,14 @@ class FlightService
                 // Invoice process and create
                 if (!empty($tickets)) {
                     if ($requestData['group'] == 1) {
-                        $autoInvoiceCreateResponse = InvoiceService::autoInvoice($customer->id, $tickets);
+                        $autoInvoiceCreateResponse = $this->invoiceService->autoInvoice($customer->id, $tickets);
                         if ($autoInvoiceCreateResponse['error']) {
                             throw new Exception('Invoice - ' . $autoInvoiceCreateResponse['message']);
                         }
                         $invoice = $autoInvoiceCreateResponse['data'];
                     } else {
                         foreach ($tickets as $ticket) {
-                            $autoInvoiceCreateResponse = InvoiceService::autoInvoice($customer->id, [$ticket]);
+                            $autoInvoiceCreateResponse = $this->invoiceService->autoInvoice($customer->id, [$ticket]);
                             if ($autoInvoiceCreateResponse['error']) {
                                 throw new Exception('Invoice - ' . $autoInvoiceCreateResponse['message']);
                             }
@@ -250,7 +252,7 @@ class FlightService
             }
 
             // Add refund ticket in invoice
-            $invoiceDetailProcessResponse = InvoiceService::addRefundServiceToInvoice($newRefundTicket);
+            $invoiceDetailProcessResponse = $this->invoiceService->addRefundServiceToInvoice($newRefundTicket);
             if ($invoiceDetailProcessResponse['error']) {
                 throw new Exception('Invoice creation failed - ' . $invoiceDetailProcessResponse['message']);
             }
@@ -459,7 +461,7 @@ class FlightService
             $ticket->receivedAmount = 0;
             $ticket->status = GlobalConstant::ACTIVE_STATUS;
         }
-        if ($ticket->type == ServiceConstant::TICKET_TYPE_FOR_CREATE['Reissue']){
+        if ($ticket->type == ServiceConstant::TICKET_TYPE_FOR_CREATE['Reissue']) {
             $ticket->invoiceId = Ticket::findOne(['id' => $ticket->motherTicketId])->invoiceId;
         }
         return $ticket;
@@ -544,7 +546,7 @@ class FlightService
 
     public function findTicket(string $uid, $withArray = []): ActiveRecord
     {
-        return $this->flightRepository->findOneTicket($uid, $withArray);
+        return $this->flightRepository->findOne($uid, Ticket::class, $withArray);
     }
 
     public function ajaxCostCalculation($baseFare, $tax, $airlineId)

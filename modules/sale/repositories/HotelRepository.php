@@ -2,33 +2,19 @@
 
 namespace app\modules\sale\repositories;
 
+use app\components\GlobalConstant;
 use app\modules\sale\models\hotel\Hotel;
-use Yii;
-use yii\db\ActiveRecord;
+use ParentRepository;
 
-class HotelRepository
+class HotelRepository extends ParentRepository
 {
-    public function findOne(string $uid, mixed $withArray): ActiveRecord
+    public function findAllHotel(string $query): array
     {
-        $query = Hotel::find();
-        if (!empty($withArray)) {
-            $query->with($withArray);
-        }
-
-        return $query->where(['uid' => $uid])->one();
-    }
-
-    public function batchStore($table, $columns, $rows): bool
-    {
-        if (Yii::$app->db->createCommand()->batchInsert($table, $columns, $rows)->execute()) {
-            return true;
-        }
-        return false;
-    }
-
-    public function store(ActiveRecord $object): ActiveRecord
-    {
-        $object->save();
-        return $object;
+        return Hotel::find()
+            ->select(['id', 'identificationNumber', 'voucherNumber'])
+            ->where(['like', 'identificationNumber', $query])
+            ->orWhere(['like', 'voucherNumber', $query])
+            ->andWhere(['status' => GlobalConstant::ACTIVE_STATUS])
+            ->all();
     }
 }

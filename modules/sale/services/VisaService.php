@@ -21,10 +21,12 @@ use yii\db\Exception;
 class VisaService
 {
     private VisaRepository $visaRepository;
+    private InvoiceService $invoiceService;
 
     public function __construct()
     {
         $this->visaRepository = new VisaRepository();
+        $this->invoiceService = new InvoiceService();
     }
 
     public function storeVisa(array $requestData): bool
@@ -57,7 +59,7 @@ class VisaService
                     $supplierLedgerArray = $visaSupplierProcessedData['supplierLedgerArray'];
 
                     // Invoice process and create
-                    $autoInvoiceCreateResponse = InvoiceService::autoInvoice($customer->id, $services, 1, Yii::$app->user);
+                    $autoInvoiceCreateResponse = $this->invoiceService->autoInvoice($customer->id, $services, 1, Yii::$app->user);
                     if ($autoInvoiceCreateResponse['error']) {
                         throw new Exception('Auto Invoice creation failed - ' . $autoInvoiceCreateResponse['message']);
                     }
@@ -132,7 +134,7 @@ class VisaService
 
                     if ($motherVisa->invoiceId) {
                         // Invoice process
-                        $autoInvoiceCreateResponse = InvoiceService::autoInvoiceForRefund($motherVisa->invoice, $service, Yii::$app->user);
+                        $autoInvoiceCreateResponse = $this->invoiceService->autoInvoiceForRefund($motherVisa->invoice, $service, Yii::$app->user);
                         if ($autoInvoiceCreateResponse['error']) {
                             throw new Exception('Auto Invoice creation failed - ' . $autoInvoiceCreateResponse['message']);
                         }
@@ -396,11 +398,11 @@ class VisaService
 
     public function findVisa(string $uid, $withArray = []): ActiveRecord
     {
-        return $this->visaRepository->findOne($uid, $withArray);
+        return $this->visaRepository->findOne($uid, Visa::class,$withArray);
     }
 
     public function findVisaSupplier(string $uid, $withArray = []): ActiveRecord
     {
-        return $this->visaRepository->findSupplier($uid, $withArray);
+        return $this->visaRepository->findOne($uid, VisaSupplier::class, $withArray);
     }
 }

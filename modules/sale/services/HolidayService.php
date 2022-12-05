@@ -21,10 +21,12 @@ use yii\helpers\ArrayHelper;
 class HolidayService
 {
     private HolidayRepository $holidayRepository;
+    private InvoiceService $invoiceService;
 
     public function __construct()
     {
         $this->holidayRepository = new HolidayRepository();
+        $this->invoiceService = new InvoiceService();
     }
 
     public function storeHoliday(array $requestData): bool
@@ -58,7 +60,7 @@ class HolidayService
                     $supplierLedgerArray = $holidaySupplierProcessedData['supplierLedgerArray'];
 
                     // Invoice process and create
-                    $autoInvoiceCreateResponse = InvoiceService::autoInvoice($customer->id, $services, 1, Yii::$app->user);
+                    $autoInvoiceCreateResponse = $this->invoiceService->autoInvoice($customer->id, $services, 1, Yii::$app->user);
                     if ($autoInvoiceCreateResponse['error']) {
                         throw new Exception('Auto Invoice creation failed - ' . $autoInvoiceCreateResponse['message']);
                     }
@@ -133,7 +135,7 @@ class HolidayService
 
                     if ($motherHoliday->invoiceId) {
                         // Invoice process
-                        $autoInvoiceDetailCreateResponse = InvoiceService::autoInvoiceForRefund($motherHoliday->invoice, $service, Yii::$app->user);
+                        $autoInvoiceDetailCreateResponse = $this->invoiceService->autoInvoiceForRefund($motherHoliday->invoice, $service, Yii::$app->user);
                         if ($autoInvoiceDetailCreateResponse['error']) {
                             throw new Exception('Auto Invoice detail creation failed - ' . $autoInvoiceDetailCreateResponse['message']);
                         }
@@ -310,7 +312,7 @@ class HolidayService
 
     public function findHoliday(string $uid, $withArray = []): ActiveRecord
     {
-        return $this->holidayRepository->findOne($uid, $withArray);
+        return $this->holidayRepository->findOne($uid, Holiday::class, $withArray);
     }
 
     public function getCategories(): array

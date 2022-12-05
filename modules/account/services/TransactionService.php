@@ -19,7 +19,7 @@ class TransactionService
     public function store(ActiveRecord $refObject, ActiveRecord $subRefObject,array $requestData): array
     {
         $transactionStatement = new Transaction();
-        $transactionStatement->load(['Transaction' => $requestData]);
+        $transactionStatement->load($requestData);
         $transactionStatement->transactionNumber = Helper::transactionNumber();
         $transactionStatement->refId = $refObject->id;
         $transactionStatement->refModel = $refObject::class;
