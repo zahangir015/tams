@@ -138,13 +138,13 @@ class InvoiceController extends ParentController
     {
         $model = $this->invoiceRepository->findOne(['uid' => $uid], Invoice::class, ['details', 'customer', 'transactions']);
         $transaction = new Transaction();
-        $model->scenario = 'invoicePay';
         if (Yii::$app->request->isPost) {
             $invoicePaymentResponse = $this->invoiceService->payment($model, Yii::$app->request->post());
             Yii::$app->session->setFlash($invoicePaymentResponse['error'] ? 'error' : 'success', $invoicePaymentResponse['message']);
             if (!$invoicePaymentResponse['error']) {
                 return $this->render('view', [
                     'model' => $model,
+                    'company' => Company::findOne(['id' => 1]),
                 ]);
             }
         }

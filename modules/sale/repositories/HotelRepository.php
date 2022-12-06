@@ -4,7 +4,7 @@ namespace app\modules\sale\repositories;
 
 use app\components\GlobalConstant;
 use app\modules\sale\models\hotel\Hotel;
-use ParentRepository;
+use app\repository\ParentRepository;
 
 class HotelRepository extends ParentRepository
 {

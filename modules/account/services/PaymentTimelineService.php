@@ -11,6 +11,13 @@ use yii\db\ActiveRecord;
 
 class PaymentTimelineService
 {
+    private PaymentTimelineRepository $paymentTimelineRepository;
+
+    public function __construct()
+    {
+        $this->paymentTimelineRepository = new PaymentTimelineRepository();
+    }
+
     public static function processData(Invoice $invoice, array $singleService): array
     {
         $paymentTimelineBatchData = [];
@@ -106,7 +113,7 @@ class PaymentTimelineService
     {
     }
 
-    public static function storeServicePaymentDetailData(array $services, ActiveRecord $invoiceDetail): array
+    public function storeServicePaymentDetailData(array $services, ActiveRecord $invoiceDetail): array
     {
         foreach ($services as $key => $service) {
             if ($key == 'parentService' && $service->paymentStatus == GlobalConstant::PAYMENT_STATUS['Full Paid']) {
@@ -121,7 +128,7 @@ class PaymentTimelineService
             $model->paidAmount = ($key == 'parentService') ? $service->receivedAmount : 0;
             $model->dueAmount = ($key == 'parentService') ? 0 : ($service->quoteAmount - $services['parentService']->receivedAmount);
             $model->status = GlobalConstant::ACTIVE_STATUS;
-            $model = PaymentTimelineRepository::store($model);
+            $model = $this->paymentTimelineRepository->store($model);
             if ($model->hasErrors()) {
                 return ['error' => true, 'message' => 'Service Payment details not saved - ' . Helper::processErrorMessages($model->getErrors())];
             }

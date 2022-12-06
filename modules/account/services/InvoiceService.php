@@ -2,25 +2,17 @@
 
 namespace app\modules\account\services;
 
-use app\components\AttachmentFile;
-use app\components\Constant;
 use app\components\GlobalConstant;
 use app\components\Helper;
 use app\modules\account\models\BankAccount;
 use app\modules\account\models\Invoice;
 use app\modules\account\models\InvoiceDetail;
 use app\modules\account\models\RefundTransaction;
-use app\modules\account\models\ServicePaymentTimeline;
-use app\modules\account\models\Transaction;
 use app\modules\account\repositories\InvoiceRepository;
-use app\modules\account\repositories\PaymentTimelineRepository;
 use app\modules\admin\models\User;
 use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\Customer;
-use app\modules\sale\repositories\HolidayRepository;
 use app\modules\sale\services\SaleService;
-use app\modules\sales\models\ServicePaymentDetail;
-use PhpParser\Node\Expr\Cast\Double;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\db\Exception;
@@ -31,6 +23,7 @@ class InvoiceService
 {
     private InvoiceRepository $invoiceRepository;
     private TransactionService $transactionService;
+    private LedgerService $ledgerService;
     private RefundTransactionService $refundTransactionService;
 
     public function __construct()
@@ -38,6 +31,7 @@ class InvoiceService
         $this->invoiceRepository = new InvoiceRepository();
         $this->transactionService = new TransactionService();
         $this->refundTransactionService = new RefundTransactionService();
+        $this->ledgerService = new LedgerService();
     }
 
     public function storeInvoice($requestData, ActiveRecord $invoice): bool
@@ -97,7 +91,7 @@ class InvoiceService
                 'debit' => $invoice->paidAmount,
                 'credit' => 0
             ];
-            $ledgerRequestResponse = LedgerService::store($ledgerRequestData);
+            $ledgerRequestResponse = $this->ledgerService->store($ledgerRequestData);
             if ($ledgerRequestResponse['error']) {
                 throw new Exception('Customer Ledger creation failed - ' . $ledgerRequestResponse['message']);
             }
@@ -148,7 +142,7 @@ class InvoiceService
             'debit' => array_sum(array_column($services, 'dueAmount')),
             'credit' => 0
         ];
-        $ledgerRequestResponse = LedgerService::store($ledgerRequestData);
+        $ledgerRequestResponse = $this->ledgerService->store($ledgerRequestData);
         if ($ledgerRequestResponse['error']) {
             return ['error' => true, 'message' => $ledgerRequestResponse['message']];
         }
@@ -199,7 +193,7 @@ class InvoiceService
             'credit' => ($invoiceDetail->dueAmount > 0) ? 0 : $invoiceDetail->dueAmount
         ];
 
-        $ledgerRequestResponse = LedgerService::store($ledgerRequestData);
+        $ledgerRequestResponse = $this->ledgerService->store($ledgerRequestData);
         if ($ledgerRequestResponse['error']) {
             return ['error' => $ledgerRequestResponse['error'], 'message' => 'Customer Ledger creation failed - ' . $ledgerRequestResponse['message']];
         }
@@ -252,7 +246,7 @@ class InvoiceService
             'debit' => ($invoiceDetail->dueAmount > 0) ? $invoiceDetail->dueAmount : 0,
             'credit' => ($invoiceDetail->dueAmount > 0) ? 0 : $invoiceDetail->dueAmount
         ];
-        $ledgerRequestResponse = LedgerService::store($ledgerRequestData);
+        $ledgerRequestResponse = $this->ledgerService->store($ledgerRequestData);
         if ($ledgerRequestResponse['error']) {
             return ['error' => true, 'message' => 'Customer Ledger creation failed - ' . $ledgerRequestResponse['message']];
         }
@@ -260,8 +254,7 @@ class InvoiceService
         return ['error' => false, 'data' => $invoiceDetail];
     }
 
-    public
-    static function autoInvoiceForReissue(Invoice $invoice, array $service, $user): array
+    public function autoInvoiceForReissue(Invoice $invoice, array $service, $user): array
     {
         // Invoice Details process
         $invoiceDetail = new InvoiceDetail();
@@ -306,7 +299,7 @@ class InvoiceService
             'debit' => ($invoiceDetail->dueAmount > 0) ? $invoiceDetail->dueAmount : 0,
             'credit' => ($invoiceDetail->dueAmount > 0) ? 0 : $invoiceDetail->dueAmount
         ];
-        $ledgerRequestResponse = LedgerService::store($ledgerRequestData);
+        $ledgerRequestResponse = $this->ledgerService->store($ledgerRequestData);
         if ($ledgerRequestResponse['error']) {
             return ['error' => true, 'message' => 'Customer Ledger creation failed - ' . $ledgerRequestResponse['message']];
         }
@@ -402,7 +395,7 @@ class InvoiceService
             'credit' => ($invoiceDetail->dueAmount > 0) ? 0 : $invoiceDetail->dueAmount
         ];
 
-        $ledgerRequestResponse = LedgerService::store($ledgerRequestData);
+        $ledgerRequestResponse = $this->ledgerService->store($ledgerRequestData);
         if ($ledgerRequestResponse['error']) {
             return ['error' => $ledgerRequestResponse['error'], 'message' => 'Customer Ledger creation failed - ' . $ledgerRequestResponse['message']];
         }
@@ -426,13 +419,18 @@ class InvoiceService
         return $paymentStatus;
     }
 
-    public function payment(Invoice $invoice, array $requestData): array
+    public function payment(ActiveRecord $invoice, array $requestData): array
     {
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
             // If invoice is already paid
             if ($invoice->dueAmount <= 0) {
                 throw  new Exception('You are not allowed to perform this action. This invoice is already paid.');
+            }
+
+            // If distribtion amount is greater than dueAmount
+            if ($invoice->dueAmount < $requestData['Transaction']['paidAmount']) {
+                throw  new Exception('You are not allowed to perform this action. This invoice will be over paid.');
             }
 
             $customer = $invoice->customer;
@@ -493,7 +491,7 @@ class InvoiceService
                 'debit' => 0,
                 'credit' => $distributionAmount
             ];
-            $customerLedgerRequestResponse = LedgerService::store($customerLedgerRequestData);
+            $customerLedgerRequestResponse = $this->ledgerService->store($customerLedgerRequestData);
             if ($customerLedgerRequestResponse['error']) {
                 throw new Exception('Customer Ledger creation failed - ' . $customerLedgerRequestResponse['message']);
             }
@@ -502,14 +500,14 @@ class InvoiceService
             $bankLedgerRequestData = [
                 'title' => 'Service Payment received',
                 'reference' => 'Invoice Number - ' . $invoice->invoiceNumber,
-                'refId' => $transaction->bank,
+                'refId' => $transaction->bankId,
                 'refModel' => BankAccount::class,
                 'subRefId' => $invoice->id,
                 'subRefModel' => $invoice::class,
                 'debit' => $distributionAmount,
                 'credit' => 0
             ];
-            $bankLedgerRequestResponse = LedgerService::store($bankLedgerRequestData);
+            $bankLedgerRequestResponse = $this->ledgerService->store($bankLedgerRequestData);
             if ($bankLedgerRequestResponse['error']) {
                 throw new Exception('Bank Ledger creation failed - ' . $bankLedgerRequestResponse['message']);
             }
@@ -521,6 +519,7 @@ class InvoiceService
             return ['error' => true, 'message' => $e->getMessage() . ' - ' . $e->getFile() . ' - ' . $e->getLine()];
         }
     }
+
     private function distributePaidAmountToServices($invoice, $amount): array
     {
         foreach ($invoice->details as $invoiceDetail) {

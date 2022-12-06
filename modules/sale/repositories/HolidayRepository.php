@@ -3,11 +3,8 @@
 namespace app\modules\sale\repositories;
 
 use app\components\GlobalConstant;
-use app\modules\sale\models\holiday\Holiday;
 use app\modules\sale\models\holiday\HolidayCategory;
-use ParentRepository;
-use Yii;
-use yii\db\ActiveRecord;
+use app\repository\ParentRepository;
 
 class HolidayRepository extends ParentRepository
 {

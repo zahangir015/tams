@@ -4,7 +4,7 @@ namespace app\modules\sale\repositories;
 
 use app\components\GlobalConstant;
 use app\modules\sale\models\ticket\Ticket;
-use ParentRepository;
+use app\repository\ParentRepository;
 use Yii;
 use yii\db\ActiveRecord;
 

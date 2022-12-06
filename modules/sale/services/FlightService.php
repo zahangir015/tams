@@ -546,7 +546,7 @@ class FlightService
 
     public function findTicket(string $uid, $withArray = []): ActiveRecord
     {
-        return $this->flightRepository->findOne($uid, Ticket::class, $withArray);
+        return $this->flightRepository->findOne(['uid' => $uid], Ticket::class, $withArray);
     }
 
     public function ajaxCostCalculation($baseFare, $tax, $airlineId)

@@ -4,10 +4,7 @@ namespace app\modules\sale\repositories;
 
 use app\components\GlobalConstant;
 use app\modules\sale\models\visa\Visa;
-use app\modules\sale\models\visa\VisaSupplier;
-use ParentRepository;
-use Yii;
-use yii\db\ActiveRecord;
+use app\repository\ParentRepository;
 
 class VisaRepository extends ParentRepository
 {

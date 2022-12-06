@@ -13,6 +13,13 @@ use app\modules\sale\models\Supplier;
 
 class LedgerService
 {
+    private LedgerRepository $ledgerRepository;
+
+    public function __construct()
+    {
+        $this->ledgerRepository = new LedgerRepository();
+    }
+
     public static function batchInsert($invoice, array $ledgerArray): array
     {
         foreach ($ledgerArray as $key => $value) {
@@ -36,7 +43,7 @@ class LedgerService
         return ['error' => false, 'message' => 'Ledger created successfully.'];
     }
 
-    public static function store(array $requestData): array
+    public function store(array $requestData): array
     {
         $balance = 0;
         if ($previousLedger = LedgerRepository::findLatestOne($requestData['refId'], $requestData['refModel'])) {
@@ -50,7 +57,7 @@ class LedgerService
         $newLedger->balance = $closingBalance;
         $newLedger->date = date('Y-m-d');
         $newLedger->status = GlobalConstant::ACTIVE_STATUS;
-        $newLedger = LedgerRepository::store($newLedger);
+        $newLedger = $this->ledgerRepository->store($newLedger);
         if ($newLedger->hasErrors()) {
             return ['error' => true, 'message' => 'Ledger creation failed - ' . Helper::processErrorMessages($newLedger->getErrors())];
         }
