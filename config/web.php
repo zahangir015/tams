@@ -89,6 +89,9 @@ $config = [
         'account' => [
             'class' => 'app\modules\account\Module',
         ],
+        'hrm' => [
+            'class' => 'app\modules\hrm\Module',
+        ],
     ],
     'as access' => [
         'class' => 'app\modules\admin\components\AccessControl',

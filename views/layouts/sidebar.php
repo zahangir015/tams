@@ -52,7 +52,35 @@ use hail812\adminlte\widgets\Menu;
                     ['label' => 'Routes',  'icon' => 'list-alt', 'url' => ['/admin/route']],
                     ['label' => 'Permission', 'icon' => 'key', 'url' => ['/admin/permission']],
                     ['label' => 'Assignment',  'icon' => 'check-double', 'url' => ['/admin/assignment']],
-                    ['label' => 'SALES SETTINGS', 'header' => true],
+                    ['label' => 'HRM', 'header' => true],
+                    [
+                        'label' => 'Branch Settings',
+                        'icon' => 'sitemap',
+                        'badge' => '<span class="right badge badge-info">2</span>',
+                        'items' => [
+                            ['label' => 'Branch Add', 'icon' => 'plus', 'url' => ['/hrm/branch/create']],
+                            ['label' => 'Branch List', 'icon' => 'list', 'url' => ['/hrm/branch/index']],
+                        ]
+                    ],
+                    [
+                        'label' => 'Department',
+                        'icon' => 'menu',
+                        'badge' => '<span class="right badge badge-info">2</span>',
+                        'items' => [
+                            ['label' => 'Department Add', 'icon' => 'menu', 'url' => ['/hrm/department/create']],
+                            ['label' => 'Department List', 'icon' => 'menu', 'url' => ['/hrm/department/index']],
+                        ]
+                    ],
+                    [
+                        'label' => 'Designation',
+                        'icon' => 'menu',
+                        'badge' => '<span class="right badge badge-info">2</span>',
+                        'items' => [
+                            ['label' => 'Designation Add', 'icon' => 'menu', 'url' => ['/hrm/designation/create']],
+                            ['label' => 'Designation List', 'icon' => 'menu', 'url' => ['/hrm/designation/index']],
+                        ]
+                    ],
+                    ['label' => 'SALES', 'header' => true],
                     [
                         'label' => 'Supplier Settings',
                         'icon' => 'truck',

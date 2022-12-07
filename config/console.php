@@ -38,10 +38,9 @@ $config = [
         ],
         'migrate' => [
             'class' => 'yii\console\controllers\MigrateController',
-            'migrationPath' => ['@app/migrations','@app/modules/sale/migrations'], // allows to disable not namespaced migration completely
+            'migrationPath' => ['@app/migrations','@app/modules/sale/migrations','@app/modules/hrm/migrations'], // allows to disable not namespaced migration completely
         ],
     ],
-
 ];
 
 if (YII_ENV_DEV) {
