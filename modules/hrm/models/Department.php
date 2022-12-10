@@ -4,6 +4,7 @@ namespace app\modules\hrm\models;
 
 use app\traits\BehaviorTrait;
 use Yii;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
 /**
@@ -22,6 +23,7 @@ use yii\db\ActiveRecord;
 class Department extends ActiveRecord
 {
     use BehaviorTrait;
+
     /**
      * {@inheritdoc}
      */
@@ -62,4 +64,11 @@ class Department extends ActiveRecord
             'updatedAt' => Yii::t('app', 'Updated At'),
         ];
     }
+
+    public function getParent(): ActiveQuery
+    {
+        return $this->hasOne(self::class, ['parentId' => 'id']);
+    }
+
+
 }

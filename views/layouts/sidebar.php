@@ -64,20 +64,20 @@ use hail812\adminlte\widgets\Menu;
                     ],
                     [
                         'label' => 'Department',
-                        'icon' => 'menu',
+                        'icon' => 'building',
                         'badge' => '<span class="right badge badge-info">2</span>',
                         'items' => [
-                            ['label' => 'Department Add', 'icon' => 'menu', 'url' => ['/hrm/department/create']],
-                            ['label' => 'Department List', 'icon' => 'menu', 'url' => ['/hrm/department/index']],
+                            ['label' => 'Department Add', 'icon' => 'plus', 'url' => ['/hrm/department/create']],
+                            ['label' => 'Department List', 'icon' => 'list', 'url' => ['/hrm/department/index']],
                         ]
                     ],
                     [
                         'label' => 'Designation',
-                        'icon' => 'menu',
+                        'icon' => 'user-tie',
                         'badge' => '<span class="right badge badge-info">2</span>',
                         'items' => [
-                            ['label' => 'Designation Add', 'icon' => 'menu', 'url' => ['/hrm/designation/create']],
-                            ['label' => 'Designation List', 'icon' => 'menu', 'url' => ['/hrm/designation/index']],
+                            ['label' => 'Designation Add', 'icon' => 'plus', 'url' => ['/hrm/designation/create']],
+                            ['label' => 'Designation List', 'icon' => 'list', 'url' => ['/hrm/designation/index']],
                         ]
                     ],
                     ['label' => 'SALES', 'header' => true],

@@ -2,33 +2,28 @@
 
 namespace app\modules\hrm\controllers;
 
+use app\components\GlobalConstant;
 use app\modules\hrm\models\Department;
 use app\modules\hrm\models\DepartmentSearch;
 use app\controllers\ParentController;
+use app\modules\hrm\services\HrmConfigurationService;
+use Yii;
+use yii\db\ActiveRecord;
+use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
+use yii\web\Response;
 
 /**
  * DepartmentController implements the CRUD actions for Department model.
  */
 class DepartmentController extends ParentController
 {
-    /**
-     * @inheritDoc
-     */
-    public function behaviors()
+    public HrmConfigurationService $hrmConfigurationService;
+
+    public function __construct($uid, $module, $config = [])
     {
-        return array_merge(
-            parent::behaviors(),
-            [
-                'verbs' => [
-                    'class' => VerbFilter::className(),
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
-                ],
-            ]
-        );
+        $this->hrmConfigurationService = new HrmConfigurationService();
+        parent::__construct($uid, $module, $config);
     }
 
     /**
@@ -36,7 +31,7 @@ class DepartmentController extends ParentController
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $searchModel = new DepartmentSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
@@ -44,26 +39,27 @@ class DepartmentController extends ParentController
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'parentArray' => $this->hrmConfigurationService->getAll(['status' => GlobalConstant::ACTIVE_STATUS], Department::class, [], true),
         ]);
     }
 
     /**
      * Displays a single Department model.
-     * @param int $id ID
+     * @param string $uid UID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id)
+    public function actionView(string $uid): string
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $this->findModel($uid),
         ]);
     }
 
     /**
      * Creates a new Department model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
+     * @return string|Response
      */
     public function actionCreate()
     {
@@ -71,7 +67,7 @@ class DepartmentController extends ParentController
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+                return $this->redirect(['view', 'uid' => $model->uid]);
             }
         } else {
             $model->loadDefaultValues();
@@ -79,53 +75,71 @@ class DepartmentController extends ParentController
 
         return $this->render('create', [
             'model' => $model,
+            'departments' => $this->findModels()
         ]);
     }
 
     /**
      * Updates an existing Department model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id ID
-     * @return string|\yii\web\Response
+     * @param string $uid UID
+     * @return string|Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionUpdate(string $uid): Response|string
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel($uid);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['view', 'uid' => $model->uid]);
         }
 
         return $this->render('update', [
             'model' => $model,
+            'departments' => $this->findModels()
         ]);
     }
 
     /**
      * Deletes an existing Department model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id ID
-     * @return \yii\web\Response
+     * @param string $uid UID
+     * @return Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($id)
+    public function actionDelete(string $uid): Response
     {
-        $this->findModel($id)->delete();
+        $this->findModel($uid)->delete();
 
         return $this->redirect(['index']);
     }
 
     /**
-     * Finds the Department model based on its primary key value.
+     * Finds all the Department models.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id ID
      * @return Department the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModels(): array
     {
-        if (($model = Department::findOne(['id' => $id])) !== null) {
+        $models = Department::findAll(['status' => GlobalConstant::ACTIVE_STATUS]);
+        if (!empty($models)) {
+            return ArrayHelper::map($models, 'id', 'name');
+        }
+
+        return [];
+    }
+
+    /**
+     * Finds the Department model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param string $uid UID
+     * @return array|ActiveRecord the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel(string $uid): array|ActiveRecord
+    {
+        if (($model = Department::find()->with(['parent'])->where(['uid' => $uid])->one()) !== null) {
             return $model;
         }
 

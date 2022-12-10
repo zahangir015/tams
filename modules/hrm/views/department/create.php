@@ -10,11 +10,9 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Departments'), 'url'
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="department-create">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
     <?= $this->render('_form', [
         'model' => $model,
+        'departments' => $departments,
     ]) ?>
 
 </div>
