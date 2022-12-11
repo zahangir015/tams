@@ -23,15 +23,15 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'kartik\grid\SerialColumn'],
-            'parent',
-            [
+            //'parent',
+            /*[
                 'class' => '\kartik\grid\DataColumn',
                 'attribute' => 'parentId',
                 'value' => function ($model) {
                     return ($model->parent) ? $model->parent->name : null;
                 },
                 'filter' => ArrayHelper::map($parentArray, 'id', 'name')
-            ],
+            ],*/
             'name',
             [
                 'class' => '\kartik\grid\DataColumn',

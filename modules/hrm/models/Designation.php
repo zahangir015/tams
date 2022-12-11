@@ -4,6 +4,7 @@ namespace app\modules\hrm\models;
 
 use app\traits\BehaviorTrait;
 use Yii;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
 /**
@@ -63,5 +64,10 @@ class Designation extends ActiveRecord
             'updatedBy' => Yii::t('app', 'Updated By'),
             'updatedAt' => Yii::t('app', 'Updated At'),
         ];
+    }
+
+    public function getDepartment(): ActiveQuery
+    {
+        return $this->hasOne(Department::class, ['departmentId' => 'id']);
     }
 }

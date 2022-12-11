@@ -17,9 +17,9 @@ use yii\bootstrap4\ActiveForm;
         <div class="card-body">
             <?php $form = ActiveForm::begin(); ?>
             <div class="row">
-                <div class="col-md">
-                    <?= $form->field($model, 'parentId')->dropdownList($departments, ['maxlength' => true, 'prompt' => 'Select parent department ...', 'value' => $model->isNewRecord ? [] : ($model->parent ? [$model->parent->id => $model->parent->name] : [])]) ?>
-                </div>
+                <!--<div class="col-md">
+                    <?php /*= $form->field($model, 'parentId')->dropdownList($departments, ['maxlength' => true, 'prompt' => 'Select parent department ...', 'value' => $model->isNewRecord ? [] : ($model->parent ? [$model->parent->id => $model->parent->name] : [])]) */?>
+                </div>-->
                 <div class="col-md">
                     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
                 </div>

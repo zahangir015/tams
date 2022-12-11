@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'kartik\grid\SerialColumn'],
-            'parentId',
+            //'parentId',
             'departmentId',
             'name',
             [
@@ -40,7 +40,7 @@ $this->params['breadcrumbs'][] = $this->title;
             //'updatedAt',
             [
                 'class' => ActionColumn::class,
-                'urlCreator' => function ($action, Department $model, $key, $index, $column) {
+                'urlCreator' => function ($action, Designation $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'uid' => $model->uid]);
                 }
             ],

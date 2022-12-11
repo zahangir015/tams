@@ -61,9 +61,10 @@ class DepartmentController extends ParentController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|Response
      */
-    public function actionCreate()
+    public function actionCreate(): Response|string
     {
         $model = new Department();
+        $departments = $this->hrmConfigurationService->getAll(['status' => GlobalConstant::ACTIVE_STATUS], Department::class, [], true);
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
@@ -75,7 +76,7 @@ class DepartmentController extends ParentController
 
         return $this->render('create', [
             'model' => $model,
-            'departments' => $this->findModels()
+            'departments' => ArrayHelper::map($departments, 'id', 'name')
         ]);
     }
 
