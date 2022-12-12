@@ -68,6 +68,6 @@ class Designation extends ActiveRecord
 
     public function getDepartment(): ActiveQuery
     {
-        return $this->hasOne(Department::class, ['departmentId' => 'id']);
+        return $this->hasOne(Department::class, ['id' => 'departmentId']);
     }
 }

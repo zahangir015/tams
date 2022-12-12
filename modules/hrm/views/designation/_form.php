@@ -19,7 +19,7 @@ use yii\bootstrap4\ActiveForm;
             <?php $form = ActiveForm::begin(); ?>
             <div class="row">
                 <div class="col-md">
-                    <?= $form->field($model, 'departmentId')->dropdownList($departments, ['maxlength' => true, 'prompt' => 'Select department ...', ]) ?>
+                    <?= $form->field($model, 'departmentId')->dropdownList($departments, ['maxlength' => true, 'prompt' => 'Select department ...']) ?>
                 </div>
                 <div class="col-md">
                     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>

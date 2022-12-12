@@ -23,6 +23,13 @@ class m221207_180824_create_department_table extends Migration
             'updatedBy' => $this->integer()->null(),
             'updatedAt' => $this->integer()->null(),
         ]);
+
+        // creates index for column `name`
+        $this->createIndex(
+            'idx-department-name',
+            'department',
+            'name'
+        );
     }
 
     /**
@@ -30,6 +37,12 @@ class m221207_180824_create_department_table extends Migration
      */
     public function safeDown()
     {
+        // drops index for column `name`
+        $this->dropIndex(
+            'idx-department-name',
+            'department'
+        );
+
         $this->dropTable('{{%department}}');
     }
 }

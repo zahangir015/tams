@@ -1,6 +1,7 @@
 <?php
 
 use app\modules\hrm\models\Designation;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use kartik\grid\ActionColumn;
@@ -21,7 +22,14 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'kartik\grid\SerialColumn'],
             //'parentId',
-            'departmentId',
+            [
+                'class' => '\kartik\grid\DataColumn',
+                'attribute' => 'departmentId',
+                'value' => function ($model) {
+                    return $model->department->name;
+                },
+                'filter' => $departments
+            ],
             'name',
             [
                 'class' => '\kartik\grid\DataColumn',
