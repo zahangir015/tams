@@ -80,6 +80,15 @@ use hail812\adminlte\widgets\Menu;
                             ['label' => 'Designation List', 'icon' => 'list', 'url' => ['/hrm/designation/index']],
                         ]
                     ],
+                    [
+                        'label' => 'Employee Manage',
+                        'icon' => 'users',
+                        'badge' => '<span class="right badge badge-info">2</span>',
+                        'items' => [
+                            ['label' => 'Employee Add', 'icon' => 'plus', 'url' => ['/hrm/employee/create']],
+                            ['label' => 'Employee List', 'icon' => 'list', 'url' => ['/hrm/employee/index']],
+                        ]
+                    ],
                     ['label' => 'SALES', 'header' => true],
                     [
                         'label' => 'Supplier Settings',
