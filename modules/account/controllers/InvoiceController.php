@@ -14,6 +14,7 @@ use app\modules\account\services\InvoiceService;
 use app\modules\account\services\RefundTransactionService;
 use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\Customer;
+use Exception;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
@@ -72,7 +73,7 @@ class InvoiceController extends ParentController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate()
+    public function actionCreate(): Response|string
     {
         $model = new Invoice();
 
@@ -99,7 +100,7 @@ class InvoiceController extends ParentController
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($uid)
+    public function actionUpdate(string $uid): Response|string
     {
         $model = $this->findModel($uid);
 
@@ -119,7 +120,7 @@ class InvoiceController extends ParentController
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($uid)
+    public function actionDelete($uid): Response
     {
         $this->findModel($uid)->delete();
 
@@ -131,12 +132,17 @@ class InvoiceController extends ParentController
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param string $uid
      * @return mixed
-     * @throws NotFoundHttpException
      * @throws Exception
      */
-    public function actionPay(string $uid)
+    public function actionPay(string $uid): mixed
     {
         $model = $this->invoiceRepository->findOne(['uid' => $uid], Invoice::class, ['details', 'customer', 'transactions']);
+
+        if ($model->dueAmount == 0) {
+            Yii::$app->session->setFlash('danger', 'Invalid payment request');
+            return $this->redirect('index');
+        }
+
         $transaction = new Transaction();
         if (Yii::$app->request->isPost) {
             $invoicePaymentResponse = $this->invoiceService->payment($model, Yii::$app->request->post());
@@ -148,6 +154,7 @@ class InvoiceController extends ParentController
                 ]);
             }
         }
+
         return $this->render('payment', [
             'model' => $model,
             'transaction' => $transaction,

@@ -62,28 +62,31 @@ $this->params['breadcrumbs'][] = $this->title;
             'updatedBy',
             [
                 'class' => 'kartik\grid\ActionColumn',
-                //'dropdown' => true,
                 'vAlign' => 'middle',
                 'urlCreator' => function ($action, $model, $key, $index) {
                     return \yii\helpers\Url::to([$action, 'uid' => $model->uid]);
                 },
-
+                'width' => '150px',
                 'template' => '{view} {preview} {send} {payment}',
                 'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
                 'buttons' => [
                     'view' => function ($url, $model) {
                         return Html::a('<i class="fa fa-info-circle"></i>', ['view', 'uid' => $model->uid], [
-                            'title' => 'view', 'data-pjax' => '0',
+                            'title' => 'view',
+                            'data-pjax' => '0',
+                            'class' => 'btn btn-primary btn-xs'
                         ]);
                     },
                     'preview' => function ($url, $model, $key) {
                         return Html::a('<i class="fa fa-envelope-open"></i>', ['preview', 'uid' => $model->uid], [
                             'title' => Yii::t('app', 'Preview of Invoice'),
+                            'class' => 'btn btn-primary btn-xs'
                         ]);
                     },
                     'send' => function ($url, $model, $key) {
                         return Html::a('<i class="fa fa-paper-plane"></i>', ['send', 'uid' => $model->uid], [
                             'title' => Yii::t('app', 'Send Invoice'),
+                            'class' => 'btn btn-primary btn-xs'
                         ]);
                     },
                     'payment' => function ($url, $model, $key) {
@@ -92,6 +95,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 [
                                     'title' => Yii::t('app', 'pay'),
                                     'data-pjax' => '0',
+                                    'class' => 'btn btn-primary btn-xs'
                                 ]);
                         } else {
                             return false;
@@ -105,6 +109,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
                                 'method' => 'post',
                             ],
+                            'class' => 'btn btn-primary btn-xs'
                         ]);
                     },
                 ]

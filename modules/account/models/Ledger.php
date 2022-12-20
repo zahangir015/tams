@@ -30,6 +30,7 @@ use yii\db\ActiveRecord;
 class Ledger extends ActiveRecord
 {
     use BehaviorTrait;
+
     /**
      * {@inheritdoc}
      */
@@ -44,7 +45,7 @@ class Ledger extends ActiveRecord
     public function rules(): array
     {
         return [
-            [['uid', 'title', 'date', 'refId', 'refModel', 'createdBy'], 'required'],
+            [['title', 'date', 'refId', 'refModel'], 'required'],
             [['date'], 'safe'],
             [['refId', 'subRefId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['debit', 'credit', 'balance'], 'number'],

@@ -1,5 +1,6 @@
 <?php
 
+use app\components\Helper;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -43,20 +44,10 @@ $this->params['breadcrumbs'][] = $this->title;
                                 Email: <?= $model->customer->email ?>
                             </address>
                         </div>
-                        <div class="col-sm invoice-col">
-                            Details
-                            <address>
-                                <b>Invoice #<?= $model->invoiceNumber ?></b><br>
-                                <b>Due Date:</b> <?= date('l jS \of F Y', strtotime($model->expectedPaymentDate)) ?>
-                                <br>
-                                <b>Created By:</b> <?= $model->createdBy ?><br>
-                                <b>Issue Date:</b> <?= $model->updatedBy ?><br>
-                            </address>
-                        </div>
                     </div>
                     <div class="row pb-5">
                         <div class="table-responsive border-bottom">
-                            <h4>Invoice Details</h4>
+                            <h5>Invoice Details</h5>
                             <div class="separator separator-dashed my-10"></div>
                             <table class="table table-striped">
                                 <thead>
@@ -85,24 +76,32 @@ $this->params['breadcrumbs'][] = $this->title;
                                         <td><?= $invoiceDetail->service->quoteAmount ?></td>
                                         <td><?= $invoiceDetail->service->receivedAmount ?></td>
                                         <td><?= $invoiceDetail->service->paymentStatus ?></td>
-                                        <td><?php
-                                            $url = '/sale/' . \app\components\Helper::getServiceName($invoiceDetail->refModel) . '/view';
+                                        <td>
+                                            <?php
+                                            $url = '/sale/' . Helper::getServiceName($invoiceDetail->refModel) . '/view';
                                             echo Html::a('<i class="fa fa-info-circle"></i>', [$url, 'uid' => $invoiceDetail->service->uid],
                                                 [
                                                     'title' => Yii::t('app', 'View More'),
-                                                    'target' => '_blank'
-                                                ]) ?></td>
+                                                    'target' => '_blank',
+                                                    'class' => 'btn btn-primary btn-xs',
+                                                ]) ?>
+                                        </td>
                                     </tr>
                                     <?php
                                 }
                                 ?>
                                 </tbody>
+                                <tfoot>
+                                <tr>
+
+                                </tr>
+                                </tfoot>
                             </table>
                         </div>
                     </div>
-                    <?php if (!empty($model->transactionStatement)) : ?>
+                    <?php if (!empty($model->transactions)) : ?>
                         <div class="row">
-                            <h4>Money Receipt</h4>
+                            <h5>Money Receipt</h5>
                             <div class="separator separator-dashed my-10"></div>
                             <table class="table table-striped">
                                 <thead>
@@ -112,7 +111,6 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <th>Payment Mode</th>
                                     <th>Payment Date</th>
                                     <th>Payment Charge</th>
-                                    <th>Discount</th>
                                     <th>Action</th>
                                 </tr>
                                 </thead>
@@ -122,15 +120,15 @@ $this->params['breadcrumbs'][] = $this->title;
                                     ?>
                                     <tr>
                                         <td><?= ($key + 1) ?></td>
-                                        <td><?= $transaction->amount ?></td>
+                                        <td><?= $transaction->paidAmount ?></td>
                                         <td><?= $transaction->paymentMode ?></td>
                                         <td><?= $transaction->paymentDate ?></td>
                                         <td><?= $transaction->paymentCharge ?></td>
-                                        <td><?= $transaction->discount ?></td>
-                                        <td><?= Html::a('<i class="fa fa-money-bill-alt"></i>', ['money-receipt', 'uid' => $transaction->uid],
+                                        <td><?= Html::a('<i class="fa fa-money-bill-alt"></i>',
+                                                ['money-receipt', 'uid' => $transaction->uid],
                                                 [
                                                     'title' => Yii::t('app', 'View Money Receipt'),
-                                                    'class' => 'btn btn-default',
+                                                    'class' => 'btn btn-primary btn-xs',
                                                     'target' => '_blank'
                                                 ]) ?></td>
                                     </tr>
@@ -173,6 +171,31 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="card-body">
                     <div class="row">
                         <div class="col-12">
+                            <p class="lead">Details</p>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <tbody>
+                                    <tr>
+                                        <th>Invoice #:</th>
+                                        <td><?= $model->invoiceNumber ?></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Due Date:</th>
+                                        <td><?= date('l jS \of F Y', strtotime($model->expectedPaymentDate)) ?></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Creator:</th>
+                                        <td><?= $model->createdBy ?></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Updater:</th>
+                                        <td><?= $model->updatedBy ?></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-12">
                             <p class="lead">Amount Due 2/22/2014</p>
                             <div class="table-responsive">
                                 <table class="table">
@@ -202,14 +225,20 @@ $this->params['breadcrumbs'][] = $this->title;
                             </div>
                         </div>
                         <div class="col-12">
-                            <?= Html::a('<i class="fas fa-print"></i> Preview', ['preview', 'uid' => $model->uid], [
-                                'title' => 'preview', 'class' => 'btn btn-default float-right',
-                            ]); ?>
-                            <?= Html::a('<i class="fa fa-envelope-open"></i> Send Invoice', ['send', 'uid' => $model->uid], [
+                            <?php
+                            if ($model->dueAmount != 0) {
+                                echo Html::a('<i class="far fa-credit-card"></i> Payment', ['pay', 'uid' => $model->uid], [
+                                    'title' => 'pay', 'class' => 'btn btn-success float-right',
+                                ]);
+                            }
+                            ?>
+                            <?= Html::a('<i class="fa fa-envelope-open"></i> Send to Customer', ['send', 'uid' => $model->uid], [
                                 'title' => 'send', 'class' => 'btn btn-primary float-right',
                             ]); ?>
-                            <?= Html::a('<i class="far fa-credit-card"></i> Payment', ['pay', 'uid' => $model->uid], [
-                                'title' => 'pay', 'class' => 'btn btn-success float-right',
+                            <?= Html::a('<i class="fas fa-print"></i> Preview Invoice Mail', ['preview', 'uid' => $model->uid], [
+                                'title' => 'preview',
+                                'class' => 'btn btn-default float-right',
+                                ''
                             ]); ?>
                         </div>
                     </div>
