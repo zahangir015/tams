@@ -122,4 +122,15 @@ class BankAccountController extends ParentController
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
+
+    public function actionGetBanks($query = null): array
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $banks = BankAccount::query($query);
+        $data = [];
+        foreach ($banks as $bank) {
+            $data[] = ['id' => $bank->id, 'text' => $bank->name . ' | ' . $bank->accountName . ' | ' . $bank->accountnumber];
+        }
+        return ['results' => $data];
+    }
 }

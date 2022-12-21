@@ -3,6 +3,7 @@
 namespace app\modules\account\models;
 
 use app\modules\sale\models\ticket\TicketRefund;
+use app\traits\BehaviorTrait;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
@@ -31,6 +32,10 @@ use yii\db\ActiveRecord;
  */
 class RefundTransaction extends ActiveRecord
 {
+    use BehaviorTrait;
+
+    public $dateRange;
+
     /**
      * {@inheritdoc}
      */
@@ -45,7 +50,7 @@ class RefundTransaction extends ActiveRecord
     public function rules(): array
     {
         return [
-            [['uid', 'refId', 'refModel', 'createdBy', 'createdAt'], 'required'],
+            [['refId', 'refModel'], 'required'],
             [['refId', 'isAdjusted', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['payableAmount', 'receivableAmount', 'totalAmount', 'adjustedAmount'], 'number'],
             [['paymentStatus', 'remarks'], 'string'],

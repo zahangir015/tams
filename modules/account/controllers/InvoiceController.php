@@ -82,7 +82,7 @@ class InvoiceController extends ParentController
             $requestData = Yii::$app->request->post();
             $storeResponse = $this->invoiceService->storeInvoice($requestData, $model);
             if ($storeResponse) {
-                return $this->redirect(['index']);
+                return $this->redirect(['view', 'uid' => $model->uid]);
             }
         } else {
             $model->loadDefaultValues();

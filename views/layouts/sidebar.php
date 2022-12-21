@@ -118,7 +118,7 @@ use hail812\adminlte\widgets\Menu;
                         'icon' => 'plane',
                         'badge' => '<span class="right badge badge-info">6</span>',
                         'items' => [
-                            ['label' => 'Add Ticket ',  'icon' => 'plus-circle', 'url' => ['/sale/ticket/create']],
+                            ['label' => 'Add Ticket',  'icon' => 'plus-circle', 'url' => ['/sale/ticket/create']],
                             ['label' => 'Upload Ticket',  'icon' => 'upload', 'url' => ['/sale/ticket/upload']],
                             ['label' => 'Ticket List', 'icon' => 'list', 'url' => ['/sale/ticket/index']],
                             ['label' => 'Ticket Supplier List', 'icon' => 'list', 'url' => ['/sale/ticket/ticket-supplier-list']],
@@ -131,8 +131,8 @@ use hail812\adminlte\widgets\Menu;
                         'icon' => 'suitcase',
                         'badge' => '<span class="right badge badge-info">4</span>',
                         'items' => [
-                            ['label' => 'Category List ',  'icon' => 'list', 'url' => ['/sale/holiday-category/index']],
-                            ['label' => 'Add Holiday ',  'icon' => 'plus-circle', 'url' => ['/sale/holiday/create']],
+                            ['label' => 'Category List',  'icon' => 'list', 'url' => ['/sale/holiday-category/index']],
+                            ['label' => 'Add Holiday',  'icon' => 'plus-circle', 'url' => ['/sale/holiday/create']],
                             ['label' => 'Holiday List', 'icon' => 'list', 'url' => ['/sale/holiday/index']],
                             ['label' => 'Holiday Supplier List', 'icon' => 'list', 'url' => ['/sale/holiday/holiday-supplier-list']],
                             ['label' => 'Refund List', 'icon' => 'minus-circle', 'url' => ['/sale/holiday/refund-list']],
@@ -143,7 +143,7 @@ use hail812\adminlte\widgets\Menu;
                         'icon' => 'hotel',
                         'badge' => '<span class="right badge badge-info">4</span>',
                         'items' => [
-                            ['label' => 'Add Hotel ',  'icon' => 'plus-circle', 'url' => ['/sale/hotel/create']],
+                            ['label' => 'Add Hotel',  'icon' => 'plus-circle', 'url' => ['/sale/hotel/create']],
                             ['label' => 'Hotel List', 'icon' => 'list', 'url' => ['/sale/hotel/index']],
                             ['label' => 'Hotel Supplier List', 'icon' => 'list', 'url' => ['/sale/hotel/hotel-supplier-list']],
                             ['label' => 'Refund List', 'icon' => 'minus-circle', 'url' => ['/sale/hotel/refund-list']],
@@ -154,7 +154,7 @@ use hail812\adminlte\widgets\Menu;
                         'icon' => 'passport',
                         'badge' => '<span class="right badge badge-info">4</span>',
                         'items' => [
-                            ['label' => 'Add Visa ',  'icon' => 'plus-circle', 'url' => ['/sale/visa/create']],
+                            ['label' => 'Add Visa',  'icon' => 'plus-circle', 'url' => ['/sale/visa/create']],
                             ['label' => 'Visa List', 'icon' => 'list', 'url' => ['/sale/visa/index']],
                             ['label' => 'Visa Supplier List', 'icon' => 'list', 'url' => ['/sale/visa/visa-supplier-list']],
                             ['label' => 'Refund List', 'icon' => 'minus-circle', 'url' => ['/sale/visa/refund-list']],
@@ -162,7 +162,15 @@ use hail812\adminlte\widgets\Menu;
                     ],
                     ['label' => 'ACCOUNTS', 'header' => true],
                     ['label' => 'Bank Accounts', 'icon' => 'building', 'url' => ['/account/bank-account']],
-                    ['label' => 'Invoice', 'icon' => 'file-invoice-dollar', 'url' => ['/account/invoice/index']],
+                    [
+                        'label' => 'Invoice Management',
+                        'icon' => 'file-invoice-dollar',
+                        'badge' => '<span class="right badge badge-info">2</span>',
+                        'items' => [
+                            ['label' => 'Create Invoice',  'icon' => 'plus-circle', 'url' => ['/account/invoice/create']],
+                            ['label' => 'Invoice List', 'icon' => 'list', 'url' => ['/account/invoice/index']],
+                        ]
+                    ],
                     ['label' => 'Bill', 'icon' => 'money-bill', 'url' => ['/account/bill/index']],
                     ['label' => 'Refund Transactions', 'icon' => 'money-bill', 'url' => ['/account/refund-transaction/index']],
                     ['label' => 'Ledger', 'icon' => 'book', 'url' => ['/account/ledger/index']],

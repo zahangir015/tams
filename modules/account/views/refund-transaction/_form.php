@@ -1,5 +1,7 @@
 <?php
 
+use app\components\GlobalConstant;
+use app\components\Helper;
 use kartik\daterange\DateRangePicker;
 use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
@@ -34,44 +36,13 @@ $this->registerJsFile(
             <div class="row">
                 <div class="col-md-6">
                     <label class="control-label" for="supplier">Select Customer</label>
-                    <?= Select2::widget([
-                        'name' => 'customerId',
-                        'options' => ['placeholder' => 'Select Customer ...', 'id' => 'customerId'],
-                        'theme' => Select2::THEME_DEFAULT,
-                        'data' => [],
-                        'maintainOrder' => true,
-                        'pluginOptions' => [
-                            'allowClear' => true,
-                            'minimumInputLength' => 3,
-                            'language' => [
-                                'errorLoading' => new JsExpression("function () { return 'Waiting for results...'; }"),
-                            ],
-                            'ajax' => [
-                                'url' => Url::to('get-customer'),
-                                'dataType' => 'json',
-                                'data' => new JsExpression('function(params) { return {query:params.term}; }'),
-                            ],
-                        ],
-                    ]) ?>
+                    <?= $form->field($model, 'refId')->widget(Select2::classname(), Helper::ajaxDropDown('customerId', '/sale/customer/get-customers', true, 'customerId', 'customer'))->label('Invoice To'); ?>
                 </div>
                 <div class="col-md-6">
                     <label class="control-label" for="dateRange">Issue Date Range</label>
-                    <?= DateRangePicker::widget([
-                        'name' => 'dateRange',
-                        'attribute' => 'dateRange',
-                        'pluginOptions' => [
-                            'format' => 'Y-m-d',
-                            'autoUpdateInput' => false
-                        ],
-                        'pluginEvents' => [
-                            'apply.daterangepicker' => 'function(ev, picker) {
-                        console.log(picker)
-                            if($(this).val() == "") {
-                            picker.callback(picker.startDate.clone(), picker.endDate.clone(), picker.chosenLabel);
-                            }
-                        }']
-                    ])
-                    ?>
+                    <?= $form->field($model, 'dateRange', [
+                        'options' => ['class' => 'drp-container mb-2']
+                    ])->widget(DateRangePicker::class, Helper::getDateRangeWidgetOptions())->label(false) ?>
                 </div>
             </div>
             <hr class="m-5">
@@ -128,39 +99,25 @@ $this->registerJsFile(
 
                         <div class="row">
                             <div class="col-md-4">
-                                <?= $form->field($model, 'paymentMode')->dropDownList(Constant::PAYMENT_MODE, ['prompt' => ''])->label('Payment Mode') ?>
+                                <?= $form->field($model, 'paymentMode')->dropDownList(GlobalConstant::PAYMENT_MODE, ['prompt' => ''])->label('Payment Mode') ?>
                             </div>
                             <div class="col-md-4">
-                                <?= $form->field($model, 'transactionDate')->widget(DateRangePicker::className(), \app\components\Utils::dateFormat())->label('Transaction Date') ?>
+                                <?= $form->field($model, 'transactionDate')->widget(DateRangePicker::className(), Helper::dateFormat())->label('Transaction Date') ?>
                             </div>
                             <div class="col-md-4">
-                                <?php
-                                echo $form->field($model, 'bankId')->widget(Select2::class, [
-                                    'theme' =>Select2::THEME_DEFAULT,
-                                    'data' => ArrayHelper::map(\app\modules\account\models\BankAccount::find()->where(['status' => Constant::ACTIVE_STATUS])->orderBy('bankName')->all(), 'id', 'bankName'),
-                                    'options' => [
-                                        'id' => 'bankId',
-                                        'class' => 'form-control',
-                                        'placeholder' => 'Select a bank ...',
-                                    ],
-                                    'pluginOptions' => [
-                                        'allowClear' => true
-                                    ],
-                                ])->label('Bank');
-
-                                ?>
+                                <?= $form->field($model, 'bankId')->widget(Select2::class, Helper::ajaxDropDown('bankId', '/account/bank-account/get-banks', true, 'bankId', 'bank'))->label('Bank'); ?>
                             </div>
                             <div class="col-md-4">
-                                <?= $form->field($model, 'amount')->textInput(['value'=>0,'type'=>'number','step'=>'any']) ?>
+                                <?= $form->field($model, 'amount')->textInput(['value' => 0, 'type' => 'number', 'step' => 'any']) ?>
                             </div>
                             <div class="col-md-4">
-                                <?= $form->field($model, 'adjustAmount')->textInput(['value'=>0,'type'=>'number']) ?>
+                                <?= $form->field($model, 'adjustAmount')->textInput(['value' => 0, 'type' => 'number']) ?>
                             </div>
                             <div class="col-md-4">
-                                <?= $form->field($model, 'payable')->textInput(['value'=>0,'type'=>'number','step'=>'any']) ?>
+                                <?= $form->field($model, 'payableAmount5')->textInput(['value' => 0, 'type' => 'number', 'step' => 'any']) ?>
                             </div>
                             <div class="col-md-4">
-                                <?= $form->field($model, 'receivable')->textInput(['value'=>0,'type'=>'number','step'=>'any']) ?>
+                                <?= $form->field($model, 'receivableAmount')->textInput(['value' => 0, 'type' => 'number', 'step' => 'any']) ?>
                             </div>
                             <div class="col-md-8">
                                 <?= $form->field($model, 'remarks')->textarea(['rows' => 6]) ?>
@@ -177,35 +134,35 @@ $this->registerJsFile(
         </div>
     </div>
 
-    <?/*= $form->field($model, 'uid')->textInput(['maxlength' => true]) */?><!--
+    <? /*= $form->field($model, 'uid')->textInput(['maxlength' => true]) */ ?><!--
 
-    <?/*= $form->field($model, 'refId')->textInput() */?>
+    <? /*= $form->field($model, 'refId')->textInput() */ ?>
 
-    <?/*= $form->field($model, 'refModel')->textInput(['maxlength' => true]) */?>
+    <? /*= $form->field($model, 'refModel')->textInput(['maxlength' => true]) */ ?>
 
-    <?/*= $form->field($model, 'payableAmount')->textInput() */?>
+    <? /*= $form->field($model, 'payableAmount')->textInput() */ ?>
 
-    <?/*= $form->field($model, 'receivableAmount')->textInput() */?>
+    <? /*= $form->field($model, 'receivableAmount')->textInput() */ ?>
 
-    <?/*= $form->field($model, 'totalAmount')->textInput() */?>
+    <? /*= $form->field($model, 'totalAmount')->textInput() */ ?>
 
-    <?/*= $form->field($model, 'paymentStatus')->dropDownList([ 'Payable' => 'Payable', 'Receivable' => 'Receivable', ], ['prompt' => '']) */?>
+    <? /*= $form->field($model, 'paymentStatus')->dropDownList([ 'Payable' => 'Payable', 'Receivable' => 'Receivable', ], ['prompt' => '']) */ ?>
 
-    <?/*= $form->field($model, 'adjustedAmount')->textInput() */?>
+    <? /*= $form->field($model, 'adjustedAmount')->textInput() */ ?>
 
-    <?/*= $form->field($model, 'isAdjusted')->textInput() */?>
+    <? /*= $form->field($model, 'isAdjusted')->textInput() */ ?>
 
-    <?/*= $form->field($model, 'remarks')->textarea(['rows' => 6]) */?>
+    <? /*= $form->field($model, 'remarks')->textarea(['rows' => 6]) */ ?>
 
-    <?/*= $form->field($model, 'status')->textInput() */?>
+    <? /*= $form->field($model, 'status')->textInput() */ ?>
 
-    <?/*= $form->field($model, 'createdBy')->textInput() */?>
+    <? /*= $form->field($model, 'createdBy')->textInput() */ ?>
 
-    <?/*= $form->field($model, 'createdAt')->textInput() */?>
+    <? /*= $form->field($model, 'createdAt')->textInput() */ ?>
 
-    <?/*= $form->field($model, 'updatedBy')->textInput() */?>
+    <? /*= $form->field($model, 'updatedBy')->textInput() */ ?>
 
-    --><?/*= $form->field($model, 'updatedAt')->textInput() */?>
+    --><? /*= $form->field($model, 'updatedAt')->textInput() */ ?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>

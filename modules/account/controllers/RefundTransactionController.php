@@ -4,6 +4,7 @@ namespace app\modules\account\controllers;
 
 use app\modules\account\models\RefundTransaction;
 use app\modules\account\models\search\RefundTransactionSearch;
+use app\modules\account\models\Transaction;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -48,13 +49,13 @@ class RefundTransactionController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|Response
      */
-    public function actionCreate()
+    public function actionCreate(): Response|string
     {
         $model = new RefundTransaction();
-
+        $transaction = new Transaction();
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+                return $this->redirect(['view', 'uid' => $model->uid]);
             }
         } else {
             $model->loadDefaultValues();
@@ -62,6 +63,7 @@ class RefundTransactionController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'transaction' => $transaction,
         ]);
     }
 
