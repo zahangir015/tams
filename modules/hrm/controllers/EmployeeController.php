@@ -9,7 +9,9 @@ use app\modules\hrm\models\Employee;
 use app\modules\hrm\models\EmployeeDesignation;
 use app\modules\hrm\models\EmployeeSearch;
 use app\controllers\ParentController;
+use app\modules\hrm\services\EmployeeService;
 use app\modules\hrm\services\HrmConfigurationService;
+use Yii;
 use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -21,6 +23,7 @@ use yii\web\Response;
 class EmployeeController extends ParentController
 {
     public HrmConfigurationService $hrmConfigurationService;
+    public EmployeeService $employeeService;
 
     public function __construct($id, $module, $config = [])
     {
@@ -70,11 +73,14 @@ class EmployeeController extends ParentController
         $departments = $this->hrmConfigurationService->getAll(['status' => GlobalConstant::ACTIVE_STATUS], Department::class, [], true);
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+            // Store ticket data
+            $storeResponse = $this->employeeService->storeEmployee(Yii::$app->request->post(), $model, $designation);
+            if ($storeResponse) {
+                return $this->redirect(['index']);
             }
         } else {
             $model->loadDefaultValues();
+            $designation->loadDefaultValues();
         }
 
         return $this->render('create', [
@@ -133,5 +139,48 @@ class EmployeeController extends ParentController
         }
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+    }
+
+    // THE CONTROLLER
+    public function actionGetDesignationByDepartment()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if ($parents != null) {
+                $departmentId = $parents[0];
+                $out = $this->hrmConfigurationService->getDesignationList(['departmentId' => $departmentId, 'status' => GlobalConstant::ACTIVE_STATUS]);
+                // the getSubCatList function will query the database based on the
+                // $departmentId and return an array like below:
+                // [
+                //    ['id'=>'<designation-id-1>', 'name'=>'<designation-name1>'],
+                //    ['id'=>'<designation_id_2>', 'name'=>'<designation-name2>']
+                // ]
+                return ['output' => $out, 'selected' => ''];
+            }
+        }
+        return ['output' => '', 'selected' => ''];
+    }
+
+    public function actionGetEmployeeByDepartment()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if ($parents != null) {
+                $departmentId = $parents[0];
+                $out = $this->hrmConfigurationService->getEmployeeList(['status' => GlobalConstant::ACTIVE_STATUS],['departmentId' => $departmentId, 'status' => GlobalConstant::ACTIVE_STATUS]);
+                // the getSubCatList function will query the database based on the
+                // $departmentId and return an array like below:
+                // [
+                //    ['id'=>'<designation-id-1>', 'name'=>'<designation-name1>'],
+                //    ['id'=>'<designation_id_2>', 'name'=>'<designation-name2>']
+                // ]
+                return ['output' => $out, 'selected' => ''];
+            }
+        }
+        return ['output' => '', 'selected' => ''];
     }
 }

@@ -2,7 +2,12 @@
 
 namespace app\modules\hrm\models;
 
+use app\modules\admin\models\User;
+use app\modules\employee\models\EmployeeEducation;
+use app\traits\BehaviorTrait;
 use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%employee}}".
@@ -46,12 +51,14 @@ use Yii;
  * @property EmployeeEducation[] $employeeEducations
  * @property User $user
  */
-class Employee extends \yii\db\ActiveRecord
+class Employee extends ActiveRecord
 {
+    use BehaviorTrait;
+
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%employee}}';
     }
@@ -59,10 +66,10 @@ class Employee extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            [['uid', 'firstName', 'lastName', 'dateOfBirth', 'gender', 'nid', 'officialId', 'permanentAddress', 'presentAddress', 'personalPhone', 'joiningDate', 'jobCategory', 'createdBy', 'createdAt'], 'required'],
+            [['firstName', 'lastName', 'dateOfBirth', 'gender', 'nid', 'officialId', 'permanentAddress', 'presentAddress', 'personalPhone', 'joiningDate', 'jobCategory'], 'required'],
             [['userId', 'reportTo', 'gender', 'maritalStatus', 'inProhibition', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['dateOfBirth', 'joiningDate', 'confirmationDate'], 'safe'],
             [['religion'], 'string'],
@@ -77,7 +84,7 @@ class Employee extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),
@@ -120,9 +127,9 @@ class Employee extends \yii\db\ActiveRecord
     /**
      * Gets query for [[EmployeeDesignations]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getEmployeeDesignations()
+    public function getEmployeeDesignations(): ActiveQuery
     {
         return $this->hasMany(EmployeeDesignation::class, ['employeeId' => 'id']);
     }
@@ -130,9 +137,9 @@ class Employee extends \yii\db\ActiveRecord
     /**
      * Gets query for [[EmployeeEducations]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getEmployeeEducations()
+    public function getEmployeeEducations(): ActiveQuery
     {
         return $this->hasMany(EmployeeEducation::class, ['employeeId' => 'id']);
     }
@@ -140,9 +147,9 @@ class Employee extends \yii\db\ActiveRecord
     /**
      * Gets query for [[User]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getUser()
+    public function getUser(): ActiveQuery
     {
         return $this->hasOne(User::class, ['id' => 'userId']);
     }

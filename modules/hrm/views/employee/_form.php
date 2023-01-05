@@ -1,6 +1,8 @@
 <?php
 
+use app\components\GlobalConstant;
 use app\modules\hrm\components\HrmConstant;
+use kartik\date\DatePicker;
 use kartik\daterange\DateRangePicker;
 use kartik\depdrop\DepDrop;
 use kartik\select2\Select2;
@@ -41,7 +43,7 @@ use yii\helpers\Url;
                 </div>
                 <div class="row mb-5">
                     <div class="col-md">
-                        <?= $form->field($model, 'dateOfBirth')->widget(DateRangePicker::class, Helper::getDateWidget('dateOfBirth', 'dateOfBirth')) ?>
+                        <?= $form->field($model, 'dateOfBirth')->widget(DatePicker::class, Helper::getDateWidget('dateOfBirth', 'dateOfBirth form-control')) ?>
                     </div>
                     <div class="col-md">
                         <?= $form->field($model, 'gender')->dropDownList(HrmConstant::GENDER) ?>
@@ -82,27 +84,13 @@ use yii\helpers\Url;
                 </div>
                 <div class="row">
                     <div class="col-md"><?= $form->field($model, 'confirmationDate')->textInput() ?></div>
-                    <div class="col-md"><?= $form->field($model, 'inProhibition')->textInput() ?></div>
+                    <div class="col-md"><?= $form->field($model, 'inProhibition')->dropDownList(GlobalConstant::YES_NO) ?></div>
                     <div class="col-md"><?= $form->field($model, 'jobCategory')->textInput(['maxlength' => true]) ?></div>
-                    <div class="col-md">
-                        <?= $form->field($model, 'reportTo')->widget(DepDrop::classname(), [
-                            'data' => empty($model->reported) ? [] : [$model->reported->id => $model->reported->fullName],
-                            'options' => ['placeholder' => 'Select Reported To...'],
-                            'type' => DepDrop::TYPE_SELECT2,
-                            'select2Options' => ['pluginOptions' => ['allowClear' => true], 'theme' => Select2::THEME_DEFAULT],
-                            'pluginOptions' => [
-                                'depends' => ['employeedesignation-departmentid'],
-                                'initialize' => $model->isNewRecord ? false : true,
-                                'url' => Url::to(['/employee/employee/employee-reported']),
-                                'loadingText' => 'Loading Reported To ...',
-                            ],
-                        ]); ?>
-                    </div>
-                </div>
-                <div class="row">
                     <div class="col-md">
                         <?= $form->field($designation, 'branchId')->dropDownList($branchList); ?>
                     </div>
+                </div>
+                <div class="row">
                     <div class="col-md">
                         <?= $form->field($designation, 'departmentId')->dropDownList($departmentList);
                         ?>
@@ -116,8 +104,22 @@ use yii\helpers\Url;
                             'pluginOptions' => [
                                 'depends' => ['employeedesignation-departmentid'],
                                 'initialize' => $model->isNewRecord ? false : true,
-                                'url' => Url::to(['/employee/employee/designation']),
+                                'url' => Url::to(['/hrm/employee/get-designation-by-department']),
                                 'loadingText' => 'Loading designation ...',
+                            ],
+                        ]); ?>
+                    </div>
+                    <div class="col-md">
+                        <?= $form->field($model, 'reportTo')->widget(DepDrop::classname(), [
+                            'data' => empty($model->reported) ? [] : [$model->reported->id => $model->reported->firstName.' '.$model->reported->lastName],
+                            'options' => ['placeholder' => 'Select Reported To...'],
+                            'type' => DepDrop::TYPE_SELECT2,
+                            'select2Options' => ['pluginOptions' => ['allowClear' => true], 'theme' => Select2::THEME_DEFAULT],
+                            'pluginOptions' => [
+                                'depends' => ['employeedesignation-departmentid'],
+                                'initialize' => $model->isNewRecord ? false : true,
+                                'url' => Url::to(['/hrm/employee/get-employee-by-department']),
+                                'loadingText' => 'Loading Reported To ...',
                             ],
                         ]); ?>
                     </div>

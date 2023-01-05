@@ -28,7 +28,7 @@
         "kartik-v/yii2-date-range": "v1.7.3",
         "frostealth/yii2-aws-s3": "2.1.1",
         "kartik-v/yii2-widget-fileinput": "v1.1.1",
-        "kartik-v/yii2-widget-depdrop": "v1.0.6"
+        "kartik-v/yii2-widget-depdrop": "dev-master"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",
