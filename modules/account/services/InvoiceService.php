@@ -267,11 +267,11 @@ class InvoiceService
         }
 
         // Mother Invoice Detail status update
-        $motherInvoiceDetailUpdateResponse = InvoiceDetail::find()->where(['refId' => $service['motherId'], 'refModel' => $service['refModel']])->one();
+        /*$motherInvoiceDetailUpdateResponse = InvoiceDetail::find()->where(['refId' => $service['motherId'], 'refModel' => $service['refModel']])->one();
         $motherInvoiceDetailUpdateResponse->status = GlobalConstant::REFUND_REQUESTED_STATUS;
         if (!$motherInvoiceDetailUpdateResponse->save()) {
             return ['error' => true, 'message' => 'Mother Invoice details update failed'];
-        }
+        }*/
 
         // Invoice due update
         $invoiceDue = InvoiceDetail::find()

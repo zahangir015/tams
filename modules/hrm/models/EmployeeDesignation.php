@@ -2,7 +2,10 @@
 
 namespace app\modules\hrm\models;
 
+use app\traits\BehaviorTrait;
 use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%employee_designation}}".
@@ -26,12 +29,13 @@ use Yii;
  * @property Designation $designation
  * @property Employee $employee
  */
-class EmployeeDesignation extends \yii\db\ActiveRecord
+class EmployeeDesignation extends ActiveRecord
 {
+    use BehaviorTrait;
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%employee_designation}}';
     }
@@ -39,10 +43,10 @@ class EmployeeDesignation extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            [['uid', 'employeeId', 'departmentId', 'designationId', 'branchId', 'startDate', 'endDate', 'createdBy', 'createdAt'], 'required'],
+            [['employeeId', 'departmentId', 'designationId', 'branchId', 'startDate'], 'required'],
             [['employeeId', 'departmentId', 'designationId', 'branchId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['startDate', 'endDate'], 'safe'],
             [['uid'], 'string', 'max' => 36],
@@ -57,15 +61,15 @@ class EmployeeDesignation extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),
             'uid' => Yii::t('app', 'Uid'),
-            'employeeId' => Yii::t('app', 'Employee ID'),
-            'departmentId' => Yii::t('app', 'Department ID'),
-            'designationId' => Yii::t('app', 'Designation ID'),
-            'branchId' => Yii::t('app', 'Branch ID'),
+            'employeeId' => Yii::t('app', 'Employee'),
+            'departmentId' => Yii::t('app', 'Department'),
+            'designationId' => Yii::t('app', 'Designation'),
+            'branchId' => Yii::t('app', 'Branch'),
             'startDate' => Yii::t('app', 'Start Date'),
             'endDate' => Yii::t('app', 'End Date'),
             'status' => Yii::t('app', 'Status'),
@@ -79,9 +83,9 @@ class EmployeeDesignation extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Branch]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getBranch()
+    public function getBranch(): ActiveQuery
     {
         return $this->hasOne(Branch::class, ['id' => 'branchId']);
     }
@@ -89,9 +93,9 @@ class EmployeeDesignation extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Department]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getDepartment()
+    public function getDepartment(): ActiveQuery
     {
         return $this->hasOne(Department::class, ['id' => 'departmentId']);
     }
@@ -99,9 +103,9 @@ class EmployeeDesignation extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Designation]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getDesignation()
+    public function getDesignation(): ActiveQuery
     {
         return $this->hasOne(Designation::class, ['id' => 'designationId']);
     }
@@ -109,9 +113,9 @@ class EmployeeDesignation extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Employee]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getEmployee()
+    public function getEmployee(): ActiveQuery
     {
         return $this->hasOne(Employee::class, ['id' => 'employeeId']);
     }
