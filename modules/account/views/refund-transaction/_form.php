@@ -99,22 +99,22 @@ $this->registerJsFile(
 
                         <div class="row">
                             <div class="col-md-4">
-                                <?= $form->field($model, 'paymentMode')->dropDownList(GlobalConstant::PAYMENT_MODE, ['prompt' => ''])->label('Payment Mode') ?>
+                                <?= $form->field($transaction, 'paymentMode')->dropDownList(GlobalConstant::PAYMENT_MODE, ['prompt' => ''])->label('Payment Mode') ?>
                             </div>
                             <div class="col-md-4">
-                                <?= $form->field($model, 'transactionDate')->widget(DateRangePicker::className(), Helper::dateFormat())->label('Transaction Date') ?>
+                                <?= $form->field($transaction, 'paymentDate')->widget(DateRangePicker::className(), Helper::dateFormat())->label('Transaction Date') ?>
                             </div>
                             <div class="col-md-4">
-                                <?= $form->field($model, 'bankId')->widget(Select2::class, Helper::ajaxDropDown('bankId', '/account/bank-account/get-banks', true, 'bankId', 'bank'))->label('Bank'); ?>
+                                <?= $form->field($transaction, 'bankId')->widget(Select2::class, Helper::ajaxDropDown('bankId', '/account/bank-account/get-banks', true, 'bankId', 'bank'))->label('Bank'); ?>
                             </div>
                             <div class="col-md-4">
-                                <?= $form->field($model, 'amount')->textInput(['value' => 0, 'type' => 'number', 'step' => 'any']) ?>
+                                <?= $form->field($transaction, 'amount')->textInput(['value' => 0, 'type' => 'number', 'step' => 'any']) ?>
                             </div>
                             <div class="col-md-4">
-                                <?= $form->field($model, 'adjustAmount')->textInput(['value' => 0, 'type' => 'number']) ?>
+                                <?= $form->field($transaction, 'adjustAmount')->textInput(['value' => 0, 'type' => 'number']) ?>
                             </div>
                             <div class="col-md-4">
-                                <?= $form->field($model, 'payableAmount5')->textInput(['value' => 0, 'type' => 'number', 'step' => 'any']) ?>
+                                <?= $form->field($model, 'payableAmount')->textInput(['value' => 0, 'type' => 'number', 'step' => 'any']) ?>
                             </div>
                             <div class="col-md-4">
                                 <?= $form->field($model, 'receivableAmount')->textInput(['value' => 0, 'type' => 'number', 'step' => 'any']) ?>
