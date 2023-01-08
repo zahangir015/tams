@@ -47,7 +47,7 @@ use yii\db\ActiveRecord;
  * @property int|null $updatedBy
  * @property int|null $updatedAt
  *
- * @property EmployeeDesignation[] $employeeDesignations
+ * @property EmployeeDesignation $employeeDesignation
  * @property EmployeeEducation[] $employeeEducations
  * @property User $user
  */
@@ -129,9 +129,9 @@ class Employee extends ActiveRecord
      *
      * @return ActiveQuery
      */
-    public function getEmployeeDesignations(): ActiveQuery
+    public function getEmployeeDesignation(): ActiveQuery
     {
-        return $this->hasMany(EmployeeDesignation::class, ['employeeId' => 'id']);
+        return $this->hasOne(EmployeeDesignation::class, ['employeeId' => 'id']);
     }
 
     /**

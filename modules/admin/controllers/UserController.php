@@ -145,6 +145,23 @@ class UserController extends Controller
      * Signup new user
      * @return string
      */
+    public function actionCreate()
+    {
+        $model = new Signup();
+        if ($model->load(Yii::$app->getRequest()->post())) {
+            if ($user = $model->signup()) {
+                return $this->goHome();
+            }
+        }
+        return $this->render('create', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * Signup new user
+     * @return string
+     */
     public function actionSignup()
     {
         $model = new Signup();

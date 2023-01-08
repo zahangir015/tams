@@ -44,7 +44,7 @@ use hail812\adminlte\widgets\Menu;
                     ['label' => 'Countries',  'icon' => 'globe', 'url' => ['/country']],
                     ['label' => 'Company',  'icon' => 'building', 'url' => ['/company']],
                     ['label' => 'USER MANAGEMENT', 'header' => true],
-                    ['label' => 'Users',  'icon' => 'users', 'url' => ['/admin/user']],
+                    ['label' => 'Users',  'icon' => 'users', 'url' => ['/admin/user/index']],
                     ['label' => 'Create User', 'icon' => 'user-plus', 'url' => ['/admin/user/create']],
                     ['label' => 'AUTHORIZATION MANAGEMENT', 'header' => true],
                     ['label' => 'Roles',  'icon' => 'user-tie', 'url' => ['/admin/role']],

@@ -199,7 +199,6 @@ class TicketController extends ParentController
         $model = $this->flightService->findTicket($uid);
 
         if ($this->request->isPost) {
-
             // Update Ticket
             $model = $this->flightService->updateTicket(Yii::$app->request->post(), $model);
             if ($model) {

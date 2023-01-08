@@ -3,15 +3,18 @@
 namespace app\modules\hrm\controllers;
 
 use app\components\GlobalConstant;
+use app\modules\admin\models\form\Signup;
 use app\modules\hrm\models\Branch;
 use app\modules\hrm\models\Department;
 use app\modules\hrm\models\Employee;
 use app\modules\hrm\models\EmployeeDesignation;
 use app\modules\hrm\models\EmployeeSearch;
 use app\controllers\ParentController;
+use app\modules\hrm\repositories\EmployeeRepository;
 use app\modules\hrm\services\EmployeeService;
 use app\modules\hrm\services\HrmConfigurationService;
 use Yii;
+use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -24,10 +27,13 @@ class EmployeeController extends ParentController
 {
     public HrmConfigurationService $hrmConfigurationService;
     public EmployeeService $employeeService;
+    public EmployeeRepository $employeeRepository;
 
     public function __construct($id, $module, $config = [])
     {
         $this->hrmConfigurationService = new HrmConfigurationService();
+        $this->employeeService = new EmployeeService();
+        $this->employeeRepository = new EmployeeRepository();
         parent::__construct($id, $module, $config);
     }
 
@@ -53,10 +59,10 @@ class EmployeeController extends ParentController
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id): string
+    public function actionView(string $uid): string
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $this->employeeRepository->findOne(['uid' => $uid], Employee::class, ['employeeDesignation']),
         ]);
     }
 
@@ -67,17 +73,24 @@ class EmployeeController extends ParentController
      */
     public function actionCreate(): Response|string
     {
+        $signup = new Signup();
         $model = new Employee();
         $designation = new EmployeeDesignation();
         $branches = $this->hrmConfigurationService->getAll(['status' => GlobalConstant::ACTIVE_STATUS], Branch::class, [], true);
         $departments = $this->hrmConfigurationService->getAll(['status' => GlobalConstant::ACTIVE_STATUS], Department::class, [], true);
 
         if ($this->request->isPost) {
+            $requestData = Yii::$app->request->post();
+            if (!empty($requestData['Signup'])){
+
+            }
             // Store ticket data
-            $storeResponse = $this->employeeService->storeEmployee(Yii::$app->request->post(), $model, $designation);
+            $storeResponse = $this->employeeService->storeEmployee($requestData, $model, $designation);
             if ($storeResponse) {
                 return $this->redirect(['index']);
             }
+
+
         } else {
             $model->loadDefaultValues();
             $designation->loadDefaultValues();
@@ -88,6 +101,7 @@ class EmployeeController extends ParentController
             'designation' => $designation,
             'branchList' => ArrayHelper::map($branches, 'id', 'name'),
             'departmentList' => ArrayHelper::map($departments, 'id', 'name'),
+            'signup' => $signup
         ]);
     }
 
@@ -100,14 +114,24 @@ class EmployeeController extends ParentController
      */
     public function actionUpdate(string $uid): Response|string
     {
-        $model = $this->findModel($uid);
-
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        $model = $this->employeeRepository->findOne(['uid' => $uid], Employee::class, ['employeeDesignation']);
+        $designation = $model->employeeDesignation;
+        $branches = $this->hrmConfigurationService->getAll(['status' => GlobalConstant::ACTIVE_STATUS], Branch::class, [], true);
+        $departments = $this->hrmConfigurationService->getAll(['status' => GlobalConstant::ACTIVE_STATUS], Department::class, [], true);
+        // Update Employee Data
+        if ($this->request->isPost) {
+            // Update Employee
+            $updateStatus = $this->employeeService->updateEmployee(Yii::$app->request->post(), $model, $designation);
+            if ($updateStatus) {
+                return $this->redirect(['view', 'uid' => $model->uid]);
+            }
         }
 
         return $this->render('update', [
             'model' => $model,
+            'designation' => $designation,
+            'branchList' => ArrayHelper::map($branches, 'id', 'name'),
+            'departmentList' => ArrayHelper::map($departments, 'id', 'name'),
         ]);
     }
 
@@ -125,20 +149,9 @@ class EmployeeController extends ParentController
         return $this->redirect(['index']);
     }
 
-    /**
-     * Finds the Employee model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param string $uid UID
-     * @return Employee the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel(string $uid): Employee
+    public function findEmployee(string $uid, $withArray = []): ActiveRecord
     {
-        if (($model = Employee::findOne(['uid' => $uid])) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+        return $this->employeeRepository->findOne(['uid' => $uid], Employee::class, $withArray);
     }
 
     // THE CONTROLLER
