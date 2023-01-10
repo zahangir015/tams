@@ -5,6 +5,11 @@ namespace app\modules\account\controllers;
 use app\modules\account\models\RefundTransaction;
 use app\modules\account\models\search\RefundTransactionSearch;
 use app\modules\account\models\Transaction;
+use app\modules\account\repositories\RefundTransactionRepository;
+use app\modules\account\services\RefundTransactionService;
+use app\modules\hrm\repositories\EmployeeRepository;
+use app\modules\hrm\services\EmployeeService;
+use app\modules\hrm\services\HrmConfigurationService;
 use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\Customer;
 use yii\web\Controller;
@@ -17,12 +22,20 @@ use yii\web\Response;
  */
 class RefundTransactionController extends Controller
 {
+
+    public RefundTransactionService $refundTransactionService;
+
+    public function __construct($id, $module, $config = [])
+    {
+        $this->refundTransactionService = new RefundTransactionService();
+        parent::__construct($id, $module, $config);
+    }
     /**
      * Lists all RefundTransaction models.
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $searchModel = new RefundTransactionSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
@@ -56,7 +69,9 @@ class RefundTransactionController extends Controller
         $model = new RefundTransaction();
         $transaction = new Transaction();
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
+            $requestData = $this->request->post();
+            $refundServiceProcessResponse = $this->refundTransactionService->customerPending($requestData);
+            if ($model->load() && $model->save()) {
                 return $this->redirect(['view', 'uid' => $model->uid]);
             }
         } else {
@@ -121,51 +136,9 @@ class RefundTransactionController extends Controller
 
     public function actionCustomerPending(): array
     {
-        $data = Yii::$app->request->get();
+        $requestData = Yii::$app->request->get();
         Yii::$app->response->format = Response::FORMAT_JSON;
-        $customerId = $data['customerId'];
-        if (empty($customerId)) {
-            return false;
-        }
 
-        $start_date = $end_date = null;
-        if (isset($data['dateRange']) && strpos($data['dateRange'], '-') !== false) {
-            list($start_date, $end_date) = explode(' - ', $data['dateRange']);
-        }
-
-        $pendingServices = Customer::find()
-            ->select(['id', 'name', 'company'])
-            ->with([
-                'refundTickets' => function ($query) use ($start_date, $end_date) {
-                    $query->where(['isRefunded' => ServiceConstant::PAYMENT_STATUS['Full Paid']])
-                        ->andWhere(['IS', 'invoiceId', NULL]);
-                    if ($start_date && $end_date) {
-                        $query->andWhere(['between', 'issueDate', $start_date, $end_date])->orderBy(['issueDate' => SORT_ASC]);
-                    }
-                },
-                'refundVisas' => function ($query) use ($start_date, $end_date) {
-                    $query->where(['<>', 'paymentStatus', ServiceConstant::PAYMENT_STATUS['Full Paid']])
-                        ->andWhere(['IS', 'invoiceId', NULL]);
-                    if ($start_date && $end_date) {
-                        $query->andWhere(['between', 'issueDate', $start_date, $end_date])->orderBy(['issueDate' => SORT_ASC]);
-                    }
-                },
-                'refundHotels' => function ($query) use ($start_date, $end_date) {
-                    $query->where(['<>', 'paymentStatus', ServiceConstant::PAYMENT_STATUS['Full Paid']])
-                        ->andWhere(['IS', 'invoiceId', NULL]);
-                    if ($start_date && $end_date) {
-                        $query->andWhere(['between', 'issueDate', $start_date, $end_date])->orderBy(['issueDate' => SORT_ASC]);
-                    }
-                },
-                'refundHolidays' => function ($query) use ($start_date, $end_date) {
-                    $query->where(['<>', 'paymentStatus', ServiceConstant::PAYMENT_STATUS['Full Paid']])
-                        ->andWhere(['IS', 'invoiceId', NULL]);
-                    if ($start_date && $end_date) {
-                        $query->andWhere(['between', 'issueDate', $start_date, $end_date])->orderBy(['issueDate' => SORT_ASC]);
-                    }
-                },
-            ])
-            ->where(['id' => $customerId])->one();
 
         $html = '';
         $key = 1;

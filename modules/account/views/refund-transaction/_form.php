@@ -17,7 +17,7 @@ use yii\widgets\ActiveForm;
 /** @var yii\widgets\ActiveForm $form */
 
 $this->registerJs(
-    "var ajaxUrl = '" . Yii::$app->request->baseUrl . '/account/refund-transaction/pending-for-customer' . "'; var _csrf='" . Yii::$app->request->getCsrfToken() . "';",
+    "var ajaxUrl = '" . Yii::$app->request->baseUrl . '/account/refund-transaction/customer-pending' . "'; var _csrf='" . Yii::$app->request->getCsrfToken() . "';",
     View::POS_HEAD,
     'url'
 );

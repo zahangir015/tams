@@ -4,9 +4,9 @@ $(function () {
         var customerId = $(this).val();
         if ($('input[name=dateRange]').val()) {
             var dateRange = $('input[name=dateRange]').val();
-            ajaxCall(customerId, dateRange);
+            pendingRefund(customerId, dateRange);
         } else {
-            ajaxCall(customerId, "");
+            pendingRefund(customerId, "");
         }
     });
 
@@ -14,7 +14,7 @@ $(function () {
         var dateRange = $('input[name=dateRange]').val();
         if ($('#customerId').val()) {
             var customerId = $('#customerId').val();
-            ajaxCall(customerId, dateRange);
+            pendingRefund(customerId, dateRange);
         }
     });
 
@@ -22,9 +22,9 @@ $(function () {
         var supplierId = $(this).val();
         if ($('input[name=dateRange2]').val()) {
             var dateRange2 = $('input[name=dateRange2]').val();
-            ajaxCall2(supplierId, dateRange2);
+            pendingRefund2(supplierId, dateRange2);
         } else {
-            ajaxCall2(supplierId, "");
+            pendingRefund2(supplierId, "");
         }
     });
 
@@ -32,11 +32,11 @@ $(function () {
         var dateRange2 = $('input[name=dateRange2]').val();
         if ($('#supplierId').val()) {
             var supplierId = $('#supplierId').val();
-            ajaxCall2(supplierId, dateRange2);
+            pendingRefund2(supplierId, dateRange2);
         }
     });
 
-    function ajaxCall(customerId, dateRange) {
+    function pendingRefund(customerId, dateRange) {
         $.ajax({
             url: ajaxUrl,
             type: 'get',
@@ -57,7 +57,7 @@ $(function () {
         });
     }
 
-    function ajaxCall2(supplierId, dateRange) {
+    function pendingRefund2(supplierId, dateRange) {
         $.ajax({
             url: ajaxUrl,
             type: 'get',
