@@ -73,7 +73,7 @@ class EmployeeController extends ParentController
      */
     public function actionCreate(): Response|string
     {
-        $signup = new Signup();
+        $signupModel = new Signup();
         $model = new Employee();
         $designation = new EmployeeDesignation();
         $branches = $this->hrmConfigurationService->getAll(['status' => GlobalConstant::ACTIVE_STATUS], Branch::class, [], true);
@@ -81,15 +81,11 @@ class EmployeeController extends ParentController
 
         if ($this->request->isPost) {
             $requestData = Yii::$app->request->post();
-            if (!empty($requestData['Signup'])){
-
-            }
             // Store ticket data
-            $storeResponse = $this->employeeService->storeEmployee($requestData, $model, $designation);
+            $storeResponse = $this->employeeService->storeEmployee($requestData, $model, $designation, $signupModel);
             if ($storeResponse) {
                 return $this->redirect(['index']);
             }
-
 
         } else {
             $model->loadDefaultValues();
@@ -101,7 +97,7 @@ class EmployeeController extends ParentController
             'designation' => $designation,
             'branchList' => ArrayHelper::map($branches, 'id', 'name'),
             'departmentList' => ArrayHelper::map($departments, 'id', 'name'),
-            'signup' => $signup
+            'signup' => $signupModel
         ]);
     }
 
@@ -184,7 +180,7 @@ class EmployeeController extends ParentController
             $parents = $_POST['depdrop_parents'];
             if ($parents != null) {
                 $departmentId = $parents[0];
-                $out = $this->hrmConfigurationService->getEmployeeList(['status' => GlobalConstant::ACTIVE_STATUS],['departmentId' => $departmentId, 'status' => GlobalConstant::ACTIVE_STATUS]);
+                $out = $this->hrmConfigurationService->getEmployeeList(['status' => GlobalConstant::ACTIVE_STATUS], ['departmentId' => $departmentId, 'status' => GlobalConstant::ACTIVE_STATUS]);
                 // the getSubCatList function will query the database based on the
                 // $departmentId and return an array like below:
                 // [

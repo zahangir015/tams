@@ -4,9 +4,13 @@ namespace app\modules\sale\models;
 
 use app\components\GlobalConstant;
 use app\modules\sale\models\holiday\Holiday;
+use app\modules\sale\models\holiday\HolidayRefund;
 use app\modules\sale\models\hotel\Hotel;
+use app\modules\sale\models\hotel\HotelRefund;
 use app\modules\sale\models\ticket\Ticket;
+use app\modules\sale\models\ticket\TicketRefund;
 use app\modules\sale\models\visa\Visa;
+use app\modules\sale\models\visa\VisaRefund;
 use app\traits\BehaviorTrait;
 use Yii;
 use yii\db\ActiveQuery;
@@ -134,5 +138,45 @@ class Customer extends ActiveRecord
     public function getHolidays(): ActiveQuery
     {
         return $this->hasMany(Holiday::class, ['customerId' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Customer]] from [[Ticket]].
+     *
+     * @return ActiveQuery
+     */
+    public function getRefundTickets(): ActiveQuery
+    {
+        return $this->hasMany(TicketRefund::class, ['refId' => 'id'])->onCondition(['refModel' => Customer::class]);
+    }
+
+    /**
+     * Gets query for [[Customer]] from [[Visa]].
+     *
+     * @return ActiveQuery
+     */
+    public function getRefundVisas(): ActiveQuery
+    {
+        return $this->hasMany(VisaRefund::class, ['refId' => 'id'])->onCondition(['refModel' => Customer::class]);
+    }
+
+    /**
+     * Gets query for [[Customer]] from [[Hotel]].
+     *
+     * @return ActiveQuery
+     */
+    public function getRefundHotels(): ActiveQuery
+    {
+        return $this->hasMany(HotelRefund::class, ['refId' => 'id'])->onCondition(['refModel' => Customer::class]);
+    }
+
+    /**
+     * Gets query for [[Customer]] from [[Holiday]].
+     *
+     * @return ActiveQuery
+     */
+    public function getRefundHolidays(): ActiveQuery
+    {
+        return $this->hasMany(HolidayRefund::class, ['refId' => 'id'])->onCondition(['refModel' => Customer::class]);
     }
 }

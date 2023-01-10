@@ -4,6 +4,7 @@ namespace app\modules\hrm\services;
 
 
 use app\components\Helper;
+use app\modules\admin\models\form\Signup;
 use app\modules\hrm\models\Employee;
 use app\modules\hrm\models\EmployeeDesignation;
 use app\modules\hrm\repositories\EmployeeRepository;
@@ -20,12 +21,24 @@ class EmployeeService
         $this->employeeRepository = new EmployeeRepository();
     }
 
-    public function storeEmployee(array $requestData, Employee $employee, EmployeeDesignation $employeeDesignation): bool
+    public function storeEmployee(array $requestData, Employee $employee, EmployeeDesignation $employeeDesignation, Signup $signupModel): bool
     {
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
+            // User create
+            $user = null;
+            if (isset($requestData['Signup']) && !empty($requestData['Signup'])) {
+                if ($signupModel->load($requestData)) {
+                    $user = $signupModel->signup();
+                    if (is_null($user)) {
+                        throw new Exception('User creation failed.');
+                    }
+                }
+            }
+            // Employee create
             if (!empty($requestData['Employee']) || !empty($requestData['EmployeeDesignation'])) {
                 if ($employee->load($requestData)) {
+                    $employee->userId = !is_null($user) ? $user->id : null;
                     $employee = $this->employeeRepository->store($employee);
                     if ($employee->hasErrors()) {
                         throw new Exception('Employee creation failed - ' . Helper::processErrorMessages($employee->getErrors()));
