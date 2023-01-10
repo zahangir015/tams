@@ -14,7 +14,7 @@ class EmployeeSearch extends Employee
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['id', 'userId', 'reportTo', 'gender', 'maritalStatus', 'inProhibition', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
@@ -25,7 +25,7 @@ class EmployeeSearch extends Employee
     /**
      * {@inheritdoc}
      */
-    public function scenarios()
+    public function scenarios(): array
     {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
@@ -38,7 +38,7 @@ class EmployeeSearch extends Employee
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search(array $params): ActiveDataProvider
     {
         $query = Employee::find();
 
@@ -74,8 +74,7 @@ class EmployeeSearch extends Employee
             'updatedAt' => $this->updatedAt,
         ]);
 
-        $query->andFilterWhere(['like', 'uid', $this->uid])
-            ->andFilterWhere(['like', 'firstName', $this->firstName])
+        $query->andFilterWhere(['like', 'firstName', $this->firstName])
             ->andFilterWhere(['like', 'lastName', $this->lastName])
             ->andFilterWhere(['like', 'fathersName', $this->fathersName])
             ->andFilterWhere(['like', 'mothersName', $this->mothersName])

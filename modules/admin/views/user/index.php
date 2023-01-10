@@ -12,14 +12,11 @@ $this->title = Yii::t('rbac-admin', 'Users');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="user-index">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+            ['class' => 'kartik\grid\SerialColumn'],
             'username',
             'email:email',
             [
@@ -33,7 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ]
             ],
             [
-                'class' => 'yii\grid\ActionColumn',
+                'class' => 'kartik\grid\ActionColumn',
                 'template' => Helper::filterActionColumn(['view', 'activate', 'delete']),
                 'buttons' => [
                     'activate' => function($url, $model) {
@@ -52,6 +49,31 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]
                 ],
             ],
+        'toolbar' => [
+            [
+                'content' =>
+                    Html::a('<i class="fas fa-plus"></i>', ['/admin/user/create'], [
+                        'title' => Yii::t('app', 'Add Designation'),
+                        'class' => 'btn btn-success'
+                    ]) . ' ' .
+                    Html::a('<i class="fas fa-redo"></i>', ['/admin/user/index'], [
+                        'class' => 'btn btn-primary',
+                        'title' => Yii::t('app', 'Reset Grid')
+                    ]),
+            ],
+            '{export}',
+            '{toggleData}'
+        ],
+        'pjax' => true,
+        'bordered' => true,
+        'striped' => false,
+        'condensed' => false,
+        'responsive' => true,
+        'hover' => true,
+        'panel' => [
+            'heading'=> '<i class="fas fa-list-alt"></i> '.Html::encode($this->title),
+            'type' => GridView::TYPE_DARK
+        ],
         ]);
-        ?>
+    ?>
 </div>

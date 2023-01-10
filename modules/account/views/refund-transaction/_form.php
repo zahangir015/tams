@@ -30,24 +30,22 @@ $this->registerJsFile(
 ?>
 
 <div class="refund-transaction-form">
-    <div class="card">
-        <div class="card-body">
-            <?php $form = ActiveForm::begin(); ?>
-            <div class="row">
-                <div class="col-md-6">
-                    <label class="control-label" for="supplier">Select Customer</label>
-                    <?= $form->field($model, 'refId')->widget(Select2::classname(), Helper::ajaxDropDown('customerId', '/sale/customer/get-customers', true, 'customerId', 'customer'))->label('Invoice To'); ?>
-                </div>
-                <div class="col-md-6">
-                    <label class="control-label" for="dateRange">Issue Date Range</label>
-                    <?= $form->field($model, 'dateRange', [
-                        'options' => ['class' => 'drp-container mb-2']
-                    ])->widget(DateRangePicker::class, Helper::getDateRangeWidgetOptions())->label(false) ?>
-                </div>
-            </div>
-            <hr class="m-5">
-            <div class="row" style="margin-bottom: 10px;">
-                <div class="col-md-9">
+    <?php $form = ActiveForm::begin(); ?>
+    <div class="row">
+        <div class="col-md-7">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <?= $form->field($model, 'refId')->widget(Select2::classname(), Helper::ajaxDropDown('refId', '/sale/customer/get-customers', true, 'customerId', 'customer'))->label('Refund To'); ?>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="control-label" for="dateRange">Issue Date Range</label>
+                            <?= $form->field($model, 'dateRange', [
+                                'options' => ['class' => 'drp-container mb-2']
+                            ])->widget(DateRangePicker::class, Helper::getDateRangeWidgetOptions())->label(false) ?>
+                        </div>
+                    </div>
                     <div id="bills" style="border: 1px solid #ddd; background-color: #FFFFFF; padding: 10px;">
                         <h4>Pending Refunds</h4>
                         <hr>
@@ -68,35 +66,14 @@ $this->registerJsFile(
                         </table>
                     </div>
                 </div>
-                <div class="col-md-3" style="padding-left: 5px">
-                    <div style="border: 1px solid #ddd; background-color: #FFFFFF; padding: 10px;">
-                        <h4>Customer Payment details</h4>
-                        <hr>
-
-                        <table class="table table-bordered">
-                            <tbody>
-                            <tr>
-                                <td><h4>Currency:</h4></td>
-                                <td><h3>BDT</h3></td>
-                            </tr>
-                            <tr>
-                                <td><h4>Total Due:</h4></td>
-                                <td><h3 id="totalDue"></h3></td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="clearfix"></div>
             </div>
-
-
-            <div class="row" style="margin-bottom: 10px;">
-                <div class="col-9">
+        </div>
+        <div class="col-md-5">
+            <div class="card">
+                <div class="card-body">
                     <div id="payment" style="border: 1px solid #ddd; background-color: #FFFFFF; padding: 10px;">
                         <h4>Payment Details for Customer</h4>
                         <hr>
-
                         <div class="row">
                             <div class="col-md-4">
                                 <?= $form->field($transaction, 'paymentMode')->dropDownList(GlobalConstant::PAYMENT_MODE, ['prompt' => ''])->label('Payment Mode') ?>
@@ -129,12 +106,14 @@ $this->registerJsFile(
                         <div class="clearfix"></div>
                     </div>
                 </div>
-                <div class="clearfix"></div>
             </div>
         </div>
     </div>
+    <?php ActiveForm::end(); ?>
+</div>
 
-    <? /*= $form->field($model, 'uid')->textInput(['maxlength' => true]) */ ?><!--
+
+<? /*= $form->field($model, 'uid')->textInput(['maxlength' => true]) */ ?><!--
 
     <? /*= $form->field($model, 'refId')->textInput() */ ?>
 
@@ -164,10 +143,3 @@ $this->registerJsFile(
 
     --><? /*= $form->field($model, 'updatedAt')->textInput() */ ?>
 
-    <div class="form-group">
-        <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
-    </div>
-
-    <?php ActiveForm::end(); ?>
-
-</div>
