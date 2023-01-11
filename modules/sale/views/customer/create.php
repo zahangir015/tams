@@ -12,5 +12,6 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="customer-create">
     <?= $this->render('_form', [
         'model' => $model,
+        'starCategories' => $starCategories,
     ]) ?>
 </div>

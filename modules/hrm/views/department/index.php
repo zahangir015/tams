@@ -52,7 +52,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 'class' => ActionColumn::class,
                 'urlCreator' => function ($action, Department $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'uid' => $model->uid]);
-                }
+                },
+                'width' => '150px',
+                'template' => '{view} {edit} {delete}',
+                'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
+                'buttons' => Helper::getBasicActionColumnArray()
             ],
         ],
         'toolbar' => [

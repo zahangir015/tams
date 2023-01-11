@@ -46,7 +46,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, BankAccount $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'uid' => $model->uid]);
-                 }
+                 },
+                'width' => '150px',
+                'template' => '{view} {edit} {delete}',
+                'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
+                'buttons' => Helper::getBasicActionColumnArray()
             ],
         ],
         'toolbar' => [

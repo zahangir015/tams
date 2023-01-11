@@ -2,30 +2,44 @@
 
 namespace app\modules\sale\controllers;
 
-use app\components\GlobalConstant;
-use app\modules\sale\models\Customer;
-use app\modules\sale\models\search\CustomerSearch;
-use app\controllers\ParentController;
 use app\modules\sale\models\StarCategory;
-use Yii;
-use yii\helpers\ArrayHelper;
+use app\modules\sale\models\search\StarCategorySearch;
+use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 
 /**
- * CustomerController implements the CRUD actions for Customer model.
+ * StarCategoryController implements the CRUD actions for StarCategory model.
  */
-class CustomerController extends ParentController
+class StarCategoryController extends Controller
 {
     /**
-     * Lists all Customer models.
+     * @inheritDoc
+     */
+    public function behaviors()
+    {
+        return array_merge(
+            parent::behaviors(),
+            [
+                'verbs' => [
+                    'class' => VerbFilter::className(),
+                    'actions' => [
+                        'delete' => ['POST'],
+                    ],
+                ],
+            ]
+        );
+    }
+
+    /**
+     * Lists all StarCategory models.
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
-        $searchModel = new CustomerSearch();
+        $searchModel = new StarCategorySearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
@@ -35,12 +49,12 @@ class CustomerController extends ParentController
     }
 
     /**
-     * Displays a single Customer model.
+     * Displays a single StarCategory model.
      * @param string $uid UID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView(string $uid)
+    public function actionView(string $uid): string
     {
         return $this->render('view', [
             'model' => $this->findModel($uid),
@@ -48,18 +62,17 @@ class CustomerController extends ParentController
     }
 
     /**
-     * Creates a new Customer model.
+     * Creates a new StarCategory model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
+     * @return string|Response
      */
-    public function actionCreate()
+    public function actionCreate(): Response|string
     {
-        $model = new Customer();
-        $starCategories = ArrayHelper::map(StarCategory::find()->where(['status' => GlobalConstant::ACTIVE_STATUS])->all(), 'id', 'name');
+        $model = new StarCategory();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'uid' => $model->uid]);
+                return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {
             $model->loadDefaultValues();
@@ -67,23 +80,22 @@ class CustomerController extends ParentController
 
         return $this->render('create', [
             'model' => $model,
-            'starCategories' => $starCategories,
         ]);
     }
 
     /**
-     * Updates an existing Customer model.
+     * Updates an existing StarCategory model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param string $uid ID
-     * @return string|\yii\web\Response
+     * @param string $uid UID
+     * @return string|Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate(string $uid)
+    public function actionUpdate(string $uid): Response|string
     {
         $model = $this->findModel($uid);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'uid' => $model->uid]);
+            return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
@@ -92,43 +104,32 @@ class CustomerController extends ParentController
     }
 
     /**
-     * Deletes an existing Customer model.
+     * Deletes an existing StarCategory model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id ID
-     * @return \yii\web\Response
+     * @param string $uid UID
+     * @return Response
      * @throws NotFoundHttpException if the model cannot be found
-     *
-     * public function actionDelete($id)
+     */
+    /*public function actionDelete(string $uid): Response
     {
-        $this->findModel($id)->delete();
+        $this->findModel($uid)->delete();
 
         return $this->redirect(['index']);
     }*/
 
     /**
-     * Finds the Customer model based on its primary key value.
+     * Finds the StarCategory model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param string $uid ID
-     * @return Customer the loaded model
+     * @param string $uid UID
+     * @return StarCategory the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel(string $uid): Customer
+    protected function findModel(string $uid)
     {
-        if (($model = Customer::findOne(['uid' => $uid])) !== null) {
+        if (($model = StarCategory::findOne(['uid' => $uid])) !== null) {
             return $model;
         }
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
-    }
-
-    public function actionGetCustomers($query = null): array
-    {
-        Yii::$app->response->format = Response::FORMAT_JSON;
-        $customers = Customer::query($query);
-        $data = [];
-        foreach ($customers as $customer) {
-            $data[] = ['id' => $customer->id, 'text' => $customer->name . ' | ' . $customer->company . ' | ' . $customer->email];
-        }
-        return ['results' => $data];
     }
 }

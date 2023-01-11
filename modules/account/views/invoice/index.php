@@ -102,7 +102,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         }
                     },
                     'delete' => function ($url, $model, $key) {
-                        return Html::a(Utils::svgDeleteIcon(), ['delete', 'uid' => $model->uid], [
+                        return Html::a('<i class="fa fa-trash-alt"></i>', ['delete', 'uid' => $model->uid], [
                             'title' => 'delete',
                             'data-pjax' => '0',
                             'data' => [

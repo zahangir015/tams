@@ -90,14 +90,15 @@ use hail812\adminlte\widgets\Menu;
                         ]
                     ],
                     ['label' => 'SALES', 'header' => true],
+                    ['label' => 'Providers', 'icon' => 'paper-plane', 'url' => ['/sale/provider/index']],
                     [
                         'label' => 'Supplier Settings',
                         'icon' => 'truck',
                         'badge' => '<span class="right badge badge-info">4</span>',
                         'items' => [
-                            ['label' => 'Supplier Category Add',  'icon' => 'list-alt', 'url' => ['/sale/supplier-category/create']],
+                            ['label' => 'Supplier Category Add',  'icon' => 'plus', 'url' => ['/sale/supplier-category/create']],
                             ['label' => 'Category List',  'icon' => 'list-alt', 'url' => ['/sale/supplier-category/index']],
-                            ['label' => 'Supplier Add', 'icon' => 'truck', 'url' => ['/sale/supplier/create']],
+                            ['label' => 'Supplier Add', 'icon' => 'plus', 'url' => ['/sale/supplier/create']],
                             ['label' => 'Supplier List', 'icon' => 'truck', 'url' => ['/sale/supplier/index']],
                         ]
                     ],
@@ -111,8 +112,18 @@ use hail812\adminlte\widgets\Menu;
                             ['label' => 'Airline History', 'icon' => 'list', 'url' => ['/sale/airline-history/index']],
                         ]
                     ],
-                    ['label' => 'Customers', 'icon' => 'users', 'url' => ['/sale/customer/index']],
-                    ['label' => 'Providers', 'icon' => 'paper-plane', 'url' => ['/sale/provider/index']],
+                    [
+                        'label' => 'Customer Settings',
+                        'icon' => 'users',
+                        'badge' => '<span class="right badge badge-info">4</span>',
+                        'items' => [
+                            ['label' => 'Star Category Add',  'icon' => 'star', 'url' => ['/sale/star-category/create']],
+                            ['label' => 'Star Categories',  'icon' => 'list-alt', 'url' => ['/sale/star-category/index']],
+                            ['label' => 'Customer Add', 'icon' => 'user-plus', 'url' => ['/sale/customer/create']],
+                            ['label' => 'Customer List', 'icon' => 'list', 'url' => ['/sale/customer/index']],
+                        ]
+                    ],
+
                     [
                         'label' => 'Flight Management',
                         'icon' => 'plane',

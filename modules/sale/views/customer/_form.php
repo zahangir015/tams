@@ -43,6 +43,9 @@ use yii\bootstrap4\ActiveForm;
                     <?= $form->field($model, 'category')->dropDownList(GlobalConstant::CUSTOMER_CATEGORY, ['prompt' => '']) ?>
                 </div>
                 <div class="col-md">
+                    <?= $form->field($model, 'starCategoryId')->dropDownList($starCategories, ['prompt' => '']) ?>
+                </div>
+                <div class="col-md">
                     <?= $form->field($model, 'creditModality')->dropDownList(GlobalConstant::YES_NO, ['prompt' => '']) ?>
                 </div>
                 <div class="col-md">

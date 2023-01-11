@@ -25,6 +25,7 @@ use yii\db\ActiveRecord;
  * @property string $company
  * @property string $customerCode
  * @property string $category
+ * @property integer $starCategoryId
  * @property string $email
  * @property string|null $address
  * @property string|null $phone
@@ -55,7 +56,7 @@ class Customer extends ActiveRecord
         return [
             [['name', 'company', 'customerCode', 'category', 'email', 'createdBy'], 'required'],
             [['category'], 'string'],
-            [['creditModality', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['creditModality', 'starCategoryId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['name', 'company', 'email', 'address'], 'string', 'max' => 255],
             [['customerCode'], 'string', 'max' => 32],
@@ -76,6 +77,7 @@ class Customer extends ActiveRecord
             'company' => Yii::t('app', 'Company'),
             'customerCode' => Yii::t('app', 'Customer Code'),
             'category' => Yii::t('app', 'Category'),
+            'starCategoryId' => Yii::t('app', 'Star Category'),
             'email' => Yii::t('app', 'Email'),
             'address' => Yii::t('app', 'Address'),
             'phone' => Yii::t('app', 'Phone'),

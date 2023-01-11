@@ -38,7 +38,36 @@ $this->params['breadcrumbs'][] = $this->title;
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, SupplierCategory $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'uid' => $model->uid]);
-                }
+                },
+                'width' => '150px',
+                'template' => '{view} {edit} {delete}',
+                'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
+                'buttons' => [
+                    'view' => function ($url, $model) {
+                        return Html::a('<i class="fa fa-info-circle"></i>', ['view', 'uid' => $model->uid], [
+                            'title' => 'view',
+                            'data-pjax' => '0',
+                            'class' => 'btn btn-primary btn-xs'
+                        ]);
+                    },
+                    'edit' => function ($url, $model, $key) {
+                        return Html::a('<i class="fa fa-envelope-open"></i>', ['update', 'uid' => $model->uid], [
+                            'title' => Yii::t('app', 'Preview of Invoice'),
+                            'class' => 'btn btn-primary btn-xs'
+                        ]);
+                    },
+                    'delete' => function ($url, $model, $key) {
+                        return Html::a('<i class="fa fa-trash-alt"></i>', ['delete', 'uid' => $model->uid], [
+                            'title' => 'delete',
+                            'data-pjax' => '0',
+                            'data' => [
+                                'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
+                                'method' => 'post',
+                            ],
+                            'class' => 'btn btn-primary btn-xs'
+                        ]);
+                    },
+                ]
             ],
         ],
         'toolbar' => [

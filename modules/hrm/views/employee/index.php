@@ -1,5 +1,6 @@
 <?php
 
+use app\components\Helper;
 use app\modules\hrm\models\Employee;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -58,7 +59,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, Employee $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'uid' => $model->uid]);
-                 }
+                 },
+                'width' => '150px',
+                'template' => '{view} {edit} {delete}',
+                'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
+                'buttons' => Helper::getBasicActionColumnArray()
             ],
         ],
         'toolbar' => [

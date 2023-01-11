@@ -19,7 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+            ['class' => 'kartik\grid\SerialColumn'],
             [
                 'class' => '\kartik\grid\DataColumn',
                 'attribute' => 'airlineId',
@@ -45,7 +45,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, AirlineHistory $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'uid' => $model->uid]);
-                 }
+                 },
+                'width' => '150px',
+                'template' => '{view} {edit} {delete}',
+                'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
+                'buttons' => Helper::getBasicActionColumnArray()
             ],
         ],
         'toolbar' => [

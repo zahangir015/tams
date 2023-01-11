@@ -1,6 +1,7 @@
 <?php
 
 use app\components\GlobalConstant;
+use app\components\Helper;
 use app\modules\hrm\models\Branch;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -25,7 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'class' => '\kartik\grid\DataColumn',
                 'attribute' => 'status',
                 'value' => function ($model) {
-                    $labelClass = \app\components\Helper::statusLabelClass($model->status);
+                    $labelClass = Helper::statusLabelClass($model->status);
                     $labelText = ($model->status) ? 'Active' : 'Inactive';
                     return '<span class="right badge ' . $labelClass . '">' . $labelText . '</span>';
                 },
@@ -40,7 +41,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 'class' => ActionColumn::class,
                 'urlCreator' => function ($action, Branch $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'uid' => $model->uid]);
-                }
+                },
+                'width' => '150px',
+                'template' => '{view} {edit} {delete}',
+                'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
+                'buttons' => Helper::getBasicActionColumnArray()
             ],
         ],
         'toolbar' => [
