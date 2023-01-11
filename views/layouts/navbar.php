@@ -181,18 +181,18 @@ use yii\helpers\Url;
                 <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
             </div>
         </li>
-        <li class="nav-item">
+        <!--<li class="nav-item">
 
-            <?= Html::beginForm(['/admin/user/logout'], 'post', ['class' => 'form-inline'])
+            <?php /*= Html::beginForm(['/admin/user/logout'], 'post', ['class' => 'form-inline'])
             . Html::submitButton(
                 '<i class="fas fa-sign-out-alt"></i>',
                 ['data-method' => 'post', 'class' => 'nav-link']
             )
             . Html::endForm()
-            ?>
-        </li>
+            */?>
+        </li>-->
         <li class="nav-item">
-            <?= Html::a('<i class="fas fa-sign-out-alt"></i>', ['/site/logout'], ['data-method' => 'post', 'class' => 'nav-link']) ?>
+            <?= Html::a('<i class="fas fa-sign-out-alt"></i>', ['/admin/user/logout'], ['data-method' => 'post', 'class' => 'nav-link']) ?>
         </li>
         <li class="nav-item">
             <a class="nav-link" data-widget="fullscreen" href="#" role="button">

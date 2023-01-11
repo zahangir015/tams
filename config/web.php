@@ -96,13 +96,14 @@ $config = [
     'as access' => [
         'class' => 'app\modules\admin\components\AccessControl',
         'allowActions' => [
-            'site/*',
-            'admin/*',
-            'gii/*',
-            'debug/*',
-            'account/*',
-            'company/*',
-            'hrm/employee/*'
+            'admin/user/login'
+//            'site/*',
+//            'admin/*',
+//            'gii/*',
+//            'debug/*',
+//            'account/*',
+//            'company/*',
+//            'hrm/employee/*'
             // The actions listed here will be allowed to everyone including guests.
             // So, 'admin/*' should not appear here in the production, of course.
             // But in the earlier stages of your development, you may probably want to
