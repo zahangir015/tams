@@ -15,13 +15,10 @@ use yii\web\Request;
 class RefundTransactionService
 {
     public RefundTransactionRepository $refundTransactionRepository;
-
-    public function __construct($id, $module, $config = [])
+    public function __construct()
     {
         $this->refundTransactionRepository = new RefundTransactionRepository();
-        parent::__construct($id, $module, $config);
     }
-
     public function getRefundList($refModel, $refId): array
     {
         $refundTransactions = RefundTransaction::find()
