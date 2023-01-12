@@ -106,7 +106,7 @@ class LedgerService
         return ($ledger->debit > $ledger->credit) ? ($balance + ($ledger->credit + $ledger->debit)) : ($balance - ($ledger->credit + $ledger->debit));
     }
 
-    public static function processSingleSupplierLedger($motherTicket, $ticketSupplier, $invoiceDetail): array
+    public function processSingleSupplierLedger($motherTicket, $ticketSupplier, $invoiceDetail): array
     {
         $debit = $credit = 0;
         $motherTicketSupplier = $motherTicket->ticketSupplier;
@@ -131,9 +131,23 @@ class LedgerService
             'debit' => $debit,
             'credit' => $credit
         ];
-        $ledgerRequestResponse = LedgerService::store($ledgerRequestData);
-        if ($ledgerRequestResponse['error']) {
-            return ['error' => true, 'message' => $ledgerRequestResponse['message']];
+
+        $balance = 0;
+        if ($previousLedger = LedgerRepository::findLatestOne($ledgerRequestData['refId'], $ledgerRequestData['refModel'])) {
+            $balance = $previousLedger['balance'];
+        }
+
+        // Process Ledger data
+        $newLedger = new Ledger();
+        $newLedger->load(['Ledger' => $ledgerRequestData]);
+        $closingBalance = self::calculateBalance($ledgerRequestData['refModel'], $newLedger, $balance);
+        $newLedger->balance = $closingBalance;
+        $newLedger->date = date('Y-m-d');
+        $newLedger->status = GlobalConstant::ACTIVE_STATUS;
+
+        $newLedger = $this->ledgerRepository->store($newLedger);
+        if ($newLedger->hasErrors()) {
+            return ['error' => true, 'message' => 'Ledger creation failed - ' . Helper::processErrorMessages($newLedger->getErrors())];
         }
         return ['error' => false, 'message' => 'Supplier ledger processed successfully'];
     }

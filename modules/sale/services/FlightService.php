@@ -28,11 +28,13 @@ class FlightService
 {
     private FlightRepository $flightRepository;
     private InvoiceService $invoiceService;
+    private LedgerService $ledgerService;
 
     public function __construct()
     {
         $this->flightRepository = new FlightRepository();
         $this->invoiceService = new InvoiceService();
+        $this->ledgerService = new LedgerService();
     }
 
     public function storeTicket(array $requestData): bool
@@ -259,7 +261,7 @@ class FlightService
             $invoiceDetail = $invoiceDetailProcessResponse['data'];
 
             // Supplier Ledger process
-            $processSupplierLedgerResponse = LedgerService::processSingleSupplierLedger($motherTicket, $ticketSupplier, $invoiceDetail);
+            $processSupplierLedgerResponse = $this->ledgerService->processSingleSupplierLedger($motherTicket, $ticketSupplier, $invoiceDetail);
             if ($processSupplierLedgerResponse['error']) {
                 throw new Exception('Supplier Ledger creation failed - ' . $processSupplierLedgerResponse['message']);
             }

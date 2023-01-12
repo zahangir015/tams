@@ -12,6 +12,7 @@ use app\modules\hrm\services\EmployeeService;
 use app\modules\hrm\services\HrmConfigurationService;
 use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\Customer;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -70,7 +71,7 @@ class RefundTransactionController extends Controller
         $transaction = new Transaction();
         if ($this->request->isPost) {
             $requestData = $this->request->post();
-            $refundServiceProcessResponse = $this->refundTransactionService->customerPending($requestData);
+            $refundServiceProcessResponse = $this->refundTransactionService->customerPending($requestData);dd($refundServiceProcessResponse);
             if ($model->load() && $model->save()) {
                 return $this->redirect(['view', 'uid' => $model->uid]);
             }
@@ -138,11 +139,10 @@ class RefundTransactionController extends Controller
     {
         $requestData = Yii::$app->request->get();
         Yii::$app->response->format = Response::FORMAT_JSON;
-
-
         $html = '';
         $key = 1;
         $totalPayable = 0;
+        $pendingServices = $this->refundTransactionService->customerPending($requestData);dd($pendingServices);
         if (!empty($pendingServices->tickets)) {
             foreach ($pendingServices->tickets as $pending) {
                 $totalPayable += ($pending->quoteAmount - $pending->receivedAmount);

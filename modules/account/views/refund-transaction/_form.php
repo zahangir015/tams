@@ -75,25 +75,25 @@ $this->registerJsFile(
                         <h4>Payment Details for Customer</h4>
                         <hr>
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-6">
                                 <?= $form->field($transaction, 'paymentMode')->dropDownList(GlobalConstant::PAYMENT_MODE, ['prompt' => ''])->label('Payment Mode') ?>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-6">
                                 <?= $form->field($transaction, 'paymentDate')->widget(DateRangePicker::className(), Helper::dateFormat())->label('Transaction Date') ?>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-6">
                                 <?= $form->field($transaction, 'bankId')->widget(Select2::class, Helper::ajaxDropDown('bankId', '/account/bank-account/get-banks', true, 'bankId', 'bank'))->label('Bank'); ?>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-6">
                                 <?= $form->field($transaction, 'amount')->textInput(['value' => 0, 'type' => 'number', 'step' => 'any']) ?>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-6">
                                 <?= $form->field($transaction, 'adjustAmount')->textInput(['value' => 0, 'type' => 'number']) ?>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-6">
                                 <?= $form->field($model, 'payableAmount')->textInput(['value' => 0, 'type' => 'number', 'step' => 'any']) ?>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-6">
                                 <?= $form->field($model, 'receivableAmount')->textInput(['value' => 0, 'type' => 'number', 'step' => 'any']) ?>
                             </div>
                             <div class="col-md-8">

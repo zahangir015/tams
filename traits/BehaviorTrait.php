@@ -36,7 +36,6 @@ trait BehaviorTrait
             if ($this->isNewRecord && $this->hasAttribute('uid')) {
                 $this->uid = Yii::$app->db->createCommand('select UUID()')->queryScalar();
             }
-
         }
         return parent::beforeValidate();
     }
@@ -49,7 +48,7 @@ trait BehaviorTrait
             $this->updatedBy = Yii::$app->user->id ?? 1;
         }
 
-        if ($this->isNewRecord && isset(Yii::$app->controller->action)) {
+        if ($this->isNewRecord && $this->hasAttribute('updatedBy')) {
             $this->uid = Yii::$app->db->createCommand('select UUID()')->queryScalar();
         }
 

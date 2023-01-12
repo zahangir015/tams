@@ -40,7 +40,7 @@ class RefundTransactionService
         return ArrayHelper::map($refundTransactions, 'id', 'name');
     }
 
-    public function customerPending(Request $requestData)
+    public function customerPending(array $requestData)
     {
         $customerId = $requestData['customerId'];
         if (empty($customerId)) {
@@ -51,7 +51,7 @@ class RefundTransactionService
             list($start_date, $end_date) = explode(' - ', $requestData['dateRange']);
         }
         $refundData = $this->refundTransactionRepository->customerPendingRefundServices($customerId, $start_date, $end_date);
-
+        dd($refundData);
     }
 
     public static function refundServiceRowGenerationForCustomer($refundData): string
