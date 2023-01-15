@@ -52,11 +52,9 @@ use yii\bootstrap4\ActiveForm;
                     <?= $form->field($model, 'status')->dropdownList(GlobalConstant::DEFAULT_STATUS) ?>
                 </div>
             </div>
-
             <div class="form-group">
                 <?= Html::submitButton(Yii::t('app', ($model->isNewRecord) ? 'Save' : 'Update'), ['class' => 'btn btn-success']) ?>
             </div>
-
             <?php ActiveForm::end(); ?>
         </div>
     </div>

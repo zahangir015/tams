@@ -25,9 +25,10 @@ $this->params['breadcrumbs'][] = $this->title;
             'name',
             'email:email',
             'company',
-            //'address',
+            'address',
             'phone',
             'refundCharge',
+            'reissueCharge',
             'categories',
             [
                 'class' => '\kartik\grid\DataColumn',

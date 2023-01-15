@@ -32,6 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'address',
                     'phone',
                     'refundCharge',
+                    'reissueCharge',
                     'categories',
                     [
                         'attribute' => 'type',

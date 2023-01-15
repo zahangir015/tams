@@ -10,7 +10,7 @@ $config = [
     'controllerNamespace' => 'app\commands',
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
-        '@npm'   => '@vendor/npm-asset',
+        '@npm' => '@vendor/npm-asset',
         '@tests' => '@app/tests',
     ],
     'components' => [
@@ -38,7 +38,7 @@ $config = [
         ],
         'migrate' => [
             'class' => 'yii\console\controllers\MigrateController',
-            'migrationPath' => ['@app/migrations', '@app/modules/sale/migrations','@app/modules/hrm/migrations',], // allows to disable not namespaced migration completely
+            'migrationPath' => ['@app/modules/sale/migrations', '@app/migrations', '@app/modules/hrm/migrations',], // allows to disable not namespaced migration completely
         ],
     ],
 ];

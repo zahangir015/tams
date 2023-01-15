@@ -42,6 +42,8 @@ use hail812\adminlte\widgets\Menu;
                 'items' => [
                     ['label' => 'GENERAL SETTINGS', 'header' => true],
                     ['label' => 'Countries',  'icon' => 'globe', 'url' => ['/country']],
+                    ['label' => 'Cities',  'icon' => 'globe', 'url' => ['/city']],
+                    ['label' => 'Airline Repository',  'icon' => 'plane', 'url' => ['/airline-repository']],
                     ['label' => 'Company',  'icon' => 'building', 'url' => ['/company']],
                     ['label' => 'USER MANAGEMENT', 'header' => true],
                     ['label' => 'Users',  'icon' => 'users', 'url' => ['/admin/user/index']],

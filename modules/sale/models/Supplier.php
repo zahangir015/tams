@@ -19,6 +19,7 @@ use yii\db\ActiveRecord;
  * @property string|null $phone
  * @property int $type
  * @property float $refundCharge
+ * @property float $reissueCharge
  * @property float $categories
  * @property int $status
  * @property int $createdBy
@@ -46,7 +47,7 @@ class Supplier extends ActiveRecord
         return [
             [['name', 'email', 'company', 'type', 'createdBy'], 'required'],
             [['type', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
-            [['refundCharge'], 'number'],
+            [['refundCharge', 'reissueCharge'], 'number'],
             [['uid'], 'string', 'max' => 36],
             [['name'], 'string', 'max' => 30],
             [['email'], 'string', 'max' => 100],
@@ -74,6 +75,7 @@ class Supplier extends ActiveRecord
             'phone' => Yii::t('app', 'Phone'),
             'type' => Yii::t('app', 'Type'),
             'refundCharge' => Yii::t('app', 'Refund Charge'),
+            'reissueCharge' => Yii::t('app', 'Reissue Charge'),
             'categories' => Yii::t('app', 'Categories'),
             'status' => Yii::t('app', 'Status'),
             'createdBy' => Yii::t('app', 'Created By'),

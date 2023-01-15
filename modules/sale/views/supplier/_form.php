@@ -43,6 +43,9 @@ use yii\bootstrap4\ActiveForm;
             </div>
             <div class="row">
                 <div class="col-md">
+                    <?= $form->field($model, 'reissueCharge')->textInput() ?>
+                </div>
+                <div class="col-md">
                     <?= $form->field($model, 'refundCharge')->textInput() ?>
                 </div>
                 <div class="col-md">

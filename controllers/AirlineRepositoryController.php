@@ -1,31 +1,27 @@
 <?php
 
-namespace app\modules\sale\controllers;
+namespace app\controllers;
 
-use app\components\GlobalConstant;
-use app\modules\sale\models\Customer;
-use app\modules\sale\models\search\CustomerSearch;
-use app\controllers\ParentController;
-use app\modules\sale\models\StarCategory;
-use Yii;
-use yii\helpers\ArrayHelper;
+use app\models\AirlineRepository;
+use app\models\AirlineRepositorySearch;
+use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 
 /**
- * CustomerController implements the CRUD actions for Customer model.
+ * AirlineRepositoryController implements the CRUD actions for AirlineRepository model.
  */
-class CustomerController extends ParentController
+class AirlineRepositoryController extends ParentController
 {
     /**
-     * Lists all Customer models.
+     * Lists all AirlineRepository models.
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
-        $searchModel = new CustomerSearch();
+        $searchModel = new AirlineRepositorySearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
@@ -35,7 +31,7 @@ class CustomerController extends ParentController
     }
 
     /**
-     * Displays a single Customer model.
+     * Displays a single AirlineRepository model.
      * @param string $uid UID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
@@ -48,18 +44,17 @@ class CustomerController extends ParentController
     }
 
     /**
-     * Creates a new Customer model.
+     * Creates a new AirlineRepository model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|Response
      */
     public function actionCreate(): Response|string
     {
-        $model = new Customer();
-        $starCategories = ArrayHelper::map(StarCategory::find()->where(['status' => GlobalConstant::ACTIVE_STATUS])->all(), 'id', 'name');
+        $model = new AirlineRepository();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'uid' => $model->uid]);
+                return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {
             $model->loadDefaultValues();
@@ -67,14 +62,13 @@ class CustomerController extends ParentController
 
         return $this->render('create', [
             'model' => $model,
-            'starCategories' => $starCategories,
         ]);
     }
 
     /**
-     * Updates an existing Customer model.
+     * Updates an existing AirlineRepository model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param string $uid ID
+     * @param string $uid UID
      * @return string|Response
      * @throws NotFoundHttpException if the model cannot be found
      */
@@ -83,7 +77,7 @@ class CustomerController extends ParentController
         $model = $this->findModel($uid);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'uid' => $model->uid]);
+            return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
@@ -92,43 +86,32 @@ class CustomerController extends ParentController
     }
 
     /**
-     * Deletes an existing Customer model.
+     * Deletes an existing AirlineRepository model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id ID
+     * @param string $uid UID
      * @return Response
      * @throws NotFoundHttpException if the model cannot be found
-     *
-     * public function actionDelete($id)
-    * {
-        * $this->findModel($id)->delete();
- *
-* return $this->redirect(['index']);
-    * }*/
+     */
+    public function actionDelete(string $uid)
+    {
+        $this->findModel($uid)->delete();
+
+        return $this->redirect(['index']);
+    }
 
     /**
-     * Finds the Customer model based on its primary key value.
+     * Finds the AirlineRepository model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param string $uid ID
-     * @return Customer the loaded model
+     * @param string $uid UID
+     * @return AirlineRepository the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel(string $uid): Customer
+    protected function findModel(string $uid): AirlineRepository
     {
-        if (($model = Customer::findOne(['uid' => $uid])) !== null) {
+        if (($model = AirlineRepository::findOne(['uid' => $uid])) !== null) {
             return $model;
         }
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
-    }
-
-    public function actionGetCustomers($query = null): array
-    {
-        Yii::$app->response->format = Response::FORMAT_JSON;
-        $customers = Customer::query($query);
-        $data = [];
-        foreach ($customers as $customer) {
-            $data[] = ['id' => $customer->id, 'text' => $customer->name . ' | ' . $customer->company . ' | ' . $customer->email];
-        }
-        return ['results' => $data];
     }
 }

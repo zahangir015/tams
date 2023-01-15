@@ -311,7 +311,6 @@ class Helper
 
     public static function ajaxDropDown($name, $endPoint, $required = false, $id = null, $class = null, array $data = null, $disabled = false): array
     {
-
         return [
             'name' => $name,
             'options' => [
@@ -340,6 +339,34 @@ class Helper
             ],
         ];
     }
+
+    /*public static function ajaxDropDownWithOutActiveForm(): array
+    {
+        return [
+            'name' => 'kv-repo-template',
+            //'value' => '14719648',
+            'initValueText' => 'kartik-v/yii2-widgets',
+            'options' => [
+                'placeholder' => 'Search for a repo ...',
+                'id' => ($id) ?? $name,
+                'class' => ($class) ?? $name,
+                'required' => $required,
+                'disabled' => $disabled ? 'readonly' : false
+            ],
+            'pluginOptions' => [
+                'allowClear' => true,
+                'minimumInputLength' => 2,
+                'ajax' => [
+                    'url' => Url::to($endPoint),
+                    'dataType' => 'json',
+                    'data' => new JsExpression('function(params) { return {q:params.term, page: params.page}; }'),
+                ],
+                'escapeMarkup' => new JsExpression('function (markup) { return markup; }'),
+                'templateResult' => new JsExpression('formatRepo'),
+                'templateSelection' => new JsExpression('formatRepoSelection'),
+            ],
+        ];
+    }*/
 
     public static function fileInputWidget(): array
     {
