@@ -8,7 +8,7 @@ use app\repository\ParentRepository;
 
 class RefundTransactionRepository extends ParentRepository
 {
-    public function customerPendingRefundServices($customerId, $start_date, $end_date): \yii\db\ActiveRecord|null
+    public function customerPendingRefundServices($customerId, $start_date, $end_date): array|null
     {
         return Customer::find()
             ->select(['id', 'name', 'company'])
@@ -18,7 +18,7 @@ class RefundTransactionRepository extends ParentRepository
                         $subQuery->where(['!=', 'isRefunded', ServiceConstant::STATE['Full Refund']])
                             ->andWhere(['refId' => $customerId])
                             ->andWhere(['refModel' => Customer::class]);
-                    }, 'ON ticket.id = ticket_refund.ticketId'])
+                    }])
                         ->where(['type' => ServiceConstant::TYPE['Refund']]);
                     if ($start_date && $end_date) {
                         $query->andWhere(['between', 'RefundRequestDate', $start_date, $end_date])
@@ -30,7 +30,7 @@ class RefundTransactionRepository extends ParentRepository
                         $subQuery->where(['!=', 'isRefunded', ServiceConstant::STATE['Full Refund']])
                             ->andWhere(['refId' => $customerId])
                             ->andWhere(['refModel' => Customer::class]);
-                    }, 'ON visa.id = visa_refund.visaId'])
+                    }])
                         ->where(['type' => ServiceConstant::TYPE['Refund']]);
                     if ($start_date && $end_date) {
                         $query->andWhere(['between', 'RefundRequestDate', $start_date, $end_date])
@@ -42,7 +42,7 @@ class RefundTransactionRepository extends ParentRepository
                         $subQuery->where(['!=', 'isRefunded', ServiceConstant::STATE['Full Refund']])
                             ->andWhere(['refId' => $customerId])
                             ->andWhere(['refModel' => Customer::class]);
-                    }, 'ON hotel.id = hotel_refund.hotelId'])
+                    }])
                         ->where(['type' => ServiceConstant::TYPE['Refund']]);
                     if ($start_date && $end_date) {
                         $query->andWhere(['between', 'RefundRequestDate', $start_date, $end_date])
@@ -54,7 +54,7 @@ class RefundTransactionRepository extends ParentRepository
                         $subQuery->where(['!=', 'isRefunded', ServiceConstant::STATE['Full Refund']])
                             ->andWhere(['refId' => $customerId])
                             ->andWhere(['refModel' => Customer::class]);
-                    }, 'ON holiday.id = holiday_refund.holidayId'])
+                    }])
                         ->where(['type' => ServiceConstant::TYPE['Refund']]);
                     if ($start_date && $end_date) {
                         $query->andWhere(['between', 'RefundRequestDate', $start_date, $end_date])
@@ -62,6 +62,6 @@ class RefundTransactionRepository extends ParentRepository
                     }
                 },
             ])
-            ->where(['id' => $customerId])->one();
+            ->where(['id' => $customerId])->asArray()->one();
     }
 }

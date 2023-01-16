@@ -2,6 +2,7 @@
 
 namespace app\modules\account\services;
 
+use app\components\Helper;
 use app\components\Utils;
 use app\modules\account\models\RefundTransaction;
 use app\modules\account\repositories\RefundTransactionRepository;
@@ -15,10 +16,12 @@ use yii\web\Request;
 class RefundTransactionService
 {
     public RefundTransactionRepository $refundTransactionRepository;
+
     public function __construct()
     {
         $this->refundTransactionRepository = new RefundTransactionRepository();
     }
+
     public function getRefundList($refModel, $refId): array
     {
         $refundTransactions = RefundTransaction::find()
@@ -50,28 +53,25 @@ class RefundTransactionService
         if (isset($requestData['dateRange']) && strpos($requestData['dateRange'], '-') !== false) {
             list($start_date, $end_date) = explode(' - ', $requestData['dateRange']);
         }
+
         $refundData = $this->refundTransactionRepository->customerPendingRefundServices($customerId, $start_date, $end_date);
-        dd($refundData);
-    }
 
-    public static function refundServiceRowGenerationForCustomer($refundData): string
-    {
-        $html = '';
-        if (!empty($refundData['refundTickets'])) {
-            $html .= self::getHtmlRowsForServiceRefunds($refundData->refundTickets, $serviceModel = Ticket::class);
+        if ($refundData && !empty($refundData)) {
+            $html = '';
+            if (!empty($refundData['tickets'])) {
+                $html .= self::getHtmlRowsForServiceRefunds($refundData['tickets'], $serviceModel = Ticket::class);
+            }
+            if (!empty($refundData['hotels'])) {
+                $html .= self::getHtmlRowsForServiceRefunds($refundData['hotels'], $serviceModel = Hotel::class);
+            }
+            if (!empty($refundData['visas'])) {
+                $html .= self::getHtmlRowsForServiceRefunds($refundData['visas'], $serviceModel = Visa::class);
+            }
+            if (!empty($refundData['holidays'])) {
+                $html .= self::getHtmlRowsForServiceRefunds($refundData['holidays'], $serviceModel = Holiday::class);
+            }
+            return empty($html) ? "<tr> <td colspan='6' class='text-danger text-center'> Refund not found </td> </tr>" : $html;
         }
-        if (!empty($refundData->refundHotels)) {
-            $html .= self::getHtmlRowsForServiceRefunds($refundData->refundHotels, $serviceModel = Hotel::class);
-        }
-        if (!empty($refundData->refundVisas)) {
-            $html .= self::getHtmlRowsForServiceRefunds($refundData->refundVisas, $serviceModel = Visa::class);
-        }
-
-        if (!empty($refundData->refundHolidays)) {
-            $html .= self::getHtmlRowsForServiceRefunds($refundData->refundHolidays, $serviceModel = Holiday::class);
-        }
-
-        return empty($html) ? "<tr> <td colspan='6' class='text-danger text-center'> Not found any sales to refund </td> </tr>" : $html;
     }
 
     public static function getHtmlRowsForServiceRefunds($services, $serviceModel): string
@@ -90,9 +90,9 @@ class RefundTransactionService
                 $receivable = $amount;
             }
             $array = [
-                'refId' => $service['serviceId'],
+                'refId' => $service['id'],
                 'refModel' => $serviceModel,
-                'serviceName' => ucfirst(Utils::getServiceName($serviceModel)),
+                'serviceName' => ucfirst(Helper::getServiceName($serviceModel)),
                 'payable' => $payable,
                 'receivable' => $receivable,
                 'amount' => abs($amount),

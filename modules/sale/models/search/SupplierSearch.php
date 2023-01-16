@@ -19,7 +19,7 @@ class SupplierSearch extends Supplier
         return [
             [['id', 'type', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['uid', 'name', 'email', 'company', 'address', 'phone', 'categories'], 'safe'],
-            [['refundCharge'], 'number'],
+            [['refundCharge', 'reissueCharge'], 'number'],
         ];
     }
 
@@ -63,6 +63,7 @@ class SupplierSearch extends Supplier
             'id' => $this->id,
             'type' => $this->type,
             'refundCharge' => $this->refundCharge,
+            'reissueCharge' => $this->refundCharge,
             'status' => $this->status,
             'createdBy' => $this->createdBy,
             'createdAt' => $this->createdAt,
