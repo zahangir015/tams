@@ -51,7 +51,7 @@ class m230114_175450_create_airline_repository_table extends Migration
             'idx-airline-repository-iataCode',
             'airline_repository'
         );
-        
+
         $this->dropTable('{{%airline_repository}}');
     }
 }

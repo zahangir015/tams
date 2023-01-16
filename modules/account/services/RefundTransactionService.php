@@ -10,6 +10,7 @@ use app\modules\sale\models\holiday\Holiday;
 use app\modules\sale\models\hotel\Hotel;
 use app\modules\sale\models\ticket\Ticket;
 use app\modules\sale\models\visa\Visa;
+use yii\base\Exception;
 use yii\helpers\ArrayHelper;
 use yii\web\Request;
 
@@ -43,12 +44,19 @@ class RefundTransactionService
         return ArrayHelper::map($refundTransactions, 'id', 'name');
     }
 
-    public function customerPending(array $requestData)
+    public function customerPending(array $requestData): array
     {
+        $html = '';
+        $totalReceivable = 0;
+        $totalPayable = 0;
         $customerId = $requestData['customerId'];
         if (empty($customerId)) {
-            return false;
+            if (empty($html)) {
+                $html .= "<tr> <td colspan='6' class='text-danger text-center'> Refund not found </td> </tr>";
+            }
+            return ['html' => $html, 'totalPayable' => $totalPayable, 'totalReceivable' => $totalReceivable];
         }
+
         $start_date = $end_date = null;
         if (isset($requestData['dateRange']) && strpos($requestData['dateRange'], '-') !== false) {
             list($start_date, $end_date) = explode(' - ', $requestData['dateRange']);
@@ -56,29 +64,46 @@ class RefundTransactionService
 
         $refundData = $this->refundTransactionRepository->customerPendingRefundServices($customerId, $start_date, $end_date);
 
-        if ($refundData && !empty($refundData)) {
-            $html = '';
+        if (!empty($refundData)) {
             if (!empty($refundData['tickets'])) {
-                $html .= self::getHtmlRowsForServiceRefunds($refundData['tickets'], $serviceModel = Ticket::class);
+                $response = self::rowGenerator($refundData['tickets'], Ticket::class);
+                $html .= $response['html'];
+                $totalReceivable += $response['totalReceivable'];
+                $totalPayable += $response['totalPayable'];
             }
             if (!empty($refundData['hotels'])) {
-                $html .= self::getHtmlRowsForServiceRefunds($refundData['hotels'], $serviceModel = Hotel::class);
+                $response = self::rowGenerator($refundData['hotels'], Hotel::class);
+                $html .= $response['html'];
+                $totalReceivable += $response['totalReceivable'];
+                $totalPayable += $response['totalPayable'];
             }
             if (!empty($refundData['visas'])) {
-                $html .= self::getHtmlRowsForServiceRefunds($refundData['visas'], $serviceModel = Visa::class);
+                $response = self::rowGenerator($refundData['visas'], Visa::class);
+                $html .= $response['html'];
+                $totalReceivable += $response['totalReceivable'];
+                $totalPayable += $response['totalPayable'];
             }
             if (!empty($refundData['holidays'])) {
-                $html .= self::getHtmlRowsForServiceRefunds($refundData['holidays'], $serviceModel = Holiday::class);
+                $response = self::rowGenerator($refundData['visas'], Holiday::class);
+                $html .= $response['html'];
+                $totalReceivable += $response['totalReceivable'];
+                $totalPayable += $response['totalPayable'];
             }
-            return empty($html) ? "<tr> <td colspan='6' class='text-danger text-center'> Refund not found </td> </tr>" : $html;
         }
+        if (empty($html)) {
+            $html .= "<tr> <td colspan='6' class='text-danger text-center'> Refund not found </td> </tr>";
+        }
+        return ['html' => $html, 'totalPayable' => $totalPayable, 'totalReceivable' => $totalReceivable];
+
     }
 
-    public static function getHtmlRowsForServiceRefunds($services, $serviceModel): string
+    public static function rowGenerator($services, $serviceModel): array
     {
         $html = '';
         $receivable = 0;
         $payable = 0;
+        $totalReceivable = 0;
+        $totalPayable = 0;
         foreach ($services as $key => $service) {
             $amount = floatval($service['quoteAmount']) - floatval($service['receivedAmount']);
             if ($amount == 0) {
@@ -86,9 +111,12 @@ class RefundTransactionService
             }
             if ($amount < 1) {
                 $payable = abs($amount);
+                $totalPayable += abs($amount);
             } else {
                 $receivable = $amount;
+                $totalReceivable += $amount;
             }
+
             $array = [
                 'refId' => $service['id'],
                 'refModel' => $serviceModel,
@@ -101,7 +129,7 @@ class RefundTransactionService
 
             $html .= '<tr>';
             $html .= '<td><input type="checkbox" class="chk" id="chk' . $key . '" name="RefundTransactionDetail[' . $key . ']" value="' . htmlspecialchars(json_encode($array)) . '"></td>';
-            $html .= '<td><span class="badge bg-green">' . $service['identificationNo'] . '</span></td>';
+            $html .= '<td><span class="badge bg-green">' . ($serviceModel == Ticket::class) ? $service['eTicket'] : $service['identificationNumber'] . '</span></td>';
             $html .= '<td>' . $array['serviceName'] . ' <input type="text"  value="' . $array['refModel'] . '" hidden >  </td>';
             $html .= '<td>' . $service['issueDate'] . '</td>';
             $html .= '<td>' . $payable . '<input type="text" class="amount payable" id="payable' . $key . '"    value="' . $payable . '" hidden></td>';
@@ -109,6 +137,6 @@ class RefundTransactionService
             $html .= '</tr>';
         }
 
-        return $html;
+        return ['html' => $html, 'totalPayable' => $totalPayable, 'totalReceivable' => $totalReceivable];
     }
 }

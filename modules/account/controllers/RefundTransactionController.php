@@ -139,87 +139,12 @@ class RefundTransactionController extends Controller
     {
         $requestData = Yii::$app->request->get();
         Yii::$app->response->format = Response::FORMAT_JSON;
-        $html = '';
-        $key = 1;
-        $totalPayable = 0;
-        $pendingServices = $this->refundTransactionService->customerPending($requestData);dd($pendingServices);
-        if (!empty($pendingServices->tickets)) {
-            foreach ($pendingServices->tickets as $pending) {
-                $totalPayable += ($pending->quoteAmount - $pending->receivedAmount);
-                $html .= '<tr>';
-                $html .= '<td><input type="checkbox" class="chk" id="chk' . $key . '" name="services[]" value="' . htmlspecialchars(json_encode([
-                        'refId' => $pending->id,
-                        'refModel' => get_class($pending),
-                        'paidAmount' => $pending->receivedAmount,
-                        'dueAmount' => ($pending->quoteAmount - $pending->receivedAmount),
-                    ])) . '"></td>';
-                $html .= '<td>' . $pending->formName() . '</td>';
-                $html .= '<td><span class="badge bg-green">' . $pending->eTicket . '</span></td>';
-                $html .= '<td>' . $pending->issueDate . '</td>';
-                $html .= '<td>' . ($pending->quoteAmount - $pending->receivedAmount) . '<input type="text" class="amount form-control" id="amt' . $key . '" value="' . ($pending->quoteAmount - $pending->receivedAmount) . '" hidden></td>';
-                $html .= '</tr>';
-                $key++;
-            }
-        }
-        if (!empty($pendingServices->hotels)) {
-            foreach ($pendingServices->hotels as $pending) {
-                $totalPayable += ($pending->quoteAmount - $pending->receivedAmount);
-                $html .= '<tr>';
-                $html .= '<td><input type="checkbox" class="chk" id="chk' . $key . '" name="services[]" value="' . htmlspecialchars(json_encode([
-                        'refId' => $pending->id,
-                        'refModel' => get_class($pending),
-                        'paidAmount' => $pending->receivedAmount,
-                        'dueAmount' => ($pending->quoteAmount - $pending->receivedAmount),
-                    ])) . '"></td>';
-                $html .= '<td>' . $pending->formName() . '</td>';
-                $html .= '<td><span class="badge bg-green">' . $pending->voucherId . '</span></td>';
-                $html .= '<td>' . $pending->issueDate . '</td>';
-                $html .= '<td>' . ($pending->quoteAmount - $pending->receivedAmount) . '<input type="text" class="amount form-control" id="amt' . $key . '" value="' . ($pending->quoteAmount - $pending->receivedAmount) . '" hidden></td>';
-                $html .= '</tr>';
-                $key++;
-            }
-        }
-        if (!empty($pendingServices->visas)) {
-            foreach ($pendingServices->visas as $pending) {
-                $totalPayable += ($pending->quoteAmount - $pending->receivedAmount);
-                $html .= '<tr>';
-                $html .= '<td><input type="checkbox" class="chk" id="chk' . $key . '" name="services[]" value="' . htmlspecialchars(json_encode([
-                        'refId' => $pending->id,
-                        'refModel' => get_class($pending),
-                        'paidAmount' => $pending->receivedAmount,
-                        'dueAmount' => ($pending->quoteAmount - $pending->receivedAmount),
-                    ])) . '"></td>';
-                $html .= '<td>' . $pending->formName() . '</td>';
-                $html .= '<td><span class="badge bg-green">' . $pending->identificationNo ?? 'N/A' . '</span></td>';
-                $html .= '<td>' . $pending->issueDate . '</td>';
-                $html .= '<td>' . ($pending->quoteAmount - $pending->receivedAmount) . '<input type="text" class="amount form-control" id="amt' . $key . '" value="' . ($pending->quoteAmount - $pending->receivedAmount) . '" hidden></td>';
-                $html .= '</tr>';
-                $key++;
-            }
-        }
-        if (!empty($pendingServices->holidays)) {
-            foreach ($pendingServices->holidays as $pending) {
-                $totalPayable += ($pending->quoteAmount - $pending->receivedAmount);
-                $html .= '<tr>';
-                $html .= '<td><input type="checkbox" class="chk" id="chk' . $key . '" name="services[]" value="' . htmlspecialchars(json_encode([
-                        'refId' => $pending->id,
-                        'refModel' => get_class($pending),
-                        'paidAmount' => $pending->receivedAmount,
-                        'dueAmount' => ($pending->quoteAmount - $pending->receivedAmount),
-                    ])) . '"></td>';
-                $html .= '<td>' . $pending->formName() . '</td>';
-                $html .= '<td><span class="badge bg-green">' . $pending->identificationNo ?? 'NA' . '</span></td>';
-                $html .= '<td>' . $pending->issueDate . '</td>';
-                $html .= '<td>' . ($pending->quoteAmount - $pending->receivedAmount) . '<input type="text" class="amount form-control" id="amt' . $key . '" value="' . ($pending->quoteAmount - $pending->receivedAmount) . '" hidden></td>';
-                $html .= '</tr>';
-                $key++;
-            }
-        }
 
+        $pendingServices = $this->refundTransactionService->customerPending($requestData);
         return [
-            'html' => $html,
-            'totalPayable' => $totalPayable,
-            'totalReceivable' => $totalReceivable,
+            'html' => $pendingServices['html'],
+            'totalPayable' => $pendingServices['totalPayable'],
+            'totalReceivable' => $pendingServices['totalReceivable'],
         ];
     }
 }

@@ -4,9 +4,9 @@ $(function () {
         var customerId = $(this).val();
         if ($('input[name=dateRange]').val()) {
             var dateRange = $('input[name=dateRange]').val();
-            ajaxCall(customerId, dateRange);
+            customerPending(customerId, dateRange);
         } else {
-            ajaxCall(customerId, "");
+            customerPending(customerId, "");
         }
     });
 
@@ -14,7 +14,7 @@ $(function () {
         var dateRange = $('input[name=dateRange]').val();
         if ($('#customerId').val()) {
             var customerId = $('#customerId').val();
-            ajaxCall(customerId, dateRange);
+            customerPending(customerId, dateRange);
         }
     });
 
@@ -22,9 +22,9 @@ $(function () {
         var supplierId = $(this).val();
         if ($('input[name=dateRange2]').val()) {
             var dateRange2 = $('input[name=dateRange2]').val();
-            ajaxCall2(supplierId, dateRange2);
+            supplierPending(supplierId, dateRange2);
         } else {
-            ajaxCall2(supplierId, "");
+            supplierPending(supplierId, "");
         }
     });
 
@@ -32,11 +32,11 @@ $(function () {
         var dateRange2 = $('input[name=dateRange2]').val();
         if ($('#supplierId').val()) {
             var supplierId = $('#supplierId').val();
-            ajaxCall2(supplierId, dateRange2);
+            supplierPending(supplierId, dateRange2);
         }
     });
 
-    function ajaxCall(customerId, dateRange) {
+    function customerPending(customerId, dateRange) {
         $.ajax({
             url: ajaxUrl,
             type: 'get',
@@ -50,13 +50,13 @@ $(function () {
                 $('tbody#t-body').append(data.html);
                 $("#totalDue").html(data.totalDue);
             },
-            error: function () {
-                console.log('Error happend!');
+            error: function (e) {
+                console.log(e);
             }
         });
     }
 
-    function ajaxCall2(supplierId, dateRange) {
+    function supplierPending(supplierId, dateRange) {
         $.ajax({
             url: ajaxUrl,
             type: 'get',
