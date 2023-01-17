@@ -9,7 +9,6 @@ use app\controllers\ParentController;
 use Yii;
 use yii\helpers\Json;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use yii\web\Response;
 
 /**
@@ -129,7 +128,7 @@ class BankAccountController extends ParentController
         $banks = BankAccount::query($query);
         $data = [];
         foreach ($banks as $bank) {
-            $data[] = ['id' => $bank->id, 'text' => $bank->name . ' | ' . $bank->accountName . ' | ' . $bank->accountnumber];
+            $data[] = ['id' => $bank->id, 'text' => $bank->name . ' | ' . $bank->accountName . ' | ' . $bank->accountNumber];
         }
         return ['results' => $data];
     }

@@ -31,6 +31,7 @@ class RefundTransactionController extends Controller
         $this->refundTransactionService = new RefundTransactionService();
         parent::__construct($id, $module, $config);
     }
+
     /**
      * Lists all RefundTransaction models.
      *
@@ -70,8 +71,9 @@ class RefundTransactionController extends Controller
         $model = new RefundTransaction();
         $transaction = new Transaction();
         if ($this->request->isPost) {
-            $requestData = $this->request->post();
-            $refundServiceProcessResponse = $this->refundTransactionService->customerPending($requestData);dd($refundServiceProcessResponse);
+            $requestData = $this->request->post();dd($requestData);
+            $refundServiceProcessResponse = $this->refundTransactionService->storeRefundTransaction($requestData, $model, $transaction);
+
             if ($model->load() && $model->save()) {
                 return $this->redirect(['view', 'uid' => $model->uid]);
             }

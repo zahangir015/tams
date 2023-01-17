@@ -2,19 +2,17 @@
 
 use app\components\GlobalConstant;
 use app\components\Helper;
+use app\modules\sale\models\Customer;
 use kartik\daterange\DateRangePicker;
 use kartik\select2\Select2;
-use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
-use yii\helpers\Url;
 use yii\web\JqueryAsset;
-use yii\web\JsExpression;
 use yii\web\View;
-use yii\widgets\ActiveForm;
+use yii\bootstrap4\ActiveForm;
 
 /** @var yii\web\View $this */
 /** @var app\modules\account\models\RefundTransaction $model */
-/** @var yii\widgets\ActiveForm $form */
+/** @var yii\bootstrap4\ActiveForm $form */
 
 $this->registerJs(
     "var ajaxUrl = '" . Yii::$app->request->baseUrl . '/account/refund-transaction/customer-pending' . "'; var _csrf='" . Yii::$app->request->getCsrfToken() . "';",
@@ -38,6 +36,7 @@ $this->registerJsFile(
                     <div class="row">
                         <div class="col-md-6">
                             <?= $form->field($model, 'refId')->widget(Select2::classname(), Helper::ajaxDropDown('refId', '/sale/customer/get-customers', true, 'customerId', 'customer'))->label('Refund To'); ?>
+                            <?= $form->field($model, 'refModel')->hiddenInput(['value' => Customer::class])->label(false) ?>
                         </div>
                         <div class="col-md-6">
                             <label class="control-label" for="dateRange">Issue Date Range</label>
@@ -75,20 +74,14 @@ $this->registerJsFile(
                         <h4>Payment Details for Customer</h4>
                         <hr>
                         <div class="row">
+                            <div class="col-12">
+                                <?= $form->field($transaction, 'bankId')->widget(Select2::class, Helper::ajaxDropDown('bankId', '/account/bank-account/get-banks', true, 'bankId', 'bank'))->label('Bank'); ?>
+                            </div>
                             <div class="col-6">
                                 <?= $form->field($transaction, 'paymentMode')->dropDownList(GlobalConstant::PAYMENT_MODE, ['prompt' => ''])->label('Payment Mode') ?>
                             </div>
                             <div class="col-6">
-                                <?= $form->field($transaction, 'paymentDate')->widget(DateRangePicker::className(), Helper::dateFormat())->label('Transaction Date') ?>
-                            </div>
-                            <div class="col-6">
-                                <?= $form->field($transaction, 'bankId')->widget(Select2::class, Helper::ajaxDropDown('bankId', '/account/bank-account/get-banks', true, 'bankId', 'bank'))->label('Bank'); ?>
-                            </div>
-                            <div class="col-6">
-                                <?= $form->field($transaction, 'amount')->textInput(['value' => 0, 'type' => 'number', 'step' => 'any']) ?>
-                            </div>
-                            <div class="col-6">
-                                <?= $form->field($transaction, 'adjustAmount')->textInput(['value' => 0, 'type' => 'number']) ?>
+                                <?= $form->field($transaction, 'paymentDate')->widget(DateRangePicker::className(), Helper::dateFormat()) ?>
                             </div>
                             <div class="col-6">
                                 <?= $form->field($model, 'payableAmount')->textInput(['value' => 0, 'type' => 'number', 'step' => 'any']) ?>
@@ -96,7 +89,13 @@ $this->registerJsFile(
                             <div class="col-6">
                                 <?= $form->field($model, 'receivableAmount')->textInput(['value' => 0, 'type' => 'number', 'step' => 'any']) ?>
                             </div>
-                            <div class="col-md-8">
+                            <div class="col-6">
+                                <?= $form->field($model, 'adjustedAmount')->textInput(['value' => 0, 'type' => 'number']) ?>
+                            </div>
+                            <div class="col-6">
+                                <?= $form->field($transaction, 'amount')->textInput(['value' => 0, 'type' => 'number', 'step' => 'any']) ?>
+                            </div>
+                            <div class="col-md-12">
                                 <?= $form->field($model, 'remarks')->textarea(['rows' => 6]) ?>
                             </div>
                         </div>

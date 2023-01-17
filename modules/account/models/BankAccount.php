@@ -97,4 +97,17 @@ class BankAccount extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Transaction::className(), ['bankId' => 'id']);
     }
+
+    public static function query($query): array
+    {
+        return self::find()
+            ->select(['id', 'name', 'accountName', 'accountNumber', 'swiftCode', 'code'])
+            ->where(['like', 'name', $query])
+            ->orWhere(['like', 'accountName', $query])
+            ->orWhere(['like', 'accountNumber', $query])
+            ->orWhere(['like', 'swiftCode', $query])
+            ->orWhere(['like', 'code', $query])
+            ->andWhere(['status' => 1])
+            ->all();
+    }
 }

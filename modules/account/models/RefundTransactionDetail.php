@@ -3,6 +3,7 @@
 namespace app\modules\account\models;
 
 use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%refund_transaction_detail}}".
@@ -16,12 +17,12 @@ use Yii;
  * @property float|null $totalAmount
  * @property int $status
  */
-class RefundTransactionDetail extends \yii\db\ActiveRecord
+class RefundTransactionDetail extends ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%refund_transaction_detail}}';
     }
@@ -29,7 +30,7 @@ class RefundTransactionDetail extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['refundTransactionID', 'refId', 'refModel'], 'required'],
@@ -42,7 +43,7 @@ class RefundTransactionDetail extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),

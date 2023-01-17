@@ -21,8 +21,8 @@ class RefundTransactionRepository extends ParentRepository
                     }])
                         ->where(['type' => ServiceConstant::TYPE['Refund']]);
                     if ($start_date && $end_date) {
-                        $query->andWhere(['between', 'RefundRequestDate', $start_date, $end_date])
-                            ->orderBy(['RefundRequestDate' => SORT_ASC]);
+                        $query->andWhere(['between', 'ticket.refundRequestDate', $start_date, $end_date])
+                            ->orderBy(['ticket.refundRequestDate' => SORT_ASC]);
                     }
                 },
                 'visas' => function ($query) use ($start_date, $end_date, $customerId) {
@@ -33,8 +33,8 @@ class RefundTransactionRepository extends ParentRepository
                     }])
                         ->where(['type' => ServiceConstant::TYPE['Refund']]);
                     if ($start_date && $end_date) {
-                        $query->andWhere(['between', 'RefundRequestDate', $start_date, $end_date])
-                            ->orderBy(['RefundRequestDate' => SORT_ASC]);
+                        $query->andWhere(['between', 'visa.refundRequestDate', $start_date, $end_date])
+                            ->orderBy(['visa.refundRequestDate' => SORT_ASC]);
                     }
                 },
                 'hotels' => function ($query) use ($start_date, $end_date, $customerId) {
@@ -45,8 +45,8 @@ class RefundTransactionRepository extends ParentRepository
                     }])
                         ->where(['type' => ServiceConstant::TYPE['Refund']]);
                     if ($start_date && $end_date) {
-                        $query->andWhere(['between', 'RefundRequestDate', $start_date, $end_date])
-                            ->orderBy(['RefundRequestDate' => SORT_ASC]);
+                        $query->andWhere(['between', 'hotel.refundRequestDate', $start_date, $end_date])
+                            ->orderBy(['hotel.refundRequestDate' => SORT_ASC]);
                     }
                 },
                 'holidays' => function ($query) use ($start_date, $end_date, $customerId) {
@@ -57,8 +57,8 @@ class RefundTransactionRepository extends ParentRepository
                     }])
                         ->where(['type' => ServiceConstant::TYPE['Refund']]);
                     if ($start_date && $end_date) {
-                        $query->andWhere(['between', 'RefundRequestDate', $start_date, $end_date])
-                            ->orderBy(['RefundRequestDate' => SORT_ASC]);
+                        $query->andWhere(['between', 'holiday.refundRequestDate', $start_date, $end_date])
+                            ->orderBy(['holiday.refundRequestDate' => SORT_ASC]);
                     }
                 },
             ])

@@ -2,16 +2,16 @@ $(function () {
 
     $(document).on('change', "#customerId", function () {
         var customerId = $(this).val();
-        if ($('input[name=dateRange]').val()) {
-            var dateRange = $('input[name=dateRange]').val();
+        if ($('#refundtransaction-daterange').val()) {
+            var dateRange = $('#refundtransaction-daterange').val();
             customerPending(customerId, dateRange);
         } else {
             customerPending(customerId, "");
         }
     });
 
-    $('input[name=dateRange]').change(function (e) {
-        var dateRange = $('input[name=dateRange]').val();
+    $(document).on('change', "#refundtransaction-daterange", function () {
+        var dateRange = $('#refundtransaction-daterange').val();
         if ($('#customerId').val()) {
             var customerId = $('#customerId').val();
             customerPending(customerId, dateRange);
@@ -114,24 +114,24 @@ $(function () {
         var amount = 0;
         var payable = 0;
         var receivable = 0;
+
         $(".chk").each(function () {
             if ($(this).is(":checked")) {
-                payable += parseFloat($(this).parents('tr').find('input.payable').val());
+                payable += parseFloat($(this).parents('tr').find('.payable').val());
                 receivable += parseFloat($(this).parents('tr').find('input.receivable').val());
             }
         });
         payable = Math.abs(payable);
         receivable = Math.abs(receivable);
         amount = Math.abs(receivable - payable);
-
-        $('#refundtransaction-payable').val(payable.toFixed(2));
-        $('#refundtransaction-receivable').val(receivable.toFixed(2));
-        $('#refundtransaction-amount').val(amount.toFixed(2));
+        $('#refundtransaction-payableamount').val(payable.toFixed(2));
+        $('#refundtransaction-receivableamount').val(receivable.toFixed(2));
+        $('#transaction-amount').val(amount.toFixed(2));
     }
 
 
     $('.breakDown').on('change', function () {
-        if ($(this).is(':checked') && ($(this).val() == 0)) {
+        if ($(this).is(':checked') && ($(this).val() === 0)) {
             $('#comment').removeClass('hidden');
         } else {
             $('#comment').addClass('hidden');
