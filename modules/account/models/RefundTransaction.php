@@ -18,7 +18,8 @@ use yii\db\ActiveRecord;
  * @property float|null $payableAmount
  * @property float|null $receivableAmount
  * @property float|null $totalAmount
- * @property string|null $paymentStatus
+ * @property string $paymentType
+ * @property boolean $paymentStatus
  * @property float|null $adjustedAmount
  * @property int|null $isAdjusted
  * @property string|null $remarks
@@ -52,8 +53,8 @@ class RefundTransaction extends ActiveRecord
         return [
             [['refId', 'refModel'], 'required'],
             [['refId', 'isAdjusted', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
-            [['payableAmount', 'receivableAmount', 'totalAmount', 'adjustedAmount'], 'number'],
-            [['paymentStatus', 'remarks'], 'string'],
+            [['paymentStatus', 'payableAmount', 'receivableAmount', 'totalAmount', 'adjustedAmount'], 'number'],
+            [['paymentType', 'remarks'], 'string'],
             [['uid'], 'string', 'max' => 36],
             [['refModel'], 'string', 'max' => 150],
             [['uid'], 'unique'],
@@ -74,7 +75,8 @@ class RefundTransaction extends ActiveRecord
             'receivableAmount' => Yii::t('app', 'Receivable Amount'),
             'totalAmount' => Yii::t('app', 'Total Amount'),
             'paymentStatus' => Yii::t('app', 'Payment Status'),
-            'adjustedAmount' => Yii::t('app', 'Adjusted Amount'),
+            'paymentType' => Yii::t('app', 'Payment Type'),
+            'adjustedAmount' => Yii::t('app', 'Refunded Amount'),
             'isAdjusted' => Yii::t('app', 'Is Adjusted'),
             'remarks' => Yii::t('app', 'Remarks'),
             'status' => Yii::t('app', 'Status'),

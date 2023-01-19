@@ -96,13 +96,16 @@ $(function () {
                     sum += Math.abs(parseFloat($(this).val()));
                 }
             });
-            $('#refundtransaction-amount').val(sum.toFixed(2));
-            $('#refundtransaction-amount').attr('data-old', sum.toFixed(2));
+            $('#refundtransaction-totalamount').val(sum.toFixed(2));
+            $('#refundtransaction-adjustedamount').val(sum.toFixed(2));
+            $('#refundtransaction-totalamount').attr('data-old', sum.toFixed(2));
 
         } else {
             $('.chk').prop('checked', false);
-            $('#refundtransaction-amount').val(sum.toFixed(2));
-            $('#refundtransaction-amount').attr('data-old', sum.toFixed(2));
+            $('#refundtransaction-totalamount').val(sum.toFixed(2))
+            $('#refundtransaction-adjustedamount').val(sum.toFixed(2))
+            $('#refundtransaction-totalamount').attr('data-old', sum.toFixed(2))
+
         }
     });
 
@@ -126,7 +129,8 @@ $(function () {
         amount = Math.abs(receivable - payable);
         $('#refundtransaction-payableamount').val(payable.toFixed(2));
         $('#refundtransaction-receivableamount').val(receivable.toFixed(2));
-        $('#transaction-amount').val(amount.toFixed(2));
+        $('#refundtransaction-totalamount').val(amount.toFixed(2));
+        $('#refundtransaction-adjustedamount').val(amount.toFixed(2));
     }
 
 

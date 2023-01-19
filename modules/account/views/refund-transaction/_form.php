@@ -52,11 +52,11 @@ $this->registerJsFile(
                             <thead>
                             <tr>
                                 <th style="width: 10px"><input type="checkbox" id="all-service"></th>
-                                <th>Identification Number</th>
+                                <th>Identification#</th>
                                 <th>Service</th>
-                                <th>Issue Date</th>
-                                <th>Payable To Customer</th>
-                                <th>Receivable From Customer</th>
+                                <th>Issue</th>
+                                <th>Payable</th>
+                                <th>Receivable</th>
                             </tr>
                             </thead>
                             <tbody id="t-body">
@@ -84,16 +84,16 @@ $this->registerJsFile(
                                 <?= $form->field($transaction, 'paymentDate')->widget(DateRangePicker::className(), Helper::dateFormat()) ?>
                             </div>
                             <div class="col-6">
-                                <?= $form->field($model, 'payableAmount')->textInput(['value' => 0, 'type' => 'number', 'step' => 'any']) ?>
+                                <?= $form->field($model, 'payableAmount')->textInput(['value' => 0, 'type' => 'number', 'step' => 'any', 'readOnly' => true]) ?>
                             </div>
                             <div class="col-6">
-                                <?= $form->field($model, 'receivableAmount')->textInput(['value' => 0, 'type' => 'number', 'step' => 'any']) ?>
+                                <?= $form->field($model, 'receivableAmount')->textInput(['value' => 0, 'type' => 'number', 'step' => 'any', 'readOnly' => true]) ?>
+                            </div>
+                            <div class="col-6">
+                                <?= $form->field($model, 'totalAmount')->textInput(['value' => 0, 'type' => 'number', 'step' => 'any', 'readOnly' => true]) ?>
                             </div>
                             <div class="col-6">
                                 <?= $form->field($model, 'adjustedAmount')->textInput(['value' => 0, 'type' => 'number']) ?>
-                            </div>
-                            <div class="col-6">
-                                <?= $form->field($transaction, 'amount')->textInput(['value' => 0, 'type' => 'number', 'step' => 'any']) ?>
                             </div>
                             <div class="col-md-12">
                                 <?= $form->field($model, 'remarks')->textarea(['rows' => 6]) ?>

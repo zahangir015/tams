@@ -5,6 +5,7 @@ namespace app\modules\account\services;
 use app\components\Helper;
 use app\components\Utils;
 use app\modules\account\models\RefundTransaction;
+use app\modules\account\models\RefundTransactionDetail;
 use app\modules\account\models\Transaction;
 use app\modules\account\repositories\RefundTransactionRepository;
 use app\modules\sale\models\holiday\Holiday;
