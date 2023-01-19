@@ -34,7 +34,7 @@ class LedgerService
                 'debit' => $value['debit'],
                 'credit' => $value['credit']
             ];
-            $response = self::store($ledgerRequestData);
+            $response = (new LedgerService)->store($ledgerRequestData);
             if ($response['error']) {
                 return $response;
             }
