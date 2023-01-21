@@ -29,8 +29,8 @@ class LedgerService
                 'reference' => 'Invoice Number' . $invoiceNumber,
                 'refId' => $value['refId'],
                 'refModel' => $value['refModel'],
-                'subRefId' => ($value['subRefId']) ?: (($invoice) ? $invoice->id : null),
-                'subRefModel' => ($value['subRefModel']) ?: (($invoice) ? Invoice::class : null),
+                'subRefId' => isset($value['subRefId']) ?: (($invoice) ? $invoice->id : null),
+                'subRefModel' => isset($value['subRefModel']) ?: (($invoice) ? Invoice::class : null),
                 'debit' => $value['debit'],
                 'credit' => $value['credit']
             ];
