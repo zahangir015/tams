@@ -56,14 +56,13 @@ class CompanyController extends ParentController
         $model = new Company();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post())) {
-                $logo = AttachmentFile::uploads($model, 'logo', null, 'uploads/company');
+            if ($model->load($this->request->post()) && $model->save()) {
+                $logo = AttachmentFile::uploads($model, 'logo', 'uploads/company');
                 if ($logo) {
-                    $model->logo = $logo[0];
+                    $model->logo = $logo[0];                                                                                                                          ;
                 }
                 return $this->redirect(['view', 'id' => $model->id]);
             }
-            dd($model->getErrors());
         } else {
             $model->loadDefaultValues();
         }

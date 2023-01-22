@@ -23,10 +23,11 @@ use yii\db\ActiveRecord;
 class Attachment extends ActiveRecord
 {
     use BehaviorTrait;
+
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%attachment}}';
     }
@@ -34,10 +35,10 @@ class Attachment extends ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            [['uid', 'name', 'cdnUrl', 'refId', 'refModel', 'createdBy', 'createdAt'], 'required'],
+            [['name', 'refId', 'refModel'], 'required'],
             [['refId', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['name'], 'string', 'max' => 120],
@@ -49,7 +50,7 @@ class Attachment extends ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),

@@ -22,38 +22,35 @@ class AttachmentFile
      * @throws Exception
      * @throws InvalidConfigException
      */
-    public static function uploads($getModel, $fieldName, $uid = null, $path = NULL): bool|array
+    public static function uploads($getModel, $fieldName, $path = NULL): bool|array
     {
         $files = UploadedFile::getInstances($getModel, $fieldName);
         $referenceModel = get_class($getModel);
-
         $refId = !empty($uid) ? $uid : $getModel->id;
-
         $row = [];
         foreach ($files as $file) {
             if (!empty($file)) {
                 $getFileName = self::uniqueFileName($referenceModel) . '.' . $file->getExtension();
                 $fileName = $file->name = $path ? $path . DIRECTORY_SEPARATOR . $getFileName : $getFileName;
                 $uploadResponse = Uploader::processFile($file, false);
+                $cdnUrl = $path.'/'.$uploadResponse['name'];
+
                 if (!$uploadResponse['error']) {
                     Uploader::deleteLocalFile($fileName);
                     $row[] = [
-                        'name' => $uploadResponse['name'],
+                        'name' => $fieldName,
                         'refModel' => $referenceModel,
                         'refId' => $refId,
-                        'cdnUrl' => null,
-                        'createdBy' => Yii::$app->user->identity->id,
-                        'updatedBy' => Yii::$app->user->identity->id,
-                        'createdAt' => time(),
-                        'updatedAt' => time()
+                        'cdnUrl' => $cdnUrl,
                     ];
                 } else {
                     break;
                 }
             }
         }
+
         $list = array_column($row, 'name');
-        $response = Yii::$app->db->createCommand()->batchInsert(Attachment::tableName(), ['name', 'refModel', 'refId', 'cdnUrl', 'createdBy', 'updatedBy', 'createdAt', 'updatedAt'], $row)->execute();
+        $response = Yii::$app->db->createCommand()->batchInsert(Attachment::tableName(), ['name', 'refModel', 'refId', 'cdnUrl'], $row)->execute();
         return $response && !empty($list) ? $list : false;
     }
 
