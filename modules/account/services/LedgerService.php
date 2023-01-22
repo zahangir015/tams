@@ -22,20 +22,22 @@ class LedgerService
 
     public static function batchInsert($invoice, array $ledgerArray): array
     {
-        foreach ($ledgerArray as $key => $value) {
+        //dd($ledgerArray);
+        foreach ($ledgerArray as $value) {
             $invoiceNumber = !$invoice ? '' : ' - '.$invoice->invoiceNumber;
             $ledgerRequestData = [
                 'title' => 'Service Purchase'.$invoiceNumber,
                 'reference' => 'Invoice Number' . $invoiceNumber,
                 'refId' => $value['refId'],
                 'refModel' => $value['refModel'],
-                'subRefId' => isset($value['subRefId']) ?: (($invoice) ? $invoice->id : null),
-                'subRefModel' => isset($value['subRefModel']) ?: (($invoice) ? Invoice::class : null),
+                'subRefId' => isset($value['subRefId']) ?? (($invoice) ? $invoice->id : null),
+                'subRefModel' => $value['subRefModel'] ?? (($invoice) ? Invoice::class : null),
                 'debit' => $value['debit'],
                 'credit' => $value['credit']
             ];
             $response = (new LedgerService)->store($ledgerRequestData);
             if ($response['error']) {
+                dd($response);
                 return $response;
             }
         }

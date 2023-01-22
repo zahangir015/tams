@@ -33,7 +33,8 @@ class ReportService
             ->andWhere(['between', 'issueDate', $startDate, $endDate])
             ->andWhere(['<>', 'type', ServiceConstant::ALL_TICKET_TYPE['Refund']])
             ->groupBy('type')
-            ->orderBy('total DESC')->asArray()->all();
+            ->orderBy('total DESC')
+            ->asArray()->all();
 
         $ticketRefundData[date('Y-m', strtotime($startDate))] = Ticket::find()
             ->select([
