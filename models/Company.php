@@ -35,7 +35,7 @@ class Company extends \yii\db\ActiveRecord
     public function rules(): array
     {
         return [
-            [['name', 'shortName', 'phone', 'email', 'address'], 'required'],
+            [['name', 'shortName', 'phone', 'email', 'address', 'logo'], 'required'],
             [['uid'], 'string', 'max' => 36],
             [['name'], 'string', 'max' => 120],
             [['shortName'], 'string', 'max' => 10],
