@@ -3,14 +3,18 @@
 namespace app\controllers;
 
 use app\components\AttachmentFile;
+use app\components\Helper;
+use app\components\Uploader;
 use app\models\Company;
 use app\models\CompanySearch;
 use app\controllers\ParentController;
+use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\Exception;
 use yii\db\Expression;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
 
 /**
  * CompanyController implements the CRUD actions for Company model.
@@ -35,14 +39,14 @@ class CompanyController extends ParentController
 
     /**
      * Displays a single Company model.
-     * @param int $id ID
+     * @param string $uid UID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id)
+    public function actionView(string $uid)
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $this->findModel($uid),
         ]);
     }
 
@@ -56,12 +60,19 @@ class CompanyController extends ParentController
         $model = new Company();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                $logo = AttachmentFile::uploads($model, 'logo', 'uploads/company');
-                if ($logo) {
-                    $model->logo = $logo[0];                                                                                                                          ;
+            if ($model->load($this->request->post())) {
+                $file = UploadedFile::getInstance($model, 'logo');
+                $uploadResponse = Uploader::processFile($file, false, 'uploads/company');
+                if (!$uploadResponse['error']) {
+                    $model->logo = $uploadResponse['name'];
+                    if ($model->save()) {
+                        return $this->redirect(['view', 'uid' => $model->uid]);
+                    } else {
+                        Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
+                    }
+                } else {
+                    Yii::$app->session->setFlash('danger', 'Image upload failed.');
                 }
-                return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {
             $model->loadDefaultValues();
@@ -75,7 +86,7 @@ class CompanyController extends ParentController
     /**
      * Updates an existing Company model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id ID
+     * @param string $uid UID
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
@@ -95,7 +106,7 @@ class CompanyController extends ParentController
     /**
      * Deletes an existing Company model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id ID
+     * @param string $uid UID
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
@@ -109,13 +120,13 @@ class CompanyController extends ParentController
     /**
      * Finds the Company model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id ID
+     * @param string $uid UID
      * @return Company the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel($uid)
     {
-        if (($model = Company::findOne(['id' => $id])) !== null) {
+        if (($model = Company::findOne(['uid' => $uid])) !== null) {
             return $model;
         }
 
