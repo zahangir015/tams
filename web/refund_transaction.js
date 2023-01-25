@@ -36,6 +36,14 @@ $(function () {
         }
     });
 
+    $(document).on('change', '#adjustedAmount', function () {
+        var total = parseFloat($('#amount').val());
+        var amount = parseFloat($(this).val());
+        if (amount > total) {
+            $(this).val(total)
+        }
+    });
+
     function pendingRefund(customerId, dateRange) {
         $.ajax({
             url: ajaxUrl,
@@ -128,8 +136,8 @@ $(function () {
         $('#refundtransaction-payable').val(payable.toFixed(2));
         $('#refundtransaction-receivable').val(receivable.toFixed(2));
         $('#refundtransaction-amount').val(amount.toFixed(2));
+        $('#refundtransaction-adjustedamount').val(amount.toFixed(2));
     }
-
 
     $('.breakDown').on('change', function () {
         if ($(this).is(':checked') && ($(this).val() == 0)) {
@@ -139,12 +147,6 @@ $(function () {
         }
     });
 
-    $('#refundtransaction-amount').on("change", function () {
-        var total = parseFloat($('#refundtransaction-amount').attr('data-old'));
-        var amnt = parseFloat($(this).val());
-        if (amnt > total) {
-            $(this).val(total)
-        }
-    });
+
 
 });

@@ -71,9 +71,8 @@ class RefundTransactionController extends Controller
         $model = new RefundTransaction();
         $transaction = new Transaction();
         if ($this->request->isPost) {
-            $requestData = $this->request->post();dd($requestData);
-            $refundServiceProcessResponse = $this->refundTransactionService->storeRefundTransaction($requestData, $model, $transaction);
-
+            $requestData = $this->request->post();
+            $refundServiceProcessResponse = $this->refundTransactionService->storeRefundTransaction($requestData, $model, $transaction);dd($refundServiceProcessResponse, false);
             if ($model->load() && $model->save()) {
                 return $this->redirect(['view', 'uid' => $model->uid]);
             }
