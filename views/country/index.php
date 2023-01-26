@@ -26,7 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'class' => '\kartik\grid\DataColumn',
                 'attribute' => 'status',
                 'value' => function ($model) {
-                    $labelClass = \app\components\Helper::statusLabelClass($model->status);
+                    $labelClass = Helper::statusLabelClass($model->status);
                     $labelText = ($model->status) ? 'Active' : 'Inactive';
                     return '<span class="right badge ' . $labelClass . '">' . $labelText . '</span>';
                 },
@@ -48,11 +48,11 @@ $this->params['breadcrumbs'][] = $this->title;
         'toolbar' => [
             [
                 'content' =>
-                    Html::a('<i class="fas fa-plus"></i>', ['/account/bank-account/create'], [
-                        'title' => Yii::t('app', 'Add Airline'),
+                    Html::a('<i class="fas fa-plus"></i>', ['/country/create'], [
+                        'title' => Yii::t('app', 'Add Country'),
                         'class' => 'btn btn-success'
                     ]) . ' ' .
-                    Html::a('<i class="fas fa-redo"></i>', ['/account/bank-account/index'], [
+                    Html::a('<i class="fas fa-redo"></i>', ['/country/index'], [
                         'class' => 'btn btn-primary',
                         'title' => Yii::t('app', 'Reset Grid')
                     ]),

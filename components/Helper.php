@@ -770,6 +770,11 @@ class Helper
         return 'INV' . date('ymdhis') . rand(9, 999);
     }
 
+    public static function refundTransactionNumber(): string
+    {
+        return 'RFT' . date('ymdhis') . rand(9, 999);
+    }
+
     public static function transactionNumber(): string
     {
         return 'TRN' . date('ymdhis') . rand(9, 999);

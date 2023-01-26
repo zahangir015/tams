@@ -74,26 +74,29 @@ $this->registerJsFile(
                         <h4>Payment Details for Customer</h4>
                         <hr>
                         <div class="row">
-                            <div class="col-12">
+                            <div class="col-md-6 col-sm-12 col-xs-12">
                                 <?= $form->field($transaction, 'bankId')->widget(Select2::class, Helper::ajaxDropDown('bankId', '/account/bank-account/get-banks', true, 'bankId', 'bank'))->label('Bank'); ?>
                             </div>
-                            <div class="col-6">
+                            <div class="col-md-6 col-sm-12 col-xs-12">
+                                <?= $form->field($transaction, 'reference')->textInput() ?>
+                            </div>
+                            <div class="col-md-6 col-sm-12 col-xs-12">
                                 <?= $form->field($transaction, 'paymentMode')->dropDownList(GlobalConstant::PAYMENT_MODE, ['prompt' => ''])->label('Payment Mode') ?>
                             </div>
-                            <div class="col-6">
+                            <div class="col-md-6 col-sm-12 col-xs-12">
                                 <?= $form->field($transaction, 'paymentDate')->widget(DateRangePicker::className(), Helper::dateFormat()) ?>
                             </div>
-                            <div class="col-6">
+                            <div class="col-md-6 col-sm-12 col-xs-12">
                                 <?= $form->field($model, 'payableAmount')->textInput(['value' => 0, 'type' => 'number', 'step' => 'any', 'readOnly' => true]) ?>
                             </div>
-                            <div class="col-6">
+                            <div class="col-md-6 col-sm-12 col-xs-12">
                                 <?= $form->field($model, 'receivableAmount')->textInput(['value' => 0, 'type' => 'number', 'step' => 'any', 'readOnly' => true]) ?>
                             </div>
-                            <div class="col-6">
+                            <div class="col-md-6 col-sm-12 col-xs-12">
                                 <?= $form->field($model, 'totalAmount')->textInput(['value' => 0, 'type' => 'number', 'step' => 'any', 'readOnly' => true]) ?>
                             </div>
-                            <div class="col-6">
-                                <?= $form->field($model, 'adjustedAmount')->textInput(['value' => 0, 'type' => 'number']) ?>
+                            <div class="col-md-6 col-sm-12 col-xs-12">
+                                <?= $form->field($model, 'adjustedAmount')->textInput(['value' => 0, 'type' => 'number', 'step' => 'any']) ?>
                             </div>
                             <div class="col-md-12">
                                 <?= $form->field($model, 'remarks')->textarea(['rows' => 6]) ?>
@@ -110,35 +113,4 @@ $this->registerJsFile(
     </div>
     <?php ActiveForm::end(); ?>
 </div>
-
-
-<? /*= $form->field($model, 'uid')->textInput(['maxlength' => true]) */ ?><!--
-
-    <? /*= $form->field($model, 'refId')->textInput() */ ?>
-
-    <? /*= $form->field($model, 'refModel')->textInput(['maxlength' => true]) */ ?>
-
-    <? /*= $form->field($model, 'payableAmount')->textInput() */ ?>
-
-    <? /*= $form->field($model, 'receivableAmount')->textInput() */ ?>
-
-    <? /*= $form->field($model, 'totalAmount')->textInput() */ ?>
-
-    <? /*= $form->field($model, 'paymentStatus')->dropDownList([ 'Payable' => 'Payable', 'Receivable' => 'Receivable', ], ['prompt' => '']) */ ?>
-
-    <? /*= $form->field($model, 'adjustedAmount')->textInput() */ ?>
-
-    <? /*= $form->field($model, 'isAdjusted')->textInput() */ ?>
-
-    <? /*= $form->field($model, 'remarks')->textarea(['rows' => 6]) */ ?>
-
-    <? /*= $form->field($model, 'status')->textInput() */ ?>
-
-    <? /*= $form->field($model, 'createdBy')->textInput() */ ?>
-
-    <? /*= $form->field($model, 'createdAt')->textInput() */ ?>
-
-    <? /*= $form->field($model, 'updatedBy')->textInput() */ ?>
-
-    --><? /*= $form->field($model, 'updatedAt')->textInput() */ ?>
 

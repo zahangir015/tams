@@ -173,6 +173,27 @@ use yii\helpers\Url;
                     ['label' => 'Refund Transactions', 'icon' => 'money-bill', 'url' => ['/account/refund-transaction/index']],
                     ['label' => 'Ledger', 'icon' => 'book', 'url' => ['/account/ledger/index']],
                     ['label' => 'Payment Timeline', 'icon' => 'list', 'url' => ['/account/service-payment-timeline/index']],
+                    [
+                        'label' => 'Journal Management',
+                        'icon' => 'file-invoice-dollar',
+                        'badge' => '<span class="right badge badge-info">4</span>',
+                        'items' => [
+                            ['label' => 'Account Type',  'icon' => 'list', 'url' => ['/account/account-type/index']],
+                            ['label' => 'Account Group', 'icon' => 'list', 'url' => ['/account/account-group/index']],
+                            ['label' => 'Chart Of Account', 'icon' => 'list', 'url' => ['/account/chart-of-account/index']],
+                            ['label' => 'Journal Entry', 'icon' => 'list', 'url' => ['/account/journal/index']],
+                        ]
+                    ],
+                    [
+                        'label' => 'Expense Management',
+                        'icon' => 'file-invoice-dollar',
+                        'badge' => '<span class="right badge badge-info">3</span>',
+                        'items' => [
+                            ['label' => 'Categories',  'icon' => 'list', 'url' => ['/account/expense-category/index']],
+                            ['label' => 'Sub Categories', 'icon' => 'list', 'url' => ['/account/expense-sub-category/index']],
+                            ['label' => 'Expenses', 'icon' => 'list', 'url' => ['/account/expense/index']],
+                        ]
+                    ],
                     ['label' => 'Simple Link', 'icon' => 'th', 'badge' => '<span class="right badge badge-danger">New</span>'],
                     ['label' => 'Yii2 PROVIDED', 'header' => true],
                     ['label' => 'Login', 'url' => ['site/login'], 'icon' => 'sign-in-alt', 'visible' => Yii::$app->user->isGuest],

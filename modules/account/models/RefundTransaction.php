@@ -13,6 +13,7 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property string $uid
+ * @property string $identificationNumber
  * @property int $refId
  * @property string $refModel
  * @property float|null $payableAmount
@@ -54,7 +55,7 @@ class RefundTransaction extends ActiveRecord
             [['refId', 'refModel'], 'required'],
             [['refId', 'isAdjusted', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['paymentStatus', 'payableAmount', 'receivableAmount', 'totalAmount', 'adjustedAmount'], 'number'],
-            [['paymentType', 'remarks'], 'string'],
+            [['identificationNumber', 'paymentType', 'remarks'], 'string'],
             [['uid'], 'string', 'max' => 36],
             [['refModel'], 'string', 'max' => 150],
             [['uid'], 'unique'],
@@ -69,6 +70,7 @@ class RefundTransaction extends ActiveRecord
         return [
             'id' => Yii::t('app', 'ID'),
             'uid' => Yii::t('app', 'Uid'),
+            'identificationNumber' => Yii::t('app', 'Identification Number'),
             'refId' => Yii::t('app', 'Ref ID'),
             'refModel' => Yii::t('app', 'Ref Model'),
             'payableAmount' => Yii::t('app', 'Payable Amount'),

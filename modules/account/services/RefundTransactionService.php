@@ -2,27 +2,34 @@
 
 namespace app\modules\account\services;
 
+use app\components\GlobalConstant;
 use app\components\Helper;
 use app\components\Utils;
+use app\modules\account\models\BankAccount;
 use app\modules\account\models\RefundTransaction;
 use app\modules\account\models\RefundTransactionDetail;
 use app\modules\account\models\Transaction;
 use app\modules\account\repositories\RefundTransactionRepository;
+use app\modules\sale\models\Customer;
 use app\modules\sale\models\holiday\Holiday;
 use app\modules\sale\models\hotel\Hotel;
 use app\modules\sale\models\ticket\Ticket;
 use app\modules\sale\models\visa\Visa;
+use Yii;
 use yii\base\Exception;
+use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 use yii\web\Request;
 
 class RefundTransactionService
 {
     public RefundTransactionRepository $refundTransactionRepository;
+    private LedgerService $ledgerService;
 
     public function __construct()
     {
         $this->refundTransactionRepository = new RefundTransactionRepository();
+        $this->ledgerService = new LedgerService();
     }
 
     public function getRefundList($refModel, $refId): array
@@ -128,9 +135,9 @@ class RefundTransactionService
                 'amount' => abs($amount),
                 'quoteAmount' => $service['quoteAmount'],
             ];
-            if ($serviceModel == Ticket::class){
+            if ($serviceModel == Ticket::class) {
                 $identificationNumber = $service['eTicket'];
-            }else{
+            } else {
                 $identificationNumber = $service['identificationNumber'];
             }
 
@@ -152,44 +159,59 @@ class RefundTransactionService
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
             $refundTransaction->load($requestData);
-            $refundTransaction->transactionNumber = RefundTransaction::setTransactionNumber();
+            $refundTransaction->identificationNumber = Helper::refundTransactionNumber();
+            dd($refundTransaction->save());
             if (!$refundTransaction->save()) {
                 throw new Exception(Helper::processErrorMessages($refundTransaction->getErrors()));
             }
+
             // store refund transaction detail
-            $store = RefundTransactionDetail::storeData($request['RefundTransactionDetail'], $model);
-            if (!$store['status']) {
-                throw new Exception(Utils::processErrorMessages('not saved for Refund-transaction-detail ' . $store['message']));
+            foreach ($requestData['RefundTransactionDetail'] as $singleDetailData) {
+                $singleData = json_decode($singleDetailData, true);
+                dd($singleData);
+                if ($refundAdjustmentAmount > 0) {
+                    $singleData['amount'] = ($refundAdjustmentAmount > $singleData['payable']) ? $singleData['payable'] : $refundAdjustmentAmount;
+                    $refundAdjustmentAmount -= $singleData['payable'];
+                } else {
+                    $singleData['amount'] = 0;
+                }
+
+                $model = new RefundTransactionDetail();
+                $model->load(['RefundTransactionDetail' => $singleData]);
+                $model->refundTransactionId = $refundTransaction->id;
+                $model->status = GlobalConstant::ACTIVE_STATUS;
+                if (!$model->save()) {
+                    return ['status' => false, 'message' => $model->errors];
+                }
+
             }
+
             // process customer ledger
             $ledgerRequestData = [
                 'title' => 'Service Refund',
-                'reference' => 'Refund Transaction - ' . $model->transactionNumber,
-                'refId' => $model->refId,
+                'reference' => 'Refund Transaction - ' . $refundTransaction->identificationNumber,
+                'refId' => $refundTransaction->refId,
                 'refModel' => Customer::class,
-                'subRefId' => $model->id,
-                'subRefModel' => get_class($model),
-                'debit' => $model->receivable,
-                'credit' => $model->payable,// To customer
+                'subRefId' => $refundTransaction->id,
+                'subRefModel' => get_class($refundTransaction),
+                'debit' => $refundTransaction->receivableAmount,
+                'credit' => $refundTransaction->payableAmount,
             ];
+            $ledgerRequestResponse = $this->ledgerService->store($ledgerRequestData);
+            if ($ledgerRequestResponse['error']) {
+                return ['error' => true, 'message' => $ledgerRequestResponse['message']];
+            }
 
-            $customerLedger = LedgerComponent::createNewLedger($ledgerRequestData);
-            if ($customerLedger['error']) {
-                throw new Exception('not saved for bank-ledger' . $customerLedger['message']);
-            }
-            if (!$request['RefundTransaction']['bankId']){
-                throw new Exception('Bank is required');
-            }
             // process bank ledger
             $bankLedgerRequestData = [
                 'title' => 'Service Refund',
-                'reference' => 'Refund Transaction - ' . $model->transactionNumber,
+                'reference' => 'Refund Transaction - ' . $refundTransaction->identificationNumber,
                 'refId' => $request['RefundTransaction']['bankId'],
                 'refModel' => BankAccount::class,
-                'subRefId' => $model->id,
-                'subRefModel' => get_class($model),
-                'credit' => $model->receivable,
-                'debit' => $model->payable,
+                'subRefId' => $refundTransaction->id,
+                'subRefModel' => get_class($refundTransaction),
+                'credit' => $refundTransaction->receivableAmount,
+                'debit' => $refundTransaction->payableAmount,
             ];
             $bankLedger = LedgerComponent::createNewLedger($bankLedgerRequestData);
             if ($bankLedger['error']) {
@@ -202,17 +224,22 @@ class RefundTransactionService
             if ($storeTransaction['error']) {
                 throw new Exception('Transaction not stored - ' . $storeTransaction['message']);
             }
-            $transaction->commit();
+            $dbTransaction->commit();
             Yii::$app->session->setFlash('success', 'Refund Transaction for Customer saved successfully');
-
             return $this->redirect(['customer-refund-list']);
         } catch (\Exception $e) {
-            Yii::$app->session->setFlash('error', $e->getMessage(). ' at Line '. $e->getLine(). ' in file ' . $e->getFile());
-            $transaction->rollBack();
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+            Yii::$app->session->setFlash('error', $e->getMessage() . ' at Line ' . $e->getLine() . ' in file ' . $e->getFile());
+            $dbTransaction->rollBack();
         }
+    }
+
+    private static function storeRefundTransactionDetails(array $requestData, ActiveRecord $refundTransaction): array
+    {
+        $refundAdjustmentAmount = $refundTransaction->totalAmount;
+        $requestData = [];
+
+
+        return ['status' => true];
     }
 
 }

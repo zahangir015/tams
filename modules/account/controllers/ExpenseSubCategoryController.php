@@ -1,33 +1,44 @@
 <?php
 
-namespace app\controllers;
+namespace app\modules\account\controllers;
 
-use app\components\AttachmentFile;
-use app\components\Helper;
-use app\components\Uploader;
-use app\models\Company;
-use app\models\CompanySearch;
-use app\controllers\ParentController;
-use Yii;
-use yii\db\Exception;
-use yii\db\Expression;
+use app\modules\account\models\ExpenseSubCategory;
+use app\modules\account\models\ExpenseSubCategorySearch;
+use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\web\UploadedFile;
 
 /**
- * CompanyController implements the CRUD actions for Company model.
+ * ExpenseSubCategoryController implements the CRUD actions for ExpenseSubCategory model.
  */
-class CompanyController extends ParentController
+class ExpenseSubCategoryController extends Controller
 {
     /**
-     * Lists all Company models.
+     * @inheritDoc
+     */
+    public function behaviors()
+    {
+        return array_merge(
+            parent::behaviors(),
+            [
+                'verbs' => [
+                    'class' => VerbFilter::className(),
+                    'actions' => [
+                        'delete' => ['POST'],
+                    ],
+                ],
+            ]
+        );
+    }
+
+    /**
+     * Lists all ExpenseSubCategory models.
      *
      * @return string
      */
     public function actionIndex()
     {
-        $searchModel = new CompanySearch();
+        $searchModel = new ExpenseSubCategorySearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
@@ -37,41 +48,30 @@ class CompanyController extends ParentController
     }
 
     /**
-     * Displays a single Company model.
-     * @param string $uid UID
+     * Displays a single ExpenseSubCategory model.
+     * @param int $id ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView(string $uid)
+    public function actionView($id)
     {
         return $this->render('view', [
-            'model' => $this->findModel($uid),
+            'model' => $this->findModel($id),
         ]);
     }
 
     /**
-     * Creates a new Company model.
+     * Creates a new ExpenseSubCategory model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|Response
+     * @return string|\yii\web\Response
      */
     public function actionCreate()
     {
-        $model = new Company();
+        $model = new ExpenseSubCategory();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post())) {
-                $file = UploadedFile::getInstance($model, 'logo');
-                $uploadResponse = Uploader::processFile($file, false, 'uploads/company');
-                if (!$uploadResponse['error']) {
-                    $model->logo = $uploadResponse['name'];
-                    if ($model->save()) {
-                        return $this->redirect(['view', 'uid' => $model->uid]);
-                    } else {
-                        Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
-                    }
-                } else {
-                    Yii::$app->session->setFlash('danger', 'Image upload failed.');
-                }
+            if ($model->load($this->request->post()) && $model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {
             $model->loadDefaultValues();
@@ -83,15 +83,10 @@ class CompanyController extends ParentController
     }
 
     /**
-     * Updates an existing Company model.
+     * Updates an existing ExpenseSubCategory model.
      * If update is successful, the browser will be redirected to the 'view' page.
-<<<<<<< HEAD
      * @param int $id ID
-     * @return string|Response
-=======
-     * @param string $uid UID
      * @return string|\yii\web\Response
->>>>>>> 52f3e5b26d7a1e3f01deb2844ffcf559f1864a29
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionUpdate($id)
@@ -108,15 +103,10 @@ class CompanyController extends ParentController
     }
 
     /**
-     * Deletes an existing Company model.
+     * Deletes an existing ExpenseSubCategory model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-<<<<<<< HEAD
      * @param int $id ID
-     * @return Response
-=======
-     * @param string $uid UID
      * @return \yii\web\Response
->>>>>>> 52f3e5b26d7a1e3f01deb2844ffcf559f1864a29
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionDelete($id)
@@ -127,15 +117,15 @@ class CompanyController extends ParentController
     }
 
     /**
-     * Finds the Company model based on its primary key value.
+     * Finds the ExpenseSubCategory model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param string $uid UID
-     * @return Company the loaded model
+     * @param int $id ID
+     * @return ExpenseSubCategory the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($uid)
+    protected function findModel($id)
     {
-        if (($model = Company::findOne(['uid' => $uid])) !== null) {
+        if (($model = ExpenseSubCategory::findOne(['id' => $id])) !== null) {
             return $model;
         }
 

@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <div class="row pb-5">
                         <div class="col-md">
                             <h4>
-                                <img alt="Logo" height="60" width="150" src=""> <?= $company->name ?>
+                                <img alt="Logo" height="60" width="150" src="<?= \yii\helpers\Url::to('/uploads/company/'.$company->logo) ?>"> <?= $company->name ?>
                                 <small class="float-right">Date: <?= $model->date ?></small>
                             </h4>
                         </div>
