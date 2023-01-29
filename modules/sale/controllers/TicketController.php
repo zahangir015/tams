@@ -12,6 +12,7 @@ use app\modules\sale\models\ticket\TicketSearch;
 use app\controllers\ParentController;
 use app\modules\sale\models\ticket\TicketSupplier;
 use app\modules\sale\models\ticket\TicketRefund;
+use app\modules\sale\models\ticket\TicketSupplierSearch;
 use app\modules\sale\services\FlightService;
 use Yii;
 use yii\bootstrap4\ActiveForm;
@@ -46,6 +47,37 @@ class TicketController extends ParentController
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
+     * Lists all TicketSupplier models.
+     *
+     * @return string
+     */
+    public function actionTicketSupplierList()
+    {
+        $searchModel = new TicketSupplierSearch();
+        $dataProvider = $searchModel->search($this->request->queryParams);
+
+        return $this->render('ticket_supplier_list', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
+     * Displays a single Ticket model.
+     * @param string $uid UID
+     * @return string
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionTicketSupplier(string $uid)
+    {
+        $model = $this->flightService->findTicket($uid, ['customer', 'ticketSupplier', 'airline', 'provider']);
+        return $this->render('view', [
+            'model' => $model,
+            'histories' => History::find()->where(['tableName' => Ticket::tableName(), 'tableId' => $model->id])->orderBy(['id' => SORT_DESC])->all()
         ]);
     }
 
