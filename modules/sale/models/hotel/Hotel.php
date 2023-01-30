@@ -103,7 +103,7 @@ class Hotel extends ActiveRecord
             'checkOutDate' => Yii::t('app', 'Check Out Date'),
             'freeCancellationDate' => Yii::t('app', 'Free Cancellation Date'),
             'totalNights' => Yii::t('app', 'Total Nights'),
-            'route' => Yii::t('app', 'Route'),
+            'route' => Yii::t('app', 'Destination'),
             'isRefundable' => Yii::t('app', 'Is Refundable'),
             'quoteAmount' => Yii::t('app', 'Quote Amount'),
             'costOfSale' => Yii::t('app', 'Cost Of Sale'),

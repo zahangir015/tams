@@ -123,4 +123,14 @@ class HolidaySupplier extends ActiveRecord
     {
         return $this->hasOne(Supplier::className(), ['id' => 'supplierId']);
     }
+
+    /**
+     * Gets query for [[HolidayCategory]].
+     *
+     * @return ActiveQuery
+     */
+    public function getCategory(): ActiveQuery
+    {
+        return $this->hasOne(HolidayCategory::className(), ['id' => 'holidayCategoryId']);
+    }
 }

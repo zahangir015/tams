@@ -1,5 +1,6 @@
 <?php
 
+use app\modules\hrm\components\HrmConstant;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -28,17 +29,37 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => [
             //'id',
             //'uid',
-            'userId',
+            //'userId',
             'reportTo',
             'firstName',
             'lastName',
             'fathersName',
             'mothersName',
-            'dateOfBirth',
-            'gender',
-            'bloodGroup',
-            'maritalStatus',
-            'religion',
+            'dateOfBirth:date',
+            [
+                'attribute' => 'gender',
+                'value' => function ($model) {
+                    return HrmConstant::GENDER[$model->gender];
+                },
+            ],
+            [
+                'attribute' => 'bloodGroup',
+                'value' => function ($model) {
+                    return HrmConstant::BLOOD_GROUP[$model->bloodGroup];
+                },
+            ],
+            [
+                'attribute' => 'maritalStatus',
+                'value' => function ($model) {
+                    return HrmConstant::MARITAL_STATUS[$model->maritalStatus];
+                },
+            ],
+            [
+                'attribute' => 'religion',
+                'value' => function ($model) {
+                    return HrmConstant::RELIGION[$model->religion];
+                },
+            ],
             'nid',
             'officialId',
             'officialEmail:email',
@@ -51,15 +72,20 @@ $this->params['breadcrumbs'][] = $this->title;
             'contactPersonsPhone',
             'contactPersonsAddress',
             'contactPersonsRelation',
-            'joiningDate',
-            'confirmationDate',
-            'inProhibition',
+            'joiningDate:date',
+            'confirmationDate:date',
+            [
+                'attribute' => 'inProhibition',
+                'value' => function ($model) {
+                    return HrmConstant::PROBATION[$model->inProhibition];
+                },
+            ],
             'jobCategory',
-            'status',
-            'createdBy',
-            'createdAt',
-            'updatedBy',
-            'updatedAt',
+            //'status',
+            //'createdBy',
+            //'createdAt',
+            //'updatedBy',
+            //'updatedAt',
         ],
     ]) ?>
 

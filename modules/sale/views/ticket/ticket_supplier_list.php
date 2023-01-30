@@ -1,31 +1,27 @@
 <?php
 
-use app\modules\sale\models\holiday\HolidaySupplier;
-use yii\helpers\Html;
-use yii\helpers\Url;
+use app\modules\sale\models\ticket\TicketSupplier;
+use app\modules\sale\models\ticket\TicketSupplierSearch;
 use kartik\grid\ActionColumn;
 use kartik\grid\GridView;
+use yii\helpers\Html;
+use yii\helpers\Url;
+use yii\widgets\Pjax;
+
 /** @var yii\web\View $this */
-/** @var app\modules\sale\models\holiday\HolidaySupplierSearch $searchModel */
+/** @var TicketSupplierSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = Yii::t('app', 'Holiday Suppliers');
+$this->title = Yii::t('app', 'Ticket Suppliers');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="holiday-supplier-index">
+<div class="ticket-supplier-index">
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'kartik\grid\SerialColumn'],
             'motherId',
-            [
-                'attribute' => 'holiday',
-                'value' => function ($model) {
-                    return $model->holiday->identificationNumber;
-                },
-                'label' => 'Holiday',
-            ],
             [
                 'attribute' => 'bill',
                 'value' => function ($model) {
@@ -41,27 +37,28 @@ $this->params['breadcrumbs'][] = $this->title;
                 'label' => 'Supplier',
             ],
             [
-                'attribute' => 'category',
+                'attribute' => 'airline',
                 'value' => function ($model) {
-                    return $model->category->name;
+                    return $model->airline->name;
                 },
-                'label' => 'Category',
+                'label' => 'Airline',
             ],
-            'supplierRef',
             'issueDate',
-            'departureDate',
             'refundRequestDate',
+            'eTicket',
+            'pnrCode',
             'type',
-            'serviceDetails',
-            'quantity',
-            'unitPrice',
+            'baseFare',
+            'tax',
+            'otherTax',
             'costOfSale',
             'paidAmount',
             'paymentStatus',
             //'status',
+            'serviceCharge',
             /*[
                 'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, HolidaySupplier $model, $key, $index, $column) {
+                'urlCreator' => function ($action, TicketSupplier $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'uid' => $model->uid]);
                 },
                 'width' => '150px',
@@ -69,7 +66,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
                 'buttons' => [
                     'view' => function ($url, $model) {
-                        return Html::a('<i class="fa fa-info-circle"></i>', ['holiday-supplier-list', 'uid' => $model->uid], [
+                        return Html::a('<i class="fa fa-info-circle"></i>', ['ticket-supplier', 'uid' => $model->uid], [
                             'title' => 'view',
                             'data-pjax' => '0',
                             'class' => 'btn btn-primary btn-xs'
@@ -81,7 +78,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'toolbar' => [
             [
                 'content' =>
-                    Html::a('<i class="fas fa-redo"></i>', ['/sale/holiday/holiday-supplier-list'], [
+                    Html::a('<i class="fas fa-redo"></i>', ['/sale/ticket/ticket-supplier-list'], [
                         'class' => 'btn btn-primary',
                         'title' => Yii::t('app', 'Reset Grid')
                     ]),

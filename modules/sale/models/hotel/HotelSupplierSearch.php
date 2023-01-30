@@ -2,6 +2,7 @@
 
 namespace app\modules\sale\models\hotel;
 
+use app\components\GlobalConstant;
 use app\modules\account\models\Bill;
 use app\modules\sale\models\Supplier;
 use yii\base\Model;
@@ -50,6 +51,23 @@ class HotelSupplierSearch extends HotelSupplier
 
         // add conditions that should always apply here
         $query->joinWith(['bill', 'supplier', 'hotel']);
+        $query->where([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS]);
+
+        // do we have values? if so, add a filter to our query
+        if (isset($params['HotelSupplierSearch'])) {
+            if (!empty($params['HotelSupplierSearch']['issueDate']) && str_contains($params['HotelSupplierSearch']['issueDate'], '-')) {
+                list($start_date, $end_date) = explode(' - ', $params['HotelSupplierSearch']['issueDate']);
+                $query->andFilterWhere(['between', 'issueDate', date('Y-m-d', strtotime($start_date)), date('Y-m-d', strtotime($end_date))]);
+            }
+            if (!empty($params['HotelSupplierSearch']['departureDate']) && str_contains($params['HotelSupplierSearch']['departureDate'], '-')) {
+                list($start_date, $end_date) = explode(' - ', $params['HotelSupplierSearch']['departureDate']);
+                $query->andFilterWhere(['between', 'departureDate', date('Y-m-d', strtotime($start_date)), date('Y-m-d', strtotime($end_date))]);
+            }
+            if (!empty($params['HotelSupplierSearch']['refundRequestDate']) && str_contains($params['HotelSupplierSearch']['refundRequestDate'], '-')) {
+                list($start_date, $end_date) = explode(' - ', $params['HotelSupplierSearch']['refundRequestDate']);
+                $query->andFilterWhere(['between', 'refundRequestDate', date('Y-m-d', strtotime($start_date)), date('Y-m-d', strtotime($end_date))]);
+            }
+        }
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
