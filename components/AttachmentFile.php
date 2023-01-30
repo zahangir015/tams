@@ -26,7 +26,7 @@ class AttachmentFile
     {
         $files = UploadedFile::getInstances($model, $name);
         $referenceModel = get_class($model);
-        $refId = !empty($uid) ? $uid : ;
+        $refId = !empty($uid) ? $uid : '';
         $row = [];
         foreach ($files as $file) {
             if (!empty($file)) {

@@ -28,7 +28,7 @@ use yii\helpers\Url;
                     ['label' => 'GENERAL SETTINGS', 'header' => true],
                     ['label' => 'Countries',  'icon' => 'globe', 'url' => ['/country']],
                     ['label' => 'Cities',  'icon' => 'globe', 'url' => ['/city']],
-                    ['label' => 'Airline Repository',  'icon' => 'plane', 'url' => ['/airline-repository']],
+                    //['label' => 'Airline Repository',  'icon' => 'plane', 'url' => ['/airline-repository']],
                     ['label' => 'Company',  'icon' => 'building', 'url' => ['/company']],
                     ['label' => 'USER MANAGEMENT', 'header' => true],
                     ['label' => 'Users',  'icon' => 'users', 'url' => ['/admin/user/index']],
@@ -92,11 +92,11 @@ use yii\helpers\Url;
                     [
                         'label' => 'Airline Settings',
                         'icon' => 'paper-plane',
-                        'badge' => '<span class="right badge badge-info">3</span>',
+                        'badge' => '<span class="right badge badge-info">2</span>',
                         'items' => [
                             ['label' => 'Airline Add', 'icon' => 'paper-plane', 'url' => ['/sale/airline/create']],
                             ['label' => 'Airline List', 'icon' => 'paper-plane', 'url' => ['/sale/airline/index']],
-                            ['label' => 'Airline History', 'icon' => 'list', 'url' => ['/sale/airline-history/index']],
+                            //['label' => 'Airline History', 'icon' => 'list', 'url' => ['/sale/airline-history/index']],
                         ]
                     ],
                     [
