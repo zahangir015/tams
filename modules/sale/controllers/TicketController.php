@@ -72,10 +72,10 @@ class TicketController extends ParentController
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionTicketSupplier(string $uid)
+    public function actionTicketSupplier(string $uid): string
     {
-        $model = $this->flightService->findTicket($uid, ['customer', 'ticketSupplier', 'airline', 'provider']);
-        return $this->render('view', [
+        $model = $this->flightService->findTicket($uid, TicketSupplier::class, ['bill', 'supplier', 'ticket', 'airline']);
+        return $this->render('ticket_supplier_view', [
             'model' => $model,
             'histories' => History::find()->where(['tableName' => Ticket::tableName(), 'tableId' => $model->id])->orderBy(['id' => SORT_DESC])->all()
         ]);
@@ -105,7 +105,7 @@ class TicketController extends ParentController
      */
     public function actionView(string $uid)
     {
-        $model = $this->flightService->findTicket($uid, ['customer', 'ticketSupplier', 'airline', 'provider']);
+        $model = $this->flightService->findTicket($uid, Ticket::class, ['customer', 'ticketSupplier', 'airline', 'provider']);
         return $this->render('view', [
             'model' => $model,
             'histories' => History::find()->where(['tableName' => Ticket::tableName(), 'tableId' => $model->id])->orderBy(['id' => SORT_DESC])->all()
@@ -179,7 +179,7 @@ class TicketController extends ParentController
      */
     public function actionRefund(string $uid): Response|string
     {
-        $motherTicket = $this->flightService->findTicket($uid, ['airline', 'provider', 'customer', 'ticketSupplier']);
+        $motherTicket = $this->flightService->findTicket($uid, Ticket::class, ['airline', 'provider', 'customer', 'ticketSupplier']);
         $totalReceivedAmount = 0;
         if (($motherTicket->type == ServiceConstant::TYPE['Refund']) || ($motherTicket->type == ServiceConstant::TYPE['Refund Requested'])) {
             Yii::$app->session->setFlash('error', 'Refund and Refund Requested Ticket can not be refunded.');
@@ -228,7 +228,7 @@ class TicketController extends ParentController
      */
     public function actionUpdate(string $uid): Response|string
     {
-        $model = $this->flightService->findTicket($uid);
+        $model = $this->flightService->findTicket($uid, Ticket::class);
 
         if ($this->request->isPost) {
             // Update Ticket

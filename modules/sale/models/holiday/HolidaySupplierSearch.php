@@ -3,6 +3,8 @@
 namespace app\modules\sale\models\holiday;
 
 use app\components\GlobalConstant;
+use app\modules\account\models\Bill;
+use app\modules\sale\models\Supplier;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
@@ -11,6 +13,11 @@ use yii\data\ActiveDataProvider;
  */
 class HolidaySupplierSearch extends HolidaySupplier
 {
+    public $bill;
+    public $supplier;
+    public $holiday;
+    public $category;
+
     /**
      * {@inheritdoc}
      */
@@ -18,7 +25,7 @@ class HolidaySupplierSearch extends HolidaySupplier
     {
         return [
             [['id', 'holidayId', 'billId', 'supplierId', 'quantity', 'unitPrice', 'status', 'holidayCategoryId', 'motherId'], 'integer'],
-            [['uid', 'supplierRef', 'issueDate', 'departureDate', 'refundRequestDate', 'type', 'serviceDetails', 'paymentStatus'], 'safe'],
+            [['uid', 'supplierRef', 'issueDate', 'departureDate', 'refundRequestDate', 'type', 'serviceDetails', 'paymentStatus', 'holiday', 'supplier', 'category', 'bill'], 'safe'],
             [['costOfSale', 'paidAmount'], 'number'],
         ];
     }
@@ -44,6 +51,7 @@ class HolidaySupplierSearch extends HolidaySupplier
         $query = HolidaySupplier::find();
 
         // add conditions that should always apply here
+        $query->joinWith(['holiday', 'supplier', 'category', 'bill']);
         $query->where([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS]);
 
         // do we have values? if so, add a filter to our query
@@ -66,6 +74,26 @@ class HolidaySupplierSearch extends HolidaySupplier
             'query' => $query,
             'sort' => ['defaultOrder' => ['issueDate' => SORT_DESC]],
         ]);
+
+        $dataProvider->sort->attributes['category'] = [
+            'asc' => [HolidayCategory::tableName() . '.name' => SORT_ASC],
+            'desc' => [HolidayCategory::tableName() . '.name' => SORT_DESC],
+        ];
+
+        $dataProvider->sort->attributes['bill'] = [
+            'asc' => [Bill::tableName() . '.billNumber' => SORT_ASC],
+            'desc' => [Bill::tableName() . '.billNumber' => SORT_DESC],
+        ];
+
+        $dataProvider->sort->attributes['supplier'] = [
+            'asc' => [Supplier::tableName() . '.company' => SORT_ASC],
+            'desc' => [Supplier::tableName() . '.company' => SORT_DESC],
+        ];
+
+        $dataProvider->sort->attributes['holiday'] = [
+            'asc' => [Holiday::tableName() . '.identificationNumber' => SORT_ASC],
+            'desc' => [Holiday::tableName() . '.identificationNumber' => SORT_DESC],
+        ];
 
         $this->load($params);
 
@@ -92,7 +120,11 @@ class HolidaySupplierSearch extends HolidaySupplier
             'motherId' => $this->motherId,
         ]);
 
-        $query->andFilterWhere(['like', 'supplierRef', $this->supplierRef])
+        $query->andFilterWhere(['like', Bill::tableName() . '.billNumber', $this->bill])
+            ->andFilterWhere(['like', Supplier::tableName() . '.company', $this->supplier])
+            ->andFilterWhere(['like', Holiday::tableName() . '.name', $this->holiday])
+            ->andFilterWhere(['like', HolidayCategory::tableName() . '.name', $this->category])
+            ->andFilterWhere(['like', 'supplierRef', $this->supplierRef])
             ->andFilterWhere(['like', 'type', $this->type])
             ->andFilterWhere(['like', 'serviceDetails', $this->serviceDetails])
             ->andFilterWhere(['like', 'paymentStatus', $this->paymentStatus]);

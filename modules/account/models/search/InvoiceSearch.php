@@ -1,8 +1,7 @@
 <?php
 
 namespace app\modules\account\models\search;
-
-use app\components\Constant;
+use app\components\GlobalConstant;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\account\models\Invoice;
@@ -45,7 +44,7 @@ class InvoiceSearch extends Invoice
         $query = Invoice::find();
 
         // add conditions that should always apply here
-        $query->where(['status' => Constant::ACTIVE_STATUS]);
+        $query->where(['status' => GlobalConstant::ACTIVE_STATUS]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

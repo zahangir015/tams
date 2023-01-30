@@ -99,7 +99,7 @@ class Holiday extends ActiveRecord
             'receivedAmount' => Yii::t('app', 'Received'),
             'paymentStatus' => Yii::t('app', 'Payment Status'),
             'isOnlineBooked' => Yii::t('app', 'Is Online Booked'),
-            'route' => Yii::t('app', 'Route'),
+            'route' => Yii::t('app', 'Destination'),
             'status' => Yii::t('app', 'Status'),
             'createdBy' => Yii::t('app', 'Created By'),
             'createdAt' => Yii::t('app', 'Created At'),

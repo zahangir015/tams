@@ -23,13 +23,6 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'kartik\grid\SerialColumn'],
             'motherId',
             [
-                'attribute' => 'ticket',
-                'value' => function ($model) {
-                    return $model->ticket->eTicket;
-                },
-                'label' => 'Ticket',
-            ],
-            [
                 'attribute' => 'bill',
                 'value' => function ($model) {
                     return $model->bill ? $model->bill->billNumber : null;
@@ -61,9 +54,9 @@ $this->params['breadcrumbs'][] = $this->title;
             'costOfSale',
             'paidAmount',
             'paymentStatus',
-            'status',
+            //'status',
             'serviceCharge',
-            [
+            /*[
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, TicketSupplier $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'uid' => $model->uid]);
@@ -80,12 +73,12 @@ $this->params['breadcrumbs'][] = $this->title;
                         ]);
                     },
                 ]
-            ],
+            ],*/
         ],
         'toolbar' => [
             [
                 'content' =>
-                    Html::a('<i class="fas fa-redo"></i>', ['/sale/ticket/index'], [
+                    Html::a('<i class="fas fa-redo"></i>', ['/sale/ticket/ticket-supplier-list'], [
                         'class' => 'btn btn-primary',
                         'title' => Yii::t('app', 'Reset Grid')
                     ]),

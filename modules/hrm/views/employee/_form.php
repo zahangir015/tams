@@ -129,28 +129,32 @@ $this->registerJsFile(
                         ]); ?>
                     </div>
                 </div>
-                <br>
-                <div class="row">
-                    <div class="col">
-                        <div class="form-group">
-                            <div class="custom-control custom-switch">
-                                <input type="checkbox" class="custom-control-input" id="userCreate">
-                                <label class="custom-control-label" for="userCreate">Want to create a <b>User</b> for login?</label>
+                <?php
+                if ($model->isNewRecord) {
+                    ?>
+                    <br>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <div class="custom-control custom-switch">
+                                    <input type="checkbox" class="custom-control-input" id="userCreate">
+                                    <label class="custom-control-label" for="userCreate">Want to create a <b>User</b>
+                                        for login?</label>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div id="createUser">
-                    <h5 class="mb-10 font-weight-bold text-dark">Login Credentials</h5>
-                    <hr>
-                    <div class="row">
-                        <div class="col"><?= $form->field($signup, 'username') ?></div>
-                        <div class="col"><?= $form->field($signup, 'email') ?></div>
-                        <div class="col"><?= $form->field($signup, 'password')->passwordInput() ?></div>
-                        <div class="col"><?= $form->field($signup, 'retypePassword')->passwordInput() ?></div>
+                    <div id="createUser">
+                        <h5 class="mb-10 font-weight-bold text-dark">Login Credentials</h5>
+                        <hr>
+                        <div class="row">
+                            <div class="col"><?= $form->field($signup, 'username') ?></div>
+                            <div class="col"><?= $form->field($signup, 'email') ?></div>
+                            <div class="col"><?= $form->field($signup, 'password')->passwordInput() ?></div>
+                            <div class="col"><?= $form->field($signup, 'retypePassword')->passwordInput() ?></div>
+                        </div>
                     </div>
-                </div>
-
+                <?php } ?>
                 <div class="form-group">
                     <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
                 </div>

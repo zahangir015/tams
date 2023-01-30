@@ -2,6 +2,7 @@
 
 namespace app\modules\sale\models\ticket;
 
+use app\components\GlobalConstant;
 use app\modules\account\models\Bill;
 use app\modules\sale\models\Airline;
 use app\modules\sale\models\Supplier;
@@ -51,7 +52,23 @@ class TicketSupplierSearch extends TicketSupplier
         $query = TicketSupplier::find();
 
         // add conditions that should always apply here
-        $query->joinWith(['bill', 'supplier', 'ticket', 'airline']);
+        $query->joinWith(['bill', 'supplier', 'airline']);
+        $query->where([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS]);
+
+        if (isset($params['TicketSupplierSearch'])) {
+            if (!empty($params['TicketSupplierSearch']['issueDate']) && str_contains($params['TicketSupplierSearch']['issueDate'], '-')) {
+                list($start_date, $end_date) = explode(' - ', $params['TicketSupplierSearch']['issueDate']);
+                $query->andFilterWhere(['between', 'issueDate', date('Y-m-d', strtotime($start_date)), date('Y-m-d', strtotime($end_date))]);
+            }
+            if (!empty($params['TicketSupplierSearch']['departureDate']) && str_contains($params['TicketSupplierSearch']['departureDate'], '-')) {
+                list($start_date, $end_date) = explode(' - ', $params['TicketSupplierSearch']['departureDate']);
+                $query->andFilterWhere(['between', 'departureDate', date('Y-m-d', strtotime($start_date)), date('Y-m-d', strtotime($end_date))]);
+            }
+            if (!empty($params['TicketSupplierSearch']['refundRequestDate']) && str_contains($params['TicketSupplierSearch']['refundRequestDate'], '-')) {
+                list($start_date, $end_date) = explode(' - ', $params['TicketSupplierSearch']['refundRequestDate']);
+                $query->andFilterWhere(['between', 'refundRequestDate', date('Y-m-d', strtotime($start_date)), date('Y-m-d', strtotime($end_date))]);
+            }
+        }
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -66,11 +83,6 @@ class TicketSupplierSearch extends TicketSupplier
         $dataProvider->sort->attributes['supplier'] = [
             'asc' => [Supplier::tableName() . '.company' => SORT_ASC],
             'desc' => [Supplier::tableName() . '.company' => SORT_DESC],
-        ];
-
-        $dataProvider->sort->attributes['hotel'] = [
-            'asc' => [Ticket::tableName() . '.eTicket' => SORT_ASC],
-            'desc' => [Ticket::tableName() . '.eTicket' => SORT_DESC],
         ];
 
         $dataProvider->sort->attributes['airline'] = [
@@ -95,6 +107,8 @@ class TicketSupplierSearch extends TicketSupplier
             'billId' => $this->billId,
             'issueDate' => $this->issueDate,
             'refundRequestDate' => $this->refundRequestDate,
+            'pnrCode' => $this->pnrCode,
+            'eTicket' => $this->eTicket,
             'baseFare' => $this->baseFare,
             'tax' => $this->tax,
             'otherTax' => $this->otherTax,
@@ -107,7 +121,6 @@ class TicketSupplierSearch extends TicketSupplier
 
         $query->andFilterWhere(['like', Bill::tableName() . '.billNumber', $this->bill])
             ->andFilterWhere(['like', Supplier::tableName() . '.company', $this->supplier])
-            ->andFilterWhere(['like', Ticket::tableName() . '.eTicket', $this->ticket])
             ->andFilterWhere(['like', Airline::tableName() . '.name', $this->airline])
             ->andFilterWhere(['like', 'eTicket', $this->eTicket])
             ->andFilterWhere(['like', 'pnrCode', $this->pnrCode])

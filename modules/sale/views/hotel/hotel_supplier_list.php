@@ -91,7 +91,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'costOfSale',
             'paidAmount',
             'paymentStatus',
-            'status',
+            //'status',
             'description:ntext',
         ],
         'toolbar' => [

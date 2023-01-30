@@ -7,7 +7,7 @@ use yii\widgets\DetailView;
 /** @var app\modules\sale\models\ticket\TicketSupplier $model */
 
 $this->title = $model->id;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Ticket Suppliers'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Ticket Suppliers'), 'url' => ['ticket-supplier-list']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
@@ -29,12 +29,28 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'id',
-            'uid',
-            'ticketId',
-            'supplierId',
-            'airlineId',
-            'billId',
+            'motherId',
+            [
+                'attribute' => 'supplier',
+                'value' => function ($model) {
+                    return $model->supplier->name;
+                },
+                'label' => 'Customer',
+            ],
+            [
+                'attribute' => 'airline',
+                'value' => function ($model) {
+                    return $model->airline->name;
+                },
+                'label' => 'Airline',
+            ],
+            [
+                'attribute' => 'bill',
+                'value' => function ($model) {
+                    return ($model->bill) ? $model->bill->billNumber : null;
+                },
+                'label' => 'Bill Number',
+            ],
             'issueDate',
             'refundRequestDate',
             'eTicket',
@@ -48,7 +64,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'paymentStatus',
             'status',
             'serviceCharge',
-            'motherId',
+
         ],
     ]) ?>
 

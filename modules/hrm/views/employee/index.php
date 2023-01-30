@@ -1,6 +1,7 @@
 <?php
 
 use app\components\Helper;
+use app\modules\hrm\components\HrmConstant;
 use app\modules\hrm\models\Employee;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -28,11 +29,39 @@ $this->params['breadcrumbs'][] = $this->title;
             'lastName',
             'fathersName',
             'mothersName',
-            'dateOfBirth',
-            'gender',
-            'bloodGroup',
-            'maritalStatus',
-            'religion',
+            'dateOfBirth:date',
+            [
+                'class' => '\kartik\grid\DataColumn',
+                'attribute' => 'gender',
+                'value' => function ($model) {
+                    return HrmConstant::GENDER[$model->gender];
+                },
+                'filter' => HrmConstant::GENDER
+            ],
+            [
+                'class' => '\kartik\grid\DataColumn',
+                'attribute' => 'bloodGroup',
+                'value' => function ($model) {
+                    return HrmConstant::BLOOD_GROUP[$model->bloodGroup];
+                },
+                'filter' => HrmConstant::BLOOD_GROUP
+            ],
+            [
+                'class' => '\kartik\grid\DataColumn',
+                'attribute' => 'maritalStatus',
+                'value' => function ($model) {
+                    return HrmConstant::MARITAL_STATUS[$model->maritalStatus];
+                },
+                'filter' => HrmConstant::MARITAL_STATUS
+            ],
+            [
+                'class' => '\kartik\grid\DataColumn',
+                'attribute' => 'religion',
+                'value' => function ($model) {
+                    return HrmConstant::RELIGION[$model->religion];
+                },
+                'filter' => HrmConstant::RELIGION
+            ],
             'nid',
             'officialId',
             'officialEmail:email',
@@ -47,7 +76,14 @@ $this->params['breadcrumbs'][] = $this->title;
             'contactPersonsRelation',
             'joiningDate',
             'confirmationDate',
-            'inProhibition',
+            [
+                'class' => '\kartik\grid\DataColumn',
+                'attribute' => 'inProhibition',
+                'value' => function ($model) {
+                    return HrmConstant::PROBATION[$model->inProhibition];
+                },
+                'filter' => HrmConstant::PROBATION
+            ],
             'jobCategory',
             'reportTo',
             //'status',
