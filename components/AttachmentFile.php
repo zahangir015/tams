@@ -22,11 +22,11 @@ class AttachmentFile
      * @throws Exception
      * @throws InvalidConfigException
      */
-    public static function uploads($getModel, $fieldName, $path = NULL): bool|array
+    public static function uploads($model, $name, $path = NULL): bool|array
     {
-        $files = UploadedFile::getInstances($getModel, $fieldName);
-        $referenceModel = get_class($getModel);
-        $refId = !empty($uid) ? $uid : $getModel->id;
+        $files = UploadedFile::getInstances($model, $name);
+        $referenceModel = get_class($model);
+        $refId = !empty($uid) ? $uid : '';
         $row = [];
         foreach ($files as $file) {
             if (!empty($file)) {
@@ -38,9 +38,9 @@ class AttachmentFile
                 if (!$uploadResponse['error']) {
                     Uploader::deleteLocalFile($fileName);
                     $row[] = [
-                        'name' => $fieldName,
+                        'name' => $name,
                         'refModel' => $referenceModel,
-                        'refId' => $refId,
+                        'refId' => $model->id,
                         'cdnUrl' => $cdnUrl,
                     ];
                 } else {

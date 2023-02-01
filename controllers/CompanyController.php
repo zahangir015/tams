@@ -9,7 +9,6 @@ use app\models\Company;
 use app\models\CompanySearch;
 use app\controllers\ParentController;
 use Yii;
-use yii\base\InvalidConfigException;
 use yii\db\Exception;
 use yii\db\Expression;
 use yii\web\NotFoundHttpException;
@@ -53,7 +52,7 @@ class CompanyController extends ParentController
     /**
      * Creates a new Company model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
+     * @return string|Response
      */
     public function actionCreate()
     {
@@ -86,8 +85,13 @@ class CompanyController extends ParentController
     /**
      * Updates an existing Company model.
      * If update is successful, the browser will be redirected to the 'view' page.
+<<<<<<< HEAD
+     * @param int $id ID
+     * @return string|Response
+=======
      * @param string $uid UID
      * @return string|\yii\web\Response
+>>>>>>> 52f3e5b26d7a1e3f01deb2844ffcf559f1864a29
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionUpdate($id)
@@ -106,8 +110,13 @@ class CompanyController extends ParentController
     /**
      * Deletes an existing Company model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
+<<<<<<< HEAD
+     * @param int $id ID
+     * @return Response
+=======
      * @param string $uid UID
      * @return \yii\web\Response
+>>>>>>> 52f3e5b26d7a1e3f01deb2844ffcf559f1864a29
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionDelete($id)
