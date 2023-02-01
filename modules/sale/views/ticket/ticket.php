@@ -2,6 +2,7 @@
 
 use app\components\GlobalConstant;
 use app\components\Helper;
+use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\ticket\Ticket;
 use kartik\date\DatePicker;
 use kartik\select2\Select2;
@@ -59,6 +60,9 @@ use yii\bootstrap4\Html;
             <div class="col-md">
                 <?= $form->field($model, "[$row]motherTicketId")->widget(Select2::classname(), Helper::ajaxDropDown('motherTicketId', 'get-mother-ticket', true, 'motherTicketId' . $row, 'motherTicket', (!$model->isNewRecord && $model->motherTicket) ? [$model->motherTicket => $model->motherTicket->eTicket . ' | ' . $model->motherTicket->pnrCode] : [], true))->label('Parent') ?>
             </div>
+            <div class="col-md">
+                <?= $form->field($model, "[$row]refundPolicy")->dropDownList(ServiceConstant::REFUND_POLICY) ?>
+            </div>
         </div>
         <div class="row">
             <div class="col-md">
@@ -73,8 +77,14 @@ use yii\bootstrap4\Html;
             <div class="col-md">
                 <?= $form->field($model, "[$row]paxType")->dropDownList(GlobalConstant::PAX_TYPE, ['prompt' => '']) ?>
             </div>
+            <div class="col-md">
+                <?= $form->field($model, "[$row]route")->textInput(['maxlength' => true]) ?>
+            </div>
         </div>
         <div class="row">
+            <div class="col-md">
+                <?= $form->field($model, "[$row]flightType")->dropDownList(ServiceConstant::FLIGHT_TYPE) ?>
+            </div>
             <div class="col-md">
                 <?= $form->field($model, "[$row]issueDate")->widget(DatePicker::className(), Helper::getDatewidget('issueDate' . $row))->label('Issue'); ?>
             </div>
@@ -82,10 +92,10 @@ use yii\bootstrap4\Html;
                 <?= $form->field($model, "[$row]departureDate")->widget(DatePicker::className(), Helper::getDatewidget('departureDate' . $row))->label('Departure'); ?>
             </div>
             <div class="col-md">
-                <?= $form->field($model, "[$row]route")->textInput(['maxlength' => true]) ?>
+                <?= $form->field($model, "[$row]numberOfSegment")->textInput(['maxlength' => true]) ?>
             </div>
             <div class="col-md">
-                <?= $form->field($model, "[$row]numberOfSegment")->textInput(['maxlength' => true]) ?>
+                <?= $form->field($model, "[$row]refundPolicy")->dropDownList(ServiceConstant::REFUND_POLICY) ?>
             </div>
         </div>
         <div class="row">
@@ -107,10 +117,7 @@ use yii\bootstrap4\Html;
         </div>
         <div class="row">
             <div class="col-md">
-                <?= $form->field($model, "[$row]reference")->textInput(['maxlength' => true]) ?>
-            </div>
-            <div class="col-md">
-                <?= $form->field($model, "[$row]seatClass")->textInput() ?>
+                <?= $form->field($model, "[$row]seatClass")->dropDownList(ServiceConstant::SEAT_CLASS) ?>
             </div>
             <div class="col-md">
                 <?= $form->field($model, "[$row]tripType")->dropDownList(GlobalConstant::TRIP_TYPE) ?>
@@ -120,6 +127,9 @@ use yii\bootstrap4\Html;
             </div>
             <div class="col-md">
                 <?= $form->field($model, "[$row]codeShare")->dropDownList(GlobalConstant::YES_NO, ['value' => 0]) ?>
+            </div>
+            <div class="col-md">
+                <?= $form->field($model, "[$row]reference")->textInput(['maxlength' => true]) ?>
             </div>
             <?= $form->field($model, "[$row]customerId")->hiddenInput(['id' => 'customerId' . $row, 'class' => 'customerId'])->label(false) ?>
         </div>

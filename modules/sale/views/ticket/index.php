@@ -129,6 +129,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
                 'filter' => ServiceConstant::BOOKING_TYPE
             ],
+            'route',
             [
                 'attribute' => 'flightType',
                 'value' => function($model){
@@ -136,10 +137,22 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
                 'filter' => ServiceConstant::FLIGHT_TYPE
             ],
-            'seatClass',
-            //'codeShare',
+            [
+                'attribute' => 'seatClass',
+                'value' => function($model){
+                    return ServiceConstant::SEAT_CLASS[$model->seatClass];
+                },
+                'filter' => ServiceConstant::SEAT_CLASS
+            ],
+            [
+                'attribute' => 'refundPolicy',
+                'value' => function($model){
+                    return $model->refundPolicy ? ServiceConstant::REFUND_POLICY[$model->refundPolicy] : null;
+                },
+                'filter' => ServiceConstant::REFUND_POLICY
+            ],
+            'codeShare',
             'reference',
-            'route',
             [
                 'attribute' => 'numberOfSegment',
                 'value' => 'numberOfSegment',

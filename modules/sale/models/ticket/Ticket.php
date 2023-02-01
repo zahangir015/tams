@@ -30,6 +30,7 @@ use yii\db\ActiveRecord;
  * @property string $pnrCode
  * @property string $type
  * @property string|null $tripType
+ * @property string|null $refundPolicy
  * @property int|null $bookedOnline
  * @property int|null $flightType
  * @property string $seatClass
@@ -101,7 +102,7 @@ class Ticket extends ActiveRecord
             [['paxName'], 'string', 'max' => 120],
             [['paxType'], 'string', 'max' => 1],
             [['eTicket', 'pnrCode'], 'string', 'max' => 50],
-            [['seatClass', 'reference', 'route', 'baggage'], 'string', 'max' => 255],
+            [['seatClass', 'reference', 'route', 'baggage', 'refundPolicy'], 'string', 'max' => 255],
             [['uid'], 'unique'],
             [['airlineId'], 'exist', 'skipOnError' => true, 'targetClass' => Airline::className(), 'targetAttribute' => ['airlineId' => 'id']],
             [['customerId'], 'exist', 'skipOnError' => true, 'targetClass' => Customer::className(), 'targetAttribute' => ['customerId' => 'id']],

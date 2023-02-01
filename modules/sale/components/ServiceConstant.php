@@ -66,4 +66,7 @@ final class ServiceConstant
     const OTHER_SERVICE_REFUND_STATUS = ['Full Paid' => 'Full Paid', 'Partially Paid' => 'Partially Paid', 'Due' => 'Due', 'Refund Adjustment' => 'Refund Adjustment'];
     const STATE = ['Full Refund' => 2, 'Partial Refund' => 1, 'Not Refunded' => 0];
 
+    const SEAT_CLASS = ['Economy Class' => 'Economy Class', 'Premium Economy Class' => 'Premium Economy Class', 'Business Class' => 'Business Class', 'First Class' => 'First Class'];
+    const REFUND_POLICY = ['Refundable & Changeable' => 'Refundable & Changeable', 'Non-Refundable & Non Changeable' => 'Non-Refundable & Non Changeable', 'Non-refundable but Changeable' => 'Non-refundable but Changeable'];
+
 }

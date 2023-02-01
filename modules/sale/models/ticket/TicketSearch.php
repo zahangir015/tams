@@ -27,7 +27,7 @@ class TicketSearch extends Ticket
     {
         return [
             [['id', 'motherTicketId', 'airlineId', 'providerId', 'invoiceId', 'customerId', 'bookedOnline', 'flightType', 'codeShare', 'numberOfSegment', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
-            [['uid', 'customerCategory', 'paxName', 'paxType', 'eTicket', 'pnrCode', 'type', 'tripType', 'seatClass', 'reference', 'issueDate', 'departureDate', 'refundRequestDate', 'route', 'paymentStatus', 'baggage', 'customer', 'airline', 'provider', 'invoice'], 'safe'],
+            [['uid', 'customerCategory', 'paxName', 'paxType', 'eTicket', 'pnrCode', 'type', 'tripType', 'seatClass', 'reference', 'issueDate', 'departureDate', 'refundRequestDate', 'route', 'paymentStatus', 'baggage', 'customer', 'airline', 'provider', 'invoice', 'refundPolicy'], 'safe'],
             [['baseFare', 'tax', 'otherTax', 'commission', 'commissionReceived', 'incentive', 'incentiveReceived', 'govTax', 'serviceCharge', 'ait', 'quoteAmount', 'receivedAmount', 'costOfSale', 'netProfit'], 'number'],
         ];
     }
@@ -112,6 +112,7 @@ class TicketSearch extends Ticket
             'customerId' => $this->customerId,
             'bookedOnline' => $this->bookedOnline,
             'flightType' => $this->flightType,
+            'refundPolicy' => $this->refundPolicy,
             'codeShare' => $this->codeShare,
             'issueDate' => $this->issueDate,
             'departureDate' => $this->departureDate,

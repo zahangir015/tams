@@ -19,6 +19,8 @@ use yii\db\ActiveRecord;
  * @property int|null $billId
  * @property int $supplierId
  * @property string $supplierRef
+ * @property string $hotelName
+ * @property string $roomType
  * @property string $issueDate
  * @property string|null $refundRequestDate
  * @property string $type
@@ -58,7 +60,7 @@ class HotelSupplier extends ActiveRecord
             [['type', 'paymentStatus'], 'string'],
             [['unitPrice', 'costOfSale', 'paidAmount'], 'number'],
             [['uid'], 'string', 'max' => 36],
-            [['supplierRef', 'serviceDetails'], 'string', 'max' => 255],
+            [['supplierRef', 'serviceDetails', 'hotelName', 'roomType'], 'string', 'max' => 255],
             [['uid'], 'unique'],
             [['billId'], 'exist', 'skipOnError' => true, 'targetClass' => Bill::className(), 'targetAttribute' => ['billId' => 'id']],
             [['hotelId'], 'exist', 'skipOnError' => true, 'targetClass' => Hotel::className(), 'targetAttribute' => ['hotelId' => 'id']],

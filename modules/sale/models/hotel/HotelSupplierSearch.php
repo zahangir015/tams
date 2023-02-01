@@ -24,7 +24,7 @@ class HotelSupplierSearch extends HotelSupplier
     {
         return [
             [['id', 'motherId', 'hotelId', 'billId', 'supplierId', 'numberOfNights', 'quantity', 'status', 'motherId'], 'integer'],
-            [['bill', 'supplier', 'hotel', 'supplierRef', 'issueDate', 'refundRequestDate', 'type', 'serviceDetails', 'paymentStatus'], 'safe'],
+            [['bill', 'supplier', 'hotel', 'supplierRef', 'issueDate', 'refundRequestDate', 'type', 'serviceDetails', 'paymentStatus', 'hotelName', 'roomType'], 'safe'],
             [['unitPrice', 'costOfSale', 'paidAmount'], 'number'],
         ];
     }
@@ -118,6 +118,8 @@ class HotelSupplierSearch extends HotelSupplier
             ->andFilterWhere(['like', Supplier::tableName() . '.company', $this->supplier])
             ->andFilterWhere(['like', Hotel::tableName() . '.identificationNumber', $this->hotel])
             ->andFilterWhere(['like', 'supplierRef', $this->supplierRef])
+            ->andFilterWhere(['like', 'hotelName', $this->hotelName])
+            ->andFilterWhere(['like', 'roomType', $this->roomType])
             ->andFilterWhere(['like', 'type', $this->type])
             ->andFilterWhere(['like', 'serviceDetails', $this->serviceDetails])
             ->andFilterWhere(['like', 'paymentStatus', $this->paymentStatus]);

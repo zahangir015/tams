@@ -19,6 +19,9 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'kartik\grid\SerialColumn'],
             'motherId',
+            'motherId',
+            'hotelName',
+            'roomType',
             [
                 'attribute' => 'hotel',
                 'value' => function ($model) {

@@ -44,10 +44,16 @@ use yii\bootstrap4\Html;
             </div>
         </div>
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md">
+                <?= $form->field($hotelSupplier, "[$row]hotelName")->textInput() ?>
+            </div>
+            <div class="col-md">
+                <?= $form->field($hotelSupplier, "[$row]roomType")->textInput() ?>
+            </div>
+            <div class="col-md">
                 <?= $form->field($hotelSupplier, "[$row]type")->textInput(['readOnly' => 'readOnly', 'value' => ServiceConstant::ALL_SERVICE_TYPE['New']]) ?>
             </div>
-            <div class="col-md-8">
+            <div class="col-md">
                 <?= $form->field($hotelSupplier, "[$row]serviceDetails")->textInput(['maxlength' => true]); ?>
             </div>
         </div>
