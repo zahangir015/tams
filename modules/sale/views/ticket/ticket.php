@@ -60,9 +60,6 @@ use yii\bootstrap4\Html;
             <div class="col-md">
                 <?= $form->field($model, "[$row]motherTicketId")->widget(Select2::classname(), Helper::ajaxDropDown('motherTicketId', 'get-mother-ticket', true, 'motherTicketId' . $row, 'motherTicket', (!$model->isNewRecord && $model->motherTicket) ? [$model->motherTicket => $model->motherTicket->eTicket . ' | ' . $model->motherTicket->pnrCode] : [], true))->label('Parent') ?>
             </div>
-            <div class="col-md">
-                <?= $form->field($model, "[$row]refundPolicy")->dropDownList(ServiceConstant::REFUND_POLICY) ?>
-            </div>
         </div>
         <div class="row">
             <div class="col-md">
