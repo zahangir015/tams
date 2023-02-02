@@ -1,5 +1,7 @@
 <?php
 
+use app\components\GlobalConstant;
+use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -9,29 +11,29 @@ use yii\widgets\ActiveForm;
 ?>
 
 <div class="expense-sub-category-form">
+    <div class="card">
+        <div class="card-header bg-gray-dark">
+            <?= Html::encode($this->title) ?>
+        </div>
+        <div class="card-body">
+            <?php $form = ActiveForm::begin(); ?>
+            <div class="row">
+                <div class="col-md-4">
+                    <?= $form->field($model, 'categoryId')->widget(Select2::classname(), Utils::ajaxDropDownWithActiveForm($model, 'categoryId', '/account/expenditure-category/get-categories', true, 'categoryId', 'categoryId', ($model->isNewRecord) ? [] : [$model->category->id => $model->category->name]))->label('Category'); ?>
+                </div>
+                <div class="col-md-4">
+                    <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+                </div>
+                <div class="col-md-4">
+                    <?= $form->field($model, 'status')->dropdownList(GlobalConstant::DEFAULT_STATUS?>
+                </div>
+            </div>
 
-    <?php $form = ActiveForm::begin(); ?>
+            <div class="form-group">
+                <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
+            </div>
 
-    <?= $form->field($model, 'uid')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'categoryId')->textInput() ?>
-
-    <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'status')->textInput() ?>
-
-    <?= $form->field($model, 'createdAt')->textInput() ?>
-
-    <?= $form->field($model, 'createdBy')->textInput() ?>
-
-    <?= $form->field($model, 'updatedAt')->textInput() ?>
-
-    <?= $form->field($model, 'updatedBy')->textInput() ?>
-
-    <div class="form-group">
-        <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
+            <?php ActiveForm::end(); ?>
+        </div>
     </div>
-
-    <?php ActiveForm::end(); ?>
-
 </div>

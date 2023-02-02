@@ -2,7 +2,10 @@
 
 namespace app\modules\account\models;
 
+use app\traits\BehaviorTrait;
 use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "expense_category".
@@ -19,12 +22,14 @@ use Yii;
  * @property ExpenseSubCategory[] $expenseSubCategories
  * @property Expense[] $expenses
  */
-class ExpenseCategory extends \yii\db\ActiveRecord
+class ExpenseCategory extends ActiveRecord
 {
+    use BehaviorTrait;
+
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'expense_category';
     }
@@ -32,10 +37,10 @@ class ExpenseCategory extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            [['uid', 'name', 'status', 'createdAt', 'createdBy'], 'required'],
+            [['name'], 'required'],
             [['status', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['name'], 'string', 'max' => 150],
@@ -46,7 +51,7 @@ class ExpenseCategory extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),
@@ -63,9 +68,9 @@ class ExpenseCategory extends \yii\db\ActiveRecord
     /**
      * Gets query for [[ExpenseSubCategories]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getExpenseSubCategories()
+    public function getExpenseSubCategories(): ActiveQuery
     {
         return $this->hasMany(ExpenseSubCategory::class, ['categoryId' => 'id']);
     }
@@ -73,9 +78,9 @@ class ExpenseCategory extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Expenses]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getExpenses()
+    public function getExpenses(): ActiveQuery
     {
         return $this->hasMany(Expense::class, ['categoryId' => 'id']);
     }

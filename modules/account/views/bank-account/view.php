@@ -23,8 +23,8 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= DetailView::widget([
                 'model' => $model,
                 'attributes' => [
-                    'id',
-                    'uid',
+                    //'id',
+                    //'uid',
                     'name',
                     'shortName',
                     'accountName',
@@ -36,7 +36,15 @@ $this->params['breadcrumbs'][] = $this->title;
                     'paymentCharge',
                     'logo',
                     'tag',
-                    'status',
+                    [
+                        'attribute' => 'status',
+                        'value' => function ($model) {
+                            $labelClass = \app\components\Helper::statusLabelClass($model->status);
+                            $labelText = ($model->status) ? 'Active' : 'Inactive';
+                            return '<span class="right badge ' . $labelClass . '">' . $labelText . '</span>';
+                        },
+                        'format' => 'html'
+                    ],
                     'createdBy',
                     'createdAt',
                     'updatedBy',

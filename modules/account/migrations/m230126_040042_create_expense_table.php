@@ -98,7 +98,7 @@ class m230126_040042_create_expense_table extends Migration
             'expense'
         );
 
-        // drops index for column `refModel`
+        // drops index for column `categoryId`
         $this->dropIndex(
             'idx-expense-categoryId',
             'expense'
@@ -106,17 +106,23 @@ class m230126_040042_create_expense_table extends Migration
 
         // drops foreign key for table `expense_sub_category`
         $this->dropForeignKey(
-            'fk-expense-categoryId',
+            'fk-expense-subCategoryId',
             'expense'
         );
 
-        // drops index for column `refModel`
+        // drops index for column `subCategoryId`
+        $this->dropIndex(
+            'idx-expense-subCategoryId',
+            'expense'
+        );
+
+        // drops index for column `supplierId`
         $this->dropIndex(
             'idx-expense-supplierId',
             'expense'
         );
 
-        // drops foreign key for table `suppliers`
+        // drops foreign key for table `supplier`
         $this->dropForeignKey(
             'fk-expense-supplierId',
             'expense'

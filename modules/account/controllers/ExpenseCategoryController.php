@@ -2,41 +2,26 @@
 
 namespace app\modules\account\controllers;
 
+use app\controllers\ParentController;
 use app\modules\account\models\ExpenseCategory;
 use app\modules\account\models\ExpenseCategorySearch;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Response;
 
 /**
  * ExpenseCategoryController implements the CRUD actions for ExpenseCategory model.
  */
-class ExpenseCategoryController extends Controller
+class ExpenseCategoryController extends ParentController
 {
-    /**
-     * @inheritDoc
-     */
-    public function behaviors()
-    {
-        return array_merge(
-            parent::behaviors(),
-            [
-                'verbs' => [
-                    'class' => VerbFilter::className(),
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
-                ],
-            ]
-        );
-    }
-
     /**
      * Lists all ExpenseCategory models.
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $searchModel = new ExpenseCategorySearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
@@ -49,29 +34,29 @@ class ExpenseCategoryController extends Controller
 
     /**
      * Displays a single ExpenseCategory model.
-     * @param int $id ID
+     * @param string $uid UID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id)
+    public function actionView(string $uid): string
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $this->findModel($uid),
         ]);
     }
 
     /**
      * Creates a new ExpenseCategory model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
+     * @return string|Response
      */
-    public function actionCreate()
+    public function actionCreate(): Response|string
     {
         $model = new ExpenseCategory();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+                return $this->redirect(['view', 'uid' => $model->uid]);
             }
         } else {
             $model->loadDefaultValues();
@@ -85,16 +70,16 @@ class ExpenseCategoryController extends Controller
     /**
      * Updates an existing ExpenseCategory model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id ID
-     * @return string|\yii\web\Response
+     * @param string $uid UID
+     * @return string|Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionUpdate(string $uid): Response|string
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel($uid);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['view', 'uid' => $model->uid]);
         }
 
         return $this->render('update', [
@@ -105,13 +90,13 @@ class ExpenseCategoryController extends Controller
     /**
      * Deletes an existing ExpenseCategory model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id ID
-     * @return \yii\web\Response
+     * @param string $uid UID
+     * @return Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($id)
+    public function actionDelete(string $uid)
     {
-        $this->findModel($id)->delete();
+        $this->findModel($uid)->delete();
 
         return $this->redirect(['index']);
     }
@@ -119,13 +104,13 @@ class ExpenseCategoryController extends Controller
     /**
      * Finds the ExpenseCategory model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id ID
+     * @param string $uid UID
      * @return ExpenseCategory the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel(string $uid): ExpenseCategory
     {
-        if (($model = ExpenseCategory::findOne(['id' => $id])) !== null) {
+        if (($model = ExpenseCategory::findOne(['uid' => $uid])) !== null) {
             return $model;
         }
 

@@ -10,11 +10,7 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Expense Sub Categori
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="expense-sub-category-create">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
     <?= $this->render('_form', [
         'model' => $model,
     ]) ?>
-
 </div>
