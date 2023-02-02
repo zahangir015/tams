@@ -1,6 +1,7 @@
 <?php
 
 use app\components\GlobalConstant;
+use app\components\Helper;
 use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -19,13 +20,13 @@ use yii\widgets\ActiveForm;
             <?php $form = ActiveForm::begin(); ?>
             <div class="row">
                 <div class="col-md-4">
-                    <?= $form->field($model, 'categoryId')->widget(Select2::classname(), Utils::ajaxDropDownWithActiveForm($model, 'categoryId', '/account/expenditure-category/get-categories', true, 'categoryId', 'categoryId', ($model->isNewRecord) ? [] : [$model->category->id => $model->category->name]))->label('Category'); ?>
+                    <?= $form->field($model, 'categoryId')->widget(Select2::classname(), Helper::ajaxDropDown('categoryId', '/account/expense-category/get-categories', true, 'categoryId', 'categoryId', ($model->isNewRecord) ? [] : [$model->category->id => $model->category->name]))->label('Category'); ?>
                 </div>
                 <div class="col-md-4">
                     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
                 </div>
                 <div class="col-md-4">
-                    <?= $form->field($model, 'status')->dropdownList(GlobalConstant::DEFAULT_STATUS?>
+                    <?= $form->field($model, 'status')->dropdownList(GlobalConstant::DEFAULT_STATUS) ?>
                 </div>
             </div>
 

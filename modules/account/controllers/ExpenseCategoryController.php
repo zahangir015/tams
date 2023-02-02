@@ -3,6 +3,7 @@
 namespace app\modules\account\controllers;
 
 use app\controllers\ParentController;
+use app\modules\account\models\BankAccount;
 use app\modules\account\models\ExpenseCategory;
 use app\modules\account\models\ExpenseCategorySearch;
 use Yii;
@@ -115,5 +116,16 @@ class ExpenseCategoryController extends ParentController
         }
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+    }
+
+    public function actionGetBanks($query = null): array
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $banks = ::query($query);
+        $data = [];
+        foreach ($banks as $bank) {
+            $data[] = ['id' => $bank->id, 'text' => $bank->name . ' | ' . $bank->accountName . ' | ' . $bank->accountNumber];
+        }
+        return ['results' => $data];
     }
 }
