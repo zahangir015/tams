@@ -2,6 +2,7 @@
 
 namespace app\modules\hrm\models;
 
+use app\components\GlobalConstant;
 use app\traits\BehaviorTrait;
 use Yii;
 use yii\db\ActiveQuery;
@@ -30,6 +31,15 @@ class Department extends ActiveRecord
     public static function tableName(): string
     {
         return '{{%department}}';
+    }
+
+    public static function query(mixed $query)
+    {
+        return self::find()
+            ->select(['id', 'name', 'status'])
+            ->where(['like', 'name', $query])
+            ->andWhere(['status' => GlobalConstant::ACTIVE_STATUS])
+            ->all();
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace app\modules\account\models;
 
+use app\components\GlobalConstant;
 use app\traits\BehaviorTrait;
 use Yii;
 use yii\db\ActiveQuery;
@@ -90,7 +91,7 @@ class ExpenseCategory extends ActiveRecord
         return self::find()
             ->select(['id', 'name', 'status'])
             ->where(['like', 'name', $query])
-            ->andWhere(['status' => 1])
+            ->andWhere(['status' => GlobalConstant::ACTIVE_STATUS])
             ->all();
     }
 }

@@ -34,12 +34,9 @@ class DesignationController extends ParentController
     {
         $searchModel = new DesignationSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
-        $departments = $this->hrmConfigurationService->getAll(['status' => GlobalConstant::ACTIVE_STATUS], Department::class, [], true);
-
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'departments' => ArrayHelper::map($departments, 'id', 'name'),
         ]);
     }
 

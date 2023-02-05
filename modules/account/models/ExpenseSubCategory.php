@@ -2,6 +2,7 @@
 
 namespace app\modules\account\models;
 
+use app\components\GlobalConstant;
 use app\traits\BehaviorTrait;
 use Yii;
 use yii\db\ActiveQuery;
@@ -33,6 +34,15 @@ class ExpenseSubCategory extends ActiveRecord
     public static function tableName(): string
     {
         return 'expense_sub_category';
+    }
+
+    public static function query(mixed $query): array
+    {
+        return self::find()
+            ->select(['id', 'name', 'status'])
+            ->where(['like', 'name', $query])
+            ->andWhere(['status' => GlobalConstant::ACTIVE_STATUS])
+            ->all();
     }
 
     /**

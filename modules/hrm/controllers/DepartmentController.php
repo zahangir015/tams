@@ -146,4 +146,15 @@ class DepartmentController extends ParentController
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
+
+    public function actionGetDepartments($query = null): array
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $departments = Department::query($query);
+        $data = [];
+        foreach ($departments as $department) {
+            $data[] = ['id' => $department->id, 'text' => $department->name];
+        }
+        return ['results' => $data];
+    }
 }

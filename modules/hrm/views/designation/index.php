@@ -2,7 +2,6 @@
 
 use app\modules\hrm\models\Designation;
 use kartik\select2\Select2;
-use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use kartik\grid\ActionColumn;
@@ -80,7 +79,7 @@ $this->params['breadcrumbs'][] = $this->title;
             '{export}',
             '{toggleData}'
         ],
-        'pjax' => true,
+        //'pjax' => true,
         'bordered' => true,
         'striped' => false,
         'condensed' => false,

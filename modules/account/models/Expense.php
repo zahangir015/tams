@@ -2,7 +2,9 @@
 
 namespace app\modules\account\models;
 
+use app\modules\sale\models\Supplier;
 use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "expense".
@@ -26,12 +28,12 @@ use Yii;
  * @property ExpenseSubCategory $subCategory
  * @property Supplier $supplier
  */
-class Expense extends \yii\db\ActiveRecord
+class Expense extends ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'expense';
     }
@@ -39,7 +41,7 @@ class Expense extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['uid', 'categoryId', 'subCategoryId', 'supplierId', 'name', 'status', 'createdAt', 'createdBy'], 'required'],
@@ -58,7 +60,7 @@ class Expense extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),

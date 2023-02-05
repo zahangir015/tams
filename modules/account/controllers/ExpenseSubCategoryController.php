@@ -4,6 +4,7 @@ namespace app\modules\account\controllers;
 
 use app\components\Helper;
 use app\controllers\ParentController;
+use app\modules\account\models\ExpenseCategory;
 use app\modules\account\models\ExpenseSubCategory;
 use app\modules\account\models\ExpenseSubCategorySearch;
 use Yii;
@@ -122,5 +123,16 @@ class ExpenseSubCategoryController extends ParentController
         }
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+    }
+
+    public function actionGetCategories($query = null): array
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $categories = ExpenseSubCategory::query($query);
+        $data = [];
+        foreach ($categories as $category) {
+            $data[] = ['id' => $category->id, 'text' => $category->name];
+        }
+        return ['results' => $data];
     }
 }
