@@ -2,6 +2,7 @@
 
 namespace app\modules\account\controllers;
 
+use app\components\Helper;
 use app\controllers\ParentController;
 use app\modules\account\models\BankAccount;
 use app\modules\account\models\ExpenseCategory;
@@ -59,6 +60,7 @@ class ExpenseCategoryController extends ParentController
             if ($model->load($this->request->post()) && $model->save()) {
                 return $this->redirect(['view', 'uid' => $model->uid]);
             }
+            Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
         } else {
             $model->loadDefaultValues();
         }
@@ -81,6 +83,8 @@ class ExpenseCategoryController extends ParentController
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['view', 'uid' => $model->uid]);
+        }else{
+            Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
         }
 
         return $this->render('update', [
@@ -118,13 +122,13 @@ class ExpenseCategoryController extends ParentController
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
 
-    public function actionGetBanks($query = null): array
+    public function actionGetCategories($query = null): array
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
-        $banks = ::query($query);
+        $categories = ExpenseCategory::query($query);
         $data = [];
-        foreach ($banks as $bank) {
-            $data[] = ['id' => $bank->id, 'text' => $bank->name . ' | ' . $bank->accountName . ' | ' . $bank->accountNumber];
+        foreach ($categories as $category) {
+            $data[] = ['id' => $category->id, 'text' => $category->name];
         }
         return ['results' => $data];
     }

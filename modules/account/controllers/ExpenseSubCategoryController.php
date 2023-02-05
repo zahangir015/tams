@@ -2,41 +2,27 @@
 
 namespace app\modules\account\controllers;
 
+use app\components\Helper;
+use app\controllers\ParentController;
 use app\modules\account\models\ExpenseSubCategory;
 use app\modules\account\models\ExpenseSubCategorySearch;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Response;
 
 /**
  * ExpenseSubCategoryController implements the CRUD actions for ExpenseSubCategory model.
  */
-class ExpenseSubCategoryController extends Controller
+class ExpenseSubCategoryController extends ParentController
 {
-    /**
-     * @inheritDoc
-     */
-    public function behaviors()
-    {
-        return array_merge(
-            parent::behaviors(),
-            [
-                'verbs' => [
-                    'class' => VerbFilter::className(),
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
-                ],
-            ]
-        );
-    }
-
     /**
      * Lists all ExpenseSubCategory models.
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $searchModel = new ExpenseSubCategorySearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
@@ -49,29 +35,31 @@ class ExpenseSubCategoryController extends Controller
 
     /**
      * Displays a single ExpenseSubCategory model.
-     * @param int $id ID
+     * @param string $uid UID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id)
+    public function actionView(string $uid): string
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $this->findModel($uid),
         ]);
     }
 
     /**
      * Creates a new ExpenseSubCategory model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
+     * @return string|Response
      */
-    public function actionCreate()
+    public function actionCreate(): Response|string
     {
         $model = new ExpenseSubCategory();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+                return $this->redirect(['view', 'uid' => $model->uid]);
+            } else {
+                Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
             }
         } else {
             $model->loadDefaultValues();
@@ -85,16 +73,18 @@ class ExpenseSubCategoryController extends Controller
     /**
      * Updates an existing ExpenseSubCategory model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id ID
-     * @return string|\yii\web\Response
+     * @param string $uid UID
+     * @return string|Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionUpdate(string $uid)
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel($uid);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['view', 'uid' => $model->uid]);
+        } else {
+            Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
         }
 
         return $this->render('update', [
@@ -105,13 +95,13 @@ class ExpenseSubCategoryController extends Controller
     /**
      * Deletes an existing ExpenseSubCategory model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id ID
-     * @return \yii\web\Response
+     * @param string $uid UID
+     * @return Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($id)
+    public function actionDelete(string $uid): Response
     {
-        $this->findModel($id)->delete();
+        $this->findModel($uid)->delete();
 
         return $this->redirect(['index']);
     }
@@ -119,13 +109,13 @@ class ExpenseSubCategoryController extends Controller
     /**
      * Finds the ExpenseSubCategory model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id ID
+     * @param string $uid UID
      * @return ExpenseSubCategory the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel(string $uid)
     {
-        if (($model = ExpenseSubCategory::findOne(['id' => $id])) !== null) {
+        if (($model = ExpenseSubCategory::findOne(['uid' => $uid])) !== null) {
             return $model;
         }
 

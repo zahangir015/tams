@@ -84,4 +84,13 @@ class ExpenseCategory extends ActiveRecord
     {
         return $this->hasMany(Expense::class, ['categoryId' => 'id']);
     }
+
+    public static function query(mixed $query)
+    {
+        return self::find()
+            ->select(['id', 'name', 'status'])
+            ->where(['like', 'name', $query])
+            ->andWhere(['status' => 1])
+            ->all();
+    }
 }

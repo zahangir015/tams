@@ -14,7 +14,7 @@ class ExpenseSubCategorySearch extends ExpenseSubCategory
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['id', 'categoryId', 'status', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'], 'integer'],
@@ -25,7 +25,7 @@ class ExpenseSubCategorySearch extends ExpenseSubCategory
     /**
      * {@inheritdoc}
      */
-    public function scenarios()
+    public function scenarios(): array
     {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
@@ -38,7 +38,7 @@ class ExpenseSubCategorySearch extends ExpenseSubCategory
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search(array $params): ActiveDataProvider
     {
         $query = ExpenseSubCategory::find();
 
