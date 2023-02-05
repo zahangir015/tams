@@ -77,14 +77,16 @@ class ExpenseSubCategoryController extends ParentController
      * @return string|Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate(string $uid)
+    public function actionUpdate(string $uid): Response|string
     {
         $model = $this->findModel($uid);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'uid' => $model->uid]);
-        } else {
-            Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
+        if($this->request->isPost){
+            if ($model->load($this->request->post()) && $model->save()) {
+                return $this->redirect(['view', 'uid' => $model->uid]);
+            } else {
+                Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
+            }
         }
 
         return $this->render('update', [

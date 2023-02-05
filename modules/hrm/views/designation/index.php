@@ -1,6 +1,7 @@
 <?php
 
 use app\modules\hrm\models\Designation;
+use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -22,13 +23,20 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'kartik\grid\SerialColumn'],
             //'parentId',
-            [
+            /*[
                 'class' => '\kartik\grid\DataColumn',
                 'attribute' => 'departmentId',
                 'value' => function ($model) {
                     return $model->department->name;
                 },
                 'filter' => $departments
+            ],*/
+            [
+                'attribute' => 'departmentId',
+                'value' => function ($model) {
+                    return $model->department->name;
+                },
+                'filter' => Select2::widget(Helper::ajaxDropDown('departmentId', '/hrm/department/get-departments', false, 'departmentId', 'departmentId'))
             ],
             'name',
             [

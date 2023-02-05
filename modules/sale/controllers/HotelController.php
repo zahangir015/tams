@@ -2,6 +2,7 @@
 
 namespace app\modules\sale\controllers;
 
+use app\components\GlobalConstant;
 use app\models\History;
 use app\modules\sale\models\hotel\Hotel;
 use app\modules\sale\models\hotel\HotelRefund;
@@ -176,7 +177,9 @@ class HotelController extends ParentController
      */
     public function actionDelete(string $uid)
     {
-        $this->findModel($uid)->delete();
+        $model = $this->findModel($uid);
+        $model->status = GlobalConstant::INACTIVE_STATUS;
+        $model->save();
 
         return $this->redirect(['index']);
     }

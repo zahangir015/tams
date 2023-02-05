@@ -2,11 +2,13 @@
 
 use app\components\GlobalConstant;
 use app\modules\account\models\ExpenseSubCategory;
+use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use kartik\grid\ActionColumn;
 use kartik\grid\GridView;
-use yii\widgets\Pjax;
+use app\components\Helper;
+
 /** @var yii\web\View $this */
 /** @var app\modules\account\models\ExpenseSubCategorySearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
@@ -20,16 +22,19 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'kartik\grid\SerialColumn'],
-
-            'id',
-            'uid',
-            'categoryId',
+            [
+                'attribute' => 'categoryId',
+                'value' => function ($model) {
+                    return $model->category->name;
+                },
+                'filter' => Select2::widget(Helper::ajaxDropDown('categoryId', '/account/expense-category/get-categories', false, 'categoryId', 'categoryId'))
+            ],
             'name',
             [
                 'class' => '\kartik\grid\DataColumn',
                 'attribute' => 'status',
                 'value' => function ($model) {
-                    $labelClass = \app\components\Helper::statusLabelClass($model->status);
+                    $labelClass = Helper::statusLabelClass($model->status);
                     return '<span class="right badge ' . $labelClass . '">' . GlobalConstant::DEFAULT_STATUS[$model->status] . '</span>';
                 },
                 'filter' => GlobalConstant::DEFAULT_STATUS,
@@ -47,7 +52,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'width' => '150px',
                 'template' => '{view} {edit} {delete}',
                 'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
-                'buttons' => \app\components\Helper::getBasicActionColumnArray()
+                'buttons' => Helper::getBasicActionColumnArray()
             ],
         ],
         'toolbar' => [
@@ -65,7 +70,7 @@ $this->params['breadcrumbs'][] = $this->title;
             '{export}',
             '{toggleData}'
         ],
-        'pjax' => true,
+        //'pjax' => true,
         'bordered' => true,
         'striped' => false,
         'condensed' => false,

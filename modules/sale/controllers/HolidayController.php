@@ -186,7 +186,9 @@ class HolidayController extends ParentController
      */
     public function actionDelete(string $uid)
     {
-        $this->findModel($uid)->delete();
+        $model = $this->findModel($uid);
+        $model->status = GlobalConstant::INACTIVE_STATUS;
+        $model->save();
 
         return $this->redirect(['index']);
     }

@@ -58,7 +58,7 @@ class ExpenseSubCategory extends ActiveRecord
         return [
             'id' => Yii::t('app', 'ID'),
             'uid' => Yii::t('app', 'Uid'),
-            'categoryId' => Yii::t('app', 'Category ID'),
+            'categoryId' => Yii::t('app', 'Category'),
             'name' => Yii::t('app', 'Name'),
             'status' => Yii::t('app', 'Status'),
             'createdAt' => Yii::t('app', 'Created At'),

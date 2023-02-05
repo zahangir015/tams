@@ -2,6 +2,7 @@
 
 namespace app\modules\account\controllers;
 
+use app\components\GlobalConstant;
 use app\components\Helper;
 use app\modules\account\models\BankAccount;
 use app\modules\account\models\search\BankAccountSearch;
@@ -99,12 +100,15 @@ class BankAccountController extends ParentController
      * @return Response
      * @throws NotFoundHttpException if the model cannot be found
      *
-     * public function actionDelete($uid)
+     * */
+    public function actionDelete($uid)
     {
-        $this->findModel($uid)->delete();
+        $model = $this->findModel($uid);
+        $model->status = GlobalConstant::INACTIVE_STATUS;
+        $model->save();
 
         return $this->redirect(['index']);
-    }*/
+    }
 
     /**
      * Finds the BankAccount model based on its primary key value.

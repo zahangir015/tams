@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\components\GlobalConstant;
 use app\models\City;
 use app\models\CitySearch;
 use Yii;
@@ -95,8 +96,9 @@ class CityController extends ParentController
      */
     public function actionDelete(string $uid): Response
     {
-        $this->findModel($uid)->delete();
-
+        $model = $this->findModel($uid);
+        $model->status = GlobalConstant::INACTIVE_STATUS;
+        $model->save();
         return $this->redirect(['index']);
     }
 

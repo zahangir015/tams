@@ -46,6 +46,7 @@ class ExpenseSubCategorySearch extends ExpenseSubCategory
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+
         ]);
 
         $this->load($params);
