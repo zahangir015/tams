@@ -3,7 +3,9 @@
 namespace app\modules\account\models;
 
 use app\modules\sale\models\Supplier;
+use app\traits\BehaviorTrait;
 use Yii;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
 /**
@@ -17,6 +19,9 @@ use yii\db\ActiveRecord;
  * @property string $name
  * @property string|null $accruingMonth
  * @property string|null $timingOfExp
+ * @property double $totalCost
+ * @property double $totalPaid
+ * @property string $paymentStatus
  * @property string|null $notes
  * @property int $status
  * @property int $createdAt
@@ -30,6 +35,7 @@ use yii\db\ActiveRecord;
  */
 class Expense extends ActiveRecord
 {
+    use BehaviorTrait;
     /**
      * {@inheritdoc}
      */
@@ -44,10 +50,11 @@ class Expense extends ActiveRecord
     public function rules(): array
     {
         return [
-            [['uid', 'categoryId', 'subCategoryId', 'supplierId', 'name', 'status', 'createdAt', 'createdBy'], 'required'],
+            [['categoryId', 'subCategoryId', 'supplierId', 'name', 'status'], 'required'],
             [['categoryId', 'subCategoryId', 'supplierId', 'status', 'createdAt', 'updatedAt', 'createdBy', 'updatedBy'], 'integer'],
             [['accruingMonth'], 'safe'],
-            [['timingOfExp', 'notes'], 'string'],
+            [['totalCost', 'totalPaid'], 'number'],
+            [['timingOfExp', 'notes', 'paymentStatus'], 'string'],
             [['uid'], 'string', 'max' => 36],
             [['name'], 'string', 'max' => 150],
             [['uid'], 'unique'],
@@ -65,12 +72,15 @@ class Expense extends ActiveRecord
         return [
             'id' => Yii::t('app', 'ID'),
             'uid' => Yii::t('app', 'Uid'),
-            'categoryId' => Yii::t('app', 'Category ID'),
-            'subCategoryId' => Yii::t('app', 'Sub Category ID'),
-            'supplierId' => Yii::t('app', 'Supplier ID'),
+            'categoryId' => Yii::t('app', 'Category'),
+            'subCategoryId' => Yii::t('app', 'Sub Category'),
+            'supplierId' => Yii::t('app', 'Supplier'),
             'name' => Yii::t('app', 'Name'),
             'accruingMonth' => Yii::t('app', 'Accruing Month'),
             'timingOfExp' => Yii::t('app', 'Timing Of Exp'),
+            'totalCost' => Yii::t('app', 'Total Cost'),
+            'totalPaid' => Yii::t('app', 'Total Paid'),
+            'paymentStatus' => Yii::t('app', 'Payment Status'),
             'notes' => Yii::t('app', 'Notes'),
             'status' => Yii::t('app', 'Status'),
             'createdAt' => Yii::t('app', 'Created At'),
@@ -83,9 +93,9 @@ class Expense extends ActiveRecord
     /**
      * Gets query for [[Category]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getCategory()
+    public function getCategory(): ActiveQuery
     {
         return $this->hasOne(ExpenseCategory::class, ['id' => 'categoryId']);
     }
@@ -93,9 +103,9 @@ class Expense extends ActiveRecord
     /**
      * Gets query for [[SubCategory]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getSubCategory()
+    public function getSubCategory(): ActiveQuery
     {
         return $this->hasOne(ExpenseSubCategory::class, ['id' => 'subCategoryId']);
     }
@@ -103,9 +113,9 @@ class Expense extends ActiveRecord
     /**
      * Gets query for [[Supplier]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getSupplier()
+    public function getSupplier(): ActiveQuery
     {
         return $this->hasOne(Supplier::class, ['id' => 'supplierId']);
     }

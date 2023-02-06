@@ -1,5 +1,6 @@
 <?php
 
+use app\components\Helper;
 use app\modules\account\models\Expense;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -25,6 +26,9 @@ $this->params['breadcrumbs'][] = $this->title;
             'name',
             'accruingMonth',
             'timingOfExp',
+            'totalCost',
+            'totalPaid',
+            'paymentStatus',
             'notes:ntext',
             'status',
             'createdAt',
@@ -35,11 +39,38 @@ $this->params['breadcrumbs'][] = $this->title;
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, Expense $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'id' => $model->id]);
-                 }
+                 },
+                'width' => '150px',
+                'template' => '{view} {edit} {delete}',
+                'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
+                'buttons' => Helper::getBasicActionColumnArray()
             ],
         ],
+        'toolbar' => [
+            [
+                'content' =>
+                    Html::a('<i class="fas fa-plus"></i>', ['/account/expense/create'], [
+                        'title' => Yii::t('app', 'Add Airline'),
+                        'class' => 'btn btn-success'
+                    ]) . ' ' .
+                    Html::a('<i class="fas fa-redo"></i>', ['/account/expense/index'], [
+                        'class' => 'btn btn-primary',
+                        'title' => Yii::t('app', 'Reset Grid')
+                    ]),
+            ],
+            '{export}',
+            '{toggleData}'
+        ],
+        'pjax' => true,
+        'bordered' => true,
+        'striped' => false,
+        'condensed' => false,
+        'responsive' => true,
+        'hover' => true,
+        'panel' => [
+            'heading' => '<i class="fas fa-list-alt"></i> ' . Html::encode($this->title),
+            'type' => GridView::TYPE_DARK
+        ],
     ]); ?>
-
-    <?php Pjax::end(); ?>
 
 </div>
