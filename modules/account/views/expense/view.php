@@ -6,44 +6,64 @@ use yii\widgets\DetailView;
 /** @var yii\web\View $this */
 /** @var app\modules\account\models\Expense $model */
 
-$this->title = $model->name;
+$this->title = $model->identificationNumber;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Expenses'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
 <div class="expense-view">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
     <p>
-        <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
-                'method' => 'post',
-            ],
-        ]) ?>
+        <?= Html::a(Yii::t('app', 'Update'), ['update', 'uid' => $model->uid], ['class' => 'btn btn-primary']) ?>
     </p>
-
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'id',
-            'uid',
-            'categoryId',
-            'subCategoryId',
-            'supplierId',
-            'name',
-            'accruingMonth',
-            'timingOfExp',
-            'notes:ntext',
-            'status',
-            'createdAt',
-            'updatedAt',
-            'createdBy',
-            'updatedBy',
-        ],
-    ]) ?>
+    <div class="card">
+        <div class="card-header bg-gray-dark">
+            <?= Html::encode($this->title) ?>
+        </div>
+        <div class="card-body">
+            <?= DetailView::widget([
+                'model' => $model,
+                'attributes' => [
+                    'identificationNumber',
+                    [
+                        'attribute' => 'categoryId',
+                        'value' => function ($model) {
+                            return $model->category->name;
+                        }
+                    ],
+                    [
+                        'attribute' => 'subCategoryId',
+                        'value' => function ($model) {
+                            return $model->subCategory->name;
+                        }
+                    ],
+                    [
+                        'attribute' => 'supplierId',
+                        'value' => function ($model) {
+                            return isset($model->supplier) ? $model->supplier->name : null;
+                        }
+                    ],
+                    'accruingMonth',
+                    'timingOfExp',
+                    'totalCost',
+                    'totalPaid',
+                    'paymentStatus',
+                    'notes:ntext',
+                    [
+                        'attribute' => 'status',
+                        'value' => function ($model) {
+                            $labelClass = \app\components\Helper::statusLabelClass($model->status);
+                            $labelText = ($model->status) ? 'Active' : 'Inactive';
+                            return '<span class="right badge ' . $labelClass . '">' . $labelText . '</span>';
+                        },
+                        'format' => 'html'
+                    ],
+                    'createdAt',
+                    'updatedAt',
+                    'createdBy',
+                    'updatedBy',
+                ],
+            ]) ?>
+        </div>
+    </div>
 
 </div>

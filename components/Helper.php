@@ -795,6 +795,11 @@ class Helper
         return 'VA' . date('ymdhis') . rand(9, 999);
     }
 
+    public static function expenseIdentificationNumber(): string
+    {
+        return 'EXP' . date('ymdhis') . rand(9, 999);
+    }
+
     public static function serviceTypeLabelClass($value, array $types): string
     {
         if ($value == $types['New']) {

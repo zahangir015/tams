@@ -1,14 +1,15 @@
 <?php
 
-namespace app\modules\account\models;
+namespace app\modules\account\models\search;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use app\modules\account\models\ExpenseSubCategory;
 
 /**
- * ExpenseSearch represents the model behind the search form of `app\modules\account\models\Expense`.
+ * ExpenseSubCategorySearch represents the model behind the search form of `app\modules\account\models\ExpenseSubCategory`.
  */
-class ExpenseSearch extends Expense
+class ExpenseSubCategorySearch extends ExpenseSubCategory
 {
     /**
      * {@inheritdoc}
@@ -16,8 +17,8 @@ class ExpenseSearch extends Expense
     public function rules(): array
     {
         return [
-            [['id', 'categoryId', 'subCategoryId', 'supplierId', 'status', 'createdAt', 'updatedAt', 'createdBy', 'updatedBy'], 'integer'],
-            [['uid', 'accruingMonth', 'timingOfExp', 'notes'], 'safe'],
+            [['id', 'categoryId', 'status', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'], 'integer'],
+            [['uid', 'name'], 'safe'],
         ];
     }
 
@@ -39,12 +40,13 @@ class ExpenseSearch extends Expense
      */
     public function search(array $params): ActiveDataProvider
     {
-        $query = Expense::find();
+        $query = ExpenseSubCategory::find();
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+
         ]);
 
         $this->load($params);
@@ -59,19 +61,15 @@ class ExpenseSearch extends Expense
         $query->andFilterWhere([
             'id' => $this->id,
             'categoryId' => $this->categoryId,
-            'subCategoryId' => $this->subCategoryId,
-            'supplierId' => $this->supplierId,
-            'accruingMonth' => $this->accruingMonth,
             'status' => $this->status,
             'createdAt' => $this->createdAt,
-            'updatedAt' => $this->updatedAt,
             'createdBy' => $this->createdBy,
+            'updatedAt' => $this->updatedAt,
             'updatedBy' => $this->updatedBy,
         ]);
 
         $query->andFilterWhere(['like', 'uid', $this->uid])
-            ->andFilterWhere(['like', 'timingOfExp', $this->timingOfExp])
-            ->andFilterWhere(['like', 'notes', $this->notes]);
+            ->andFilterWhere(['like', 'name', $this->name]);
 
         return $dataProvider;
     }

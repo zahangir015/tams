@@ -5,12 +5,9 @@ namespace app\modules\account\controllers;
 use app\components\GlobalConstant;
 use app\controllers\ParentController;
 use app\modules\account\models\Expense;
-use app\modules\account\models\ExpenseSearch;
+use app\modules\account\models\search\ExpenseSearch;
 use app\modules\account\repositories\ExpenseRepository;
 use app\modules\account\services\ExpenseService;
-use app\modules\hrm\repositories\EmployeeRepository;
-use app\modules\hrm\services\EmployeeService;
-use app\modules\hrm\services\HrmConfigurationService;
 use Exception;
 use Yii;
 use yii\web\NotFoundHttpException;
@@ -49,14 +46,14 @@ class ExpenseController extends ParentController
 
     /**
      * Displays a single Expense model.
-     * @param int $id ID
+     * @param string $uid UID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id)
+    public function actionView(string $uid): string
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $this->expenseRepository->findOne(['uid' => $uid], Expense::class, ['category', 'subCategory', 'supplier']),
         ]);
     }
 
@@ -76,7 +73,10 @@ class ExpenseController extends ParentController
             $expenseStoreResponse = $this->expenseService->storeExpense($requestData, $model);
             if (!$expenseStoreResponse['error']) {
                 return $this->redirect(['view', 'uid' => $expenseStoreResponse['data']->uid]);
+            }else{
+                Yii::$app->session->setFlash('danger', $expenseStoreResponse['message']);
             }
+
         } else {
             $model->loadDefaultValues();
         }
@@ -89,7 +89,7 @@ class ExpenseController extends ParentController
     /**
      * Updates an existing Expense model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id ID
+     * @param string $uid UID
      * @return string|Response
      * @throws NotFoundHttpException if the model cannot be found
      */
@@ -109,7 +109,7 @@ class ExpenseController extends ParentController
     /**
      * Deletes an existing Expense model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id ID
+     * @param string $uid UID
      * @return Response
      * @throws NotFoundHttpException if the model cannot be found
      */
@@ -123,7 +123,7 @@ class ExpenseController extends ParentController
     /**
      * Finds the Expense model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id ID
+     * @param string $uid UID
      * @return Expense the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */

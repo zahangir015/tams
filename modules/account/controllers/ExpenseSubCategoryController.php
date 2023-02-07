@@ -6,7 +6,7 @@ use app\components\Helper;
 use app\controllers\ParentController;
 use app\modules\account\models\ExpenseCategory;
 use app\modules\account\models\ExpenseSubCategory;
-use app\modules\account\models\ExpenseSubCategorySearch;
+use app\modules\account\models\search\ExpenseSubCategorySearch;
 use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;

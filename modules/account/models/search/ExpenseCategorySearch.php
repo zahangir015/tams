@@ -1,15 +1,15 @@
 <?php
 
-namespace app\modules\account\models;
+namespace app\modules\account\models\search;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\account\models\ExpenseSubCategory;
+use app\modules\account\models\ExpenseCategory;
 
 /**
- * ExpenseSubCategorySearch represents the model behind the search form of `app\modules\account\models\ExpenseSubCategory`.
+ * ExpenseCategorySearch represents the model behind the search form of `app\modules\account\models\ExpenseCategory`.
  */
-class ExpenseSubCategorySearch extends ExpenseSubCategory
+class ExpenseCategorySearch extends ExpenseCategory
 {
     /**
      * {@inheritdoc}
@@ -17,7 +17,7 @@ class ExpenseSubCategorySearch extends ExpenseSubCategory
     public function rules(): array
     {
         return [
-            [['id', 'categoryId', 'status', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'], 'integer'],
+            [['id', 'status', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'], 'integer'],
             [['uid', 'name'], 'safe'],
         ];
     }
@@ -40,13 +40,12 @@ class ExpenseSubCategorySearch extends ExpenseSubCategory
      */
     public function search(array $params): ActiveDataProvider
     {
-        $query = ExpenseSubCategory::find();
+        $query = ExpenseCategory::find();
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-
         ]);
 
         $this->load($params);
@@ -60,7 +59,6 @@ class ExpenseSubCategorySearch extends ExpenseSubCategory
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'categoryId' => $this->categoryId,
             'status' => $this->status,
             'createdAt' => $this->createdAt,
             'createdBy' => $this->createdBy,

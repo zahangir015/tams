@@ -6,7 +6,7 @@ use app\components\Helper;
 use app\controllers\ParentController;
 use app\modules\account\models\BankAccount;
 use app\modules\account\models\ExpenseCategory;
-use app\modules\account\models\ExpenseCategorySearch;
+use app\modules\account\models\search\ExpenseCategorySearch;
 use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -55,7 +55,6 @@ class ExpenseCategoryController extends ParentController
     public function actionCreate(): Response|string
     {
         $model = new ExpenseCategory();
-
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
                 return $this->redirect(['view', 'uid' => $model->uid]);

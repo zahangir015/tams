@@ -34,7 +34,9 @@ class ExpenseService
 
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
-            if (!$expense->load($request) || !$expense->validate()) {
+            $expense->load($request);
+            $expense->identificationNumber = Helper::expenseIdentificationNumber();
+            if (!$expense->validate()) {
                 throw new Exception('Expense validation failed - ' . Helper::processErrorMessages($expense->getErrors()));
             }
 
@@ -48,7 +50,7 @@ class ExpenseService
             if (!empty($expense->supplierId)) {
                 $ledgerRequestData = [
                     'title' => 'Expense',
-                    'reference' => 'Expense Number - ' . $expense->name,
+                    'reference' => 'Expense Number - ' . $expense->identificationNumber,
                     'refId' => $expense->supplierId,
                     'refModel' => Supplier::class,
                     'subRefId' => $expense->id,
@@ -63,18 +65,16 @@ class ExpenseService
             }
 
             // Transaction Process
-            $transactionData = TransactionService::formDataForTransactionStatement($request['TransactionStatement'], $expense->id, Expense::className(), $expense->companyId, Company::className(), Yii::$app->user->id);
+            /*$transactionData = TransactionService::formDataForTransactionStatement($request['TransactionStatement'], $expense->id, Expense::className(), $expense->companyId, Company::className(), Yii::$app->user->id);
             $transactionStoreResponse = TransactionService::store($transactionData);
             if ($transactionStoreResponse['error']) {
                 throw new Exception('Transaction Statement creation failed - ' . $transactionStoreResponse['message']);
             }
-
-            //
             $expense->totalPaid += $transactionStoreResponse['data']->amount;
-            $expense = $this->expenseRepository->update($expense);
+            $expense = $this->expenseRepository->update($expense);*/
 
             // Bank Ledger process
-            $bankLedgerRequestData = [
+            /*$bankLedgerRequestData = [
                 'title' => 'Expense',
                 'reference' => 'Expense Number - ' . $expense->name,
                 'refId' => $transactionStoreResponse['data']->bankId,
@@ -87,13 +87,13 @@ class ExpenseService
             $bankLedgerRequestResponse = LedgerComponent::createNewLedger($bankLedgerRequestData);
             if ($bankLedgerRequestResponse['error']) {
                 throw new Exception('Bank Ledger creation failed - ' . $bankLedgerRequestResponse['message']);
-            }
+            }*/
 
             $dbTransaction->commit();
-            return ['error' => false, 'Expense is successfully created.', 'data' => $expense];
+            return ['error' => false, 'message' => 'Expense is successfully created.', 'data' => $expense];
         } catch (Exception $e) {
             $dbTransaction->rollBack();
-            return ['error' => true, $e->getMessage()];
+            return ['error' => true, 'message' => $e->getMessage().$e->getFile().$e->getLine()];
         }
     }
 

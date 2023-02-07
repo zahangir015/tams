@@ -1,5 +1,6 @@
 <?php
 
+use app\components\GlobalConstant;
 use app\components\Helper;
 use app\modules\account\models\Expense;
 use yii\helpers\Html;
@@ -7,6 +8,7 @@ use yii\helpers\Url;
 use kartik\grid\ActionColumn;
 use kartik\grid\GridView;
 use yii\widgets\Pjax;
+
 /** @var yii\web\View $this */
 /** @var app\modules\account\models\ExpenseSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
@@ -20,17 +22,40 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'kartik\grid\SerialColumn'],
-            'categoryId',
-            'subCategoryId',
-            'supplierId',
-            'name',
+            [
+                'attribute' => 'category',
+                'value' => function ($model) {
+                    return $model->category->name;
+                }
+            ],
+            [
+                'attribute' => 'subCategory',
+                'value' => function ($model) {
+                    return $model->subCategory->name;
+                }
+            ],
+            [
+                'attribute' => 'supplier',
+                'value' => function ($model) {
+                    return isset($model->supplier) ? $model->supplier->name : null;
+                }
+            ],
             'accruingMonth',
             'timingOfExp',
             'totalCost',
             'totalPaid',
             'paymentStatus',
             'notes:ntext',
-            'status',
+            [
+                'class' => '\kartik\grid\DataColumn',
+                'attribute' => 'status',
+                'value' => function ($model) {
+                    $labelClass = Helper::statusLabelClass($model->status);
+                    return '<span class="right badge ' . $labelClass . '">' . GlobalConstant::DEFAULT_STATUS[$model->status] . '</span>';
+                },
+                'filter' => GlobalConstant::DEFAULT_STATUS,
+                'format' => 'html',
+            ],
             'createdAt',
             'updatedAt',
             'createdBy',
@@ -39,8 +64,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, Expense $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'id' => $model->id]);
-                 },
-                'width' => '150px',
+                },
+                'width' => '200px',
                 'template' => '{view} {edit} {delete}',
                 'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
                 'buttons' => Helper::getBasicActionColumnArray()

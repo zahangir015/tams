@@ -16,7 +16,7 @@ use yii\db\ActiveRecord;
  * @property int $categoryId
  * @property int $subCategoryId
  * @property int $supplierId
- * @property string $name
+ * @property string $identificationNumber
  * @property string|null $accruingMonth
  * @property string|null $timingOfExp
  * @property double $totalCost
@@ -50,7 +50,7 @@ class Expense extends ActiveRecord
     public function rules(): array
     {
         return [
-            [['categoryId', 'subCategoryId'], 'required'],
+            [['categoryId', 'subCategoryId', 'identificationNumber', 'accruingMonth', 'totalCost', 'timingOfExp'], 'required'],
             [['categoryId', 'subCategoryId', 'supplierId', 'status', 'createdAt', 'updatedAt', 'createdBy', 'updatedBy'], 'integer'],
             [['accruingMonth'], 'safe'],
             [['totalCost', 'totalPaid'], 'number'],
@@ -74,6 +74,7 @@ class Expense extends ActiveRecord
             'categoryId' => Yii::t('app', 'Category'),
             'subCategoryId' => Yii::t('app', 'Sub Category'),
             'supplierId' => Yii::t('app', 'Supplier'),
+            'identificationNumber' => Yii::t('app', 'identification#'),
             'accruingMonth' => Yii::t('app', 'Accruing Month'),
             'timingOfExp' => Yii::t('app', 'Timing Of Exp'),
             'totalCost' => Yii::t('app', 'Total Cost'),
