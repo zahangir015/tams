@@ -50,13 +50,12 @@ class Expense extends ActiveRecord
     public function rules(): array
     {
         return [
-            [['categoryId', 'subCategoryId', 'supplierId', 'name', 'status'], 'required'],
+            [['categoryId', 'subCategoryId'], 'required'],
             [['categoryId', 'subCategoryId', 'supplierId', 'status', 'createdAt', 'updatedAt', 'createdBy', 'updatedBy'], 'integer'],
             [['accruingMonth'], 'safe'],
             [['totalCost', 'totalPaid'], 'number'],
             [['timingOfExp', 'notes', 'paymentStatus'], 'string'],
             [['uid'], 'string', 'max' => 36],
-            [['name'], 'string', 'max' => 150],
             [['uid'], 'unique'],
             [['categoryId'], 'exist', 'skipOnError' => true, 'targetClass' => ExpenseCategory::class, 'targetAttribute' => ['categoryId' => 'id']],
             [['subCategoryId'], 'exist', 'skipOnError' => true, 'targetClass' => ExpenseSubCategory::class, 'targetAttribute' => ['subCategoryId' => 'id']],
@@ -75,7 +74,6 @@ class Expense extends ActiveRecord
             'categoryId' => Yii::t('app', 'Category'),
             'subCategoryId' => Yii::t('app', 'Sub Category'),
             'supplierId' => Yii::t('app', 'Supplier'),
-            'name' => Yii::t('app', 'Name'),
             'accruingMonth' => Yii::t('app', 'Accruing Month'),
             'timingOfExp' => Yii::t('app', 'Timing Of Exp'),
             'totalCost' => Yii::t('app', 'Total Cost'),

@@ -47,7 +47,7 @@ class LedgerService
     public function store(array $requestData): array
     {
         $balance = 0;
-        if ($previousLedger = LedgerRepository::findLatestOne($requestData['refId'], $requestData['refModel'])) {
+        if ($previousLedger = $this->ledgerRepository->findLatestOne($requestData['refId'], $requestData['refModel'])) {
             $balance = $previousLedger['balance'];
         }
 
@@ -134,7 +134,7 @@ class LedgerService
         ];
 
         $balance = 0;
-        if ($previousLedger = LedgerRepository::findLatestOne($ledgerRequestData['refId'], $ledgerRequestData['refModel'])) {
+        if ($previousLedger = $this->ledgerRepository->findLatestOne($ledgerRequestData['refId'], $ledgerRequestData['refModel'])) {
             $balance = $previousLedger['balance'];
         }
 

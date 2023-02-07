@@ -2,33 +2,33 @@
 
 namespace app\modules\account\controllers;
 
+use app\components\GlobalConstant;
+use app\controllers\ParentController;
 use app\modules\account\models\Expense;
 use app\modules\account\models\ExpenseSearch;
-use yii\web\Controller;
+use app\modules\account\repositories\ExpenseRepository;
+use app\modules\account\services\ExpenseService;
+use app\modules\hrm\repositories\EmployeeRepository;
+use app\modules\hrm\services\EmployeeService;
+use app\modules\hrm\services\HrmConfigurationService;
+use Exception;
+use Yii;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
+use yii\web\Response;
 
 /**
  * ExpenseController implements the CRUD actions for Expense model.
  */
-class ExpenseController extends Controller
+class ExpenseController extends ParentController
 {
-    /**
-     * @inheritDoc
-     */
-    public function behaviors()
+    public ExpenseService $expenseService;
+    public ExpenseRepository $expenseRepository;
+
+    public function __construct($id, $module, $config = [])
     {
-        return array_merge(
-            parent::behaviors(),
-            [
-                'verbs' => [
-                    'class' => VerbFilter::className(),
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
-                ],
-            ]
-        );
+        $this->expenseService = new ExpenseService();
+        $this->expenseRepository = new ExpenseRepository();
+        parent::__construct($id, $module, $config);
     }
 
     /**
@@ -63,15 +63,19 @@ class ExpenseController extends Controller
     /**
      * Creates a new Expense model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
+     * @return string|Response
+     * @throws Exception
      */
-    public function actionCreate()
+    public function actionCreate(): Response|string
     {
         $model = new Expense();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+            $requestData = Yii::$app->request->post();
+            // Store expense data
+            $expenseStoreResponse = $this->expenseService->storeExpense($requestData, $model);
+            if (!$expenseStoreResponse['error']) {
+                return $this->redirect(['view', 'uid' => $expenseStoreResponse['data']->uid]);
             }
         } else {
             $model->loadDefaultValues();
@@ -86,7 +90,7 @@ class ExpenseController extends Controller
      * Updates an existing Expense model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $id ID
-     * @return string|\yii\web\Response
+     * @return string|Response
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionUpdate($id)
@@ -106,7 +110,7 @@ class ExpenseController extends Controller
      * Deletes an existing Expense model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
-     * @return \yii\web\Response
+     * @return Response
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionDelete($id)
@@ -130,5 +134,20 @@ class ExpenseController extends Controller
         }
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+    }
+
+    public function actionGetSubCategoryByCategory(): array
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if ($parents != null) {
+                $categoryId = $parents[0];
+                $out = $this->expenseService->getSubCategoryList(['categoryId' => $categoryId, 'status' => GlobalConstant::ACTIVE_STATUS]);
+                return ['output' => $out, 'selected' => ''];
+            }
+        }
+        return ['output' => '', 'selected' => ''];
     }
 }

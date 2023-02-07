@@ -4,7 +4,6 @@ namespace app\modules\account\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\account\models\Expense;
 
 /**
  * ExpenseSearch represents the model behind the search form of `app\modules\account\models\Expense`.
@@ -18,7 +17,7 @@ class ExpenseSearch extends Expense
     {
         return [
             [['id', 'categoryId', 'subCategoryId', 'supplierId', 'status', 'createdAt', 'updatedAt', 'createdBy', 'updatedBy'], 'integer'],
-            [['uid', 'name', 'accruingMonth', 'timingOfExp', 'notes'], 'safe'],
+            [['uid', 'accruingMonth', 'timingOfExp', 'notes'], 'safe'],
         ];
     }
 
@@ -71,7 +70,6 @@ class ExpenseSearch extends Expense
         ]);
 
         $query->andFilterWhere(['like', 'uid', $this->uid])
-            ->andFilterWhere(['like', 'name', $this->name])
             ->andFilterWhere(['like', 'timingOfExp', $this->timingOfExp])
             ->andFilterWhere(['like', 'notes', $this->notes]);
 

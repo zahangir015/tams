@@ -11,7 +11,7 @@ use yii\db\ActiveRecord;
 
 class LedgerRepository extends ParentRepository
 {
-    public static function findAll(string $query): array
+    public static function search(string $query): array
     {
         return Ledger::find()
             ->select(['id', 'eTicket', 'pnrCode'])
@@ -21,7 +21,7 @@ class LedgerRepository extends ParentRepository
             ->all();
     }
 
-    public static function findLatestOne(int $refId, string $refModel)
+    public function findLatestOne(int $refId, string $refModel)
     {
         return Ledger::find()
             ->where(['refId' => $refId, 'refModel' => $refModel])

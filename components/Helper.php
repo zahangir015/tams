@@ -381,11 +381,11 @@ class Helper
         ];
     }
 
-    public static function depDropConfigurationGenerate($model, $id, $depandedId, $endPoint): array
+    public static function depDropConfigurationGenerate($model, $id, $depandedId, $endPoint, $data = []): array
     {
         return [
             'options' => ['id' => $id],
-            'data' => ($model->isNewRecord) ? [] : [$model->departmentId => $model->department->name],
+            'data' => $data,
             'pluginOptions' => [
                 'depends' => [$depandedId],
                 'initialize' => !$model->isNewRecord,

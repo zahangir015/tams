@@ -2,154 +2,46 @@
 
 namespace app\modules\account\services;
 
-use app\modules\account\repositories\ExpenseCategoryRepository;
+use app\components\Helper;
+use app\modules\account\models\Expense;
+use app\modules\account\models\ExpenseSubCategory;
 use app\modules\account\repositories\ExpenseRepository;
+use app\modules\sale\models\Supplier;
+use Exception;
+use Yii;
 
 class ExpenseService
 {
     protected ExpenseRepository $expenseRepository;
+    protected LedgerService $ledgerService;
 
     public function __construct()
     {
         $this->expenseRepository = new ExpenseRepository();
+        $this->ledgerService = new LedgerService();
     }
 
-    public function storeExpenseCategory($request, ExpenseCategory $category): ExpenseCategory
+    public function getAll(array $queryArray, string $model, array $withArray, bool $asArray)
     {
-        if (!isset($request['ExpenseCategory'])) {
-            Yii::$app->session->setFlash('error', 'Expense Category data is required.');
-            return $category;
-        }
-
-        if (!$category->load($request) || !$category->validate()) {
-            Yii::$app->session->setFlash('error', Utils::processErrorMessages($category->getErrors()));
-            return $category;
-        }
-
-        $category = $this->categoryRepository->store($category);
-        if ($category->hasErrors()) {
-            Yii::$app->session->setFlash('error', Utils::processErrorMessages($category->getErrors()));
-            return $category;
-        }
-
-        Yii::$app->session->setFlash('error', 'Expense Category data is required.');
-        return $category;
+        return $this->expenseRepository->findAll($queryArray, $model, $withArray, $asArray);
     }
 
-    public function updateExpenseCategory($request, ExpenseCategory $category): ExpenseCategory
-    {
-        // Request Data
-        if (empty($request['ExpenseCategory'])) {
-            Yii::$app->session->setFlash('error', 'Expense Category data is required.');
-            return $category;
-        }
-
-        if (!$category->load($request) || !$category->validate()) {
-            Yii::$app->session->setFlash('error', Utils::processErrorMessages($category->getErrors()));
-            return $category;
-        }
-
-        $category = $this->categoryRepository->update($category);
-        if ($category->hasErrors()) {
-            Yii::$app->session->setFlash('error', Utils::processErrorMessages($category->getErrors()));
-            return $category;
-        }
-
-        Yii::$app->session->setFlash('success', 'Expense Category updated successfully.');
-        return $category;
-    }
-
-    public function findCategory(string $uid): ExpenseCategory
-    {
-        return $this->categoryRepository->findOne($uid);
-    }
-
-    public function findCategories(string $query): array
-    {
-        $categories = $this->categoryRepository->findAll($query);
-        $data = [];
-        foreach ($categories as $category) {
-            $data[] = ['id' => $category->id, 'text' => $category->name];
-        }
-        return ['results' => $data];
-    }
-
-    public function storeExpenseSubCategory($request, ExpenseSubCategory $category): ExpenseSubCategory
-    {
-        if (!isset($request['ExpenseSubCategory'])) {
-            Yii::$app->session->setFlash('error', 'Expense Category data is required.');
-            return $category;
-        }
-
-        if (!$category->load($request) || !$category->validate()) {
-            Yii::$app->session->setFlash('error', Utils::processErrorMessages($category->getErrors()));
-            return $category;
-        }
-
-        $category = $this->categoryRepository->store($category);
-        if ($category->hasErrors()) {
-            Yii::$app->session->setFlash('error', Utils::processErrorMessages($category->getErrors()));
-            return $category;
-        }
-
-        Yii::$app->session->setFlash('error', 'Expense Category data is required.');
-        return $category;
-    }
-
-    public function updateExpenseSubCategory($request, ExpenseCategory $category): ExpenseCategory
-    {
-        // Request Data
-        if (empty($request['ExpenseCategory'])) {
-            Yii::$app->session->setFlash('error', 'Expense Category data is required.');
-            return $category;
-        }
-
-        if (!$category->load($request) || !$category->validate()) {
-            Yii::$app->session->setFlash('error', Utils::processErrorMessages($category->getErrors()));
-            return $category;
-        }
-
-        $category = $this->categoryRepository->update($category);
-        if ($category->hasErrors()) {
-            Yii::$app->session->setFlash('error', Utils::processErrorMessages($category->getErrors()));
-            return $category;
-        }
-
-        Yii::$app->session->setFlash('success', 'Expense Category updated successfully.');
-        return $category;
-    }
-
-    public function findSubCategory(string $uid): ExpenseSubCategory
-    {
-        return $this->subCategoryRepository->findOne($uid);
-    }
-
-    public function findSubCategoryBasedOnCategory(string $categoryId): array
-    {
-        $subCategories = $this->subCategoryRepository->getSubCategoriesBasedOnCategory($categoryId);
-        $data = [];
-        foreach ($subCategories as $category) {
-            $data[] = ['id' => $category->id, 'name' => $category->name];
-        }
-
-        return $data;
-    }
-
-    public function storeExpense(array $request, ActiveRecord $expense): array
+    public function storeExpense(array $request, Expense $expense): array
     {
         if (!isset($request['Expense'])) {
             throw new Exception('Expense data is required.');
         }
+
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
             if (!$expense->load($request) || !$expense->validate()) {
-                throw new Exception('Expense validation failed - ' . Utils::processErrorMessages($expense->getErrors()));
+                throw new Exception('Expense validation failed - ' . Helper::processErrorMessages($expense->getErrors()));
             }
 
             // Store expense data
             $expense = $this->expenseRepository->store($expense);
             if ($expense->hasErrors()) {
-                throw new Exception('Expense creation failed - ' . Utils::processErrorMessages($expense->getErrors()));
+                throw new Exception('Expense creation failed - ' . Helper::processErrorMessages($expense->getErrors()));
             }
 
             // Supplier Ledger process
@@ -158,13 +50,13 @@ class ExpenseService
                     'title' => 'Expense',
                     'reference' => 'Expense Number - ' . $expense->name,
                     'refId' => $expense->supplierId,
-                    'refModel' => Supplier::className(),
+                    'refModel' => Supplier::class,
                     'subRefId' => $expense->id,
-                    'subRefModel' => $expense::className(),
+                    'subRefModel' => Expense::class,
                     'debit' => 0,
                     'credit' => $expense->totalCost
                 ];
-                $ledgerRequestResponse = LedgerComponent::createNewLedger($ledgerRequestData);
+                $ledgerRequestResponse = $this->ledgerService->store($ledgerRequestData);
                 if ($ledgerRequestResponse['error']) {
                     throw new Exception('Supplier Ledger creation failed - ' . $ledgerRequestResponse['message']);
                 }
@@ -304,6 +196,17 @@ class ExpenseService
             Yii::$app->session->setFlash('error', 'Expense not found.');
             return null;
         }
+    }
+
+    public function getSubCategoryList(array $queryArray): array
+    {
+        $subCategoryList = self::getAll($queryArray, ExpenseSubCategory::class, [], true);
+        $subCategoryDataArray = [];
+        foreach ($subCategoryList as $value) {
+            $subCategoryDataArray[] = ['id' => $value['id'], 'name' => $value['name']];
+        }
+
+        return $subCategoryDataArray;
     }
 
 }
