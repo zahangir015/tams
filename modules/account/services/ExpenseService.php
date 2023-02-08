@@ -29,7 +29,7 @@ class ExpenseService
     public function storeExpense(array $request, Expense $expense): array
     {
         if (!isset($request['Expense'])) {
-            throw new Exception('Expense data is required.');
+            return ['error' => true, 'message' => 'Expense data is required.'];
         }
 
         $dbTransaction = Yii::$app->db->beginTransaction();
@@ -93,7 +93,7 @@ class ExpenseService
             return ['error' => false, 'message' => 'Expense is successfully created.', 'data' => $expense];
         } catch (Exception $e) {
             $dbTransaction->rollBack();
-            return ['error' => true, 'message' => $e->getMessage().$e->getFile().$e->getLine()];
+            return ['error' => true, 'message' => $e->getMessage() . $e->getFile() . $e->getLine()];
         }
     }
 
@@ -101,23 +101,26 @@ class ExpenseService
     {
         // Request Data
         if (empty($request['Expense'])) {
-            Yii::$app->session->setFlash('error', 'Expense data is required.');
-            return $expense;
+            return ['error' => true, 'message' => 'Expense data is required.'];
         }
+        $dbTransaction = Yii::$app->db->beginTransaction();
+        try {
+            if (!$expense->load($request) || !$expense->validate()) {
+                throw new Exception('Expense validation failed - ' . Helper::processErrorMessages($expense->getErrors()));
+            }
 
-        if (!$expense->load($request) || !$expense->validate()) {
-            Yii::$app->session->setFlash('error', Utils::processErrorMessages($expense->getErrors()));
-            return $expense;
+            $expense = $this->expenseRepository->update($expense);
+            if ($expense->hasErrors()) {
+                Yii::$app->session->setFlash('error', Helper::processErrorMessages($expense->getErrors()));
+                return $expense;
+            }
+
+            $dbTransaction->commit();
+            return ['error' => false, 'message' => 'Expense is successfully created.', 'data' => $expense];
+        } catch (Exception $e) {
+            $dbTransaction->rollBack();
+            return ['error' => true, 'message' => $e->getMessage() . $e->getFile() . $e->getLine()];
         }
-
-        $expense = $this->expenseRepository->update($expense);
-        if ($expense->hasErrors()) {
-            Yii::$app->session->setFlash('error', Utils::processErrorMessages($expense->getErrors()));
-            return $expense;
-        }
-
-        Yii::$app->session->setFlash('success', 'Expense updated successfully.');
-        return $expense;
     }
 
     public function payExpense($request, Expense $expense): Expense

@@ -73,7 +73,7 @@ class ExpenseController extends ParentController
             $expenseStoreResponse = $this->expenseService->storeExpense($requestData, $model);
             if (!$expenseStoreResponse['error']) {
                 return $this->redirect(['view', 'uid' => $expenseStoreResponse['data']->uid]);
-            }else{
+            } else {
                 Yii::$app->session->setFlash('danger', $expenseStoreResponse['message']);
             }
 
@@ -91,14 +91,20 @@ class ExpenseController extends ParentController
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param string $uid UID
      * @return string|Response
-     * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionUpdate(string $uid): Response|string
     {
-        $model = $this->findModel($id);
+        $model = $this->expenseRepository->findOne(['uid' => $uid], Expense::class, ['category', 'subCategory', 'supplier']);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($this->request->isPost) {
+            $requestData = Yii::$app->request->post();
+
+            $expenseUpdateResponse = $this->expenseService->updateExpense($requestData, $model);
+            if (!$expenseUpdateResponse['error']) {
+                return $this->redirect(['view', 'uid' => $expenseStoreResponse['data']->uid]);
+            } else {
+                Yii::$app->session->setFlash('danger', $expenseStoreResponse['message']);
+            }
         }
 
         return $this->render('update', [

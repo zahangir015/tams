@@ -1,5 +1,6 @@
 <?php
 
+use app\components\Helper;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -51,7 +52,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     [
                         'attribute' => 'status',
                         'value' => function ($model) {
-                            $labelClass = \app\components\Helper::statusLabelClass($model->status);
+                            $labelClass = Helper::statusLabelClass($model->status);
                             $labelText = ($model->status) ? 'Active' : 'Inactive';
                             return '<span class="right badge ' . $labelClass . '">' . $labelText . '</span>';
                         },

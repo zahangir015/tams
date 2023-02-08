@@ -889,4 +889,40 @@ class Helper
         ];
     }
 
+    public static function getBasicActionColumnWithPayArray(): array
+    {
+        return [
+            'view' => function ($url, $model) {
+                return Html::a('<i class="fa fa-info-circle"></i>', ['view', 'uid' => $model->uid], [
+                    'title' => Yii::t('app', 'View'),
+                    'data-pjax' => '0',
+                    'class' => 'btn btn-primary btn-xs'
+                ]);
+            },
+            'edit' => function ($url, $model, $key) {
+                return Html::a('<i class="fa fa-pencil-alt"></i>', ['update', 'uid' => $model->uid], [
+                    'title' => Yii::t('app', 'Update'),
+                    'class' => 'btn btn-primary btn-xs'
+                ]);
+            },
+            'pay' => function ($url, $model, $key) {
+                return Html::a('<i class="fa fa-credit-card"></i>', ['pay', 'uid' => $model->uid], [
+                    'title' => Yii::t('app', 'Pay'),
+                    'class' => 'btn btn-primary btn-xs'
+                ]);
+            },
+            'delete' => function ($url, $model, $key) {
+                return Html::a('<i class="fa fa-trash-alt"></i>', ['delete', 'uid' => $model->uid], [
+                    'title' => Yii::t('app', 'Delete'),
+                    'data-pjax' => '0',
+                    'data' => [
+                        'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
+                        'method' => 'post',
+                    ],
+                    'class' => 'btn btn-primary btn-xs'
+                ]);
+            },
+        ];
+    }
+
 }

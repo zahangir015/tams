@@ -15,6 +15,7 @@ use yii\widgets\Pjax;
 
 $this->title = Yii::t('app', 'Expenses');
 $this->params['breadcrumbs'][] = $this->title;
+
 ?>
 <div class="expense-index">
     <?= GridView::widget([
@@ -22,6 +23,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'kartik\grid\SerialColumn'],
+            'identificationNumber',
             [
                 'attribute' => 'category',
                 'value' => function ($model) {
@@ -44,8 +46,14 @@ $this->params['breadcrumbs'][] = $this->title;
             'timingOfExp',
             'totalCost',
             'totalPaid',
-            'paymentStatus',
-            'notes:ntext',
+            [
+                'attribute' => 'paymentStatus',
+                'value' => function ($model) {
+                    return $model->paymentStatus;
+                },
+                'filter' => GlobalConstant::PAYMENT_STATUS
+            ],
+            //'notes:ntext',
             [
                 'class' => '\kartik\grid\DataColumn',
                 'attribute' => 'status',
@@ -57,18 +65,16 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => 'html',
             ],
             'createdAt',
-            'updatedAt',
             'createdBy',
-            'updatedBy',
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, Expense $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'id' => $model->id]);
                 },
                 'width' => '200px',
-                'template' => '{view} {edit} {delete}',
+                'template' => '{view} {edit} {pay} {delete}',
                 'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
-                'buttons' => Helper::getBasicActionColumnArray()
+                'buttons' => Helper::getBasicActionColumnWithPayArray()
             ],
         ],
         'toolbar' => [

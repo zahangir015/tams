@@ -25,7 +25,7 @@ class ExpenseSearch extends Expense
     {
         return [
             [['id', 'categoryId', 'subCategoryId', 'supplierId', 'status', 'createdAt', 'updatedAt', 'createdBy', 'updatedBy'], 'integer'],
-            [['uid', 'accruingMonth', 'timingOfExp', 'notes', 'identificationNumber', 'category', 'subCategory', 'supplier'], 'safe'],
+            [['uid', 'accruingMonth', 'timingOfExp', 'notes', 'identificationNumber', 'category', 'subCategory', 'supplier', 'totalCost', 'totalPaid', 'paymentStatus'], 'safe'],
         ];
     }
 
@@ -50,7 +50,7 @@ class ExpenseSearch extends Expense
         $query = Expense::find();
 
         // add conditions that should always apply here
-        $query->with(['category', 'subCategory', 'supplier'])->where([self::tableName().'.status' => GlobalConstant::ACTIVE_STATUS]);
+        $query->joinWith(['category', 'subCategory', 'supplier'])->where([self::tableName().'.status' => GlobalConstant::ACTIVE_STATUS]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -84,6 +84,9 @@ class ExpenseSearch extends Expense
         $query->andFilterWhere([
             self::tableName().'.identificationNumber' => $this->identificationNumber,
             self::tableName().'.accruingMonth' => $this->accruingMonth,
+            self::tableName().'.totalCost' => $this->totalCost,
+            self::tableName().'.totalPaid' => $this->totalPaid,
+            self::tableName().'.paymentStatus' => $this->paymentStatus,
             self::tableName().'.status' => $this->status,
             'createdAt' => $this->createdAt,
             'updatedAt' => $this->updatedAt,
@@ -97,7 +100,6 @@ class ExpenseSearch extends Expense
             ->orFilterWhere(['like', Supplier::tableName() . '.company', $this->supplier])
             ->andFilterWhere(['like', self::tableName().'.timingOfExp', $this->timingOfExp])
             ->andFilterWhere(['like', 'notes', $this->notes]);
-
         return $dataProvider;
     }
 }

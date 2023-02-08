@@ -80,9 +80,10 @@ class ExpenseCategoryController extends ParentController
     {
         $model = $this->findModel($uid);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'uid' => $model->uid]);
-        }else{
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post()) && $model->save()) {
+                return $this->redirect(['view', 'uid' => $model->uid]);
+            }
             Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
         }
 
