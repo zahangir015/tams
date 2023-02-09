@@ -2,15 +2,14 @@
 
 namespace app\modules\account\models\search;
 
-use app\components\GlobalConstant;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\account\models\ExpenseSubCategory;
+use app\modules\account\models\AccountType;
 
 /**
- * ExpenseSubCategorySearch represents the model behind the search form of `app\modules\account\models\ExpenseSubCategory`.
+ * AccountTypeSearch represents the model behind the search form of `app\modules\account\models\AccountType`.
  */
-class ExpenseSubCategorySearch extends ExpenseSubCategory
+class AccountTypeSearch extends AccountType
 {
     /**
      * {@inheritdoc}
@@ -18,7 +17,7 @@ class ExpenseSubCategorySearch extends ExpenseSubCategory
     public function rules(): array
     {
         return [
-            [['id', 'categoryId', 'status', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'], 'integer'],
+            [['id', 'status', 'createdAt', 'updatedAt', 'createdBy', 'updatedBy'], 'integer'],
             [['uid', 'name'], 'safe'],
         ];
     }
@@ -41,15 +40,12 @@ class ExpenseSubCategorySearch extends ExpenseSubCategory
      */
     public function search(array $params): ActiveDataProvider
     {
-        $query = ExpenseSubCategory::find();
+        $query = AccountType::find();
 
         // add conditions that should always apply here
-        $query->joinWith(['category'])
-            ->where(['status' => GlobalConstant::ACTIVE_STATUS]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'sort' => ['defaultOrder' => ['id' => SORT_ASC]]
         ]);
 
         $this->load($params);
@@ -63,11 +59,10 @@ class ExpenseSubCategorySearch extends ExpenseSubCategory
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'categoryId' => $this->categoryId,
             'status' => $this->status,
             'createdAt' => $this->createdAt,
-            'createdBy' => $this->createdBy,
             'updatedAt' => $this->updatedAt,
+            'createdBy' => $this->createdBy,
             'updatedBy' => $this->updatedBy,
         ]);
 

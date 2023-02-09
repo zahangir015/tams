@@ -1,33 +1,33 @@
 <?php
 
 use app\components\GlobalConstant;
-use app\modules\account\models\ExpenseSubCategory;
+use app\components\Helper;
+use app\modules\account\models\AccountGroup;
 use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use kartik\grid\ActionColumn;
 use kartik\grid\GridView;
-use app\components\Helper;
 
 /** @var yii\web\View $this */
-/** @var app\modules\account\models\ExpenseSubCategorySearch $searchModel */
+/** @var app\modules\account\models\search\AccountGroupSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = Yii::t('app', 'Expense Sub Categories');
+$this->title = Yii::t('app', 'Account Groups');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="expense-sub-category-index">
+<div class="account-group-index">
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'kartik\grid\SerialColumn'],
             [
-                'attribute' => 'categoryId',
+                'attribute' => 'accountTypeId',
                 'value' => function ($model) {
-                    return $model->category->name;
+                    return $model->accountType->name;
                 },
-                'filter' => Select2::widget(Helper::ajaxDropDown('categoryId', '/account/expense-category/get-categories', false, 'categoryId', 'categoryId'))
+                'filter' => Select2::widget(Helper::ajaxDropDown('accountTypeId', '/account/account-type/get-types', false, 'accountTypeId', 'accountTypeId'))
             ],
             'name',
             [
@@ -46,7 +46,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'updatedBy',
             [
                 'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, ExpenseSubCategory $model, $key, $index, $column) {
+                'urlCreator' => function ($action, AccountGroup $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'uid' => $model->uid]);
                 },
                 'width' => '150px',
@@ -58,11 +58,11 @@ $this->params['breadcrumbs'][] = $this->title;
         'toolbar' => [
             [
                 'content' =>
-                    Html::a('<i class="fas fa-plus"></i>', ['/account/expense-sub-category/create'], [
+                    Html::a('<i class="fas fa-plus"></i>', ['/account/account-group/create'], [
                         'title' => Yii::t('app', 'Add Airline'),
                         'class' => 'btn btn-success'
                     ]) . ' ' .
-                    Html::a('<i class="fas fa-redo"></i>', ['/account/expense-sub-category/index'], [
+                    Html::a('<i class="fas fa-redo"></i>', ['/account/account-group/index'], [
                         'class' => 'btn btn-primary',
                         'title' => Yii::t('app', 'Reset Grid')
                     ]),
@@ -81,4 +81,5 @@ $this->params['breadcrumbs'][] = $this->title;
             'type' => GridView::TYPE_DARK
         ],
     ]); ?>
+
 </div>
