@@ -2,6 +2,7 @@
 
 namespace app\modules\account\services;
 
+use app\components\GlobalConstant;
 use app\components\Helper;
 use app\modules\account\models\BankAccount;
 use app\modules\account\models\Expense;
@@ -147,6 +148,7 @@ class ExpenseService
 
             // Expense update
             $expense->totalPaid += $transaction->paidAmount;
+            $expense->paymentStatus = ($expense->totalCost == $expense->totalPaid) ? GlobalConstant::PAYMENT_STATUS['Full Paid'] : GlobalConstant::PAYMENT_STATUS['Partially Paid'];
             $expense = $this->expenseRepository->store($expense);
 
             // Supplier Ledger process for payment
