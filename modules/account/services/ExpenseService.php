@@ -3,6 +3,7 @@
 namespace app\modules\account\services;
 
 use app\components\Helper;
+use app\modules\account\models\BankAccount;
 use app\modules\account\models\Expense;
 use app\modules\account\models\ExpenseSubCategory;
 use app\modules\account\models\Transaction;
@@ -126,70 +127,67 @@ class ExpenseService
         }
     }
 
-    public function payExpense($request, Expense $expense, Transaction $transaction): Expense
+    public function payExpense(array $requestData, Expense $expense, Transaction $transaction): array
     {
-        if (!isset($request['TransactionStatement'])) {
-            Yii::$app->session->setFlash('error', 'Transaction Statement data is required.');
-            return $expense;
+        if (!isset($requestData['Transaction'])) {
+            return ['error' => true, 'message' => 'Transaction Statement data is required.'];
         }
 
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
+            if ($requestData['Transaction']['paidAmount'] > ($expense->totalCost - $expense->totalPaid)) {
+                return ['error' => true, 'message' => 'Extra amount could not be paid.'];
+            }
             // Process Transaction Data
-            $transactionStatementStoreResponse = $this->transactionService->store($expense, $customer, $requestData);
+            $transactionStatementStoreResponse = $this->transactionService->store($expense, $expense->supplier, $requestData);
             if ($transactionStatementStoreResponse['error']) {
                 throw new Exception('Transaction Statement Data process failed - ' . $transactionStatementStoreResponse['message']);
             }
             $transaction = $transactionStatementStoreResponse['data'];
 
-            //
-            $expense->totalPaid += $transactionStoreResponse['data']->amount;
-            $expense = $this->expenseRepository->update($expense);
+            // Expense update
+            $expense->totalPaid += $transaction->paidAmount;
+            $expense = $this->expenseRepository->store($expense);
 
             // Supplier Ledger process for payment
             $supplierLedgerRequestData = [
                 'title' => 'Expense',
-                'reference' => 'Expense Number - ' . $expense->name,
+                'reference' => 'Expense Number - ' . $expense->identificationNumber,
                 'refId' => $expense->supplierId,
-                'refModel' => Supplier::className(),
+                'refModel' => Supplier::class,
                 'subRefId' => $expense->id,
-                'subRefModel' => $expense::className(),
-                'debit' => $transactionStoreResponse['data']->amount,
+                'subRefModel' => $expense::class,
+                'debit' => $transaction->paidAmount,
                 'credit' => 0
             ];
-            $ledgerRequestResponse = LedgerComponent::createNewLedger($supplierLedgerRequestData);
+            $ledgerRequestResponse = $this->ledgerService->store($supplierLedgerRequestData);
             if ($ledgerRequestResponse['error']) {
-                Yii::$app->session->setFlash('error', 'Supplier Ledger creation failed - ' . $ledgerRequestResponse['message']);
-                $dbTransaction->rollBack();
-                return $expense;
+                throw new Exception('Supplier Ledger creation failed - ' . $ledgerRequestResponse['message']);
             }
 
 
             // Bank Ledger process
             $bankLedgerRequestData = [
                 'title' => 'Expense',
-                'reference' => 'Expense Number - ' . $expense->name,
-                'refId' => $transactionStoreResponse['data']->bankId,
-                'refModel' => BankAccount::className(),
+                'reference' => 'Expense Number - ' . $expense->identificationNumber,
+                'refId' => $transaction->bankId,
+                'refModel' => BankAccount::class,
                 'subRefId' => $expense->id,
-                'subRefModel' => $expense::className(),
+                'subRefModel' => $expense::class,
                 'debit' => 0,
-                'credit' => $transactionStoreResponse['data']->amount
+                'credit' => $transaction->paidAmount
             ];
-            $bankLedgerRequestResponse = LedgerComponent::createNewLedger($bankLedgerRequestData);
+            $bankLedgerRequestResponse = $this->ledgerService->store($bankLedgerRequestData);
             if ($bankLedgerRequestResponse['error']) {
-                Yii::$app->session->setFlash('error', 'Bank Ledger creation failed - ' . $bankLedgerRequestResponse['message']);
-                $dbTransaction->rollBack();
-                return $expense;
+                throw new Exception('Bank Ledger creation failed - ' . $bankLedgerRequestResponse['message']);
             }
 
-            Yii::$app->session->setFlash('success', 'Expense payment done successfully.');
             $dbTransaction->commit();
-            return $expense;
+            return ['error' => false, 'message' => 'Expense payment done successfully.', 'data' => $expense];
 
         } catch (Exception $e) {
             Yii::$app->session->setFlash('error', $e->getMessage());
-            return $expense;
+            return ['error' => true, 'message' => $e->getMessage()];
         }
     }
 
