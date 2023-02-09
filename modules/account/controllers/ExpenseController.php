@@ -6,6 +6,7 @@ use app\components\GlobalConstant;
 use app\controllers\ParentController;
 use app\modules\account\models\Expense;
 use app\modules\account\models\search\ExpenseSearch;
+use app\modules\account\models\Transaction;
 use app\modules\account\repositories\ExpenseRepository;
 use app\modules\account\services\ExpenseService;
 use Exception;
@@ -101,14 +102,41 @@ class ExpenseController extends ParentController
 
             $expenseUpdateResponse = $this->expenseService->updateExpense($requestData, $model);
             if (!$expenseUpdateResponse['error']) {
-                return $this->redirect(['view', 'uid' => $expenseStoreResponse['data']->uid]);
+                return $this->redirect(['view', 'uid' => $expenseUpdateResponse['data']->uid]);
             } else {
-                Yii::$app->session->setFlash('danger', $expenseStoreResponse['message']);
+                Yii::$app->session->setFlash('danger', $expenseUpdateResponse['message']);
             }
         }
 
         return $this->render('update', [
             'model' => $model,
+        ]);
+    }
+
+    /**
+     * Pay an existing Expense model.
+     * If pay is successful, the browser will be redirected to the 'view' page.
+     * @param string $uid UID
+     * @return string|Response
+     */
+    public function actionPay(string $uid): Response|string
+    {
+        $model = $this->expenseRepository->findOne(['uid' => $uid], Expense::class, ['category', 'subCategory', 'supplier']);
+        $transaction = new Transaction();
+
+        if ($this->request->isPost) {
+            $requestData = Yii::$app->request->post();
+            $expensePaymentResponse = $this->expenseService->payExpense($requestData, $model, $transaction);
+            if (!$expensePaymentResponse['error']) {
+                return $this->redirect(['view', 'uid' => $expensePaymentResponse['data']->uid]);
+            } else {
+                Yii::$app->session->setFlash('danger', $expensePaymentResponse['message']);
+            }
+        }
+
+        return $this->render('pay', [
+            'model' => $model,
+            'transaction' => $transaction
         ]);
     }
 

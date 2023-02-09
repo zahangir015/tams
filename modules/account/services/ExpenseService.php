@@ -5,6 +5,7 @@ namespace app\modules\account\services;
 use app\components\Helper;
 use app\modules\account\models\Expense;
 use app\modules\account\models\ExpenseSubCategory;
+use app\modules\account\models\Transaction;
 use app\modules\account\repositories\ExpenseRepository;
 use app\modules\sale\models\Supplier;
 use Exception;
@@ -14,11 +15,13 @@ class ExpenseService
 {
     protected ExpenseRepository $expenseRepository;
     protected LedgerService $ledgerService;
+    protected TransactionService $transactionService;
 
     public function __construct()
     {
         $this->expenseRepository = new ExpenseRepository();
         $this->ledgerService = new LedgerService();
+        $this->transactionService = new TransactionService();
     }
 
     public function getAll(array $queryArray, string $model, array $withArray, bool $asArray)
@@ -97,7 +100,7 @@ class ExpenseService
         }
     }
 
-    public function updateExpense($request, Expense $expense): Expense
+    public function updateExpense($request, Expense $expense): array
     {
         // Request Data
         if (empty($request['Expense'])) {
@@ -119,11 +122,11 @@ class ExpenseService
             return ['error' => false, 'message' => 'Expense is successfully created.', 'data' => $expense];
         } catch (Exception $e) {
             $dbTransaction->rollBack();
-            return ['error' => true, 'message' => $e->getMessage() . $e->getFile() . $e->getLine()];
+            return ['error' => true, 'message' => $e->getMessage()];
         }
     }
 
-    public function payExpense($request, Expense $expense): Expense
+    public function payExpense($request, Expense $expense, Transaction $transaction): Expense
     {
         if (!isset($request['TransactionStatement'])) {
             Yii::$app->session->setFlash('error', 'Transaction Statement data is required.');
@@ -132,14 +135,13 @@ class ExpenseService
 
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
-            // Transaction Process
-            $transactionData = TransactionService::formDataForTransactionStatement($request['TransactionStatement'], $expense->id, Expense::className(), $expense->supplierId, Supplier::className(), Yii::$app->user->id);
-            $transactionStoreResponse = TransactionService::store($transactionData);
-            if ($transactionStoreResponse['error']) {
-                Yii::$app->session->setFlash('error', 'Transaction Statement - ' . $transactionStoreResponse['message']);
-                $dbTransaction->rollBack();
-                return $expense;
+            // Process Transaction Data
+            $transactionStatementStoreResponse = $this->transactionService->store($expense, $customer, $requestData);
+            if ($transactionStatementStoreResponse['error']) {
+                throw new Exception('Transaction Statement Data process failed - ' . $transactionStatementStoreResponse['message']);
             }
+            $transaction = $transactionStatementStoreResponse['data'];
+
             //
             $expense->totalPaid += $transactionStoreResponse['data']->amount;
             $expense = $this->expenseRepository->update($expense);
