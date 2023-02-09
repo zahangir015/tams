@@ -55,7 +55,7 @@ class AccountTypeController extends Controller
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+                return $this->redirect(['view', 'uid' => $model->uid]);
             } else {
                 Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
             }
@@ -80,7 +80,7 @@ class AccountTypeController extends Controller
         $model = $this->findModel($uid);
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+                return $this->redirect(['view', 'uid' => $model->uid]);
             } else {
                 Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
             }

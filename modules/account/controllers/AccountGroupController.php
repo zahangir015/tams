@@ -54,7 +54,7 @@ class AccountGroupController extends Controller
         $model = new AccountGroup();
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+                return $this->redirect(['view', 'uid' => $model->uid]);
             } else {
                 Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
             }
@@ -79,7 +79,7 @@ class AccountGroupController extends Controller
         $model = $this->findModel($uid);
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+                return $this->redirect(['view', 'uid' => $model->uid]);
             } else {
                 Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
             }
@@ -120,7 +120,7 @@ class AccountGroupController extends Controller
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
 
-    public function actionGetTypes($query = null): array
+    public function actionGetGroups($query = null): array
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
         $types = AccountGroup::query($query);

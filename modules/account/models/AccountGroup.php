@@ -27,7 +27,7 @@ class AccountGroup extends ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%account_group}}';
     }
@@ -75,5 +75,15 @@ class AccountGroup extends ActiveRecord
     public function getChartOfAccounts(): ActiveQuery
     {
         return $this->hasMany(ChartOfAccount::class, ['accountGroupId' => 'id']);
+    }
+
+    /**
+     * Gets query for [[AccountType]].
+     *
+     * @return ActiveQuery
+     */
+    public function getAccountType(): ActiveQuery
+    {
+        return $this->hasOne(AccountType::class, ['id' => 'accountTypeId']);
     }
 }
