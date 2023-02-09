@@ -1,34 +1,29 @@
 <?php
 
 use app\components\GlobalConstant;
-use app\modules\account\models\ExpenseSubCategory;
-use kartik\select2\Select2;
+use app\components\Helper;
+use app\modules\account\models\AccountType;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use kartik\grid\ActionColumn;
 use kartik\grid\GridView;
-use app\components\Helper;
 
 /** @var yii\web\View $this */
-/** @var app\modules\account\models\ExpenseSubCategorySearch $searchModel */
+/** @var app\modules\account\models\search\AccountTypeSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = Yii::t('app', 'Expense Sub Categories');
+$this->title = Yii::t('app', 'Account Types');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="expense-sub-category-index">
+<div class="account-type-index">
+
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'kartik\grid\SerialColumn'],
-            [
-                'attribute' => 'categoryId',
-                'value' => function ($model) {
-                    return $model->category->name;
-                },
-                'filter' => Select2::widget(Helper::ajaxDropDown('categoryId', '/account/expense-category/get-categories', false, 'categoryId', 'categoryId'))
-            ],
+            //'id',
+            //'uid',
             'name',
             [
                 'class' => '\kartik\grid\DataColumn',
@@ -46,7 +41,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'updatedBy',
             [
                 'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, ExpenseSubCategory $model, $key, $index, $column) {
+                'urlCreator' => function ($action, AccountType $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'uid' => $model->uid]);
                 },
                 'width' => '150px',
@@ -58,11 +53,11 @@ $this->params['breadcrumbs'][] = $this->title;
         'toolbar' => [
             [
                 'content' =>
-                    Html::a('<i class="fas fa-plus"></i>', ['/account/expense-sub-category/create'], [
+                    Html::a('<i class="fas fa-plus"></i>', ['/account/account-type/create'], [
                         'title' => Yii::t('app', 'Add Airline'),
                         'class' => 'btn btn-success'
                     ]) . ' ' .
-                    Html::a('<i class="fas fa-redo"></i>', ['/account/expense-sub-category/index'], [
+                    Html::a('<i class="fas fa-redo"></i>', ['/account/account-type/index'], [
                         'class' => 'btn btn-primary',
                         'title' => Yii::t('app', 'Reset Grid')
                     ]),
@@ -70,7 +65,7 @@ $this->params['breadcrumbs'][] = $this->title;
             '{export}',
             '{toggleData}'
         ],
-        //'pjax' => true,
+        'pjax' => true,
         'bordered' => true,
         'striped' => false,
         'condensed' => false,
@@ -81,4 +76,5 @@ $this->params['breadcrumbs'][] = $this->title;
             'type' => GridView::TYPE_DARK
         ],
     ]); ?>
+
 </div>

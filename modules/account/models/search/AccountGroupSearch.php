@@ -5,12 +5,12 @@ namespace app\modules\account\models\search;
 use app\components\GlobalConstant;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\account\models\ExpenseSubCategory;
+use app\modules\account\models\AccountGroup;
 
 /**
- * ExpenseSubCategorySearch represents the model behind the search form of `app\modules\account\models\ExpenseSubCategory`.
+ * AccountGroupSearch represents the model behind the search form of `app\modules\account\models\AccountGroup`.
  */
-class ExpenseSubCategorySearch extends ExpenseSubCategory
+class AccountGroupSearch extends AccountGroup
 {
     /**
      * {@inheritdoc}
@@ -18,8 +18,8 @@ class ExpenseSubCategorySearch extends ExpenseSubCategory
     public function rules(): array
     {
         return [
-            [['id', 'categoryId', 'status', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'], 'integer'],
-            [['uid', 'name'], 'safe'],
+            [['id', 'accountTypeId', 'status', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'], 'integer'],
+            [['uid', 'name', 'code'], 'safe'],
         ];
     }
 
@@ -41,10 +41,10 @@ class ExpenseSubCategorySearch extends ExpenseSubCategory
      */
     public function search(array $params): ActiveDataProvider
     {
-        $query = ExpenseSubCategory::find();
+        $query = AccountGroup::find();
 
         // add conditions that should always apply here
-        $query->joinWith(['category'])
+        $query->joinWith(['accountType'])
             ->where(['status' => GlobalConstant::ACTIVE_STATUS]);
 
         $dataProvider = new ActiveDataProvider([
@@ -63,7 +63,7 @@ class ExpenseSubCategorySearch extends ExpenseSubCategory
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'categoryId' => $this->categoryId,
+            'accountTypeId' => $this->accountTypeId,
             'status' => $this->status,
             'createdAt' => $this->createdAt,
             'createdBy' => $this->createdBy,
@@ -72,7 +72,8 @@ class ExpenseSubCategorySearch extends ExpenseSubCategory
         ]);
 
         $query->andFilterWhere(['like', 'uid', $this->uid])
-            ->andFilterWhere(['like', 'name', $this->name]);
+            ->andFilterWhere(['like', 'name', $this->name])
+            ->andFilterWhere(['like', 'code', $this->code]);
 
         return $dataProvider;
     }
