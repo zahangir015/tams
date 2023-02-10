@@ -3,7 +3,7 @@
 namespace app\modules\sale\models\ticket;
 
 use app\modules\account\models\Invoice;
-use app\modules\sale\components\ServiceConstant;
+use app\modules\sale\components\AccountConstant;
 use app\modules\sale\models\Airline;
 use app\modules\sale\models\Customer;
 use app\modules\sale\models\Provider;
@@ -70,7 +70,7 @@ class TicketSearch extends Ticket
 
         // add conditions that should always apply here
         $query->joinWith(['airline', 'customer', 'provider', 'invoice'])
-            ->where(['<>', 'type', ServiceConstant::TYPE['Refund']]);
+            ->where(['<>', 'type', AccountConstant::TYPE['Refund']]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

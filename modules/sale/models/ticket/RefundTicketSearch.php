@@ -3,7 +3,7 @@
 namespace app\modules\sale\models\ticket;
 
 use app\modules\account\models\Invoice;
-use app\modules\sale\components\ServiceConstant;
+use app\modules\sale\components\AccountConstant;
 use app\modules\sale\models\Airline;
 use app\modules\sale\models\Customer;
 use app\modules\sale\models\Provider;
@@ -82,7 +82,7 @@ class RefundTicketSearch extends Ticket
         $query->joinWith(['airline', 'customer', 'provider', 'invoice','ticketSupplier',
             'ticketRefund' => function ($query) {
                 $query->where(['LIKE', 'refModel', 'Customer']);
-            }])->where([self::tableName().'.type' => ServiceConstant::TYPE['Refund']]);
+            }])->where([self::tableName().'.type' => AccountConstant::TYPE['Refund']]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

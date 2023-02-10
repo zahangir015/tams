@@ -3,6 +3,7 @@
 namespace app\modules\account\controllers;
 
 use app\components\Constant;
+use app\components\GlobalConstant;
 use app\models\Company;
 use app\modules\account\models\Invoice;
 use app\modules\account\models\search\InvoiceSearch;
@@ -12,7 +13,7 @@ use app\modules\account\models\TransactionStatement;
 use app\modules\account\repositories\InvoiceRepository;
 use app\modules\account\services\InvoiceService;
 use app\modules\account\services\RefundTransactionService;
-use app\modules\sale\components\ServiceConstant;
+use app\modules\sale\components\AccountConstant;
 use app\modules\sale\models\Customer;
 use Exception;
 use Yii;
@@ -122,8 +123,10 @@ class InvoiceController extends ParentController
      */
     public function actionDelete($uid): Response
     {
-        $this->findModel($uid)->delete();
-
+        $model = $this->findModel($uid);
+        $model->status = GlobalConstant::INACTIVE_STATUS;
+        $model->save();
+        Yii::$app->session->setFlash('success', 'Successfully Deleted');
         return $this->redirect(['index']);
     }
 
@@ -182,28 +185,28 @@ class InvoiceController extends ParentController
             ->with([
                 'tickets' => function ($query) use ($start_date, $end_date) {
                     $query
-                        ->where(['<>', 'paymentStatus', ServiceConstant::PAYMENT_STATUS['Full Paid']])
+                        ->where(['<>', 'paymentStatus', AccountConstant::PAYMENT_STATUS['Full Paid']])
                         ->andWhere(['IS', 'invoiceId', NULL]);
                     if ($start_date && $end_date) {
                         $query->andWhere(['between', 'issueDate', $start_date, $end_date])->orderBy(['issueDate' => SORT_ASC]);
                     }
                 },
                 'visas' => function ($query) use ($start_date, $end_date) {
-                    $query->where(['<>', 'paymentStatus', ServiceConstant::PAYMENT_STATUS['Full Paid']])
+                    $query->where(['<>', 'paymentStatus', AccountConstant::PAYMENT_STATUS['Full Paid']])
                         ->andWhere(['IS', 'invoiceId', NULL]);
                     if ($start_date && $end_date) {
                         $query->andWhere(['between', 'issueDate', $start_date, $end_date])->orderBy(['issueDate' => SORT_ASC]);
                     }
                 },
                 'hotels' => function ($query) use ($start_date, $end_date) {
-                    $query->where(['<>', 'paymentStatus', ServiceConstant::PAYMENT_STATUS['Full Paid']])
+                    $query->where(['<>', 'paymentStatus', AccountConstant::PAYMENT_STATUS['Full Paid']])
                         ->andWhere(['IS', 'invoiceId', NULL]);
                     if ($start_date && $end_date) {
                         $query->andWhere(['between', 'issueDate', $start_date, $end_date])->orderBy(['issueDate' => SORT_ASC]);
                     }
                 },
                 'holidays' => function ($query) use ($start_date, $end_date) {
-                    $query->where(['<>', 'paymentStatus', ServiceConstant::PAYMENT_STATUS['Full Paid']])
+                    $query->where(['<>', 'paymentStatus', AccountConstant::PAYMENT_STATUS['Full Paid']])
                         ->andWhere(['IS', 'invoiceId', NULL]);
                     if ($start_date && $end_date) {
                         $query->andWhere(['between', 'issueDate', $start_date, $end_date])->orderBy(['issueDate' => SORT_ASC]);

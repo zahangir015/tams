@@ -23,7 +23,7 @@ class m230126_174235_create_journal_entry_table extends Migration
             'debit' => $this->double()->defaultValue(0),
             'credit' => $this->double()->defaultValue(0),
             'details' => $this->string()->null(),
-            'status' => $this->tinyInteger()->notNull(),
+            'status' => $this->boolean()->notNull()->defaultValue(1),
             'createdAt' => $this->integer()->notNull(),
             'createdBy' => $this->integer(11)->notNull(),
             'updatedAt' => $this->integer()->null(),

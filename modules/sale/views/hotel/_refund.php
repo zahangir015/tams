@@ -1,7 +1,7 @@
 <?php
 
 use app\components\GlobalConstant;
-use app\modules\sale\components\ServiceConstant;
+use app\modules\sale\components\AccountConstant;
 use kartik\daterange\DateRangePicker;
 use kartik\select2\Select2;
 use yii\helpers\Html;
@@ -113,18 +113,18 @@ $this->registerJsFile(
                     </div>
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($hotelRefund, 'refundStatus')->dropDownList(ServiceConstant::OTHER_SERVICE_REFUND_STATUS, ['prompt' => 'Select refund status...']) ?>
+                            <?= $form->field($hotelRefund, 'refundStatus')->dropDownList(AccountConstant::OTHER_SERVICE_REFUND_STATUS, ['prompt' => 'Select refund status...']) ?>
                         </div>
                         <div class="col-md">
-                            <?= $form->field($hotelRefund, 'refundMedium')->dropdownList(ServiceConstant::REFUND_MEDIUM, ['prompt' => 'Select refund medium...']) ?>
+                            <?= $form->field($hotelRefund, 'refundMedium')->dropdownList(AccountConstant::REFUND_MEDIUM, ['prompt' => 'Select refund medium...']) ?>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($model, 'type')->dropdownList(ServiceConstant::SERVICE_TYPE_FOR_CREATE, ['value' => ServiceConstant::SERVICE_TYPE_FOR_CREATE['Refund'], 'readOnly' => 'readOnly'])->label('Type') ?>
+                            <?= $form->field($model, 'type')->dropdownList(AccountConstant::SERVICE_TYPE_FOR_CREATE, ['value' => AccountConstant::SERVICE_TYPE_FOR_CREATE['Refund'], 'readOnly' => 'readOnly'])->label('Type') ?>
                         </div>
                         <div class="col-md">
-                            <?= $form->field($hotelRefund, 'refundMethod')->dropdownList(ServiceConstant::REFUND_METHOD, ['prompt' => 'Select refund method...']) ?>
+                            <?= $form->field($hotelRefund, 'refundMethod')->dropdownList(AccountConstant::REFUND_METHOD, ['prompt' => 'Select refund method...']) ?>
                         </div>
                     </div>
                     <div class="row">

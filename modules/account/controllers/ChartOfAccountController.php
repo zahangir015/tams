@@ -2,33 +2,30 @@
 
 namespace app\modules\account\controllers;
 
+use app\components\GlobalConstant;
+use app\components\Helper;
+use app\controllers\ParentController;
 use app\modules\account\models\ChartOfAccount;
 use app\modules\account\models\search\ChartOfAccountSearch;
-use yii\web\Controller;
+use app\modules\account\repositories\JournalRepository;
+use app\modules\account\services\JournalService;
+use Yii;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
+use yii\web\Response;
 
 /**
  * ChartOfAccountController implements the CRUD actions for ChartOfAccount model.
  */
-class ChartOfAccountController extends Controller
+class ChartOfAccountController extends ParentController
 {
-    /**
-     * @inheritDoc
-     */
-    public function behaviors()
+    public JournalService $journalService;
+    public JournalRepository $journalRepository;
+
+    public function __construct($id, $module, $config = [])
     {
-        return array_merge(
-            parent::behaviors(),
-            [
-                'verbs' => [
-                    'class' => VerbFilter::className(),
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
-                ],
-            ]
-        );
+        $this->journalService = new JournalService();
+        $this->journalRepository = new JournalRepository();
+        parent::__construct($id, $module, $config);
     }
 
     /**
@@ -36,7 +33,7 @@ class ChartOfAccountController extends Controller
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $searchModel = new ChartOfAccountSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
@@ -49,29 +46,31 @@ class ChartOfAccountController extends Controller
 
     /**
      * Displays a single ChartOfAccount model.
-     * @param int $id ID
+     * @param string $uid UID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id)
+    public function actionView(string $uid): string
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $this->findModel($uid),
         ]);
     }
 
     /**
      * Creates a new ChartOfAccount model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
+     * @return string|Response
      */
-    public function actionCreate()
+    public function actionCreate(): Response|string
     {
         $model = new ChartOfAccount();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+                return $this->redirect(['view', 'uid' => $model->uid]);
+            } else {
+                Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
             }
         } else {
             $model->loadDefaultValues();
@@ -85,16 +84,19 @@ class ChartOfAccountController extends Controller
     /**
      * Updates an existing ChartOfAccount model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id ID
-     * @return string|\yii\web\Response
+     * @param string $uid UID
+     * @return string|Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionUpdate(string $uid): Response|string
     {
-        $model = $this->findModel($id);
-
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        $model = $this->findModel($uid);
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post()) && $model->save()) {
+                return $this->redirect(['view', 'uid' => $model->uid]);
+            } else {
+                Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
+            }
         }
 
         return $this->render('update', [
@@ -105,30 +107,43 @@ class ChartOfAccountController extends Controller
     /**
      * Deletes an existing ChartOfAccount model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id ID
-     * @return \yii\web\Response
+     * @param string $uid UID
+     * @return Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($id)
+    public function actionDelete(string $uid): Response
     {
-        $this->findModel($id)->delete();
-
+        $model = $this->findModel($uid);
+        $model->status = GlobalConstant::INACTIVE_STATUS;
+        $model->save();
+        Yii::$app->session->setFlash('success', 'Successfully Deleted');
         return $this->redirect(['index']);
     }
 
     /**
      * Finds the ChartOfAccount model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id ID
+     * @param string $uid UID
      * @return ChartOfAccount the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel(string $uid): ChartOfAccount
     {
-        if (($model = ChartOfAccount::findOne(['id' => $id])) !== null) {
+        if (($model = ChartOfAccount::findOne(['uid' => $uid])) !== null) {
             return $model;
         }
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+    }
+
+    public function actionSearch($query = null): array
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $accounts = ChartOfAccount::query($query);
+        $data = [];
+        foreach ($accounts as $account) {
+            $data[] = ['id' => $account->id, 'text' => $account->name. ' | ' .$account->code];
+        }
+        return ['results' => $data];
     }
 }

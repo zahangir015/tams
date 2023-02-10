@@ -2,6 +2,8 @@
 
 namespace app\modules\account\controllers;
 
+use app\components\GlobalConstant;
+use app\controllers\ParentController;
 use app\modules\account\models\AccountType;
 use app\modules\account\models\search\AccountTypeSearch;
 use Yii;
@@ -13,7 +15,7 @@ use yii\web\Response;
 /**
  * AccountTypeController implements the CRUD actions for AccountType model.
  */
-class AccountTypeController extends Controller
+class AccountTypeController extends ParentController
 {
     /**
      * Lists all AccountType models.
@@ -37,7 +39,7 @@ class AccountTypeController extends Controller
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView(string $uid)
+    public function actionView(string $uid): string
     {
         return $this->render('view', [
             'model' => $this->findModel($uid),
@@ -75,7 +77,7 @@ class AccountTypeController extends Controller
      * @return string|Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate(string $uid)
+    public function actionUpdate(string $uid): Response|string
     {
         $model = $this->findModel($uid);
         if ($this->request->isPost) {
@@ -100,8 +102,10 @@ class AccountTypeController extends Controller
      */
     public function actionDelete(string $uid): Response
     {
-        $this->findModel($uid)->delete();
-
+        $model = $this->findModel($uid);
+        $model->status = GlobalConstant::INACTIVE_STATUS;
+        $model->save();
+        Yii::$app->session->setFlash('success', 'Successfully Deleted');
         return $this->redirect(['index']);
     }
 
@@ -121,7 +125,7 @@ class AccountTypeController extends Controller
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
 
-    public function actionGetTypes($query = null): array
+    public function actionSearch($query = null): array
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
         $types = AccountType::query($query);

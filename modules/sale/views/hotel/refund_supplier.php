@@ -2,7 +2,7 @@
 
 use app\components\GlobalConstant;
 use app\components\Helper;
-use app\modules\sale\components\ServiceConstant;
+use app\modules\sale\components\AccountConstant;
 use app\modules\sale\models\ticket\Ticket;
 use kartik\date\DatePicker;
 use kartik\daterange\DateRangePicker;
@@ -48,7 +48,7 @@ use yii\bootstrap4\Html;
         </div>
         <div class="row">
             <div class="col-md-4">
-                <?= $form->field($hotelSupplier, "[$row]type")->dropdownList(ServiceConstant::SERVICE_TYPE_FOR_CREATE, ['value' => $hotelSupplier->type]) ?>
+                <?= $form->field($hotelSupplier, "[$row]type")->dropdownList(AccountConstant::SERVICE_TYPE_FOR_CREATE, ['value' => $hotelSupplier->type]) ?>
             </div>
             <div class="col-md-8">
                 <?= $form->field($hotelSupplier, "[$row]serviceDetails")->textInput(['maxlength' => true]); ?>

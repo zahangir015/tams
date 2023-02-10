@@ -2,6 +2,7 @@
 
 namespace app\modules\account\models;
 
+use app\traits\BehaviorTrait;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
@@ -24,6 +25,8 @@ use yii\db\ActiveRecord;
  */
 class AccountGroup extends ActiveRecord
 {
+    use BehaviorTrait;
+
     /**
      * {@inheritdoc}
      */
@@ -56,7 +59,7 @@ class AccountGroup extends ActiveRecord
         return [
             'id' => Yii::t('app', 'ID'),
             'uid' => Yii::t('app', 'Uid'),
-            'accountTypeId' => Yii::t('app', 'Account Type ID'),
+            'accountTypeId' => Yii::t('app', 'Account Type'),
             'name' => Yii::t('app', 'Name'),
             'code' => Yii::t('app', 'Code'),
             'status' => Yii::t('app', 'Status'),
@@ -85,5 +88,16 @@ class AccountGroup extends ActiveRecord
     public function getAccountType(): ActiveQuery
     {
         return $this->hasOne(AccountType::class, ['id' => 'accountTypeId']);
+    }
+
+    public static function getGroupList(array $queryArray): array
+    {
+        $groupList = self::find()->where($queryArray)->asArray()->all();
+        $groupDataArray = [];
+        foreach ($groupList as $value) {
+            $groupDataArray[] = ['id' => $value['id'], 'name' => $value['name'].' | '.$value['code']];
+        }
+
+        return $groupDataArray;
     }
 }

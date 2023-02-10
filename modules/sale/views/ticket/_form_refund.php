@@ -2,7 +2,7 @@
 
 use app\components\GlobalConstant;
 use app\components\Helper;
-use app\modules\sale\components\ServiceConstant;
+use app\modules\sale\components\AccountConstant;
 use app\modules\sale\models\ticket\TicketRefund;
 use kartik\date\DatePicker;
 use yii\bootstrap4\ActiveForm;
@@ -134,13 +134,13 @@ $this->registerJsFile(
             </div>
             <div class="row">
                 <div class="col-md">
-                    <?= $form->field($ticketRefund, 'refundStatus')->dropDownList(ServiceConstant::REFUND_STATUS, ['prompt' => 'Select refund status...']) ?>
+                    <?= $form->field($ticketRefund, 'refundStatus')->dropDownList(AccountConstant::REFUND_STATUS, ['prompt' => 'Select refund status...']) ?>
                 </div>
                 <div class="col-md">
-                    <?= $form->field($ticketRefund, 'refundMedium')->dropdownList(ServiceConstant::REFUND_MEDIUM, ['prompt' => 'Select refund medium...']) ?>
+                    <?= $form->field($ticketRefund, 'refundMedium')->dropdownList(AccountConstant::REFUND_MEDIUM, ['prompt' => 'Select refund medium...']) ?>
                 </div>
                 <div class="col-md">
-                    <?= $form->field($ticketRefund, 'refundMethod')->dropdownList(ServiceConstant::REFUND_METHOD, ['prompt' => 'Select refund method...']) ?>
+                    <?= $form->field($ticketRefund, 'refundMethod')->dropdownList(AccountConstant::REFUND_METHOD, ['prompt' => 'Select refund method...']) ?>
                 </div>
             </div>
             <div class="row">

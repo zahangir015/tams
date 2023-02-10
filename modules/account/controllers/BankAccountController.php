@@ -106,7 +106,7 @@ class BankAccountController extends ParentController
         $model = $this->findModel($uid);
         $model->status = GlobalConstant::INACTIVE_STATUS;
         $model->save();
-
+        Yii::$app->session->setFlash('success', 'Successfully Deleted');
         return $this->redirect(['index']);
     }
 

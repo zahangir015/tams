@@ -2,7 +2,11 @@
 
 namespace app\modules\account\models;
 
+use app\components\GlobalConstant;
+use app\traits\BehaviorTrait;
 use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%chart_of_account}}".
@@ -25,12 +29,13 @@ use Yii;
  * @property AccountType $accountType
  * @property JournalEntry[] $journalEntries
  */
-class ChartOfAccount extends \yii\db\ActiveRecord
+class ChartOfAccount extends ActiveRecord
 {
+    use BehaviorTrait;
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%chart_of_account}}';
     }
@@ -38,10 +43,10 @@ class ChartOfAccount extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            [['uid', 'accountTypeId', 'accountGroupId', 'code', 'name', 'status', 'createdAt', 'createdBy'], 'required'],
+            [['accountTypeId', 'accountGroupId', 'code', 'name'], 'required'],
             [['accountTypeId', 'accountGroupId', 'status', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['code'], 'string', 'max' => 10],
@@ -57,13 +62,13 @@ class ChartOfAccount extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),
             'uid' => Yii::t('app', 'Uid'),
-            'accountTypeId' => Yii::t('app', 'Account Type ID'),
-            'accountGroupId' => Yii::t('app', 'Account Group ID'),
+            'accountTypeId' => Yii::t('app', 'Account Type'),
+            'accountGroupId' => Yii::t('app', 'Account Group'),
             'code' => Yii::t('app', 'Code'),
             'name' => Yii::t('app', 'Name'),
             'description' => Yii::t('app', 'Description'),
@@ -79,9 +84,9 @@ class ChartOfAccount extends \yii\db\ActiveRecord
     /**
      * Gets query for [[AccountGroup]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getAccountGroup()
+    public function getAccountGroup(): ActiveQuery
     {
         return $this->hasOne(AccountGroup::class, ['id' => 'accountGroupId']);
     }
@@ -89,9 +94,9 @@ class ChartOfAccount extends \yii\db\ActiveRecord
     /**
      * Gets query for [[AccountType]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getAccountType()
+    public function getAccountType(): ActiveQuery
     {
         return $this->hasOne(AccountType::class, ['id' => 'accountTypeId']);
     }
@@ -99,10 +104,25 @@ class ChartOfAccount extends \yii\db\ActiveRecord
     /**
      * Gets query for [[JournalEntries]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getJournalEntries()
+    public function getJournalEntries(): ActiveQuery
     {
         return $this->hasMany(JournalEntry::class, ['accountId' => 'id']);
+    }
+
+    /**
+     * Gets query for [[ChartOfAccounts]].
+     *
+     * @return array
+     */
+    public static function query($query): array
+    {
+        return self::find()
+            ->select(['id', 'name', 'code'])
+            ->where(['like', 'name', $query])
+            ->orWhere(['like', 'code', $query])
+            ->andWhere(['status' => GlobalConstant::ACTIVE_STATUS])
+            ->all();
     }
 }

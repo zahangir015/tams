@@ -6,7 +6,7 @@ use app\components\Helper;
 use app\modules\account\models\Invoice;
 use app\modules\account\services\InvoiceService;
 use app\modules\account\services\LedgerService;
-use app\modules\sale\components\ServiceConstant;
+use app\modules\sale\components\AccountConstant;
 use app\modules\sale\models\Customer;
 use app\modules\sale\models\holiday\Holiday;
 use app\modules\sale\models\holiday\HolidayRefund;
@@ -39,7 +39,7 @@ class HolidayService
                 $customer = Customer::findOne(['id' => $requestData['Holiday']['customerId']]);
                 $holiday = new Holiday();
                 if ($holiday->load($requestData)) {
-                    $holiday->type = ServiceConstant::TYPE['New'];
+                    $holiday->type = AccountConstant::TYPE['New'];
                     $holiday->customerCategory = $customer->category;
                     $holiday = $this->holidayRepository->store($holiday);
                     if ($holiday->hasErrors()) {
@@ -105,7 +105,7 @@ class HolidayService
                     }
 
                     // Mother Holiday update
-                    $motherHoliday->type = ServiceConstant::TICKET_TYPE_FOR_REFUND['Refund Requested'];
+                    $motherHoliday->type = AccountConstant::TICKET_TYPE_FOR_REFUND['Refund Requested'];
                     $motherHoliday->refundRequestDate = $holiday->refundRequestDate;
                     $motherHoliday = $this->holidayRepository->store($motherHoliday);
                     if ($motherHoliday->hasErrors()) {
@@ -271,7 +271,7 @@ class HolidayService
         ];
 
         foreach ($holiday->holidaySuppliers as $singleSupplier) {
-            if ($singleSupplier->type == ServiceConstant::SERVICE_TYPE_FOR_CREATE['Refund']) {
+            if ($singleSupplier->type == AccountConstant::SERVICE_TYPE_FOR_CREATE['Refund']) {
                 $referenceData[] = [
                     'refId' => $singleSupplier->supplierId,
                     'refModel' => Supplier::class,

@@ -1,7 +1,7 @@
 <?php
 
 use app\components\GlobalConstant;
-use app\modules\sale\components\ServiceConstant;
+use app\modules\sale\components\AccountConstant;
 use kartik\daterange\DateRangePicker;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -63,9 +63,9 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'paxType',
                 'value' => function($model){
-                    return ServiceConstant::PAX_TYPE[$model->paxType];
+                    return AccountConstant::PAX_TYPE[$model->paxType];
                 },
-                'filter' => ServiceConstant::PAX_TYPE
+                'filter' => AccountConstant::PAX_TYPE
             ],
             [
                 'attribute' => 'issueDate',
@@ -111,45 +111,45 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'type',
                 'value' => function($model){
-                    return ServiceConstant::ALL_TICKET_TYPE[$model->type];
+                    return AccountConstant::ALL_TICKET_TYPE[$model->type];
                 },
-                'filter' => ServiceConstant::ALL_TICKET_TYPE
+                'filter' => AccountConstant::ALL_TICKET_TYPE
             ],
             [
                 'attribute' => 'tripType',
                 'value' => function($model){
-                    return ServiceConstant::TRIP_TYPE[$model->tripType];
+                    return AccountConstant::TRIP_TYPE[$model->tripType];
                 },
-                'filter' => ServiceConstant::TRIP_TYPE
+                'filter' => AccountConstant::TRIP_TYPE
             ],
             [
                 'attribute' => 'bookedOnline',
                 'value' => function($model){
-                    return ServiceConstant::BOOKING_TYPE[$model->bookedOnline];
+                    return AccountConstant::BOOKING_TYPE[$model->bookedOnline];
                 },
-                'filter' => ServiceConstant::BOOKING_TYPE
+                'filter' => AccountConstant::BOOKING_TYPE
             ],
             'route',
             [
                 'attribute' => 'flightType',
                 'value' => function($model){
-                    return ServiceConstant::FLIGHT_TYPE[$model->flightType];
+                    return AccountConstant::FLIGHT_TYPE[$model->flightType];
                 },
-                'filter' => ServiceConstant::FLIGHT_TYPE
+                'filter' => AccountConstant::FLIGHT_TYPE
             ],
             [
                 'attribute' => 'seatClass',
                 'value' => function($model){
-                    return ServiceConstant::SEAT_CLASS[$model->seatClass];
+                    return AccountConstant::SEAT_CLASS[$model->seatClass];
                 },
-                'filter' => ServiceConstant::SEAT_CLASS
+                'filter' => AccountConstant::SEAT_CLASS
             ],
             [
                 'attribute' => 'refundPolicy',
                 'value' => function($model){
-                    return $model->refundPolicy ? ServiceConstant::REFUND_POLICY[$model->refundPolicy] : null;
+                    return $model->refundPolicy ? AccountConstant::REFUND_POLICY[$model->refundPolicy] : null;
                 },
-                'filter' => ServiceConstant::REFUND_POLICY
+                'filter' => AccountConstant::REFUND_POLICY
             ],
             'codeShare',
             'reference',
@@ -206,7 +206,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 //'updateOptions' => ['role' => 'modal-remote', 'title' => 'Update', 'data-toggle' => 'tooltip'],
                 'buttons' => [
                     'refund' => function ($url, $model) {
-                        if ($model->type === ServiceConstant::TYPE['Refund'] || $model->type === ServiceConstant::TYPE['Refund Requested']) {
+                        if ($model->type === AccountConstant::TYPE['Refund'] || $model->type === AccountConstant::TYPE['Refund Requested']) {
                             return false;
                         }
                         return Html::a('<span class="fas fa-minus-square"></span>', ['/sale/ticket/refund', 'uid' => $model->uid], [

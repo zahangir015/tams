@@ -7,7 +7,7 @@ use app\components\Helper;
 use app\modules\account\models\Invoice;
 use app\modules\account\services\InvoiceService;
 use app\modules\account\services\LedgerService;
-use app\modules\sale\components\ServiceConstant;
+use app\modules\sale\components\AccountConstant;
 use app\modules\sale\models\Customer;
 use app\modules\sale\models\hotel\Hotel;
 use app\modules\sale\models\hotel\HotelCategory;
@@ -51,7 +51,7 @@ class HotelService
                 $customer = Customer::findOne(['id' => $requestData['Hotel']['customerId']]);
                 $hotel = new Hotel();
                 if ($hotel->load($requestData)) {
-                    $hotel->type = ServiceConstant::TYPE['New'];
+                    $hotel->type = AccountConstant::TYPE['New'];
                     $hotel->customerCategory = $customer->category;
                     $hotel = $this->hotelRepository->store($hotel);
                     if ($hotel->hasErrors()) {
@@ -117,7 +117,7 @@ class HotelService
                     }
 
                     // Mother Hotel update
-                    $motherHotel->type = ServiceConstant::TICKET_TYPE_FOR_REFUND['Refund Requested'];
+                    $motherHotel->type = AccountConstant::TICKET_TYPE_FOR_REFUND['Refund Requested'];
                     $motherHotel->refundRequestDate = $hotel->refundRequestDate;
                     $motherHotel = $this->hotelRepository->store($motherHotel);
                     if ($motherHotel->hasErrors()) {
@@ -248,10 +248,10 @@ class HotelService
                 $model->packageId = $hotel->id;
                 $model->identificationNo = $hotel->identificationNumber;
                 $model->status = Constant::ACTIVE_STATUS;
-                $model->paymentStatus = ServiceConstant::PAYMENT_STATUS['Due'];
+                $model->paymentStatus = AccountConstant::PAYMENT_STATUS['Due'];
             }
             $model->setAttributes($packageSupplier);
-            $model->type = $packageSupplier['type'] ?? ServiceConstant::TYPE['New'];
+            $model->type = $packageSupplier['type'] ?? AccountConstant::TYPE['New'];
             $model->supplierName = $checkSupplier->name;
 
             if (!$model->save()) {
@@ -371,7 +371,7 @@ class HotelService
         ];
 
         foreach ($hotel->hotelSuppliers as $singleSupplier) {
-            if ($singleSupplier->type == ServiceConstant::SERVICE_TYPE_FOR_CREATE['Refund']) {
+            if ($singleSupplier->type == AccountConstant::SERVICE_TYPE_FOR_CREATE['Refund']) {
                 $referenceData[] = [
                     'refId' => $singleSupplier->supplierId,
                     'refModel' => Supplier::class,

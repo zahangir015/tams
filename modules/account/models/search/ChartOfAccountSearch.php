@@ -2,6 +2,7 @@
 
 namespace app\modules\account\models\search;
 
+use app\components\GlobalConstant;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\account\models\ChartOfAccount;
@@ -11,10 +12,11 @@ use app\modules\account\models\ChartOfAccount;
  */
 class ChartOfAccountSearch extends ChartOfAccount
 {
+
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['id', 'accountTypeId', 'accountGroupId', 'status', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'], 'integer'],
@@ -25,7 +27,7 @@ class ChartOfAccountSearch extends ChartOfAccount
     /**
      * {@inheritdoc}
      */
-    public function scenarios()
+    public function scenarios(): array
     {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
@@ -38,14 +40,17 @@ class ChartOfAccountSearch extends ChartOfAccount
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search(array $params): ActiveDataProvider
     {
         $query = ChartOfAccount::find();
 
         // add conditions that should always apply here
+        $query->joinWith(['accountType', 'accountGroup'])
+            ->where([self::tableName().'.status' => GlobalConstant::ACTIVE_STATUS]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => ['defaultOrder' => ['id' => SORT_ASC]]
         ]);
 
         $this->load($params);
@@ -68,8 +73,7 @@ class ChartOfAccountSearch extends ChartOfAccount
             'updatedBy' => $this->updatedBy,
         ]);
 
-        $query->andFilterWhere(['like', 'uid', $this->uid])
-            ->andFilterWhere(['like', 'code', $this->code])
+        $query->andFilterWhere(['like', 'code', $this->code])
             ->andFilterWhere(['like', 'name', $this->name])
             ->andFilterWhere(['like', 'description', $this->description])
             ->andFilterWhere(['like', 'reportType', $this->reportType]);

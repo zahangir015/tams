@@ -1,6 +1,6 @@
 <?php
 
-use app\modules\sale\components\ServiceConstant;
+use app\modules\sale\components\AccountConstant;
 use app\modules\sale\models\visa\VisaSupplier;
 use kartik\daterange\DateRangePicker;
 use yii\helpers\Html;
@@ -81,7 +81,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'type',
                 'value' => 'type',
-                'filter' => ServiceConstant::ALL_SERVICE_TYPE
+                'filter' => AccountConstant::ALL_SERVICE_TYPE
             ],
             'serviceDetails',
             'quantity',

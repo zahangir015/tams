@@ -2,7 +2,7 @@
 
 use app\components\GlobalConstant;
 use app\components\Helper;
-use app\modules\sale\components\ServiceConstant;
+use app\modules\sale\components\AccountConstant;
 use app\modules\sale\models\ticket\Ticket;
 use kartik\date\DatePicker;
 use kartik\daterange\DateRangePicker;
@@ -62,7 +62,7 @@ use yii\bootstrap4\Html;
         </div>
         <div class="row">
             <div class="col-md-4">
-                <?= $form->field($holidaySupplier, "[$row]type")->textInput(['readOnly' => 'readOnly', 'value' => ServiceConstant::ALL_SERVICE_TYPE['New']]) ?>
+                <?= $form->field($holidaySupplier, "[$row]type")->textInput(['readOnly' => 'readOnly', 'value' => AccountConstant::ALL_SERVICE_TYPE['New']]) ?>
             </div>
             <div class="col-md-8">
                 <?= $form->field($holidaySupplier, "[$row]serviceDetails")->textInput(['maxlength' => true]); ?>

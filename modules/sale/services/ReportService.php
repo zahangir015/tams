@@ -2,7 +2,7 @@
 
 namespace app\modules\sale\services;
 
-use app\modules\sale\components\ServiceConstant;
+use app\modules\sale\components\AccountConstant;
 use app\modules\sale\models\ticket\Ticket;
 use yii\db\Expression;
 
@@ -31,7 +31,7 @@ class ReportService
             ->where(['<=', 'refundRequestDate', $endDate])
             ->orWhere(['IS', 'refundRequestDate', NULL])
             ->andWhere(['between', 'issueDate', $startDate, $endDate])
-            ->andWhere(['<>', 'type', ServiceConstant::ALL_TICKET_TYPE['Refund']])
+            ->andWhere(['<>', 'type', AccountConstant::ALL_TICKET_TYPE['Refund']])
             ->groupBy('type')
             ->orderBy('total DESC')
             ->asArray()->all();
@@ -56,7 +56,7 @@ class ReportService
                 'type'
             ])
             ->where(['between', 'refundRequestDate', $startDate, $endDate])
-            ->andWhere(['type' => ServiceConstant::ALL_TICKET_TYPE['Refund']])
+            ->andWhere(['type' => AccountConstant::ALL_TICKET_TYPE['Refund']])
             ->orderBy('total DESC')
             ->asArray()->one();
     }

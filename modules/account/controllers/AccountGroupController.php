@@ -2,7 +2,9 @@
 
 namespace app\modules\account\controllers;
 
+use app\components\GlobalConstant;
 use app\components\Helper;
+use app\controllers\ParentController;
 use app\modules\account\models\AccountGroup;
 use app\modules\account\models\search\AccountGroupSearch;
 use Yii;
@@ -13,7 +15,7 @@ use yii\web\Response;
 /**
  * AccountGroupController implements the CRUD actions for AccountGroup model.
  */
-class AccountGroupController extends Controller
+class AccountGroupController extends ParentController
 {
     /**
      * Lists all AccountGroup models.
@@ -99,8 +101,10 @@ class AccountGroupController extends Controller
      */
     public function actionDelete(string $uid): Response
     {
-        $this->findModel($uid)->delete();
-
+        $model = $this->findModel($uid);
+        $model->status = GlobalConstant::INACTIVE_STATUS;
+        $model->save();
+        Yii::$app->session->setFlash('success', 'Successfully Deleted');
         return $this->redirect(['index']);
     }
 
@@ -120,7 +124,7 @@ class AccountGroupController extends Controller
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
 
-    public function actionGetGroups($query = null): array
+    public function actionSearch($query = null): array
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
         $types = AccountGroup::query($query);
@@ -129,5 +133,20 @@ class AccountGroupController extends Controller
             $data[] = ['id' => $type->id, 'text' => $type->name];
         }
         return ['results' => $data];
+    }
+
+    public function actionGetGroupByType(): array
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if ($parents != null) {
+                $typeId = $parents[0];
+                $out = AccountGroup::getGroupList(['accountTypeId' => $typeId, 'status' => GlobalConstant::ACTIVE_STATUS]);
+                return ['output' => $out, 'selected' => ''];
+            }
+        }
+        return ['output' => '', 'selected' => ''];
     }
 }

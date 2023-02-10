@@ -1,7 +1,7 @@
 <?php
 
 use app\components\GlobalConstant;
-use app\modules\sale\components\ServiceConstant;
+use app\modules\sale\components\AccountConstant;
 use kartik\daterange\DateRangePicker;
 use kartik\select2\Select2;
 use yii\bootstrap4\ActiveForm;
@@ -60,7 +60,7 @@ $this->registerJsFile(
                     </div>
                     <?= $form->field($model, 'motherId')->hiddenInput(['value' => $motherVisa->id])->label(false) ?>
                     <?= $form->field($model, 'processStatus')->hiddenInput(['value' => $motherVisa->processStatus])->label(false) ?>
-                    <?= $form->field($model, 'type')->hiddenInput(['value' => ServiceConstant::ALL_SERVICE_TYPE['Refund']])->label(false) ?>
+                    <?= $form->field($model, 'type')->hiddenInput(['value' => AccountConstant::ALL_SERVICE_TYPE['Refund']])->label(false) ?>
                 </div>
             </div>
         </div>
@@ -99,15 +99,15 @@ $this->registerJsFile(
                                 <?= $form->field($visaRefund, 'isRefunded')->dropDownList(GlobalConstant::YES_NO) ?>
                             </div>
                             <div class="col-md">
-                                <?= $form->field($visaRefund, 'refundStatus')->dropDownList(ServiceConstant::OTHER_SERVICE_REFUND_STATUS, ['prompt' => 'Select refund status...']) ?>
+                                <?= $form->field($visaRefund, 'refundStatus')->dropDownList(AccountConstant::OTHER_SERVICE_REFUND_STATUS, ['prompt' => 'Select refund status...']) ?>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md">
-                                <?= $form->field($visaRefund, 'refundMedium')->dropdownList(ServiceConstant::REFUND_MEDIUM, ['prompt' => 'Select refund medium...']) ?>
+                                <?= $form->field($visaRefund, 'refundMedium')->dropdownList(AccountConstant::REFUND_MEDIUM, ['prompt' => 'Select refund medium...']) ?>
                             </div>
                             <div class="col-md">
-                                <?= $form->field($visaRefund, 'refundMethod')->dropdownList(ServiceConstant::REFUND_METHOD, ['prompt' => 'Select refund method...']) ?>
+                                <?= $form->field($visaRefund, 'refundMethod')->dropdownList(AccountConstant::REFUND_METHOD, ['prompt' => 'Select refund method...']) ?>
                             </div>
                         </div>
                     </div>

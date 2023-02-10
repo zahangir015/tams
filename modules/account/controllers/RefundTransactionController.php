@@ -10,7 +10,7 @@ use app\modules\account\services\RefundTransactionService;
 use app\modules\hrm\repositories\EmployeeRepository;
 use app\modules\hrm\services\EmployeeService;
 use app\modules\hrm\services\HrmConfigurationService;
-use app\modules\sale\components\ServiceConstant;
+use app\modules\sale\components\AccountConstant;
 use app\modules\sale\models\Customer;
 use Yii;
 use yii\web\Controller;

@@ -2,7 +2,7 @@
 
 use app\components\GlobalConstant;
 use app\components\Helper;
-use app\modules\sale\components\ServiceConstant;
+use app\modules\sale\components\AccountConstant;
 use app\modules\sale\models\ticket\Ticket;
 use kartik\date\DatePicker;
 use kartik\select2\Select2;
@@ -80,7 +80,7 @@ use yii\bootstrap4\Html;
         </div>
         <div class="row">
             <div class="col-md">
-                <?= $form->field($model, "[$row]flightType")->dropDownList(ServiceConstant::FLIGHT_TYPE) ?>
+                <?= $form->field($model, "[$row]flightType")->dropDownList(AccountConstant::FLIGHT_TYPE) ?>
             </div>
             <div class="col-md">
                 <?= $form->field($model, "[$row]issueDate")->widget(DatePicker::className(), Helper::getDatewidget('issueDate' . $row))->label('Issue'); ?>
@@ -92,7 +92,7 @@ use yii\bootstrap4\Html;
                 <?= $form->field($model, "[$row]numberOfSegment")->textInput(['maxlength' => true]) ?>
             </div>
             <div class="col-md">
-                <?= $form->field($model, "[$row]refundPolicy")->dropDownList(ServiceConstant::REFUND_POLICY) ?>
+                <?= $form->field($model, "[$row]refundPolicy")->dropDownList(AccountConstant::REFUND_POLICY) ?>
             </div>
         </div>
         <div class="row">
@@ -114,7 +114,7 @@ use yii\bootstrap4\Html;
         </div>
         <div class="row">
             <div class="col-md">
-                <?= $form->field($model, "[$row]seatClass")->dropDownList(ServiceConstant::SEAT_CLASS) ?>
+                <?= $form->field($model, "[$row]seatClass")->dropDownList(AccountConstant::SEAT_CLASS) ?>
             </div>
             <div class="col-md">
                 <?= $form->field($model, "[$row]tripType")->dropDownList(GlobalConstant::TRIP_TYPE) ?>

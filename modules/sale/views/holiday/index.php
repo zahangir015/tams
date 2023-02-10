@@ -1,7 +1,7 @@
 <?php
 
 use app\components\GlobalConstant;
-use app\modules\sale\components\ServiceConstant;
+use app\modules\sale\components\AccountConstant;
 use app\modules\sale\models\holiday\Holiday;
 use kartik\daterange\DateRangePicker;
 use yii\helpers\Html;
@@ -126,7 +126,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'updateOptions' => ['role' => 'modal-remote', 'title' => 'Update', 'data-toggle' => 'tooltip'],
                 'buttons' => [
                     'refund' => function ($url, $model) {
-                        if ($model->type === ServiceConstant::TYPE['Refund'] || $model->type === ServiceConstant::TYPE['Refund Requested']) {
+                        if ($model->type === AccountConstant::TYPE['Refund'] || $model->type === AccountConstant::TYPE['Refund Requested']) {
                             return false;
                         }
                         return Html::a('<span class="fas fa-minus-square"></span>', ['/sale/holiday/refund', 'uid' => $model->uid], [

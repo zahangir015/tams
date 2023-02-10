@@ -10,7 +10,7 @@ use app\modules\account\services\InvoiceService;
 use app\modules\account\services\LedgerService;
 use app\modules\account\services\PaymentTimelineService;
 use app\modules\admin\models\User;
-use app\modules\sale\components\ServiceConstant;
+use app\modules\sale\components\AccountConstant;
 use app\modules\sale\models\Airline;
 use app\modules\sale\models\Customer;
 use app\modules\sale\models\Provider;
@@ -51,7 +51,7 @@ class FlightService
                     $ticket = new Ticket();
                     $ticket->scenario = 'create';
 
-                    if (($ticketData['type'] == ServiceConstant::TICKET_TYPE_FOR_CREATE['Reissue']) && !isset($ticketData['motherTicketId'])) {
+                    if (($ticketData['type'] == AccountConstant::TICKET_TYPE_FOR_CREATE['Reissue']) && !isset($ticketData['motherTicketId'])) {
                         throw new Exception('Ticket create failed - Mother ticket is required.');
                     }
 
@@ -75,14 +75,14 @@ class FlightService
                         }
 
                         // Invoice details data process
-                        if (($ticket->type == ServiceConstant::TICKET_TYPE_FOR_CREATE['Reissue']) && ($ticket->invoiceId)) {
+                        if (($ticket->type == AccountConstant::TICKET_TYPE_FOR_CREATE['Reissue']) && ($ticket->invoiceId)) {
                             $autoInvoiceCreateResponse = $this->invoiceService->addReissueServiceToInvoice($ticket);
                             if ($autoInvoiceCreateResponse['error']) {
                                 $dbTransaction->rollBack();
                                 throw new Exception('Invoice - ' . $autoInvoiceCreateResponse['message']);
                             }
                             $invoice = $autoInvoiceCreateResponse['data'];
-                        } elseif (isset($requestData['invoice']) && ($ticket->type != ServiceConstant::TICKET_TYPE_FOR_CREATE['Reissue'])) {
+                        } elseif (isset($requestData['invoice']) && ($ticket->type != AccountConstant::TICKET_TYPE_FOR_CREATE['Reissue'])) {
                             $tickets[] = [
                                 'refId' => $ticket->id,
                                 'refModel' => Ticket::class,
@@ -234,7 +234,7 @@ class FlightService
             }
 
             // Mother Ticket update
-            $motherTicket->type = ServiceConstant::TICKET_TYPE_FOR_REFUND['Refund Requested'];
+            $motherTicket->type = AccountConstant::TICKET_TYPE_FOR_REFUND['Refund Requested'];
             $motherTicket->refundRequestDate = $newRefundTicket->refundRequestDate;
             $motherTicket = $this->flightRepository->store($motherTicket);
             if ($motherTicket->hasErrors()) {
@@ -463,7 +463,7 @@ class FlightService
             $ticket->receivedAmount = 0;
             $ticket->status = GlobalConstant::ACTIVE_STATUS;
         }
-        if ($ticket->type == ServiceConstant::TICKET_TYPE_FOR_CREATE['Reissue']) {
+        if ($ticket->type == AccountConstant::TICKET_TYPE_FOR_CREATE['Reissue']) {
             $ticket->invoiceId = Ticket::findOne(['id' => $ticket->motherTicketId])->invoiceId;
         }
         return $ticket;

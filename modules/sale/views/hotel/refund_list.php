@@ -1,7 +1,7 @@
 <?php
 
 use app\components\GlobalConstant;
-use app\modules\sale\components\ServiceConstant;
+use app\modules\sale\components\AccountConstant;
 use app\modules\sale\models\hotel\Hotel;
 use kartik\daterange\DateRangePicker;
 use yii\helpers\Html;
@@ -143,7 +143,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => function ($model) {
                     return $model->hotelRefund->refundStatus;
                 },
-                'filter' => ServiceConstant::REFUND_STATUS
+                'filter' => AccountConstant::REFUND_STATUS
             ],
             [
                 'attribute' => 'refundMedium',
@@ -151,7 +151,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => function ($model) {
                     return $model->hotelRefund->refundMedium;
                 },
-                'filter' => ServiceConstant::REFUND_MEDIUM
+                'filter' => AccountConstant::REFUND_MEDIUM
             ],
             [
                 'attribute' => 'refundMethod',
@@ -159,7 +159,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => function ($model) {
                     return $model->hotelRefund->refundMethod;
                 },
-                'filter' => ServiceConstant::REFUND_METHOD
+                'filter' => AccountConstant::REFUND_METHOD
             ],
             [
                 'attribute' => 'refundDate',

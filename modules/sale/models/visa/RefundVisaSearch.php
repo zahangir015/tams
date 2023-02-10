@@ -3,7 +3,7 @@
 namespace app\modules\sale\models\visa;
 
 use app\modules\account\models\Invoice;
-use app\modules\sale\components\ServiceConstant;
+use app\modules\sale\components\AccountConstant;
 use app\modules\sale\models\Customer;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
@@ -61,7 +61,7 @@ class RefundVisaSearch extends Visa
         $query->joinWith(['invoice', 'customer', 'visaSuppliers',
             'visaRefund' => function ($query) {
                 $query->where(['LIKE', 'refModel', 'Customer']);
-            }])->where([self::tableName() . '.type' => ServiceConstant::TYPE['Refund']]);
+            }])->where([self::tableName() . '.type' => AccountConstant::TYPE['Refund']]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

@@ -2,7 +2,7 @@
 
 use app\components\GlobalConstant;
 use app\components\Helper;
-use app\modules\sale\components\ServiceConstant;
+use app\modules\sale\components\AccountConstant;
 use app\modules\sale\models\ticket\Ticket;
 use kartik\date\DatePicker;
 use kartik\daterange\DateRangePicker;
@@ -40,7 +40,7 @@ use yii\bootstrap4\Html;
                 <?= $form->field($visaSupplier, "[$row]issueDate")->widget(DateRangePicker::class, Helper::dateFormat(false, true)); ?>
             </div>
             <div class="col-md-3">
-                <?= $form->field($visaSupplier, "[$row]type")->dropdownList(ServiceConstant::SERVICE_TYPE_FOR_CREATE, ['value' => ServiceConstant::ALL_SERVICE_TYPE['New']]) ?>
+                <?= $form->field($visaSupplier, "[$row]type")->dropdownList(AccountConstant::SERVICE_TYPE_FOR_CREATE, ['value' => AccountConstant::ALL_SERVICE_TYPE['New']]) ?>
             </div>
             <div class="col-md-3">
                 <?= $form->field($visaSupplier, "[$row]serviceDetails")->textInput() ?>

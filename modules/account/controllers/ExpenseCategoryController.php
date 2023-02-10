@@ -2,6 +2,7 @@
 
 namespace app\modules\account\controllers;
 
+use app\components\GlobalConstant;
 use app\components\Helper;
 use app\controllers\ParentController;
 use app\modules\account\models\BankAccount;
@@ -101,8 +102,10 @@ class ExpenseCategoryController extends ParentController
      */
     public function actionDelete(string $uid)
     {
-        $this->findModel($uid)->delete();
-
+        $model = $this->findModel($uid);
+        $model->status = GlobalConstant::INACTIVE_STATUS;
+        $model->save();
+        Yii::$app->session->setFlash('success', 'Successfully Deleted');
         return $this->redirect(['index']);
     }
 
