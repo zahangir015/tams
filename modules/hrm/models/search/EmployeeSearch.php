@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\hrm\models;
+namespace app\modules\hrm\models\search;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;

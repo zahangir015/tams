@@ -1,15 +1,15 @@
 <?php
 
-namespace app\modules\hrm\models;
+namespace app\modules\hrm\models\search;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\hrm\models\Department;
+use app\modules\hrm\models\Branch;
 
 /**
- * DepartmentSearch represents the model behind the search form of `app\modules\hrm\models\Department`.
+ * BranchSearch represents the model behind the search form of `app\modules\hrm\models\Branch`.
  */
-class DepartmentSearch extends Department
+class BranchSearch extends Branch
 {
     /**
      * {@inheritdoc}
@@ -17,8 +17,8 @@ class DepartmentSearch extends Department
     public function rules(): array
     {
         return [
-            [['id', 'parentId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
-            [['uid', 'name'], 'safe'],
+            [['id', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['uid', 'name', 'address'], 'safe'],
         ];
     }
 
@@ -40,7 +40,7 @@ class DepartmentSearch extends Department
      */
     public function search(array $params): ActiveDataProvider
     {
-        $query = Department::find();
+        $query = Branch::find();
 
         // add conditions that should always apply here
 
@@ -59,7 +59,6 @@ class DepartmentSearch extends Department
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'parentId' => $this->parentId,
             'status' => $this->status,
             'createdBy' => $this->createdBy,
             'createdAt' => $this->createdAt,
@@ -68,7 +67,8 @@ class DepartmentSearch extends Department
         ]);
 
         $query->andFilterWhere(['like', 'uid', $this->uid])
-            ->andFilterWhere(['like', 'name', $this->name]);
+            ->andFilterWhere(['like', 'name', $this->name])
+            ->andFilterWhere(['like', 'address', $this->address]);
 
         return $dataProvider;
     }

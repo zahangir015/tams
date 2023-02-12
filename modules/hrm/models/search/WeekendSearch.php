@@ -1,31 +1,31 @@
 <?php
 
-namespace app\modules\hrm\models;
+namespace app\modules\hrm\models\search;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\hrm\models\Designation;
+use app\modules\hrm\models\Weekend;
 
 /**
- * DesignationSearch represents the model behind the search form of `app\modules\hrm\models\Designation`.
+ * WeekendSearch represents the model behind the search form of `app\modules\hrm\models\Weekend`.
  */
-class DesignationSearch extends Designation
+class WeekendSearch extends Weekend
 {
     /**
      * {@inheritdoc}
      */
-    public function rules(): array
+    public function rules()
     {
         return [
-            [['id', 'parentId', 'departmentId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
-            [['uid', 'name'], 'safe'],
+            [['id', 'departmentId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['uid', 'day'], 'safe'],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function scenarios(): array
+    public function scenarios()
     {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
@@ -38,9 +38,9 @@ class DesignationSearch extends Designation
      *
      * @return ActiveDataProvider
      */
-    public function search(array $params): ActiveDataProvider
+    public function search($params)
     {
-        $query = Designation::find();
+        $query = Weekend::find();
 
         // add conditions that should always apply here
 
@@ -59,7 +59,6 @@ class DesignationSearch extends Designation
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'parentId' => $this->parentId,
             'departmentId' => $this->departmentId,
             'status' => $this->status,
             'createdBy' => $this->createdBy,
@@ -69,7 +68,7 @@ class DesignationSearch extends Designation
         ]);
 
         $query->andFilterWhere(['like', 'uid', $this->uid])
-            ->andFilterWhere(['like', 'name', $this->name]);
+            ->andFilterWhere(['like', 'day', $this->day]);
 
         return $dataProvider;
     }

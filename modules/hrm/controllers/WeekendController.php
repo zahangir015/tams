@@ -2,27 +2,43 @@
 
 namespace app\modules\hrm\controllers;
 
-use app\modules\hrm\models\Branch;
+use app\modules\hrm\models\Weekend;
+use app\modules\hrm\models\search\WeekendSearch;
 use app\controllers\ParentController;
-use app\modules\hrm\models\search\BranchSearch;
-use Yii;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\web\Response;
 
 /**
- * BranchController implements the CRUD actions for Branch model.
+ * WeekendController implements the CRUD actions for Weekend model.
  */
-class BranchController extends ParentController
+class WeekendController extends ParentController
 {
     /**
-     * Lists all Branch models.
+     * @inheritDoc
+     */
+    public function behaviors()
+    {
+        return array_merge(
+            parent::behaviors(),
+            [
+                'verbs' => [
+                    'class' => VerbFilter::className(),
+                    'actions' => [
+                        'delete' => ['POST'],
+                    ],
+                ],
+            ]
+        );
+    }
+
+    /**
+     * Lists all Weekend models.
      *
      * @return string
      */
     public function actionIndex()
     {
-        $searchModel = new BranchSearch();
+        $searchModel = new WeekendSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
@@ -32,30 +48,30 @@ class BranchController extends ParentController
     }
 
     /**
-     * Displays a single Branch model.
-     * @param string $uid UID
+     * Displays a single Weekend model.
+     * @param int $id ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView(string $uid)
+    public function actionView($id)
     {
         return $this->render('view', [
-            'model' => $this->findModel($uid),
+            'model' => $this->findModel($id),
         ]);
     }
 
     /**
-     * Creates a new Branch model.
+     * Creates a new Weekend model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|Response
+     * @return string|\yii\web\Response
      */
     public function actionCreate()
     {
-        $model = new Branch();
+        $model = new Weekend();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'uid' => $model->uid]);
+                return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {
             $model->loadDefaultValues();
@@ -67,18 +83,18 @@ class BranchController extends ParentController
     }
 
     /**
-     * Updates an existing Branch model.
+     * Updates an existing Weekend model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param string $uid UID
-     * @return string|Response
+     * @param int $id ID
+     * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate(string $uid)
+    public function actionUpdate($id)
     {
-        $model = $this->findModel($uid);
+        $model = $this->findModel($id);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'uid' => $model->uid]);
+            return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
@@ -87,29 +103,29 @@ class BranchController extends ParentController
     }
 
     /**
-     * Deletes an existing Branch model.
+     * Deletes an existing Weekend model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $uid UID
-     * @return Response
+     * @param int $id ID
+     * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($uid)
+    public function actionDelete($id)
     {
-        $this->findModel($uid)->delete();
+        $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
     }
 
     /**
-     * Finds the Branch model based on its primary key value.
+     * Finds the Weekend model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $uid UID
-     * @return Branch the loaded model
+     * @param int $id ID
+     * @return Weekend the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($uid)
+    protected function findModel($id)
     {
-        if (($model = Branch::findOne(['uid' => $uid])) !== null) {
+        if (($model = Weekend::findOne(['id' => $id])) !== null) {
             return $model;
         }
 

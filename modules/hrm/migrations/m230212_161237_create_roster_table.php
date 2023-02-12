@@ -3,21 +3,24 @@
 use yii\db\Migration;
 
 /**
- * Handles the creation of table `{{%employee_shift}}`.
+ * Handles the creation of table `{{%roster}}`.
  */
-class m230210_225334_create_employee_shift_table extends Migration
+class m230212_161237_create_roster_table extends Migration
 {
     /**
      * {@inheritdoc}
      */
     public function safeUp()
     {
-        $this->createTable('{{%employee_shift}}', [
+        $this->createTable('{{%roster}}', [
             'id' => $this->primaryKey(),
             'uid' => $this->string(36)->notNull()->unique(),
             'departmentId' => $this->integer(11)->notNull(),
-            'shiftId' => $this->integer(11)->notNull(),
             'employeeId' => $this->integer(11)->notNull(),
+            'shiftId' => $this->integer(11)->notNull(),
+            'rosterDate' => $this->date()->notNull(),
+            'alternativeHoliday' => $this->date()->notNull(),
+            'remarks' => $this->string()->null(),
             'status' => $this->boolean()->notNull()->defaultValue(1),
             'createdBy' => $this->integer(11)->notNull(),
             'createdAt' => $this->integer()->notNull(),
@@ -27,15 +30,15 @@ class m230210_225334_create_employee_shift_table extends Migration
 
         // creates index for column `departmentId`
         $this->createIndex(
-            'idx-employee-shift-departmentId',
-            'employee_shift',
+            'idx-roster-departmentId',
+            'roster',
             'departmentId'
         );
 
         // add foreign key for table `department`
         $this->addForeignKey(
-            'fk-employee-shift-departmentId',
-            'employee_shift',
+            'fk-roster-departmentId',
+            'roster',
             'departmentId',
             'department',
             'id',
@@ -44,15 +47,15 @@ class m230210_225334_create_employee_shift_table extends Migration
 
         // creates index for column `shiftId`
         $this->createIndex(
-            'idx-employee-shift-shiftId',
-            'employee_shift',
+            'idx-roster-shiftId',
+            'roster',
             'shiftId'
         );
 
         // add foreign key for table `shift`
         $this->addForeignKey(
-            'fk-employee-shift-shiftId',
-            'employee_shift',
+            'fk-roster-shiftId',
+            'roster',
             'shiftId',
             'shift',
             'id',
@@ -61,15 +64,15 @@ class m230210_225334_create_employee_shift_table extends Migration
 
         // creates index for column `employeeId`
         $this->createIndex(
-            'idx-employee-shift-employeeId',
-            'employee_shift',
+            'idx-roster-employeeId',
+            'roster',
             'employeeId'
         );
 
         // add foreign key for table `employee`
         $this->addForeignKey(
-            'fk-employee-shift-employeeId',
-            'employee_shift',
+            'fk-roster-employeeId',
+            'roster',
             'employeeId',
             'employee',
             'id',
@@ -84,41 +87,41 @@ class m230210_225334_create_employee_shift_table extends Migration
     {
         // drop foreign key for table `department`
         $this->dropForeignKey(
-            'fk-employee-shift-departmentId',
-            'employee_shift',
+            'fk-roster-departmentId',
+            'roster',
         );
 
         // drop index for column `departmentId`
         $this->dropIndex(
-            'idx-employee-shift-departmentId',
-            'employee_shift',
+            'idx-roster-departmentId',
+            'roster',
         );
 
 
         // drop foreign key for table `shift`
         $this->dropForeignKey(
-            'fk-employee-shift-shiftId',
-            'employee_shift',
+            'fk-roster-shiftId',
+            'roster',
         );
 
         // drop index for column `shiftId`
         $this->dropIndex(
-            'idx-employee-shift-shiftId',
-            'employee_shift',
+            'idx-roster-shiftId',
+            'roster',
         );
 
         // drop foreign key for table `employee`
         $this->dropForeignKey(
-            'fk-employee-shift-employeeId',
-            'employee_shift',
+            'fk-roster-employeeId',
+            'roster',
         );
 
         // drop index for column `employeeId`
         $this->dropIndex(
-            'idx-employee-shift-employeeId',
-            'employee_shift',
+            'idx-roster-employeeId',
+            'roster',
         );
 
-        $this->dropTable('{{%employee_shift}}');
+        $this->dropTable('{{%roster}}');
     }
 }
