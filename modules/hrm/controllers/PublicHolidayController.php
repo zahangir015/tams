@@ -2,28 +2,27 @@
 
 namespace app\modules\hrm\controllers;
 
-use app\components\GlobalConstant;
-use app\modules\hrm\models\Weekend;
-use app\modules\hrm\models\search\WeekendSearch;
+use app\modules\hrm\models\PublicHoliday;
+use app\modules\hrm\models\search\PublicHolidaySearch;
 use app\controllers\ParentController;
 use Yii;
 use yii\web\NotFoundHttpException;
-use yii\web\Response;
 use app\components\Helper;
+use yii\web\Response;
 
 /**
- * WeekendController implements the CRUD actions for Weekend model.
+ * PublicHolidayController implements the CRUD actions for PublicHoliday model.
  */
-class WeekendController extends ParentController
+class PublicHolidayController extends ParentController
 {
     /**
-     * Lists all Weekend models.
+     * Lists all PublicHoliday models.
      *
      * @return string
      */
     public function actionIndex(): string
     {
-        $searchModel = new WeekendSearch();
+        $searchModel = new PublicHolidaySearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
@@ -33,7 +32,7 @@ class WeekendController extends ParentController
     }
 
     /**
-     * Displays a single Weekend model.
+     * Displays a single PublicHoliday model.
      * @param string $uid UID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
@@ -46,13 +45,13 @@ class WeekendController extends ParentController
     }
 
     /**
-     * Creates a new Weekend model.
+     * Creates a new PublicHoliday model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|Response
      */
     public function actionCreate(): Response|string
     {
-        $model = new Weekend();
+        $model = new PublicHoliday();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
@@ -70,7 +69,7 @@ class WeekendController extends ParentController
     }
 
     /**
-     * Updates an existing Weekend model.
+     * Updates an existing PublicHoliday model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param string $uid UID
      * @return string|Response
@@ -93,7 +92,7 @@ class WeekendController extends ParentController
     }
 
     /**
-     * Deletes an existing Weekend model.
+     * Deletes an existing PublicHoliday model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param string $uid UID
      * @return Response
@@ -109,15 +108,15 @@ class WeekendController extends ParentController
     }
 
     /**
-     * Finds the Weekend model based on its primary key value.
+     * Finds the PublicHoliday model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param string $uid UID
-     * @return Weekend the loaded model
+     * @return PublicHoliday the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel(string $uid): Weekend
+    protected function findModel(string $uid): PublicHoliday
     {
-        if (($model = Weekend::findOne(['uid' => $uid])) !== null) {
+        if (($model = PublicHoliday::findOne(['uid' => $uid])) !== null) {
             return $model;
         }
 

@@ -46,6 +46,7 @@ class EmployeeSearch extends Employee
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => ['defaultOrder' => ['officialId' => SORT_ASC]]
         ]);
 
         $this->load($params);

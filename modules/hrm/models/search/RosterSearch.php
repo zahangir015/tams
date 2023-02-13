@@ -4,12 +4,12 @@ namespace app\modules\hrm\models\search;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\hrm\models\Weekend;
+use app\modules\hrm\models\Roster;
 
 /**
- * WeekendSearch represents the model behind the search form of `app\modules\hrm\models\Weekend`.
+ * RosterSearch represents the model behind the search form of `app\modules\hrm\models\Roster`.
  */
-class WeekendSearch extends Weekend
+class RosterSearch extends Roster
 {
     /**
      * {@inheritdoc}
@@ -17,8 +17,8 @@ class WeekendSearch extends Weekend
     public function rules(): array
     {
         return [
-            [['id', 'departmentId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
-            [['uid', 'day'], 'safe'],
+            [['id', 'departmentId', 'employeeId', 'shiftId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['uid', 'rosterDate', 'alternativeHoliday', 'remarks'], 'safe'],
         ];
     }
 
@@ -40,13 +40,12 @@ class WeekendSearch extends Weekend
      */
     public function search(array $params): ActiveDataProvider
     {
-        $query = Weekend::find();
+        $query = Roster::find();
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'sort' => ['defaultOrder' => ['id' => SORT_ASC]]
         ]);
 
         $this->load($params);
@@ -61,6 +60,10 @@ class WeekendSearch extends Weekend
         $query->andFilterWhere([
             'id' => $this->id,
             'departmentId' => $this->departmentId,
+            'employeeId' => $this->employeeId,
+            'shiftId' => $this->shiftId,
+            'rosterDate' => $this->rosterDate,
+            'alternativeHoliday' => $this->alternativeHoliday,
             'status' => $this->status,
             'createdBy' => $this->createdBy,
             'createdAt' => $this->createdAt,
@@ -68,7 +71,8 @@ class WeekendSearch extends Weekend
             'updatedAt' => $this->updatedAt,
         ]);
 
-        $query->andFilterWhere(['like', 'day', $this->day]);
+        $query->andFilterWhere(['like', 'uid', $this->uid])
+            ->andFilterWhere(['like', 'remarks', $this->remarks]);
 
         return $dataProvider;
     }

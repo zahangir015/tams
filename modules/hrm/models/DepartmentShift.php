@@ -2,7 +2,10 @@
 
 namespace app\modules\hrm\models;
 
+use app\traits\BehaviorTrait;
 use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%department_shift}}".
@@ -20,12 +23,14 @@ use Yii;
  * @property Department $department
  * @property Shift $shift
  */
-class DepartmentShift extends \yii\db\ActiveRecord
+class DepartmentShift extends ActiveRecord
 {
+    use  BehaviorTrait;
+
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%department_shift}}';
     }
@@ -33,10 +38,10 @@ class DepartmentShift extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            [['uid', 'departmentId', 'shiftId', 'createdBy', 'createdAt'], 'required'],
+            [['departmentId', 'shiftId'], 'required'],
             [['departmentId', 'shiftId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['uid'], 'unique'],
@@ -48,13 +53,13 @@ class DepartmentShift extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),
             'uid' => Yii::t('app', 'Uid'),
-            'departmentId' => Yii::t('app', 'Department ID'),
-            'shiftId' => Yii::t('app', 'Shift ID'),
+            'departmentId' => Yii::t('app', 'Department'),
+            'shiftId' => Yii::t('app', 'Shift'),
             'status' => Yii::t('app', 'Status'),
             'createdBy' => Yii::t('app', 'Created By'),
             'createdAt' => Yii::t('app', 'Created At'),
@@ -66,9 +71,9 @@ class DepartmentShift extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Department]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getDepartment()
+    public function getDepartment(): ActiveQuery
     {
         return $this->hasOne(Department::class, ['id' => 'departmentId']);
     }
@@ -76,9 +81,9 @@ class DepartmentShift extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Shift]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getShift()
+    public function getShift(): ActiveQuery
     {
         return $this->hasOne(Shift::class, ['id' => 'shiftId']);
     }

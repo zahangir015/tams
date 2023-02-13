@@ -10,11 +10,7 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Weekends'), 'url' =>
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="weekend-create">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
     <?= $this->render('_form', [
         'model' => $model,
     ]) ?>
-
 </div>

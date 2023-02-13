@@ -8,4 +8,5 @@ final class HrmConstant
     const RELIGION = ['Islam' => 'Islam', 'Hindu' => 'Hindu', 'Buddhist' => 'Buddhist', 'Christian' => 'Christian',];
     const MARITAL_STATUS = [1 => 'Married', 2 => 'Unmarried'];
     const GENDER = [1 => 'Male', 2 => 'Female'];
+    const DAYS = ['Friday' => 'Friday', 'Saturday' => 'Saturday', 'Sunday' => 'Sunday', 'Monday' => 'Monday', 'Tuesday' => 'Tuesday', 'Wednesday' => 'Wednesday', 'Thursday' => 'Thursday'];
 }

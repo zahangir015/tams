@@ -1,18 +1,17 @@
 <?php
 
 use yii\helpers\Html;
-use yii\web\YiiAsset;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
-/** @var app\modules\hrm\models\Weekend $model */
+/** @var app\modules\hrm\models\PublicHoliday $model */
 
-$this->title = $model->uid;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Weekends'), 'url' => ['index']];
+$this->title = $model->title;
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Public Holidays'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
-YiiAsset::register($this);
+\yii\web\YiiAsset::register($this);
 ?>
-<div class="weekend-view">
+<div class="public-holiday-view">
     <p>
         <?= Html::a(Yii::t('app', 'Update'), ['update', 'uid' => $model->uid], ['class' => 'btn btn-primary']) ?>
         <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'uid' => $model->uid], [
@@ -31,13 +30,8 @@ YiiAsset::register($this);
             <?= DetailView::widget([
                 'model' => $model,
                 'attributes' => [
-                    [
-                        'attribute' => 'departmentId',
-                        'value' => function ($model) {
-                            return $model->department->name;
-                        },
-                    ],
-                    'day',
+                    'title',
+                    'date',
                     [
                         'attribute' => 'status',
                         'value' => function ($model) {

@@ -1,29 +1,28 @@
 <?php
 
 use app\components\GlobalConstant;
-use app\modules\hrm\models\Weekend;
+use app\modules\hrm\models\PublicHoliday;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use kartik\grid\ActionColumn;
 use kartik\grid\GridView;
-use yii\widgets\Pjax;
 use app\components\Helper;
 
 /** @var yii\web\View $this */
-/** @var app\modules\hrm\models\search\WeekendSearch $searchModel */
+/** @var app\modules\hrm\models\search\PublicHolidaySearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = Yii::t('app', 'Weekends');
+$this->title = Yii::t('app', 'Public Holidays');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="weekend-index">
+<div class="public-holiday-index">
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'kartik\grid\SerialColumn'],
-            'departmentId',
-            'day',
+            'title',
+            'date:date',
             [
                 'class' => '\kartik\grid\DataColumn',
                 'attribute' => 'status',
@@ -41,7 +40,7 @@ $this->params['breadcrumbs'][] = $this->title;
             //'updatedAt',
             [
                 'class' => ActionColumn::class,
-                'urlCreator' => function ($action, Weekend $model, $key, $index, $column) {
+                'urlCreator' => function ($action, PublicHoliday $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'uid' => $model->uid]);
                 },
                 'width' => '150px',
@@ -53,11 +52,11 @@ $this->params['breadcrumbs'][] = $this->title;
         'toolbar' => [
             [
                 'content' =>
-                    Html::a('<i class="fas fa-plus"></i>', ['/hrm/weekend/create'], [
-                        'title' => Yii::t('app', 'Add Weekend'),
+                    Html::a('<i class="fas fa-plus"></i>', ['/hrm/public-holiday/create'], [
+                        'title' => Yii::t('app', 'Add Holiday'),
                         'class' => 'btn btn-success'
                     ]) . ' ' .
-                    Html::a('<i class="fas fa-redo"></i>', ['/hrm/weekend/index'], [
+                    Html::a('<i class="fas fa-redo"></i>', ['/hrm/public-holiday/index'], [
                         'class' => 'btn btn-primary',
                         'title' => Yii::t('app', 'Reset Grid')
                     ]),

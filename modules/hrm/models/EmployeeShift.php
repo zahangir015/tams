@@ -2,7 +2,10 @@
 
 namespace app\modules\hrm\models;
 
+use app\traits\BehaviorTrait;
 use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%employee_shift}}".
@@ -22,12 +25,14 @@ use Yii;
  * @property Employee $employee
  * @property Shift $shift
  */
-class EmployeeShift extends \yii\db\ActiveRecord
+class EmployeeShift extends ActiveRecord
 {
+    use BehaviorTrait;
+
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%employee_shift}}';
     }
@@ -35,10 +40,10 @@ class EmployeeShift extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            [['uid', 'departmentId', 'shiftId', 'employeeId', 'createdBy', 'createdAt'], 'required'],
+            [['departmentId', 'shiftId', 'employeeId'], 'required'],
             [['departmentId', 'shiftId', 'employeeId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['uid'], 'unique'],
@@ -51,14 +56,14 @@ class EmployeeShift extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),
             'uid' => Yii::t('app', 'Uid'),
-            'departmentId' => Yii::t('app', 'Department ID'),
-            'shiftId' => Yii::t('app', 'Shift ID'),
-            'employeeId' => Yii::t('app', 'Employee ID'),
+            'departmentId' => Yii::t('app', 'Department'),
+            'shiftId' => Yii::t('app', 'Shift'),
+            'employeeId' => Yii::t('app', 'Employee'),
             'status' => Yii::t('app', 'Status'),
             'createdBy' => Yii::t('app', 'Created By'),
             'createdAt' => Yii::t('app', 'Created At'),
@@ -70,9 +75,9 @@ class EmployeeShift extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Department]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getDepartment()
+    public function getDepartment(): ActiveQuery
     {
         return $this->hasOne(Department::class, ['id' => 'departmentId']);
     }
@@ -80,9 +85,9 @@ class EmployeeShift extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Employee]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getEmployee()
+    public function getEmployee(): ActiveQuery
     {
         return $this->hasOne(Employee::class, ['id' => 'employeeId']);
     }
@@ -90,9 +95,9 @@ class EmployeeShift extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Shift]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getShift()
+    public function getShift(): ActiveQuery
     {
         return $this->hasOne(Shift::class, ['id' => 'shiftId']);
     }

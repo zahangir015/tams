@@ -5,14 +5,14 @@ use yii\web\YiiAsset;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
-/** @var app\modules\hrm\models\Weekend $model */
+/** @var app\modules\hrm\models\Shift $model */
 
-$this->title = $model->uid;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Weekends'), 'url' => ['index']];
+$this->title = $model->name;
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Shifts'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 YiiAsset::register($this);
 ?>
-<div class="weekend-view">
+<div class="department-view">
     <p>
         <?= Html::a(Yii::t('app', 'Update'), ['update', 'uid' => $model->uid], ['class' => 'btn btn-primary']) ?>
         <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'uid' => $model->uid], [
@@ -31,13 +31,7 @@ YiiAsset::register($this);
             <?= DetailView::widget([
                 'model' => $model,
                 'attributes' => [
-                    [
-                        'attribute' => 'departmentId',
-                        'value' => function ($model) {
-                            return $model->department->name;
-                        },
-                    ],
-                    'day',
+                    'title',
                     [
                         'attribute' => 'status',
                         'value' => function ($model) {

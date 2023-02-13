@@ -4,46 +4,46 @@ namespace app\modules\hrm\models;
 
 use app\traits\BehaviorTrait;
 use Yii;
-use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
- * This is the model class for table "{{%weekend}}".
+ * This is the model class for table "{{%public_holiday}}".
  *
  * @property int $id
  * @property string $uid
- * @property int $departmentId
- * @property string $day
+ * @property string $title
+ * @property string $date
  * @property int $status
  * @property int $createdBy
  * @property int $createdAt
  * @property int|null $updatedBy
  * @property int|null $updatedAt
- *
- * @property Department $department
  */
-class Weekend extends \yii\db\ActiveRecord
+class PublicHoliday extends ActiveRecord
 {
     use BehaviorTrait;
-
+    
     /**
      * {@inheritdoc}
      */
     public static function tableName(): string
     {
-        return '{{%weekend}}';
+        return '{{%public_holiday}}';
     }
+
     /**
      * {@inheritdoc}
      */
     public function rules(): array
     {
         return [
-            [['departmentId', 'day'], 'required'],
-            [['departmentId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['title', 'date'], 'required'],
+            [['status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['uid'], 'string', 'max' => 36],
-            [['day'], 'string', 'max' => 10],
+            [['title'], 'string', 'max' => 150],
+            [['date'], 'string', 'max' => 255],
             [['uid'], 'unique'],
-            [['departmentId'], 'exist', 'skipOnError' => true, 'targetClass' => Department::class, 'targetAttribute' => ['departmentId' => 'id']],
+            [['title'], 'unique'],
         ];
     }
 
@@ -55,23 +55,13 @@ class Weekend extends \yii\db\ActiveRecord
         return [
             'id' => Yii::t('app', 'ID'),
             'uid' => Yii::t('app', 'Uid'),
-            'departmentId' => Yii::t('app', 'Department'),
-            'day' => Yii::t('app', 'Day'),
+            'title' => Yii::t('app', 'Title'),
+            'date' => Yii::t('app', 'Date'),
             'status' => Yii::t('app', 'Status'),
             'createdBy' => Yii::t('app', 'Created By'),
             'createdAt' => Yii::t('app', 'Created At'),
             'updatedBy' => Yii::t('app', 'Updated By'),
             'updatedAt' => Yii::t('app', 'Updated At'),
         ];
-    }
-
-    /**
-     * Gets query for [[Department]].
-     *
-     * @return ActiveQuery
-     */
-    public function getDepartment(): ActiveQuery
-    {
-        return $this->hasOne(Department::class, ['id' => 'departmentId']);
     }
 }

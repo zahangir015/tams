@@ -76,6 +76,28 @@ use yii\helpers\Url;
                             ['label' => 'Employee List', 'icon' => 'list', 'url' => ['/hrm/employee/index']],
                         ]
                     ],
+
+                    [
+                        'label' => 'Weekend & Holidays',
+                        'icon' => 'suitcase',
+                        'badge' => '<span class="right badge badge-info">2</span>',
+                        'items' => [
+                            ['label' => 'Weekend', 'icon' => 'calendar-day', 'url' => ['/hrm/weekend/index']],
+                            ['label' => 'Public Holiday', 'icon' => 'calendar-times', 'url' => ['/hrm/public-holiday/index']],
+                        ]
+                    ],
+                    [
+                        'label' => 'Shift & Roster',
+                        'icon' => 'suitcase',
+                        'badge' => '<span class="right badge badge-info">2</span>',
+                        'items' => [
+                            ['label' => 'Shift List', 'icon' => 'calendar-plus', 'url' => ['/hrm/shift/index']],
+                            ['label' => 'Department Shifts', 'icon' => 'calendar-check', 'url' => ['/hrm/department-shift/index']],
+                            ['label' => 'Employee Shifts', 'icon' => 'calendar-check', 'url' => ['/hrm/employee-shift/index']],
+                            ['label' => 'Roster List', 'icon' => 'calendar', 'url' => ['/hrm/roster/index']],
+                        ]
+                    ],
+
                     ['label' => 'SALES', 'header' => true],
                     ['label' => 'Providers', 'icon' => 'paper-plane', 'url' => ['/sale/provider/index']],
                     [

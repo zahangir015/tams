@@ -4,7 +4,7 @@ namespace app\modules\hrm\controllers;
 
 use app\components\GlobalConstant;
 use app\modules\hrm\models\Department;
-use app\modules\hrm\models\DepartmentSearch;
+use app\modules\hrm\models\search\DepartmentSearch;
 use app\controllers\ParentController;
 use app\modules\hrm\services\HrmConfigurationService;
 use Yii;

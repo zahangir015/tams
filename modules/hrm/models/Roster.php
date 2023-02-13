@@ -3,6 +3,8 @@
 namespace app\modules\hrm\models;
 
 use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%roster}}".
@@ -25,12 +27,12 @@ use Yii;
  * @property Employee $employee
  * @property Shift $shift
  */
-class Roster extends \yii\db\ActiveRecord
+class Roster extends ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%roster}}';
     }
@@ -38,10 +40,10 @@ class Roster extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            [['uid', 'departmentId', 'employeeId', 'shiftId', 'rosterDate', 'alternativeHoliday', 'createdBy', 'createdAt'], 'required'],
+            [['departmentId', 'employeeId', 'shiftId', 'rosterDate', 'alternativeHoliday'], 'required'],
             [['departmentId', 'employeeId', 'shiftId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['rosterDate', 'alternativeHoliday'], 'safe'],
             [['uid'], 'string', 'max' => 36],
@@ -56,14 +58,14 @@ class Roster extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),
             'uid' => Yii::t('app', 'Uid'),
-            'departmentId' => Yii::t('app', 'Department ID'),
-            'employeeId' => Yii::t('app', 'Employee ID'),
-            'shiftId' => Yii::t('app', 'Shift ID'),
+            'departmentId' => Yii::t('app', 'Department'),
+            'employeeId' => Yii::t('app', 'Employee'),
+            'shiftId' => Yii::t('app', 'Shift'),
             'rosterDate' => Yii::t('app', 'Roster Date'),
             'alternativeHoliday' => Yii::t('app', 'Alternative Holiday'),
             'remarks' => Yii::t('app', 'Remarks'),
@@ -78,9 +80,9 @@ class Roster extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Department]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getDepartment()
+    public function getDepartment(): ActiveQuery
     {
         return $this->hasOne(Department::class, ['id' => 'departmentId']);
     }
@@ -88,9 +90,9 @@ class Roster extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Employee]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getEmployee()
+    public function getEmployee(): ActiveQuery
     {
         return $this->hasOne(Employee::class, ['id' => 'employeeId']);
     }
@@ -98,9 +100,9 @@ class Roster extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Shift]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getShift()
+    public function getShift(): ActiveQuery
     {
         return $this->hasOne(Shift::class, ['id' => 'shiftId']);
     }

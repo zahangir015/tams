@@ -2,7 +2,10 @@
 
 namespace app\modules\hrm\models;
 
+use app\traits\BehaviorTrait;
 use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%shift}}".
@@ -23,12 +26,14 @@ use Yii;
  * @property EmployeeShift[] $employeeShifts
  * @property Roster[] $rosters
  */
-class Shift extends \yii\db\ActiveRecord
+class Shift extends ActiveRecord
 {
+    use BehaviorTrait;
+
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%shift}}';
     }
@@ -36,10 +41,10 @@ class Shift extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            [['uid', 'title', 'entryTime', 'exitTime', 'totalHours', 'createdBy', 'createdAt'], 'required'],
+            [['title', 'entryTime', 'exitTime', 'totalHours'], 'required'],
             [['entryTime', 'exitTime', 'totalHours'], 'safe'],
             [['status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['uid'], 'string', 'max' => 36],
@@ -52,7 +57,7 @@ class Shift extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),
@@ -72,9 +77,9 @@ class Shift extends \yii\db\ActiveRecord
     /**
      * Gets query for [[DepartmentShifts]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getDepartmentShifts()
+    public function getDepartmentShifts(): ActiveQuery
     {
         return $this->hasMany(DepartmentShift::class, ['shiftId' => 'id']);
     }
@@ -82,9 +87,9 @@ class Shift extends \yii\db\ActiveRecord
     /**
      * Gets query for [[EmployeeShifts]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getEmployeeShifts()
+    public function getEmployeeShifts(): ActiveQuery
     {
         return $this->hasMany(EmployeeShift::class, ['shiftId' => 'id']);
     }
@@ -92,10 +97,15 @@ class Shift extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Rosters]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getRosters()
+    public function getRosters(): ActiveQuery
     {
         return $this->hasMany(Roster::class, ['shiftId' => 'id']);
+    }
+
+    public static function query(mixed $query)
+    {
+
     }
 }
