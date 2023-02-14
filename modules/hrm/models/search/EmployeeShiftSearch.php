@@ -1,15 +1,15 @@
 <?php
 
-namespace app\modules\hrm\models;
+namespace app\modules\hrm\models\search;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\hrm\models\Department;
+use app\modules\hrm\models\EmployeeShift;
 
 /**
- * DepartmentSearch represents the model behind the search form of `app\modules\hrm\models\Department`.
+ * EmployeeShiftSearch represents the model behind the search form of `app\modules\hrm\models\EmployeeShift`.
  */
-class DepartmentSearch extends Department
+class EmployeeShiftSearch extends EmployeeShift
 {
     /**
      * {@inheritdoc}
@@ -17,8 +17,8 @@ class DepartmentSearch extends Department
     public function rules(): array
     {
         return [
-            [['id', 'parentId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
-            [['uid', 'name'], 'safe'],
+            [['id', 'departmentId', 'shiftId', 'employeeId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['uid'], 'safe'],
         ];
     }
 
@@ -40,12 +40,13 @@ class DepartmentSearch extends Department
      */
     public function search(array $params): ActiveDataProvider
     {
-        $query = Department::find();
+        $query = EmployeeShift::find();
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => ['defaultOrder' => ['id' => SORT_ASC]]
         ]);
 
         $this->load($params);
@@ -59,7 +60,9 @@ class DepartmentSearch extends Department
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'parentId' => $this->parentId,
+            'departmentId' => $this->departmentId,
+            'shiftId' => $this->shiftId,
+            'employeeId' => $this->employeeId,
             'status' => $this->status,
             'createdBy' => $this->createdBy,
             'createdAt' => $this->createdAt,
@@ -67,8 +70,7 @@ class DepartmentSearch extends Department
             'updatedAt' => $this->updatedAt,
         ]);
 
-        $query->andFilterWhere(['like', 'uid', $this->uid])
-            ->andFilterWhere(['like', 'name', $this->name]);
+        $query->andFilterWhere(['like', 'uid', $this->uid]);
 
         return $dataProvider;
     }

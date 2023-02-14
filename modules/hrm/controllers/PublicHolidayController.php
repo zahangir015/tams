@@ -2,27 +2,27 @@
 
 namespace app\modules\hrm\controllers;
 
-use app\modules\hrm\models\Branch;
+use app\modules\hrm\models\PublicHoliday;
+use app\modules\hrm\models\search\PublicHolidaySearch;
 use app\controllers\ParentController;
-use app\modules\hrm\models\search\BranchSearch;
 use Yii;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
+use app\components\Helper;
 use yii\web\Response;
 
 /**
- * BranchController implements the CRUD actions for Branch model.
+ * PublicHolidayController implements the CRUD actions for PublicHoliday model.
  */
-class BranchController extends ParentController
+class PublicHolidayController extends ParentController
 {
     /**
-     * Lists all Branch models.
+     * Lists all PublicHoliday models.
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
-        $searchModel = new BranchSearch();
+        $searchModel = new PublicHolidaySearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
@@ -32,12 +32,12 @@ class BranchController extends ParentController
     }
 
     /**
-     * Displays a single Branch model.
+     * Displays a single PublicHoliday model.
      * @param string $uid UID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView(string $uid)
+    public function actionView(string $uid): string
     {
         return $this->render('view', [
             'model' => $this->findModel($uid),
@@ -45,17 +45,19 @@ class BranchController extends ParentController
     }
 
     /**
-     * Creates a new Branch model.
+     * Creates a new PublicHoliday model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|Response
      */
-    public function actionCreate()
+    public function actionCreate(): Response|string
     {
-        $model = new Branch();
+        $model = new PublicHoliday();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
                 return $this->redirect(['view', 'uid' => $model->uid]);
+            } else {
+                Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
             }
         } else {
             $model->loadDefaultValues();
@@ -67,18 +69,21 @@ class BranchController extends ParentController
     }
 
     /**
-     * Updates an existing Branch model.
+     * Updates an existing PublicHoliday model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param string $uid UID
      * @return string|Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate(string $uid)
+    public function actionUpdate(string $uid): Response|string
     {
         $model = $this->findModel($uid);
-
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'uid' => $model->uid]);
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post()) && $model->save()) {
+                return $this->redirect(['view', 'uid' => $model->uid]);
+            } else {
+                Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
+            }
         }
 
         return $this->render('update', [
@@ -87,29 +92,31 @@ class BranchController extends ParentController
     }
 
     /**
-     * Deletes an existing Branch model.
+     * Deletes an existing PublicHoliday model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $uid UID
+     * @param string $uid UID
      * @return Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($uid)
+    public function actionDelete(string $uid): Response
     {
-        $this->findModel($uid)->delete();
-
+        $model = $this->findModel($uid);
+        $model->status = GlobalConstant::INACTIVE_STATUS;
+        $model->save();
+        Yii::$app->session->setFlash('success', 'Successfully Deleted');
         return $this->redirect(['index']);
     }
 
     /**
-     * Finds the Branch model based on its primary key value.
+     * Finds the PublicHoliday model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $uid UID
-     * @return Branch the loaded model
+     * @param string $uid UID
+     * @return PublicHoliday the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($uid)
+    protected function findModel(string $uid): PublicHoliday
     {
-        if (($model = Branch::findOne(['uid' => $uid])) !== null) {
+        if (($model = PublicHoliday::findOne(['uid' => $uid])) !== null) {
             return $model;
         }
 

@@ -3,37 +3,29 @@
 namespace app\modules\hrm\controllers;
 
 use app\components\GlobalConstant;
-use app\modules\hrm\models\Department;
-use app\modules\hrm\models\Designation;
+use app\modules\hrm\models\Weekend;
+use app\modules\hrm\models\search\WeekendSearch;
 use app\controllers\ParentController;
-use app\modules\hrm\models\search\DesignationSearch;
-use app\modules\hrm\services\HrmConfigurationService;
-use yii\helpers\ArrayHelper;
+use Yii;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
+use app\components\Helper;
 
 /**
- * DesignationController implements the CRUD actions for Designation model.
+ * WeekendController implements the CRUD actions for Weekend model.
  */
-class DesignationController extends ParentController
+class WeekendController extends ParentController
 {
-    public HrmConfigurationService $hrmConfigurationService;
-
-    public function __construct($uid, $module, $config = [])
-    {
-        $this->hrmConfigurationService = new HrmConfigurationService();
-        parent::__construct($uid, $module, $config);
-    }
-
     /**
-     * Lists all Designation models.
+     * Lists all Weekend models.
      *
      * @return string
      */
     public function actionIndex(): string
     {
-        $searchModel = new DesignationSearch();
+        $searchModel = new WeekendSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -41,31 +33,32 @@ class DesignationController extends ParentController
     }
 
     /**
-     * Displays a single Designation model.
+     * Displays a single Weekend model.
      * @param string $uid UID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView(string $uid)
+    public function actionView(string $uid): string
     {
         return $this->render('view', [
-            'model' => $this->hrmConfigurationService->findModel(['status' => GlobalConstant::ACTIVE_STATUS], Designation::class, ['department']),
+            'model' => $this->findModel($uid),
         ]);
     }
 
     /**
-     * Creates a new Designation model.
+     * Creates a new Weekend model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|Response
      */
     public function actionCreate(): Response|string
     {
-        $model = new Designation();
-        $departments = $this->hrmConfigurationService->getAll(['status' => GlobalConstant::ACTIVE_STATUS], Department::class, [], true);
+        $model = new Weekend();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
                 return $this->redirect(['view', 'uid' => $model->uid]);
+            } else {
+                Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
             }
         } else {
             $model->loadDefaultValues();
@@ -73,12 +66,11 @@ class DesignationController extends ParentController
 
         return $this->render('create', [
             'model' => $model,
-            'departments' => ArrayHelper::map($departments, 'id', 'name')
         ]);
     }
 
     /**
-     * Updates an existing Designation model.
+     * Updates an existing Weekend model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param string $uid UID
      * @return string|Response
@@ -86,30 +78,49 @@ class DesignationController extends ParentController
      */
     public function actionUpdate(string $uid): Response|string
     {
-        $model = $this->hrmConfigurationService->findModel(['uid' => $uid], Designation::class, ['department']);
-        $departments = $this->hrmConfigurationService->getAll(['status' => GlobalConstant::ACTIVE_STATUS], Department::class, [], true);
-
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'uid' => $model->uid]);
+        $model = $this->findModel($uid);
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post()) && $model->save()) {
+                return $this->redirect(['view', 'uid' => $model->uid]);
+            } else {
+                Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
+            }
         }
 
         return $this->render('update', [
             'model' => $model,
-            'departments' => ArrayHelper::map($departments, 'id', 'name')
         ]);
     }
 
     /**
-     * Deletes an existing Designation model.
+     * Deletes an existing Weekend model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param string $uid UID
      * @return Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($uid)
+    public function actionDelete(string $uid): Response
     {
-        $this->findModel($uid)->delete();
-
+        $model = $this->findModel($uid);
+        $model->status = GlobalConstant::INACTIVE_STATUS;
+        $model->save();
+        Yii::$app->session->setFlash('success', 'Successfully Deleted');
         return $this->redirect(['index']);
+    }
+
+    /**
+     * Finds the Weekend model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param string $uid UID
+     * @return Weekend the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel(string $uid): Weekend
+    {
+        if (($model = Weekend::findOne(['uid' => $uid])) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
 }

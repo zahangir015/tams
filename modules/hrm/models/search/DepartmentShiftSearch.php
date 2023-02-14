@@ -1,15 +1,15 @@
 <?php
 
-namespace app\modules\hrm\models;
+namespace app\modules\hrm\models\search;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\hrm\models\Designation;
+use app\modules\hrm\models\DepartmentShift;
 
 /**
- * DesignationSearch represents the model behind the search form of `app\modules\hrm\models\Designation`.
+ * DepartmentShiftSearch represents the model behind the search form of `app\modules\hrm\models\DepartmentShift`.
  */
-class DesignationSearch extends Designation
+class DepartmentShiftSearch extends DepartmentShift
 {
     /**
      * {@inheritdoc}
@@ -17,8 +17,8 @@ class DesignationSearch extends Designation
     public function rules(): array
     {
         return [
-            [['id', 'parentId', 'departmentId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
-            [['uid', 'name'], 'safe'],
+            [['id', 'departmentId', 'shiftId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['uid'], 'safe'],
         ];
     }
 
@@ -40,12 +40,13 @@ class DesignationSearch extends Designation
      */
     public function search(array $params): ActiveDataProvider
     {
-        $query = Designation::find();
+        $query = DepartmentShift::find();
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => ['defaultOrder' => ['id' => SORT_ASC]]
         ]);
 
         $this->load($params);
@@ -59,8 +60,8 @@ class DesignationSearch extends Designation
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'parentId' => $this->parentId,
             'departmentId' => $this->departmentId,
+            'shiftId' => $this->shiftId,
             'status' => $this->status,
             'createdBy' => $this->createdBy,
             'createdAt' => $this->createdAt,
@@ -68,8 +69,7 @@ class DesignationSearch extends Designation
             'updatedAt' => $this->updatedAt,
         ]);
 
-        $query->andFilterWhere(['like', 'uid', $this->uid])
-            ->andFilterWhere(['like', 'name', $this->name]);
+        $query->andFilterWhere(['like', 'uid', $this->uid]);
 
         return $dataProvider;
     }

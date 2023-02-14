@@ -1,18 +1,15 @@
 <?php
 
 use app\components\GlobalConstant;
-use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
-use app\components\Helper;
 
 /** @var yii\web\View $this */
-/** @var app\modules\hrm\models\Designation $model */
+/** @var app\modules\hrm\models\Department $model */
 /** @var yii\bootstrap4\ActiveForm $form */
 ?>
 
-<div class="designation-form">
-
+<div class="shift-form">
     <div class="card">
         <div class="card-header bg-gray-dark">
             <?= Html::encode($this->title) ?>
@@ -21,13 +18,13 @@ use app\components\Helper;
             <?php $form = ActiveForm::begin(); ?>
             <div class="row">
                 <div class="col-md">
-                    <?= $form->field($model, 'departmentId')->widget(Select2::class, Helper::ajaxDropDown('departmentId', '/hrm/department/get-departments', true, 'departmentId', 'departmentId', $model->isNewRecord ? [] : [$model->department->id => $model->department->name])) ?>
+                    <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
                 </div>
                 <div class="col-md">
-                    <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+                    <?= $form->field($model, 'entryTime')->textInput(['type' => 'time']) ?>
                 </div>
                 <div class="col-md">
-                    <?= $form->field($model, 'status')->dropdownList(GlobalConstant::DEFAULT_STATUS) ?>
+                    <?= $form->field($model, 'exitTime')->textInput(['type' => 'time']) ?>
                 </div>
             </div>
             <div class="form-group">
