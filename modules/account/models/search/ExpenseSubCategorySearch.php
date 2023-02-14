@@ -45,7 +45,7 @@ class ExpenseSubCategorySearch extends ExpenseSubCategory
 
         // add conditions that should always apply here
         $query->joinWith(['category'])
-            ->where(['status' => GlobalConstant::ACTIVE_STATUS]);
+            ->where([self::tableName().'.status' => GlobalConstant::ACTIVE_STATUS]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
