@@ -2,6 +2,7 @@
 
 namespace app\modules\hrm\models;
 
+use app\components\GlobalConstant;
 use app\traits\BehaviorTrait;
 use Yii;
 use yii\db\ActiveRecord;
@@ -63,5 +64,13 @@ class PublicHoliday extends ActiveRecord
             'updatedBy' => Yii::t('app', 'Updated By'),
             'updatedAt' => Yii::t('app', 'Updated At'),
         ];
+    }
+    public static function query(mixed $query): array
+    {
+        return self::find()
+            ->select(['id', 'title', 'status'])
+            ->where(['like', 'title', $query])
+            ->andWhere(['status' => GlobalConstant::ACTIVE_STATUS])
+            ->all();
     }
 }

@@ -1,5 +1,6 @@
 <?php
 
+use app\modules\hrm\models\Shift;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use kartik\grid\ActionColumn;
@@ -31,6 +32,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 'filter' => ArrayHelper::map($parentArray, 'id', 'name')
             ],*/
             'title',
+            'entryTime',
+            'exitTime',
+            'totalHours',
             [
                 'class' => '\kartik\grid\DataColumn',
                 'attribute' => 'status',

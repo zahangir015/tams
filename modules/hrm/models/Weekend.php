@@ -43,6 +43,7 @@ class Weekend extends \yii\db\ActiveRecord
             [['uid'], 'string', 'max' => 36],
             [['day'], 'string', 'max' => 10],
             [['uid'], 'unique'],
+            [['departmentId', 'day'], 'unique'],
             [['departmentId'], 'exist', 'skipOnError' => true, 'targetClass' => Department::class, 'targetAttribute' => ['departmentId' => 'id']],
         ];
     }

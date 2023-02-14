@@ -68,8 +68,7 @@ class DepartmentShiftSearch extends DepartmentShift
             'updatedBy' => $this->updatedBy,
             'updatedAt' => $this->updatedAt,
         ]);
-
-        $query->andFilterWhere(['like', 'uid', $this->uid]);
+        //$query->andFilterWhere(['like', 'uid', $this->uid]);
 
         return $dataProvider;
     }

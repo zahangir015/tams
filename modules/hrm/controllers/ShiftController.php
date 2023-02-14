@@ -7,6 +7,9 @@ use app\components\Helper;
 use app\modules\hrm\models\Shift;
 use app\modules\hrm\models\search\ShiftSearch;
 use app\controllers\ParentController;
+use app\modules\hrm\repositories\HrmConfigurationRepository;
+use app\modules\hrm\services\HrmConfigurationService;
+use DateTime;
 use Yii;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
@@ -16,8 +19,18 @@ use yii\web\Response;
  */
 class ShiftController extends ParentController
 {
+    public HrmConfigurationService $hrmConfigurationService;
+    public HrmConfigurationRepository $hrmConfigurationRepository;
+
+    public function __construct($uid, $module, $config = [])
+    {
+        $this->hrmConfigurationService = new HrmConfigurationService();
+        $this->hrmConfigurationRepository = new HrmConfigurationRepository();
+        parent::__construct($uid, $module, $config);
+    }
+
     /**
-     * Lists all Shift models.
+     * Lists all Weekend models.
      *
      * @return string
      */
@@ -33,15 +46,14 @@ class ShiftController extends ParentController
     }
 
     /**
-     * Displays a single Shift model.
+     * Displays a single Weekend model.
      * @param string $uid UID
      * @return string
-     * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionView(string $uid): string
     {
         return $this->render('view', [
-            'model' => $this->findModel($uid),
+            'model' => $this->hrmConfigurationService->findModel(['uid' => $uid], Shift::class, []),
         ]);
     }
 
@@ -55,14 +67,19 @@ class ShiftController extends ParentController
         $model = new Shift();
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
+                $duration = abs(strtotime($model->exitTime) - strtotime($model->entryTime)) / (60 * 60);
+                $hours = (int)($duration / 60);
+                $minutes = $duration - ($hours * 60);
+                $date = new DateTime($hours . ":" . $minutes);
+                $model->totalHours = $date->format('H:i:s');
 
-                dd(abs(strtotime($model->exitTime) - strtotime($model->entryTime))/(60*60));
-                //$model->totalHours =
-                if ($model->save()) {
+                $model = $this->hrmConfigurationRepository->store($model);
+                if ($model->hasErrors()) {
+                    Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
+                } else {
                     return $this->redirect(['view', 'uid' => $model->uid]);
                 }
             }
-            Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
         } else {
             $model->loadDefaultValues();
         }
@@ -81,13 +98,22 @@ class ShiftController extends ParentController
      */
     public function actionUpdate(string $uid): Response|string
     {
-        $model = $this->findModel($uid);
+        $model = $this->hrmConfigurationService->findModel(['uid' => $uid], Shift::class, []);
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'uid' => $model->uid]);
+            if ($model->load($this->request->post())) {
+                $duration = abs(strtotime($model->exitTime) - strtotime($model->entryTime)) / (60 * 60);
+                $hours = (int)($duration / 60);
+                $minutes = $duration - ($hours * 60);
+                $date = new DateTime($hours . ":" . $minutes);
+                $model->totalHours = $date->format('H:i:s');
+                $model = $this->hrmConfigurationRepository->store($model);
+                if ($model->hasErrors()) {
+                    Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
+                } else {
+                    return $this->redirect(['view', 'uid' => $model->uid]);
+                }
             }
-            Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
         }
 
         return $this->render('update', [
@@ -100,40 +126,26 @@ class ShiftController extends ParentController
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param string $uid UID
      * @return Response
-     * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete(string $uid)
+    public function actionDelete(string $uid): Response
     {
-        $model = $this->findModel($uid);
-        $model->status = GlobalConstant::INACTIVE_STATUS;
-        $model->save();
-        Yii::$app->session->setFlash('success', 'Successfully Deleted');
+        $model = $this->hrmConfigurationService->deleteModel(['uid' => $uid], Shift::class, []);
+        if ($model->hasErrors()) {
+            Yii::$app->session->setFlash('danger', 'Deletion failed - ' . Helper::processErrorMessages($model->getErrors()));
+        } else {
+            Yii::$app->session->setFlash('success', 'Successfully Deleted.');
+        }
+
         return $this->redirect(['index']);
     }
 
-    /**
-     * Finds the Shift model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param string $uid UID
-     * @return Shift the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel(string $uid): Shift
-    {
-        if (($model = Shift::findOne(['uid' => $uid])) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
-    }
-
-    public function actionSearch($query = null): array
+    public function actionGetShifts($query = null): array
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
         $shifts = Shift::query($query);
         $data = [];
         foreach ($shifts as $shift) {
-            $data[] = ['id' => $shift->id, 'text' => $shift->name];
+            $data[] = ['id' => $shift->id, 'text' => $shift->title];
         }
         return ['results' => $data];
     }

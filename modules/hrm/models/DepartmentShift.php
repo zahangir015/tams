@@ -44,6 +44,7 @@ class DepartmentShift extends ActiveRecord
             [['departmentId', 'shiftId'], 'required'],
             [['departmentId', 'shiftId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['uid'], 'string', 'max' => 36],
+            [['departmentId', 'shiftId'], 'unique'],
             [['uid'], 'unique'],
             [['departmentId'], 'exist', 'skipOnError' => true, 'targetClass' => Department::class, 'targetAttribute' => ['departmentId' => 'id']],
             [['shiftId'], 'exist', 'skipOnError' => true, 'targetClass' => Shift::class, 'targetAttribute' => ['shiftId' => 'id']],

@@ -7,7 +7,7 @@ use yii\widgets\DetailView;
 /** @var yii\web\View $this */
 /** @var app\modules\hrm\models\Shift $model */
 
-$this->title = $model->name;
+$this->title = $model->title;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Shifts'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 YiiAsset::register($this);
@@ -32,6 +32,9 @@ YiiAsset::register($this);
                 'model' => $model,
                 'attributes' => [
                     'title',
+                    'entryTime',
+                    'exitTime',
+                    'totalHours',
                     [
                         'attribute' => 'status',
                         'value' => function ($model) {
