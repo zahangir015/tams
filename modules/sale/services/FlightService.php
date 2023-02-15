@@ -8,8 +8,6 @@ use app\components\Uploader;
 use app\modules\account\models\Invoice;
 use app\modules\account\services\InvoiceService;
 use app\modules\account\services\LedgerService;
-use app\modules\account\services\PaymentTimelineService;
-use app\modules\admin\models\User;
 use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\Airline;
 use app\modules\sale\models\Customer;

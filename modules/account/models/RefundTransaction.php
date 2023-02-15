@@ -16,8 +16,8 @@ use yii\db\ActiveRecord;
  * @property string $identificationNumber
  * @property int $refId
  * @property string $refModel
- * @property float|null $payableAmount
- * @property float|null $receivableAmount
+ * @property float $payableAmount
+ * @property float $receivableAmount
  * @property float|null $totalAmount
  * @property string $paymentType
  * @property boolean $paymentStatus

@@ -80,7 +80,7 @@ class Transaction extends ActiveRecord
             'subRefId' => Yii::t('app', 'Sub Ref ID'),
             'subRefModel' => Yii::t('app', 'Sub Ref Model'),
             'bankId' => Yii::t('app', 'Bank ID'),
-            'reference' => Yii::t('app', 'Cheque number/ Payment reference number'),
+            'reference' => Yii::t('app', 'Cheque/Payment reference'),
             'paidAmount' => Yii::t('app', 'Paid Amount'),
             'paymentCharge' => Yii::t('app', 'Payment Charge'),
             'paymentDate' => Yii::t('app', 'Payment Date'),
