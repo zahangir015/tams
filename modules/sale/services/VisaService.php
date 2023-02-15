@@ -7,7 +7,7 @@ use app\components\Helper;
 use app\modules\account\models\Invoice;
 use app\modules\account\services\InvoiceService;
 use app\modules\account\services\LedgerService;
-use app\modules\sale\components\AccountConstant;
+use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\Customer;
 use app\modules\sale\models\visa\Visa;
 use app\modules\sale\models\visa\VisaRefund;
@@ -38,7 +38,7 @@ class VisaService
                 $customer = Customer::findOne(['id' => $requestData['Visa']['customerId']]);
                 $visa = new Visa();
                 if ($visa->load($requestData)) {
-                    $visa->type = AccountConstant::TYPE['New'];
+                    $visa->type = ServiceConstant::TYPE['New'];
                     $visa->customerCategory = $customer->category;
                     $visa = $this->visaRepository->store($visa);
                     if ($visa->hasErrors()) {
@@ -104,7 +104,7 @@ class VisaService
                     }
 
                     // Mother Visa update
-                    $motherVisa->type = AccountConstant::TICKET_TYPE_FOR_REFUND['Refund Requested'];
+                    $motherVisa->type = ServiceConstant::TICKET_TYPE_FOR_REFUND['Refund Requested'];
                     $motherVisa->refundRequestDate = $visa->refundRequestDate;
                     $motherVisa = $this->visaRepository->store($motherVisa);
                     if ($motherVisa->hasErrors()) {
@@ -232,10 +232,10 @@ class VisaService
                 $model->packageId = $visa->id;
                 $model->identificationNo = $visa->identificationNo;
                 $model->status = GlobalConstant::ACTIVE_STATUS;
-                $model->paymentStatus = AccountConstant::PAYMENT_STATUS['Due'];
+                $model->paymentStatus = ServiceConstant::PAYMENT_STATUS['Due'];
             }
             $model->setAttributes($supplier);
-            $model->type = $supplier['type'] ?? AccountConstant::TYPE['New'];
+            $model->type = $supplier['type'] ?? ServiceConstant::TYPE['New'];
             $model->supplierName = $checkSupplier->name;
 
             if (!$model->save()) {
@@ -355,7 +355,7 @@ class VisaService
         ];
 
         foreach ($visa->visaSuppliers as $singleSupplier) {
-            if ($singleSupplier->type == AccountConstant::SERVICE_TYPE_FOR_CREATE['Refund']) {
+            if ($singleSupplier->type == ServiceConstant::SERVICE_TYPE_FOR_CREATE['Refund']) {
                 $referenceData[] = [
                     'refId' => $singleSupplier->supplierId,
                     'refModel' => Supplier::class,

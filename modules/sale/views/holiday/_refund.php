@@ -1,7 +1,7 @@
 <?php
 
 use app\components\GlobalConstant;
-use app\modules\sale\components\AccountConstant;
+use app\modules\sale\components\ServiceConstant;
 use kartik\daterange\DateRangePicker;
 use kartik\select2\Select2;
 use yii\helpers\Html;
@@ -92,23 +92,23 @@ $this->registerJsFile(
                     </div>
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($model, 'type')->dropdownList(AccountConstant::SERVICE_TYPE_FOR_CREATE, ['value' => AccountConstant::SERVICE_TYPE_FOR_CREATE['Refund'], 'readOnly' => 'readOnly'])->label('Type') ?>
+                            <?= $form->field($model, 'type')->dropdownList(ServiceConstant::SERVICE_TYPE_FOR_CREATE, ['value' => ServiceConstant::SERVICE_TYPE_FOR_CREATE['Refund'], 'readOnly' => 'readOnly'])->label('Type') ?>
                             <?= $form->field($model, 'motherId')->hiddenInput(['value' => $motherHoliday->id])->label(false) ?>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($holidayRefund, 'refundStatus')->dropDownList(AccountConstant::OTHER_SERVICE_REFUND_STATUS, ['prompt' => 'Select refund status...']) ?>
+                            <?= $form->field($holidayRefund, 'refundStatus')->dropDownList(ServiceConstant::OTHER_SERVICE_REFUND_STATUS, ['prompt' => 'Select refund status...']) ?>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($holidayRefund, 'refundMedium')->dropdownList(AccountConstant::REFUND_MEDIUM, ['prompt' => 'Select refund medium...']) ?>
+                            <?= $form->field($holidayRefund, 'refundMedium')->dropdownList(ServiceConstant::REFUND_MEDIUM, ['prompt' => 'Select refund medium...']) ?>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($holidayRefund, 'refundMethod')->dropdownList(AccountConstant::REFUND_METHOD, ['prompt' => 'Select refund method...']) ?>
+                            <?= $form->field($holidayRefund, 'refundMethod')->dropdownList(ServiceConstant::REFUND_METHOD, ['prompt' => 'Select refund method...']) ?>
                         </div>
                     </div>
                     <div class="row">

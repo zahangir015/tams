@@ -1,6 +1,6 @@
 <?php
 
-use app\modules\sale\components\AccountConstant;
+use app\modules\sale\components\ServiceConstant;
 use kartik\daterange\DateRangePicker;
 use yii\helpers\Html;
 use kartik\grid\GridView;
@@ -85,7 +85,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'type',
                 'value' => 'type',
-                'filter' => AccountConstant::ALL_SERVICE_TYPE
+                'filter' => ServiceConstant::ALL_SERVICE_TYPE
             ],
             'serviceDetails',
             'quantity',

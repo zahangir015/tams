@@ -2,7 +2,7 @@
 
 namespace app\modules\account\repositories;
 
-use app\modules\sale\components\AccountConstant;
+use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\Customer;
 use app\repository\ParentRepository;
 
@@ -15,11 +15,11 @@ class RefundTransactionRepository extends ParentRepository
             ->with([
                 'tickets' => function ($query) use ($start_date, $end_date, $customerId) {
                     $query->joinWith(['ticketRefund' => function ($subQuery) use ($customerId) {
-                        $subQuery->where(['!=', 'isRefunded', AccountConstant::STATE['Full Refund']])
+                        $subQuery->where(['!=', 'isRefunded', ServiceConstant::STATE['Full Refund']])
                             ->andWhere(['refId' => $customerId])
                             ->andWhere(['refModel' => Customer::class]);
                     }])
-                        ->where(['type' => AccountConstant::TYPE['Refund']]);
+                        ->where(['type' => ServiceConstant::TYPE['Refund']]);
                     if ($start_date && $end_date) {
                         $query->andWhere(['between', 'ticket.refundRequestDate', $start_date, $end_date])
                             ->orderBy(['ticket.refundRequestDate' => SORT_ASC]);
@@ -27,11 +27,11 @@ class RefundTransactionRepository extends ParentRepository
                 },
                 'visas' => function ($query) use ($start_date, $end_date, $customerId) {
                     $query->joinWith(['visaRefund' => function ($subQuery) use ($customerId) {
-                        $subQuery->where(['!=', 'isRefunded', AccountConstant::STATE['Full Refund']])
+                        $subQuery->where(['!=', 'isRefunded', ServiceConstant::STATE['Full Refund']])
                             ->andWhere(['refId' => $customerId])
                             ->andWhere(['refModel' => Customer::class]);
                     }])
-                        ->where(['type' => AccountConstant::TYPE['Refund']]);
+                        ->where(['type' => ServiceConstant::TYPE['Refund']]);
                     if ($start_date && $end_date) {
                         $query->andWhere(['between', 'visa.refundRequestDate', $start_date, $end_date])
                             ->orderBy(['visa.refundRequestDate' => SORT_ASC]);
@@ -39,11 +39,11 @@ class RefundTransactionRepository extends ParentRepository
                 },
                 'hotels' => function ($query) use ($start_date, $end_date, $customerId) {
                     $query->joinWith(['hotelRefund' => function ($subQuery) use ($customerId) {
-                        $subQuery->where(['!=', 'isRefunded', AccountConstant::STATE['Full Refund']])
+                        $subQuery->where(['!=', 'isRefunded', ServiceConstant::STATE['Full Refund']])
                             ->andWhere(['refId' => $customerId])
                             ->andWhere(['refModel' => Customer::class]);
                     }])
-                        ->where(['type' => AccountConstant::TYPE['Refund']]);
+                        ->where(['type' => ServiceConstant::TYPE['Refund']]);
                     if ($start_date && $end_date) {
                         $query->andWhere(['between', 'hotel.refundRequestDate', $start_date, $end_date])
                             ->orderBy(['hotel.refundRequestDate' => SORT_ASC]);
@@ -51,11 +51,11 @@ class RefundTransactionRepository extends ParentRepository
                 },
                 'holidays' => function ($query) use ($start_date, $end_date, $customerId) {
                     $query->joinWith(['holidayRefund' => function ($subQuery) use ($customerId) {
-                        $subQuery->where(['!=', 'isRefunded', AccountConstant::STATE['Full Refund']])
+                        $subQuery->where(['!=', 'isRefunded', ServiceConstant::STATE['Full Refund']])
                             ->andWhere(['refId' => $customerId])
                             ->andWhere(['refModel' => Customer::class]);
                     }])
-                        ->where(['type' => AccountConstant::TYPE['Refund']]);
+                        ->where(['type' => ServiceConstant::TYPE['Refund']]);
                     if ($start_date && $end_date) {
                         $query->andWhere(['between', 'holiday.refundRequestDate', $start_date, $end_date])
                             ->orderBy(['holiday.refundRequestDate' => SORT_ASC]);

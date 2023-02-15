@@ -4,7 +4,7 @@ namespace app\modules\sale\controllers;
 
 use app\components\GlobalConstant;
 use app\models\History;
-use app\modules\sale\components\AccountConstant;
+use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\Airline;
 use app\modules\sale\models\holiday\Holiday;
 use app\modules\sale\models\ticket\RefundTicketSearch;
@@ -182,15 +182,15 @@ class TicketController extends ParentController
     {
         $motherTicket = $this->flightService->findTicket($uid, Ticket::class, ['airline', 'provider', 'customer', 'ticketSupplier']);
         $totalReceivedAmount = 0;
-        if (($motherTicket->type == AccountConstant::TYPE['Refund']) || ($motherTicket->type == AccountConstant::TYPE['Refund Requested'])) {
+        if (($motherTicket->type == ServiceConstant::TYPE['Refund']) || ($motherTicket->type == ServiceConstant::TYPE['Refund Requested'])) {
             Yii::$app->session->setFlash('error', 'Refund and Refund Requested Ticket can not be refunded.');
             return $this->redirect(Yii::$app->request->referrer);
-        } elseif ($motherTicket->type == AccountConstant::TYPE['New']) {
+        } elseif ($motherTicket->type == ServiceConstant::TYPE['New']) {
             if (Ticket::findOne(['motherTicketId' => $motherTicket->id])) {
                 Yii::$app->session->setFlash('error', 'This New ticket has a child ticket.');
                 return $this->redirect(Yii::$app->request->referrer);
             }
-        } elseif ($motherTicket->type == AccountConstant::TYPE['Reissue']) {
+        } elseif ($motherTicket->type == ServiceConstant::TYPE['Reissue']) {
             if (!$motherTicket->motherTicketId) {
                 Yii::$app->session->setFlash('error', 'Parent Ticket not found');
                 return $this->redirect(Yii::$app->request->referrer);

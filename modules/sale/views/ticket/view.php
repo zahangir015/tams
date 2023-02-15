@@ -2,7 +2,7 @@
 
 use app\components\Constant;
 use app\components\Utils;
-use app\modules\sale\components\AccountConstant;
+use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\ticket\Ticket;
 use yii\bootstrap4\Html;
 use yii\web\YiiAsset;
@@ -12,8 +12,8 @@ use yii\widgets\DetailView;
 /* @var $model Ticket */
 
 $this->title = $model->eTicket;
-if ($model->type == AccountConstant::TICKET_TYPE_FOR_REFUND['Refund']) {
-    if ($model->ticketRefund->refundStatus == AccountConstant::REFUND_STATUS['VOID']) {
+if ($model->type == ServiceConstant::TICKET_TYPE_FOR_REFUND['Refund']) {
+    if ($model->ticketRefund->refundStatus == ServiceConstant::REFUND_STATUS['VOID']) {
         $label = Yii::t('app', 'Void List');
         $url = 'void-list';
     } else {
@@ -93,7 +93,7 @@ YiiAsset::register($this);
                                 <th>PNR Code</th>
                                 <th>Type</th>
                                 <?php
-                                if ($model->type == AccountConstant::TICKET_TYPE_FOR_REFUND['Refund']) {
+                                if ($model->type == ServiceConstant::TICKET_TYPE_FOR_REFUND['Refund']) {
                                     ?>
                                     <th>Refund Request Date</th>
                                     <th>Refund Status</th>
@@ -114,7 +114,7 @@ YiiAsset::register($this);
                                     <?= $model->type?>
                                 </td>
                                 <?php
-                                if ($model->type == AccountConstant::TICKET_TYPE_FOR_REFUND['Refund']) {
+                                if ($model->type == ServiceConstant::TICKET_TYPE_FOR_REFUND['Refund']) {
                                     ?>
                                     <td><?= $model->refundRequestDate ?></td>
                                     <td><?= $model->ticketRefund->refundStatus ?></td>

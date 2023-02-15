@@ -2,7 +2,7 @@
 
 use app\components\GlobalConstant;
 use app\components\Helper;
-use app\modules\sale\components\AccountConstant;
+use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\ticket\Ticket;
 use kartik\daterange\DateRangePicker;
 use yii\helpers\Html;
@@ -66,9 +66,9 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'paxType',
                 'value' => function($model){
-                    return AccountConstant::PAX_TYPE[$model->paxType];
+                    return ServiceConstant::PAX_TYPE[$model->paxType];
                 },
-                'filter' => AccountConstant::PAX_TYPE
+                'filter' => ServiceConstant::PAX_TYPE
             ],
             [
                 'attribute' => 'issueDate',
@@ -114,30 +114,30 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'type',
                 'value' => function($model){
-                    return AccountConstant::ALL_TICKET_TYPE[$model->type];
+                    return ServiceConstant::ALL_TICKET_TYPE[$model->type];
                 },
-                'filter' => AccountConstant::ALL_TICKET_TYPE
+                'filter' => ServiceConstant::ALL_TICKET_TYPE
             ],
             [
                 'attribute' => 'tripType',
                 'value' => function($model){
-                    return AccountConstant::TRIP_TYPE[$model->tripType];
+                    return ServiceConstant::TRIP_TYPE[$model->tripType];
                 },
-                'filter' => AccountConstant::TRIP_TYPE
+                'filter' => ServiceConstant::TRIP_TYPE
             ],
             [
                 'attribute' => 'bookedOnline',
                 'value' => function($model){
-                    return AccountConstant::BOOKING_TYPE[$model->bookedOnline];
+                    return ServiceConstant::BOOKING_TYPE[$model->bookedOnline];
                 },
-                'filter' => AccountConstant::BOOKING_TYPE
+                'filter' => ServiceConstant::BOOKING_TYPE
             ],
             [
                 'attribute' => 'flightType',
                 'value' => function($model){
-                    return AccountConstant::FLIGHT_TYPE[$model->flightType];
+                    return ServiceConstant::FLIGHT_TYPE[$model->flightType];
                 },
-                'filter' => AccountConstant::FLIGHT_TYPE
+                'filter' => ServiceConstant::FLIGHT_TYPE
             ],
             'seatClass',
             //'codeShare',
@@ -200,7 +200,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => function ($model) {
                     return $model->ticketRefund->refundStatus;
                 },
-                'filter' => AccountConstant::REFUND_STATUS
+                'filter' => ServiceConstant::REFUND_STATUS
             ],
             [
                 'attribute' => 'refundMedium',
@@ -208,7 +208,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => function ($model) {
                     return $model->ticketRefund->refundMedium;
                 },
-                'filter' => AccountConstant::REFUND_MEDIUM
+                'filter' => ServiceConstant::REFUND_MEDIUM
             ],
             [
                 'attribute' => 'refundMethod',
@@ -216,7 +216,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => function ($model) {
                     return $model->ticketRefund->refundMethod;
                 },
-                'filter' => AccountConstant::REFUND_METHOD
+                'filter' => ServiceConstant::REFUND_METHOD
             ],
             [
                 'attribute' => 'refundDate',
@@ -269,7 +269,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 //'updateOptions' => ['role' => 'modal-remote', 'title' => 'Update', 'data-toggle' => 'tooltip'],
                 'buttons' => [
                     'refund' => function ($url, $model) {
-                        if ($model->type === AccountConstant::TYPE['Refund'] || $model->type === AccountConstant::TYPE['Refund Requested']) {
+                        if ($model->type === ServiceConstant::TYPE['Refund'] || $model->type === ServiceConstant::TYPE['Refund Requested']) {
                             return false;
                         }
                         return Html::a('<span class="fas fa-minus-square"></span>', ['/sale/ticket/refund', 'uid' => $model->uid], [

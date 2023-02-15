@@ -10,7 +10,7 @@ use app\modules\account\models\InvoiceDetail;
 use app\modules\account\models\RefundTransaction;
 use app\modules\account\repositories\InvoiceRepository;
 use app\modules\admin\models\User;
-use app\modules\sale\components\AccountConstant;
+use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\Customer;
 use app\modules\sale\services\SaleService;
 use Yii;
@@ -369,7 +369,7 @@ class InvoiceService
 
         // Mother Invoice Detail status update
         $motherInvoiceDetail = $this->invoiceRepository->findOne(['refId' => $newReissueService->motherTicketId, 'refModel' => $newReissueService::class], InvoiceDetail::class, []);
-        $motherInvoiceDetail->status = AccountConstant::INVOICE_DETAIL_REISSUE_STATUS;
+        $motherInvoiceDetail->status = ServiceConstant::INVOICE_DETAIL_REISSUE_STATUS;
         $motherInvoiceDetail = $this->invoiceRepository->store($motherInvoiceDetail);
         if ($motherInvoiceDetail->hasErrors()) {
             return ['error' => true, 'message' => 'Mother Invoice details update failed - ' . Helper::processErrorMessages($motherInvoiceDetail->getErrors())];
@@ -531,17 +531,17 @@ class InvoiceService
                 return ['error' => true, 'message' => "{$invoiceDetail->refModel} not found with id {$invoiceDetail->refId}"];
             }
             $due = $service->quoteAmount - $service->receivedAmount;
-            if (($service->paymentStatus == AccountConstant::PAYMENT_STATUS['Full Paid']) && ($due == 0)) {
+            if (($service->paymentStatus == ServiceConstant::PAYMENT_STATUS['Full Paid']) && ($due == 0)) {
                 continue;
             }
             if ($due <= $amount) {
                 $service->receivedAmount += $due;
-                $service->paymentStatus = AccountConstant::PAYMENT_STATUS['Full Paid'];
+                $service->paymentStatus = ServiceConstant::PAYMENT_STATUS['Full Paid'];
                 //$paidAmountThisTime = $due;
                 $amount -= $due;
             } else {
                 $service->receivedAmount += $amount;
-                $service->paymentStatus = AccountConstant::PAYMENT_STATUS['Partially Paid'];
+                $service->paymentStatus = ServiceConstant::PAYMENT_STATUS['Partially Paid'];
                 //$paidAmountThisTime = $amount;
                 $amount = 0;
             }

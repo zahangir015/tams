@@ -1,6 +1,6 @@
 <?php
 
-use app\modules\sale\components\AccountConstant;
+use app\modules\sale\components\ServiceConstant;
 use kartik\daterange\DateRangePicker;
 use kartik\select2\Select2;
 use yii\bootstrap4\ActiveForm;
@@ -60,7 +60,7 @@ $this->registerJsFile(
                         <?= $form->field($model, 'identificationNumber')->textInput(['value' => ($model->isNewRecord) ? Helper::visaIdentificationNumber() : $model->identificationNumber, 'readOnly' => 'readOnly']) ?>
                     </div>
                     <div class="col-md">
-                        <?= $form->field($model, 'processStatus')->dropdownList(AccountConstant::VISA_PROCESS_STATUS) ?>
+                        <?= $form->field($model, 'processStatus')->dropdownList(ServiceConstant::VISA_PROCESS_STATUS) ?>
                     </div>
                 </div>
             </div>
