@@ -1,10 +1,7 @@
 <?php
 
-use app\components\GlobalConstant;
 use app\components\Helper;
-use app\modules\sale\components\AccountConstant;
-use app\modules\sale\models\ticket\Ticket;
-use kartik\date\DatePicker;
+use app\modules\sale\components\ServiceConstant;
 use kartik\daterange\DateRangePicker;
 use kartik\select2\Select2;
 use yii\bootstrap4\Html;
@@ -59,7 +56,7 @@ use yii\bootstrap4\Html;
                 <?= $form->field($visaSupplier, "[$row]issueDate")->widget(DateRangePicker::class, Helper::dateFormat(false, true)); ?>
             </div>
             <div class="col-md">
-                <?= $form->field($visaSupplier, "[$row]type")->textInput(['readOnly' => 'readOnly', 'value' => AccountConstant::ALL_SERVICE_TYPE['New']]) ?>
+                <?= $form->field($visaSupplier, "[$row]type")->textInput(['readOnly' => 'readOnly', 'value' => ServiceConstant::ALL_SERVICE_TYPE['New']]) ?>
             </div>
             <div class="col-md">
                 <?= $form->field($visaSupplier, "[$row]paxName")->textInput(['maxlength' => true]); ?>

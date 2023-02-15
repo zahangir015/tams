@@ -1,16 +1,12 @@
 <?php
 
-use app\components\GlobalConstant;
 use app\components\Helper;
-use app\modules\sale\components\AccountConstant;
-use app\modules\sale\models\ticket\Ticket;
-use kartik\date\DatePicker;
+use app\modules\sale\components\ServiceConstant;
 use kartik\daterange\DateRangePicker;
 use kartik\select2\Select2;
-use yii\bootstrap4\Html;
 
 /* @var $this yii\web\View */
-/* @var $form yii\widgets\ActiveForm */
+/* @var $form yii\bootstrap4\ActiveForm */
 
 ?>
 <div class="card card-custom card-border mb-5" id="card<?= $row ?>">
@@ -51,7 +47,7 @@ use yii\bootstrap4\Html;
                 <?= $form->field($hotelSupplier, "[$row]roomType")->textInput() ?>
             </div>
             <div class="col-md">
-                <?= $form->field($hotelSupplier, "[$row]type")->textInput(['readOnly' => 'readOnly', 'value' => AccountConstant::ALL_SERVICE_TYPE['New']]) ?>
+                <?= $form->field($hotelSupplier, "[$row]type")->textInput(['readOnly' => 'readOnly', 'value' => ServiceConstant::ALL_SERVICE_TYPE['New']]) ?>
             </div>
             <div class="col-md">
                 <?= $form->field($hotelSupplier, "[$row]serviceDetails")->textInput(['maxlength' => true]); ?>

@@ -2,9 +2,7 @@
 
 use app\components\GlobalConstant;
 use app\components\Helper;
-use app\modules\account\components\AccountConstant;
 use app\modules\sale\components\ServiceConstant;
-use app\modules\sale\models\ticket\Ticket;
 use kartik\date\DatePicker;
 use kartik\select2\Select2;
 use yii\bootstrap4\Html;
