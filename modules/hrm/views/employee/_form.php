@@ -109,7 +109,7 @@ $this->registerJsFile(
                             'pluginOptions' => [
                                 'depends' => ['employeedesignation-departmentid'],
                                 'initialize' => $model->isNewRecord ? false : true,
-                                'url' => Url::to(['/hrm/employee/get-designation-by-department']),
+                                'url' => Url::to(['/hrm/designation/get-designation-by-department']),
                                 'loadingText' => 'Loading designation ...',
                             ],
                         ]); ?>

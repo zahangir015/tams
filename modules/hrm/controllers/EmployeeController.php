@@ -3,6 +3,7 @@
 namespace app\modules\hrm\controllers;
 
 use app\components\GlobalConstant;
+use app\components\Helper;
 use app\modules\admin\models\form\Signup;
 use app\modules\hrm\models\Branch;
 use app\modules\hrm\models\Department;
@@ -140,7 +141,12 @@ class EmployeeController extends ParentController
      */
     public function actionDelete(string $uid): Response
     {
-        $this->findModel($uid)->delete();
+        $model = $this->hrmConfigurationService->deleteModel(['uid' => $uid], Employee::class, []);
+        if ($model->hasErrors()) {
+            Yii::$app->session->setFlash('danger', 'Deletion failed - ' . Helper::processErrorMessages($model->getErrors()));
+        } else {
+            Yii::$app->session->setFlash('success', 'Successfully Deleted.');
+        }
 
         return $this->redirect(['index']);
     }
@@ -149,29 +155,6 @@ class EmployeeController extends ParentController
     {
         return $this->employeeRepository->findOne(['uid' => $uid], Employee::class, $withArray);
     }
-
-    // THE CONTROLLER
-    public function actionGetDesignationByDepartment()
-    {
-        Yii::$app->response->format = Response::FORMAT_JSON;
-        $out = [];
-        if (isset($_POST['depdrop_parents'])) {
-            $parents = $_POST['depdrop_parents'];
-            if ($parents != null) {
-                $departmentId = $parents[0];
-                $out = $this->hrmConfigurationService->getDesignationList(['departmentId' => $departmentId, 'status' => GlobalConstant::ACTIVE_STATUS]);
-                // the getSubCatList function will query the database based on the
-                // $departmentId and return an array like below:
-                // [
-                //    ['id'=>'<designation-id-1>', 'name'=>'<designation-name1>'],
-                //    ['id'=>'<designation_id_2>', 'name'=>'<designation-name2>']
-                // ]
-                return ['output' => $out, 'selected' => ''];
-            }
-        }
-        return ['output' => '', 'selected' => ''];
-    }
-
     public function actionGetEmployeeByDepartment()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -191,5 +174,16 @@ class EmployeeController extends ParentController
             }
         }
         return ['output' => '', 'selected' => ''];
+    }
+
+    public function actionGetEmployees($query = null): array
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $employees = $this->employeeRepository->employeeQuery($query);
+        $data = [];
+        foreach ($employees as $employee) {
+            $data[] = ['id' => $employee->id, 'text' => $employee->officialId.' '.$employee->firstName.' '.$employee->lastName.' | '.$employee->officialEmail];
+        }
+        return ['results' => $data];
     }
 }

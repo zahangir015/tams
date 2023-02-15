@@ -29,7 +29,6 @@ use app\components\Helper;
                 <div class="col-md">
                     <?= $form->field($model, 'reportType')->dropdownList(AccountConstant::REPORT_TYPE, ['maxlength' => true]) ?>
                 </div>
-
             </div>
             <div class="row">
                 <div class="col-md">

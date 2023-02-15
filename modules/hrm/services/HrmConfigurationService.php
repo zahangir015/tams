@@ -3,6 +3,7 @@
 namespace app\modules\hrm\services;
 
 use app\components\GlobalConstant;
+use app\modules\hrm\models\DepartmentShift;
 use app\modules\hrm\models\Designation;
 use app\modules\hrm\models\Employee;
 use app\modules\hrm\repositories\HrmConfigurationRepository;
@@ -36,6 +37,17 @@ class HrmConfigurationService
         }
 
         return $designationDataArray;
+    }
+
+    public function getShiftListByDepartment(array $queryArray): array
+    {
+        $shiftList = self::getAll($queryArray, DepartmentShift::class, ['shift'], true);
+        $shiftDataArray = [];
+        foreach ($shiftList as $value) {
+            $shiftDataArray[] = ['id' => $value['id'], 'name' => $value['title']];
+        }
+
+        return $shiftDataArray;
     }
 
     public function getEmployeeList(array $queryArray, array $subQueryArray): array

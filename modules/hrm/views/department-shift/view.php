@@ -6,7 +6,7 @@ use yii\widgets\DetailView;
 /** @var yii\web\View $this */
 /** @var app\modules\hrm\models\DepartmentShift $model */
 
-$this->title = $model->department->name.' - '.$model->shift->title;
+$this->title = $model->department->name . ' - ' . $model->shift->title;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Department Shifts'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
@@ -22,36 +22,42 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ]) ?>
     </p>
-
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            [
-                'attribute' => 'departmentId',
-                'value' => function ($model) {
-                    return $model->department->name;
-                },
-            ],
-            [
-                'attribute' => 'shiftId',
-                'value' => function ($model) {
-                    return $model->shift->title;
-                },
-            ],
-            [
-                'attribute' => 'status',
-                'value' => function ($model) {
-                    $labelClass = \app\components\Helper::statusLabelClass($model->status);
-                    $labelText = ($model->status) ? 'Active' : 'Inactive';
-                    return '<span class="right badge ' . $labelClass . '">' . $labelText . '</span>';
-                },
-                'format' => 'html'
-            ],
-            'createdBy',
-            'createdAt',
-            'updatedBy',
-            'updatedAt',
-        ],
-    ]) ?>
+    <div class="card">
+        <div class="card-header bg-gray-dark">
+            <?= Html::encode($this->title) ?>
+        </div>
+        <div class="card-body">
+            <?= DetailView::widget([
+                'model' => $model,
+                'attributes' => [
+                    [
+                        'attribute' => 'departmentId',
+                        'value' => function ($model) {
+                            return $model->department->name;
+                        },
+                    ],
+                    [
+                        'attribute' => 'shiftId',
+                        'value' => function ($model) {
+                            return $model->shift->title;
+                        },
+                    ],
+                    [
+                        'attribute' => 'status',
+                        'value' => function ($model) {
+                            $labelClass = \app\components\Helper::statusLabelClass($model->status);
+                            $labelText = ($model->status) ? 'Active' : 'Inactive';
+                            return '<span class="right badge ' . $labelClass . '">' . $labelText . '</span>';
+                        },
+                        'format' => 'html'
+                    ],
+                    'createdBy',
+                    'createdAt',
+                    'updatedBy',
+                    'updatedAt',
+                ],
+            ]) ?>
+        </div>
+    </div>
 
 </div>

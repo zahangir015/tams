@@ -112,4 +112,25 @@ class DesignationController extends ParentController
 
         return $this->redirect(['index']);
     }
+
+    public function actionGetDesignationByDepartment()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if ($parents != null) {
+                $departmentId = $parents[0];
+                $out = $this->hrmConfigurationService->getDesignationList(['departmentId' => $departmentId, 'status' => GlobalConstant::ACTIVE_STATUS]);
+                // the getSubCatList function will query the database based on the
+                // $departmentId and return an array like below:
+                // [
+                //    ['id'=>'<designation-id-1>', 'name'=>'<designation-name1>'],
+                //    ['id'=>'<designation_id_2>', 'name'=>'<designation-name2>']
+                // ]
+                return ['output' => $out, 'selected' => ''];
+            }
+        }
+        return ['output' => '', 'selected' => ''];
+    }
 }
