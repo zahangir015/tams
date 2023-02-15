@@ -2,6 +2,7 @@
 
 namespace app\modules\hrm\models;
 
+use app\components\GlobalConstant;
 use app\traits\BehaviorTrait;
 use Yii;
 use yii\db\ActiveQuery;
@@ -104,8 +105,12 @@ class Shift extends ActiveRecord
         return $this->hasMany(Roster::class, ['shiftId' => 'id']);
     }
 
-    public static function query(mixed $query)
+    public static function query(mixed $query): array
     {
-
+        return self::find()
+            ->select(['id', 'title', 'status'])
+            ->where(['like', 'title', $query])
+            ->andWhere(['status' => GlobalConstant::ACTIVE_STATUS])
+            ->all();
     }
 }

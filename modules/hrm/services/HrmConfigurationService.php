@@ -2,6 +2,7 @@
 
 namespace app\modules\hrm\services;
 
+use app\components\GlobalConstant;
 use app\modules\hrm\models\Designation;
 use app\modules\hrm\models\Employee;
 use app\modules\hrm\repositories\HrmConfigurationRepository;
@@ -46,5 +47,12 @@ class HrmConfigurationService
         }
 
         return $employeeDataArray;
+    }
+
+    public function deleteModel(array $queryArray, string $class, array $withArray = []): ActiveRecord
+    {
+        $model = self::findModel($queryArray, $class, $withArray);
+        $model->status = GlobalConstant::INACTIVE_STATUS;
+        return $this->hrmConfigurationRepository->store($model);
     }
 }

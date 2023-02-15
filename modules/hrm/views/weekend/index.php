@@ -1,12 +1,13 @@
 <?php
 
 use app\components\GlobalConstant;
+use app\modules\hrm\components\HrmConstant;
 use app\modules\hrm\models\Weekend;
+use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use kartik\grid\ActionColumn;
 use kartik\grid\GridView;
-use yii\widgets\Pjax;
 use app\components\Helper;
 
 /** @var yii\web\View $this */
@@ -22,8 +23,20 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'kartik\grid\SerialColumn'],
-            'departmentId',
-            'day',
+            [
+                'attribute' => 'departmentId',
+                'value' => function ($model) {
+                    return $model->department->name;
+                },
+                'filter' => Select2::widget(Helper::ajaxDropDown('WeekendSearch[departmentId]', '/hrm/department/get-departments', false, 'departmentId', 'departmentId'))
+            ],
+            [
+                'attribute' => 'day',
+                'value' => function ($model) {
+                    return $model->day;
+                },
+                'filter' => HrmConstant::DAYS
+            ],
             [
                 'class' => '\kartik\grid\DataColumn',
                 'attribute' => 'status',
@@ -65,7 +78,7 @@ $this->params['breadcrumbs'][] = $this->title;
             '{export}',
             '{toggleData}'
         ],
-        'pjax' => true,
+        //'pjax' => true,
         'bordered' => true,
         'striped' => false,
         'condensed' => false,
