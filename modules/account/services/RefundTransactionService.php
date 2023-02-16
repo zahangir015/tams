@@ -170,22 +170,16 @@ class RefundTransactionService
             // store refund transaction detail
             foreach ($requestData['RefundTransactionDetail'] as $singleDetailData) {
                 $singleData = json_decode($singleDetailData, true);
-                dd($singleData);
-                if ($refundAdjustmentAmount > 0) {
-                    $singleData['amount'] = ($refundAdjustmentAmount > $singleData['payable']) ? $singleData['payable'] : $refundAdjustmentAmount;
-                    $refundAdjustmentAmount -= $singleData['payable'];
-                } else {
-                    $singleData['amount'] = 0;
-                }
 
-                $model = new RefundTransactionDetail();
-                $model->load(['RefundTransactionDetail' => $singleData]);
-                $model->refundTransactionId = $refundTransaction->id;
-                $model->status = GlobalConstant::ACTIVE_STATUS;
-                if (!$model->save()) {
+                $refundTransactionDetail = new RefundTransactionDetail();
+                $refundTransactionDetail->load(['RefundTransactionDetail' => $singleData]);
+                $refundTransactionDetail->refundTransactionId = $refundTransaction->id;
+                $refundTransactionDetail->status = GlobalConstant::ACTIVE_STATUS;
+                $refundTransactionDetail = $this->refundTransactionRepository->store($refundTransactionDetail);
+
+                if ($refundTransactionDetail->hasErrors()) {
                     return ['status' => false, 'message' => $model->errors];
                 }
-
             }
 
             // process customer ledger
