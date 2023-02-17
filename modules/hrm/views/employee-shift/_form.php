@@ -22,7 +22,7 @@ use yii\bootstrap4\ActiveForm;
             <?php $form = ActiveForm::begin(); ?>
             <div class="row">
                 <div class="col-md">
-                    <?= $form->field($model, 'departmentId')->dropDownList($departmentList) ?>
+                    <?= $form->field($model, 'departmentId')->dropDownList($departmentList, ['prompt' => 'Select Department ...']) ?>
                 </div>
                 <div class="col-md">
                     <?= $form->field($model, 'shiftId')->widget(DepDrop::class, [

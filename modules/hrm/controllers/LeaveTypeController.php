@@ -2,26 +2,24 @@
 
 namespace app\modules\hrm\controllers;
 
-use app\components\GlobalConstant;
 use app\components\Helper;
-use app\modules\hrm\models\Department;
-use app\modules\hrm\models\EmployeeShift;
-use app\modules\hrm\models\search\EmployeeShiftSearch;
+use app\modules\hrm\models\LeaveType;
+use app\modules\hrm\models\search\LeaveTypeSearch;
 use app\controllers\ParentController;
 use app\modules\hrm\repositories\HrmConfigurationRepository;
 use app\modules\hrm\services\HrmConfigurationService;
 use Yii;
-use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
+use yii\filters\VerbFilter;
 use yii\web\Response;
 
 /**
- * EmployeeShiftController implements the CRUD actions for EmployeeShift model.
+ * LeaveTypeController implements the CRUD actions for LeaveType model.
  */
-class EmployeeShiftController extends ParentController
+class LeaveTypeController extends ParentController
 {
-    public HrmConfigurationService $hrmConfigurationService;
-    public HrmConfigurationRepository $hrmConfigurationRepository;
+    private HrmConfigurationService $hrmConfigurationService;
+    private HrmConfigurationRepository $hrmConfigurationRepository;
 
     public function __construct($uid, $module, $config = [])
     {
@@ -31,13 +29,13 @@ class EmployeeShiftController extends ParentController
     }
 
     /**
-     * Lists all EmployeeShift models.
+     * Lists all LeaveType models.
      *
      * @return string
      */
     public function actionIndex(): string
     {
-        $searchModel = new EmployeeShiftSearch();
+        $searchModel = new LeaveTypeSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
@@ -47,26 +45,26 @@ class EmployeeShiftController extends ParentController
     }
 
     /**
-     * Displays a single EmployeeShift model.
+     * Displays a single LeaveType model.
      * @param string $uid UID
      * @return string
      */
     public function actionView(string $uid): string
     {
         return $this->render('view', [
-            'model' => $this->hrmConfigurationService->findModel(['uid' => $uid], EmployeeShift::class, ['department', 'shift', 'employee']),
+            'model' => $this->hrmConfigurationService->findModel(['uid' => $uid], LeaveType::class, []),
         ]);
     }
 
     /**
-     * Creates a new EmployeeShift model.
+     * Creates a new LeaveType model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|Response
      */
     public function actionCreate(): Response|string
     {
-        $model = new EmployeeShift();
-        $departments = $this->hrmConfigurationService->getAll(['status' => GlobalConstant::ACTIVE_STATUS], Department::class, [], true);
+        $model = new LeaveType();
+
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
                 $model = $this->hrmConfigurationRepository->store($model);
@@ -82,20 +80,19 @@ class EmployeeShiftController extends ParentController
 
         return $this->render('create', [
             'model' => $model,
-            'departmentList' => ArrayHelper::map($departments, 'id', 'name'),
         ]);
     }
 
     /**
-     * Updates an existing EmployeeShift model.
+     * Updates an existing LeaveType model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param string $uid UID
      * @return string|Response
      */
     public function actionUpdate(string $uid): Response|string
     {
-        $model = $this->hrmConfigurationService->findModel(['uid' => $uid], EmployeeShift::class, ['department', 'shift', 'employee']);
-        $departments = $this->hrmConfigurationService->getAll(['status' => GlobalConstant::ACTIVE_STATUS], Department::class, [], true);
+        $model = $this->hrmConfigurationService->findModel(['uid' => $uid], LeaveType::class, []);
+
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
                 $model = $this->hrmConfigurationRepository->store($model);
@@ -109,19 +106,18 @@ class EmployeeShiftController extends ParentController
 
         return $this->render('update', [
             'model' => $model,
-            'departmentList' => ArrayHelper::map($departments, 'id', 'name'),
         ]);
     }
 
     /**
-     * Deletes an existing EmployeeShift model.
+     * Deletes an existing LeaveType model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param string $uid UID
      * @return Response
      */
     public function actionDelete(string $uid): Response
     {
-        $model = $this->hrmConfigurationService->deleteModel(['uid' => $uid], EmployeeShift::class, []);
+        $model = $this->hrmConfigurationService->deleteModel(['uid' => $uid], LeaveType::class, []);
         if ($model->hasErrors()) {
             Yii::$app->session->setFlash('danger', 'Deletion failed - ' . Helper::processErrorMessages($model->getErrors()));
         } else {
@@ -129,5 +125,16 @@ class EmployeeShiftController extends ParentController
         }
 
         return $this->redirect(['index']);
+    }
+
+    public function actionGetLeaveTypes($query = null): array
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $types = LeaveType::query($query);
+        $data = [];
+        foreach ($types as $type) {
+            $data[] = ['id' => $type->id, 'text' => $type->name];
+        }
+        return ['results' => $data];
     }
 }

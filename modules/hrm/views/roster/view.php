@@ -1,23 +1,22 @@
 <?php
 
 use yii\helpers\Html;
+use yii\web\YiiAsset;
 use yii\widgets\DetailView;
+use app\components\Helper;
 
 /** @var yii\web\View $this */
 /** @var app\modules\hrm\models\Roster $model */
 
-$this->title = $model->id;
+$this->title = $model->employee->firstName.' '.$model->employee->lastName;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Rosters'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
-\yii\web\YiiAsset::register($this);
+YiiAsset::register($this);
 ?>
 <div class="roster-view">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
     <p>
-        <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->id], [
+        <?= Html::a(Yii::t('app', 'Update'), ['update', 'uid' => $model->uid], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'uid' => $model->uid], [
             'class' => 'btn btn-danger',
             'data' => [
                 'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
@@ -25,24 +24,50 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ]) ?>
     </p>
-
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'id',
-            'uid',
-            'departmentId',
-            'employeeId',
-            'shiftId',
-            'rosterDate',
-            'alternativeHoliday',
-            'remarks',
-            'status',
-            'createdBy',
-            'createdAt',
-            'updatedBy',
-            'updatedAt',
-        ],
-    ]) ?>
-
+    <div class="card">
+        <div class="card-header bg-gray-dark">
+            <?= Html::encode($this->title) ?>
+        </div>
+        <div class="card-body">
+            <?= DetailView::widget([
+                'model' => $model,
+                'attributes' => [
+                    [
+                        'attribute' => 'departmentId',
+                        'value' => function ($model) {
+                            return $model->department->name;
+                        },
+                    ],
+                    [
+                        'attribute' => 'shiftId',
+                        'value' => function ($model) {
+                            return $model->shift->title;
+                        },
+                    ],
+                    [
+                        'attribute' => 'employeeId',
+                        'value' => function ($model) {
+                            return $model->employee->firstName.' '.$model->employee->lastName;
+                        },
+                    ],
+                    'rosterDate',
+                    'alternativeHoliday',
+                    'remarks',
+                    [
+                        'attribute' => 'status',
+                        'value' => function ($model) {
+                            $labelClass = Helper::statusLabelClass($model->status);
+                            $labelText = ($model->status) ? 'Active' : 'Inactive';
+                            return '<span class="right badge ' . $labelClass . '">' . $labelText . '</span>';
+                        },
+                        'format' => 'html'
+                    ],
+                    'createdBy',
+                    'createdAt',
+                    'updatedBy',
+                    'updatedAt',
+                ],
+            ]) ?>
+        </div>
+    </div>
 </div>

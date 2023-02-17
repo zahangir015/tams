@@ -44,7 +44,7 @@ class HrmConfigurationService
         $shiftList = self::getAll($queryArray, DepartmentShift::class, ['shift'], true);
         $shiftDataArray = [];
         foreach ($shiftList as $value) {
-            $shiftDataArray[] = ['id' => $value['id'], 'name' => $value['title']];
+            $shiftDataArray[] = ['id' => $value['shift']['id'], 'name' => $value['shift']['title']];
         }
 
         return $shiftDataArray;

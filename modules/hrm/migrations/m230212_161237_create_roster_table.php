@@ -97,7 +97,6 @@ class m230212_161237_create_roster_table extends Migration
             'roster',
         );
 
-
         // drop foreign key for table `shift`
         $this->dropForeignKey(
             'fk-roster-shiftId',

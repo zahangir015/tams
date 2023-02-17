@@ -8,6 +8,7 @@ use app\modules\hrm\models\Designation;
 use app\controllers\ParentController;
 use app\modules\hrm\models\search\DesignationSearch;
 use app\modules\hrm\services\HrmConfigurationService;
+use Yii;
 use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
@@ -113,7 +114,7 @@ class DesignationController extends ParentController
         return $this->redirect(['index']);
     }
 
-    public function actionGetDesignationByDepartment()
+    public function actionGetDesignationByDepartment(): array
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
         $out = [];

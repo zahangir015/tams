@@ -97,7 +97,26 @@ use yii\helpers\Url;
                             ['label' => 'Roster List', 'icon' => 'calendar', 'url' => ['/hrm/roster/index']],
                         ]
                     ],
-
+                    [
+                        'label' => 'Leave Settings',
+                        'icon' => 'cogs',
+                        'badge' => '<span class="right badge badge-info">4</span>',
+                        'items' => [
+                            ['label' => 'Leave Type', 'icon' => 'calendar-plus', 'url' => ['/hrm/leave-type/index']],
+                            ['label' => 'Yearly Allocation', 'icon' => 'calendar-check', 'url' => ['/hrm/yearly-leave-allocation/index']],
+                            ['label' => 'Employee Allocation', 'icon' => 'calendar-check', 'url' => ['/hrm/employee-leave-allocation/index']],
+                            ['label' => 'Approval Policy', 'icon' => 'calendar', 'url' => ['/hrm/leave-approval-policy/index']],
+                        ]
+                    ],
+                    [
+                        'label' => 'Leave Management',
+                        'icon' => 'cogs',
+                        'badge' => '<span class="right badge badge-info">2</span>',
+                        'items' => [
+                            ['label' => 'Leave Applications', 'icon' => 'calendar-plus', 'url' => ['/hrm/leave-application/index']],
+                            ['label' => 'Apply Leave', 'icon' => 'calendar-check', 'url' => ['/hrm/leave-application/apply']],
+                        ]
+                    ],
                     ['label' => 'SALES', 'header' => true],
                     ['label' => 'Providers', 'icon' => 'paper-plane', 'url' => ['/sale/provider/index']],
                     [
