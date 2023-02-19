@@ -5,7 +5,7 @@ use kartik\daterange\DateRangePicker;
 use kartik\select2\Select2;
 use yii\bootstrap4\ActiveForm;
 use yii\helpers\Html;
-use app\components\Helper;
+use app\components\Utilities;
 use yii\web\JqueryAsset;
 use yii\web\View;
 
@@ -49,13 +49,13 @@ $this->registerJsFile(
             <div class="card-body">
                 <div class="row">
                     <div class="col-md">
-                        <?= $form->field($model, 'customerId')->widget(Select2::class, Helper::ajaxDropDown('customerId', '/sale/customer/get-customers', true, 'customerId'))->label('Customer') ?>
+                        <?= $form->field($model, 'customerId')->widget(Select2::class, Utilities::ajaxDropDown('customerId', '/sale/customer/get-customers', true, 'customerId'))->label('Customer') ?>
                     </div>
                     <div class="col-md">
-                        <?= $form->field($model, 'issueDate')->widget(DateRangePicker::class, Helper::dateFormat(false, true)) ?>
+                        <?= $form->field($model, 'issueDate')->widget(DateRangePicker::class, Utilities::dateFormat(false, true)) ?>
                     </div>
                     <div class="col-md">
-                        <?= $form->field($model, 'identificationNumber')->textInput(['value' => ($model->isNewRecord) ? Helper::visaIdentificationNumber() : $model->identificationNumber, 'readOnly' => 'readOnly']) ?>
+                        <?= $form->field($model, 'identificationNumber')->textInput(['value' => ($model->isNewRecord) ? Utilities::visaIdentificationNumber() : $model->identificationNumber, 'readOnly' => 'readOnly']) ?>
                     </div>
                     <div class="col-md">
                         <?= $form->field($model, 'processStatus')->dropdownList(ServiceConstant::VISA_PROCESS_STATUS) ?>

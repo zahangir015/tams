@@ -9,7 +9,7 @@ use app\modules\hrm\repositories\HrmConfigurationRepository;
 use app\modules\hrm\services\HrmConfigurationService;
 use Yii;
 use yii\web\NotFoundHttpException;
-use app\components\Helper;
+use app\components\Utilities;
 use yii\web\Response;
 
 /**
@@ -70,7 +70,7 @@ class PublicHolidayController extends ParentController
             if ($model->load($this->request->post())) {
                 $model = $this->hrmConfigurationRepository->store($model);
                 if ($model->hasErrors()) {
-                    Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
+                    Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
                 } else {
                     return $this->redirect(['view', 'uid' => $model->uid]);
                 }
@@ -97,7 +97,7 @@ class PublicHolidayController extends ParentController
             if ($model->load($this->request->post())) {
                 $model = $this->hrmConfigurationRepository->store($model);
                 if ($model->hasErrors()) {
-                    Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
+                    Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
                 } else {
                     return $this->redirect(['view', 'uid' => $model->uid]);
                 }
@@ -119,7 +119,7 @@ class PublicHolidayController extends ParentController
     {
         $model = $this->hrmConfigurationService->deleteModel(['uid' => $uid], PublicHoliday::class, []);
         if ($model->hasErrors()) {
-            Yii::$app->session->setFlash('danger', 'Deletion failed - ' . Helper::processErrorMessages($model->getErrors()));
+            Yii::$app->session->setFlash('danger', 'Deletion failed - ' . Utilities::processErrorMessages($model->getErrors()));
         } else {
             Yii::$app->session->setFlash('success', 'Successfully Deleted.');
         }

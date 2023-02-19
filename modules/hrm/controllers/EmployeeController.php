@@ -3,7 +3,7 @@
 namespace app\modules\hrm\controllers;
 
 use app\components\GlobalConstant;
-use app\components\Helper;
+use app\components\Utilities;
 use app\modules\admin\models\form\Signup;
 use app\modules\hrm\models\Branch;
 use app\modules\hrm\models\Department;
@@ -143,7 +143,7 @@ class EmployeeController extends ParentController
     {
         $model = $this->hrmConfigurationService->deleteModel(['uid' => $uid], Employee::class, []);
         if ($model->hasErrors()) {
-            Yii::$app->session->setFlash('danger', 'Deletion failed - ' . Helper::processErrorMessages($model->getErrors()));
+            Yii::$app->session->setFlash('danger', 'Deletion failed - ' . Utilities::processErrorMessages($model->getErrors()));
         } else {
             Yii::$app->session->setFlash('success', 'Successfully Deleted.');
         }

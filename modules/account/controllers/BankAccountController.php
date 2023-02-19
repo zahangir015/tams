@@ -3,7 +3,7 @@
 namespace app\modules\account\controllers;
 
 use app\components\GlobalConstant;
-use app\components\Helper;
+use app\components\Utilities;
 use app\modules\account\models\BankAccount;
 use app\modules\account\models\search\BankAccountSearch;
 use app\controllers\ParentController;
@@ -62,7 +62,7 @@ class BankAccountController extends ParentController
                     Yii::$app->session->setFlash('success', 'Bank Account created successfully.');
                     return $this->redirect(['view', 'uid' => $model->uid]);
                 }
-                Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
+                Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
             }
         } else {
             $model->loadDefaultValues();

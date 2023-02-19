@@ -1,4 +1,5 @@
 <?php
+
 namespace app\repository;
 
 use Yii;
@@ -6,7 +7,7 @@ use yii\db\ActiveRecord;
 
 class ParentRepository
 {
-    public static function batchStore($table, $columns, $rows): bool
+    public function batchStore($table, $columns, $rows): bool
     {
         if (Yii::$app->db->createCommand()->batchInsert($table, $columns, $rows)->execute()) {
             return true;
@@ -20,9 +21,14 @@ class ParentRepository
         return $object;
     }
 
-    public function findOne(array $queryArray, $model, array $withArray): ActiveRecord
+    public function findOne(array $queryArray, $model, array $withArray = [], array $selectArray = []): ActiveRecord
     {
         $query = $model::find();
+
+        if (!empty($selectArray)) {
+            $query->select($selectArray);
+        }
+
         if (!empty($withArray)) {
             $query->with($withArray);
         }
@@ -30,9 +36,13 @@ class ParentRepository
         return $query->where($queryArray)->one();
     }
 
-    public function findAll($queryArray, $model, $withArray, $asArray)
+    public function findAll($queryArray, $model, array $withArray = [], $asArray = false, array $selectArray = [])
     {
         $query = $model::find();
+        if (!empty($selectArray)) {
+            $query->select($selectArray);
+        }
+
         if (!empty($withArray)) {
             $query->with($withArray);
         }

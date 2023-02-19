@@ -3,7 +3,7 @@
 namespace app\modules\account\services;
 
 use app\components\GlobalConstant;
-use app\components\Helper;
+use app\components\Utilities;
 use app\modules\account\components\AccountConstant;
 use app\modules\account\models\RefundTransaction;
 use app\modules\account\models\RefundTransactionDetail;
@@ -140,7 +140,7 @@ class RefundTransactionService
             $html .= '<tr>';
             $html .= '<td><input type="checkbox" class="chk" id="chk' . $key . '" name="RefundTransactionDetail[' . $key . ']" value="' . htmlspecialchars(json_encode($array)) . '"></td>';
             $html .= '<td><span class="badge bg-green">' . $identificationNumber . '</span></td>';
-            $html .= '<td>' . ucfirst(Helper::getServiceName($serviceModel)) . ' <input type="text"  value="' . $array['refModel'] . '" hidden >  </td>';
+            $html .= '<td>' . ucfirst(Utilities::getServiceName($serviceModel)) . ' <input type="text"  value="' . $array['refModel'] . '" hidden >  </td>';
             $html .= '<td>' . $service['issueDate'] . '</td>';
             $html .= '<td>' . $payable . '<input type="text" class="amount payable" id="payable' . $key . '"    value="' . $payable . '" hidden></td>';
             $html .= '<td>' . $receivable . '<input type="text" class="amount receivable" id="receivable' . $key . '"  value="' . $receivable . '" hidden></td>';
@@ -156,7 +156,7 @@ class RefundTransactionService
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
             $refundTransaction->load($requestData);
-            $refundTransaction->identificationNumber = Helper::refundTransactionNumber();
+            $refundTransaction->identificationNumber = Utilities::refundTransactionNumber();
 
             $difference = ($refundTransaction->payableAmount - $refundTransaction->receivableAmount);
             $refundTransaction->paymentType = ($difference > 0) ? AccountConstant::REFUND_PAYMENT_TYPE['Payable'] : AccountConstant::REFUND_PAYMENT_TYPE['Receivable'];
@@ -164,7 +164,7 @@ class RefundTransactionService
 
             $refundTransaction = $this->refundTransactionRepository->store($refundTransaction);
             if ($refundTransaction->hasErrors()) {
-                throw new Exception(Helper::processErrorMessages($refundTransaction->getErrors()));
+                throw new Exception(Utilities::processErrorMessages($refundTransaction->getErrors()));
             }
 
             // store refund transaction detail

@@ -8,7 +8,7 @@ use yii\helpers\Url;
 use kartik\grid\ActionColumn;
 use kartik\grid\GridView;
 use yii\widgets\Pjax;
-use app\components\Helper;
+use app\components\Utilities;
 
 /** @var yii\web\View $this */
 /** @var app\modules\account\models\search\ChartOfAccountSearch $searchModel */
@@ -29,14 +29,14 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => function ($model) {
                     return $model->accountType->name;
                 },
-                'filter' => Select2::widget(Helper::ajaxDropDown('accountTypeId', '/account/account-type/get-types', false, 'accountTypeId', 'accountTypeId'))
+                'filter' => Select2::widget(Utilities::ajaxDropDown('accountTypeId', '/account/account-type/get-types', false, 'accountTypeId', 'accountTypeId'))
             ],
             [
                 'attribute' => 'accountGroupId',
                 'value' => function ($model) {
                     return $model->accountGroup->name;
                 },
-                'filter' => Select2::widget(Helper::ajaxDropDown('accountGroupId', '/account/account-group/get-groups', false, 'accountGroupId', 'accountGroupId'))
+                'filter' => Select2::widget(Utilities::ajaxDropDown('accountGroupId', '/account/account-group/get-groups', false, 'accountGroupId', 'accountGroupId'))
             ],
             'name',
             'code',
@@ -45,7 +45,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'class' => '\kartik\grid\DataColumn',
                 'attribute' => 'status',
                 'value' => function ($model) {
-                    $labelClass = Helper::statusLabelClass($model->status);
+                    $labelClass = Utilities::statusLabelClass($model->status);
                     return '<span class="right badge ' . $labelClass . '">' . GlobalConstant::DEFAULT_STATUS[$model->status] . '</span>';
                 },
                 'filter' => GlobalConstant::DEFAULT_STATUS,
@@ -59,7 +59,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'width' => '150px',
                 'template' => '{view} {edit} {delete}',
                 'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
-                'buttons' => Helper::getBasicActionColumnArray()
+                'buttons' => Utilities::getBasicActionColumnArray()
             ],
         ],
         'toolbar' => [

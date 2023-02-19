@@ -33,7 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     [
                         'attribute' => 'status',
                         'value' => function ($model) {
-                            $labelClass = \app\components\Helper::statusLabelClass($model->status);
+                            $labelClass = \app\components\Utilities::statusLabelClass($model->status);
                             $labelText = ($model->status) ? 'Active' : 'Inactive';
                             return '<span class="right badge ' . $labelClass . '">' . $labelText . '</span>';
                         },

@@ -10,11 +10,8 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Yearly Leave Allocat
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="yearly-leave-allocation-create">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
     <?= $this->render('_form', [
         'model' => $model,
+        'types' => $types
     ]) ?>
-
 </div>

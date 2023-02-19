@@ -1,7 +1,7 @@
 <?php
 
 use app\components\GlobalConstant;
-use app\components\Helper;
+use app\components\Utilities;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -30,7 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'status',
                 'value' => function ($model) {
-                    $labelClass = Helper::statusLabelClass($model->status);
+                    $labelClass = Utilities::statusLabelClass($model->status);
                     return '<span class="right badge ' . $labelClass . '">' . GlobalConstant::DEFAULT_STATUS[$model->status] . '</span>';
                 },
                 'format' => 'html',

@@ -3,7 +3,7 @@
 namespace app\modules\account\services;
 
 use app\components\GlobalConstant;
-use app\components\Helper;
+use app\components\Utilities;
 use app\modules\account\models\Invoice;
 use app\modules\account\models\ServicePaymentTimeline;
 use app\modules\account\repositories\PaymentTimelineRepository;
@@ -28,7 +28,7 @@ class PaymentTimelineService
         $customerServicePaymentTimeline->subRefModel = $invoice::class;
         $customerServicePaymentTimeline->date = $invoice->date;
         if (!$customerServicePaymentTimeline->load(['ServicePaymentTimeline' => $singleService]) || !$customerServicePaymentTimeline->validate()) {
-            return ['error' => true, 'message' => 'Customer Service payment timeline validation failed - ' . Helper::processErrorMessages($customerServicePaymentTimeline->getErrors())];
+            return ['error' => true, 'message' => 'Customer Service payment timeline validation failed - ' . Utilities::processErrorMessages($customerServicePaymentTimeline->getErrors())];
         }
         $paymentTimelineBatchData[] = $customerServicePaymentTimeline->getAttributes();
 
@@ -39,7 +39,7 @@ class PaymentTimelineService
             $supplierServicePaymentTimeline->subRefModel = $invoice::class;
             $supplierServicePaymentTimeline->date = $invoice->date;
             if (!$supplierServicePaymentTimeline->load(['ServicePaymentTimeline' => $supplierData]) || !$supplierServicePaymentTimeline->validate()) {
-                return ['error' => true, 'message' => 'Supplier Service payment timeline validation failed - ' . Helper::processErrorMessages($supplierServicePaymentTimeline->getErrors())];
+                return ['error' => true, 'message' => 'Supplier Service payment timeline validation failed - ' . Utilities::processErrorMessages($supplierServicePaymentTimeline->getErrors())];
             }
             $paymentTimelineBatchData[] = $supplierServicePaymentTimeline->getAttributes();
         }
@@ -53,7 +53,7 @@ class PaymentTimelineService
         if (empty($rowData)) {
             return ['error' => true, 'message' => 'Payment Timeline Batch Data can not be empty.'];
         }
-        if (!PaymentTimelineRepository::batchStore(ServicePaymentTimeline::tableName(), array_keys($rowData[0]), $rowData)) {
+        if (!$this->paymentTimelineRepository->batchStore(ServicePaymentTimeline::tableName(), array_keys($rowData[0]), $rowData)) {
             return ['error' => true, 'message' => 'Payment Timeline batch insert failed'];
         }
 
@@ -130,7 +130,7 @@ class PaymentTimelineService
             $model->status = GlobalConstant::ACTIVE_STATUS;
             $model = $this->paymentTimelineRepository->store($model);
             if ($model->hasErrors()) {
-                return ['error' => true, 'message' => 'Service Payment details not saved - ' . Helper::processErrorMessages($model->getErrors())];
+                return ['error' => true, 'message' => 'Service Payment details not saved - ' . Utilities::processErrorMessages($model->getErrors())];
             }
         }
 

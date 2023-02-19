@@ -1,6 +1,6 @@
 <?php
 
-use app\components\Helper;
+use app\components\Utilities;
 use app\modules\sale\components\ServiceConstant;
 use kartik\daterange\DateRangePicker;
 use kartik\select2\Select2;
@@ -30,13 +30,13 @@ use kartik\select2\Select2;
     <div class="card-body">
         <div class="row">
             <div class="col-md">
-                <?= $form->field($hotelSupplier, "[$row]supplierId")->widget(Select2::class, Helper::ajaxDropDown('supplierId', '/sale/supplier/get-suppliers', true, 'supplierId' . $row, 'supplier', ($hotelSupplier->isNewRecord) ? [] : [$hotelSupplier->supplier->id => $hotelSupplier->supplier->company], !$hotelSupplier->isNewRecord))->label('Supplier') ?>
+                <?= $form->field($hotelSupplier, "[$row]supplierId")->widget(Select2::class, Utilities::ajaxDropDown('supplierId', '/sale/supplier/get-suppliers', true, 'supplierId' . $row, 'supplier', ($hotelSupplier->isNewRecord) ? [] : [$hotelSupplier->supplier->id => $hotelSupplier->supplier->company], !$hotelSupplier->isNewRecord))->label('Supplier') ?>
             </div>
             <div class="col-md">
                 <?= $form->field($hotelSupplier, "[$row]supplierRef")->textInput(['maxlength' => true]); ?>
             </div>
             <div class="col-md">
-                <?= $form->field($hotelSupplier, "[$row]issueDate")->widget(DateRangePicker::class, Helper::dateFormat(false, true)); ?>
+                <?= $form->field($hotelSupplier, "[$row]issueDate")->widget(DateRangePicker::class, Utilities::dateFormat(false, true)); ?>
             </div>
         </div>
         <div class="row">

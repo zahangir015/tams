@@ -3,7 +3,7 @@
 namespace app\modules\hrm\controllers;
 
 use app\components\GlobalConstant;
-use app\components\Helper;
+use app\components\Utilities;
 use app\modules\hrm\models\Department;
 use app\modules\hrm\models\Roster;
 use app\modules\hrm\models\search\RosterSearch;
@@ -73,7 +73,7 @@ class RosterController extends ParentController
             if ($model->load($this->request->post())) {
                 $model = $this->hrmConfigurationRepository->store($model);
                 if ($model->hasErrors()) {
-                    Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
+                    Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
                 } else {
                     return $this->redirect(['view', 'uid' => $model->uid]);
                 }
@@ -102,7 +102,7 @@ class RosterController extends ParentController
             if ($model->load($this->request->post())) {
                 $model = $this->hrmConfigurationRepository->store($model);
                 if ($model->hasErrors()) {
-                    Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
+                    Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
                 } else {
                     return $this->redirect(['view', 'uid' => $model->uid]);
                 }

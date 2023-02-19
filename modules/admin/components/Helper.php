@@ -9,7 +9,7 @@ use yii\helpers\ArrayHelper;
 use yii\web\User;
 
 /**
- * Description of Helper
+ * Description of Utilities
  *
  * @author Misbahul D Munir <misbahuldmunir@gmail.com>
  * @since 2.3
@@ -214,7 +214,7 @@ class Helper
      *     ...
      *     [
      *         'class' => 'yii\grid\ActionColumn',
-     *         'template' => Helper::filterActionColumn(['view','update','activate'])
+     *         'template' => Utilities::filterActionColumn(['view','update','activate'])
      *     ]
      * ],
      * ```

@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 use yii\web\YiiAsset;
 use yii\widgets\DetailView;
-use app\components\Helper;
+use app\components\Utilities;
 
 /** @var yii\web\View $this */
 /** @var app\modules\account\models\ChartOfAccount $model */
@@ -45,7 +45,7 @@ YiiAsset::register($this);
                     [
                         'attribute' => 'status',
                         'value' => function ($model) {
-                            $labelClass = Helper::statusLabelClass($model->status);
+                            $labelClass = Utilities::statusLabelClass($model->status);
                             $labelText = ($model->status) ? 'Active' : 'Inactive';
                             return '<span class="right badge ' . $labelClass . '">' . $labelText . '</span>';
                         },

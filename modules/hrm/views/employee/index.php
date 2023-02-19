@@ -1,6 +1,6 @@
 <?php
 
-use app\components\Helper;
+use app\components\Utilities;
 use app\modules\hrm\components\HrmConstant;
 use app\modules\hrm\models\Employee;
 use yii\helpers\Html;
@@ -99,7 +99,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'width' => '150px',
                 'template' => '{view} {edit} {delete}',
                 'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
-                'buttons' => Helper::getBasicActionColumnArray()
+                'buttons' => Utilities::getBasicActionColumnArray()
             ],
         ],
         'toolbar' => [

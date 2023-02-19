@@ -1,39 +1,43 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+use yii\bootstrap4\ActiveForm;
 
 /** @var yii\web\View $this */
 /** @var app\modules\hrm\models\YearlyLeaveAllocation $model */
-/** @var yii\widgets\ActiveForm $form */
+/** @var yii\bootstrap4\ActiveForm $form */
 ?>
 
 <div class="yearly-leave-allocation-form">
-
-    <?php $form = ActiveForm::begin(); ?>
-
-    <?= $form->field($model, 'uid')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'leaveTypeId')->textInput() ?>
-
-    <?= $form->field($model, 'year')->textInput() ?>
-
-    <?= $form->field($model, 'numberOfDays')->textInput() ?>
-
-    <?= $form->field($model, 'status')->textInput() ?>
-
-    <?= $form->field($model, 'createdBy')->textInput() ?>
-
-    <?= $form->field($model, 'createdAt')->textInput() ?>
-
-    <?= $form->field($model, 'updatedBy')->textInput() ?>
-
-    <?= $form->field($model, 'updatedAt')->textInput() ?>
-
-    <div class="form-group">
-        <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
+    <div class="card">
+        <div class="card-header bg-gray-dark">
+            <?= Html::encode($this->title) ?>
+        </div>
+        <div class="card-body">
+            <?php
+            $form = ActiveForm::begin();
+            foreach ($types as $key => $type) {
+                ?>
+                <div class="row">
+                    <div class="col-md">
+                        <?= $form->field($model, "[$key]year")->textInput() ?>
+                    </div>
+                    <div class="col-md">
+                        <?= $form->field($model, "[$key]leaveTypeId")->dropdownList([$type['id'] => $type['name']], ['value' => $type['id']]) ?>
+                    </div>
+                    <div class="col-md">
+                        <?= $form->field($model, "[$key]numberOfDays")->textInput(['value' => $type['defaultDays']]) ?>
+                        <?= $form->field($model, "[$key]status")->hiddenInput(['value' => 1])->label(false) ?>
+                    </div>
+                </div>
+                <?php
+            }
+            ?>
+            <div class="form-group">
+                <?= Html::submitButton(Yii::t('app', ($model->isNewRecord) ? 'Save' : 'Update'), ['class' => 'btn btn-success']) ?>
+            </div>
+            <?php ActiveForm::end(); ?>
+        </div>
     </div>
-
-    <?php ActiveForm::end(); ?>
 
 </div>

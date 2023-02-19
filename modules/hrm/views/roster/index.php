@@ -7,7 +7,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use kartik\grid\ActionColumn;
 use kartik\grid\GridView;
-use app\components\Helper;
+use app\components\Utilities;
 
 /** @var yii\web\View $this */
 /** @var app\modules\hrm\models\search\RosterSearch $searchModel */
@@ -27,21 +27,21 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => function ($model) {
                     return $model->department->name;
                 },
-                'filter' => Select2::widget(Helper::ajaxDropDown('EmployeeShiftSearch[departmentId]', '/hrm/department/get-departments', false, 'departmentId', 'departmentId'))
+                'filter' => Select2::widget(Utilities::ajaxDropDown('EmployeeShiftSearch[departmentId]', '/hrm/department/get-departments', false, 'departmentId', 'departmentId'))
             ],
             [
                 'attribute' => 'shiftId',
                 'value' => function ($model) {
                     return $model->shift->title;
                 },
-                'filter' => Select2::widget(Helper::ajaxDropDown('EmployeeShiftSearch[shiftId]', '/hrm/shift/get-shifts', false, 'shiftId', 'shiftId'))
+                'filter' => Select2::widget(Utilities::ajaxDropDown('EmployeeShiftSearch[shiftId]', '/hrm/shift/get-shifts', false, 'shiftId', 'shiftId'))
             ],
             [
                 'attribute' => 'employeeId',
                 'value' => function ($model) {
                     return $model->employee->firstName.' '.$model->employee->lastName;
                 },
-                'filter' => Select2::widget(Helper::ajaxDropDown('EmployeeShiftSearch[employeeId]', '/hrm/employee/get-employees', false, 'employeeId', 'employeeId'))
+                'filter' => Select2::widget(Utilities::ajaxDropDown('EmployeeShiftSearch[employeeId]', '/hrm/employee/get-employees', false, 'employeeId', 'employeeId'))
             ],
             'rosterDate',
             'alternativeHoliday',
@@ -50,7 +50,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'class' => '\kartik\grid\DataColumn',
                 'attribute' => 'status',
                 'value' => function ($model) {
-                    $labelClass = Helper::statusLabelClass($model->status);
+                    $labelClass = Utilities::statusLabelClass($model->status);
                     $labelText = ($model->status) ? 'Active' : 'Inactive';
                     return '<span class="right badge ' . $labelClass . '">' . $labelText . '</span>';
                 },
@@ -69,7 +69,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'width' => '150px',
                 'template' => '{view} {edit} {delete}',
                 'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
-                'buttons' => Helper::getBasicActionColumnArray()
+                'buttons' => Utilities::getBasicActionColumnArray()
             ],
         ],
         'toolbar' => [

@@ -3,7 +3,7 @@
 namespace app\controllers;
 
 use app\components\AttachmentFile;
-use app\components\Helper;
+use app\components\Utilities;
 use app\components\Uploader;
 use app\models\Company;
 use app\models\CompanySearch;
@@ -67,7 +67,7 @@ class CompanyController extends ParentController
                     if ($model->save()) {
                         return $this->redirect(['view', 'uid' => $model->uid]);
                     } else {
-                        Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
+                        Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
                     }
                 } else {
                     Yii::$app->session->setFlash('danger', 'Image upload failed.');

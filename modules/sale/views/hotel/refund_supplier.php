@@ -1,7 +1,7 @@
 <?php
 
 use app\components\GlobalConstant;
-use app\components\Helper;
+use app\components\Utilities;
 use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\ticket\Ticket;
 use kartik\date\DatePicker;
@@ -29,7 +29,7 @@ use yii\bootstrap4\Html;
                 <?= $form->field($hotelSupplier, "[$row]supplierRef")->textInput(['maxlength' => true]); ?>
             </div>
             <div class="col-md">
-                <?= $form->field($hotelSupplier, "[$row]issueDate")->widget(DateRangePicker::class, Helper::dateFormat(false, true)); ?>
+                <?= $form->field($hotelSupplier, "[$row]issueDate")->widget(DateRangePicker::class, Utilities::dateFormat(false, true)); ?>
             </div>
         </div>
         <div class="row calcData">

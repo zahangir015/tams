@@ -3,7 +3,7 @@
 namespace app\modules\account\services;
 
 use app\components\GlobalConstant;
-use app\components\Helper;
+use app\components\Utilities;
 use app\modules\account\models\BankAccount;
 use app\modules\account\models\Expense;
 use app\modules\account\models\ExpenseSubCategory;
@@ -40,15 +40,15 @@ class ExpenseService
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
             $expense->load($request);
-            $expense->identificationNumber = Helper::expenseIdentificationNumber();
+            $expense->identificationNumber = Utilities::expenseIdentificationNumber();
             if (!$expense->validate()) {
-                throw new Exception('Expense validation failed - ' . Helper::processErrorMessages($expense->getErrors()));
+                throw new Exception('Expense validation failed - ' . Utilities::processErrorMessages($expense->getErrors()));
             }
 
             // Store expense data
             $expense = $this->expenseRepository->store($expense);
             if ($expense->hasErrors()) {
-                throw new Exception('Expense creation failed - ' . Helper::processErrorMessages($expense->getErrors()));
+                throw new Exception('Expense creation failed - ' . Utilities::processErrorMessages($expense->getErrors()));
             }
 
             // Supplier Ledger process
@@ -111,12 +111,12 @@ class ExpenseService
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
             if (!$expense->load($request) || !$expense->validate()) {
-                throw new Exception('Expense validation failed - ' . Helper::processErrorMessages($expense->getErrors()));
+                throw new Exception('Expense validation failed - ' . Utilities::processErrorMessages($expense->getErrors()));
             }
 
             $expense = $this->expenseRepository->update($expense);
             if ($expense->hasErrors()) {
-                Yii::$app->session->setFlash('error', Helper::processErrorMessages($expense->getErrors()));
+                Yii::$app->session->setFlash('error', Utilities::processErrorMessages($expense->getErrors()));
                 return $expense;
             }
 

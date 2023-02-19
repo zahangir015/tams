@@ -2,7 +2,7 @@
 
 namespace app\modules\sale\services;
 
-use app\components\Helper;
+use app\components\Utilities;
 use app\modules\account\models\Invoice;
 use app\modules\account\models\ServicePaymentTimeline;
 use app\modules\account\services\InvoiceService;
@@ -29,7 +29,7 @@ class SaleService
             }
             $serviceObject->setAttributes($serviceArray['data']);
             if (!$serviceObject->save()) {
-                return ['error' => true, 'message' => "Service update failed reference service object: {$serviceArray['refModel']} - ".Helper::processErrorMessages($serviceObject->errors)];
+                return ['error' => true, 'message' => "Service update failed reference service object: {$serviceArray['refModel']} - ".Utilities::processErrorMessages($serviceObject->errors)];
             }
         }
 
@@ -44,7 +44,7 @@ class SaleService
         $customerServicePaymentTimeline->subRefModel = $invoice::class;
         $customerServicePaymentTimeline->date = $invoice->date;
         if (!$customerServicePaymentTimeline->load(['ServicePaymentTimeline' => $serviceData]) || !$customerServicePaymentTimeline->validate()) {
-            return ['error' => true, 'message' => 'Customer Service payment timeline validation failed - ' . Helper::processErrorMessages($customerServicePaymentTimeline->getErrors())];
+            return ['error' => true, 'message' => 'Customer Service payment timeline validation failed - ' . Utilities::processErrorMessages($customerServicePaymentTimeline->getErrors())];
         }
         $paymentTimelineBatchData[] = $customerServicePaymentTimeline->getAttributes();
 
@@ -53,7 +53,7 @@ class SaleService
         $supplierServicePaymentTimeline->subRefId = $invoice->id;
         $supplierServicePaymentTimeline->date = $invoice->date;
         if (!$supplierServicePaymentTimeline->load(['ServicePaymentTimeline' => $serviceData['supplierData'][0]]) || !$supplierServicePaymentTimeline->validate()) {
-            return ['error' => true, 'message' => 'Supplier Service payment timeline validation failed - ' . Helper::processErrorMessages($supplierServicePaymentTimeline->getErrors())];
+            return ['error' => true, 'message' => 'Supplier Service payment timeline validation failed - ' . Utilities::processErrorMessages($supplierServicePaymentTimeline->getErrors())];
         }
         $paymentTimelineBatchData[] = $supplierServicePaymentTimeline->getAttributes();
 

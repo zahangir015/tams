@@ -1,6 +1,6 @@
 <?php
 
-use app\components\Helper;
+use app\components\Utilities;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -78,7 +78,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                         <td><?= $invoiceDetail->service->paymentStatus ?></td>
                                         <td>
                                             <?php
-                                            $url = '/sale/' . Helper::getServiceName($invoiceDetail->refModel) . '/view';
+                                            $url = '/sale/' . Utilities::getServiceName($invoiceDetail->refModel) . '/view';
                                             echo Html::a('<i class="fa fa-info-circle"></i>', [$url, 'uid' => $invoiceDetail->service->uid],
                                                 [
                                                     'title' => Yii::t('app', 'View More'),

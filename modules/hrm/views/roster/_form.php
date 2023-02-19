@@ -6,7 +6,7 @@ use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\bootstrap4\ActiveForm;
-use app\components\Helper;
+use app\components\Utilities;
 
 /** @var yii\web\View $this */
 /** @var app\modules\hrm\models\Roster $model */
@@ -55,10 +55,10 @@ use app\components\Helper;
             </div>
             <div class="row">
                 <div class="col-md">
-                    <?= $form->field($model, 'rosterDate')->widget(DatePicker::class, Helper::getDateWidget('rosterDate', 'rosterDate')) ?>
+                    <?= $form->field($model, 'rosterDate')->widget(DatePicker::class, Utilities::getDateWidget('rosterDate', 'rosterDate')) ?>
                 </div>
                 <div class="col-md">
-                    <?= $form->field($model, 'alternativeHoliday')->widget(DatePicker::class, Helper::getDateWidget('alternativeHoliday', 'alternativeHoliday')) ?>
+                    <?= $form->field($model, 'alternativeHoliday')->widget(DatePicker::class, Utilities::getDateWidget('alternativeHoliday', 'alternativeHoliday')) ?>
                 </div>
                 <div class="col-md">
                     <?= $form->field($model, 'remarks')->textInput(['maxlength' => true]) ?>

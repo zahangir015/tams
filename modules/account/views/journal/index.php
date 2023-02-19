@@ -5,7 +5,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use kartik\grid\ActionColumn;
 use kartik\grid\GridView;
-use app\components\Helper;
+use app\components\Utilities;
 
 /** @var yii\web\View $this */
 /** @var app\modules\account\models\search\JournalSearch $searchModel */
@@ -38,7 +38,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'width' => '200px',
                 'template' => '{view} {edit} {pay} {delete}',
                 'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
-                'buttons' => Helper::getBasicActionColumnWithPayArray()
+                'buttons' => Utilities::getBasicActionColumnWithPayArray()
             ],
         ],
         'toolbar' => [

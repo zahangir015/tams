@@ -9,7 +9,7 @@ use app\modules\account\models\search\AccountTypeSearch;
 use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use app\components\Helper;
+use app\components\Utilities;
 use yii\web\Response;
 
 /**
@@ -59,7 +59,7 @@ class AccountTypeController extends ParentController
             if ($model->load($this->request->post()) && $model->save()) {
                 return $this->redirect(['view', 'uid' => $model->uid]);
             } else {
-                Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
+                Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
             }
         } else {
             $model->loadDefaultValues();
@@ -84,7 +84,7 @@ class AccountTypeController extends ParentController
             if ($model->load($this->request->post()) && $model->save()) {
                 return $this->redirect(['view', 'uid' => $model->uid]);
             } else {
-                Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
+                Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
             }
         }
 

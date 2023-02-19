@@ -1,6 +1,6 @@
 <?php
 
-use app\components\Helper;
+use app\components\Utilities;
 use kartik\date\DatePicker;
 use kartik\daterange\DateRangePicker;
 use kartik\file\FileInput;
@@ -33,13 +33,13 @@ $this->registerJsFile(
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($model, 'customerId')->widget(Select2::classname(), Helper::ajaxDropDown('customerId', '/sale/customer/get-customers', true, 'customerId', 'customer'))->label('Invoice To'); ?>
+                            <?= $form->field($model, 'customerId')->widget(Select2::classname(), Utilities::ajaxDropDown('customerId', '/sale/customer/get-customers', true, 'customerId', 'customer'))->label('Invoice To'); ?>
                         </div>
                         <div class="col-md">
                             <label class="control-label" for="dateRange">Issue Date</label>
                             <?= $form->field($model, 'dateRange', [
                                 'options' => ['class' => 'drp-container mb-2']
-                            ])->widget(DateRangePicker::class, Helper::getDateRangeWidgetOptions())->label(false) ?>
+                            ])->widget(DateRangePicker::class, Utilities::getDateRangeWidgetOptions())->label(false) ?>
                         </div>
                     </div>
                     <div class="separator separator-dashed my-10"></div>
@@ -100,17 +100,17 @@ $this->registerJsFile(
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($model, 'date')->widget(DatePicker::class, Helper::getDatewidget('date', 'date', false)) ?>
+                            <?= $form->field($model, 'date')->widget(DatePicker::class, Utilities::getDatewidget('date', 'date', false)) ?>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($model, 'expectedPaymentDate')->widget(DatePicker::class, Helper::getDatewidget('expectedPaymentDate', 'expectedPaymentDate', false)) ?>
+                            <?= $form->field($model, 'expectedPaymentDate')->widget(DatePicker::class, Utilities::getDatewidget('expectedPaymentDate', 'expectedPaymentDate', false)) ?>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md">
-                            <?php echo $form->field($model, 'invoiceFile')->widget(FileInput::classname(), Helper::fileInputWidget())->label('Upload File'); ?>
+                            <?php echo $form->field($model, 'invoiceFile')->widget(FileInput::classname(), Utilities::fileInputWidget())->label('Upload File'); ?>
                         </div>
                     </div>
                     <div class="row">

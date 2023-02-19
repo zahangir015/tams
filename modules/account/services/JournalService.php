@@ -3,7 +3,7 @@
 namespace app\modules\account\services;
 
 use app\components\GlobalConstant;
-use app\components\Helper;
+use app\components\Utilities;
 use app\modules\account\models\AccountGroup;
 use app\modules\account\models\AccountType;
 use app\modules\account\models\BankAccount;
@@ -44,13 +44,13 @@ class JournalService
         try {
             $journal->load($requestData);
             if (!$journal->validate()) {
-                throw new Exception('Journal validation failed - ' . Helper::processErrorMessages($journal->getErrors()));
+                throw new Exception('Journal validation failed - ' . Utilities::processErrorMessages($journal->getErrors()));
             }
 
             // Store journal data
             $journal = $this->journalRepository->store($journal);
             if ($journal->hasErrors()) {
-                throw new Exception('Journal creation failed - ' . Helper::processErrorMessages($journal->getErrors()));
+                throw new Exception('Journal creation failed - ' . Utilities::processErrorMessages($journal->getErrors()));
             }
 
             // Journal Entry process
@@ -71,7 +71,7 @@ class JournalService
                 $journalEntryModel->journalId = $journal->id;
                 $journalEntryModel = $this->journalRepository->store($journalEntryModel);
                 if ($journalEntryModel->hasErrors()) {
-                    throw new Exception('Journal Entry creation failed - ' . Helper::processErrorMessages($journal->getErrors()));
+                    throw new Exception('Journal Entry creation failed - ' . Utilities::processErrorMessages($journal->getErrors()));
                 }
 
                 // Ledger process
@@ -138,12 +138,12 @@ class JournalService
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
             if (!$journal->load($request) || !$journal->validate()) {
-                throw new Exception('Journal validation failed - ' . Helper::processErrorMessages($journal->getErrors()));
+                throw new Exception('Journal validation failed - ' . Utilities::processErrorMessages($journal->getErrors()));
             }
 
             $journal = $this->journalRepository->update($journal);
             if ($journal->hasErrors()) {
-                Yii::$app->session->setFlash('error', Helper::processErrorMessages($journal->getErrors()));
+                Yii::$app->session->setFlash('error', Utilities::processErrorMessages($journal->getErrors()));
                 return $journal;
             }
 

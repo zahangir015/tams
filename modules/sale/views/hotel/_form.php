@@ -7,7 +7,7 @@ use yii\helpers\Html;
 use yii\web\JqueryAsset;
 use yii\web\View;
 use yii\bootstrap4\ActiveForm;
-use app\components\Helper;
+use app\components\Utilities;
 
 /* @var $this yii\web\View */
 /* @var $model app\modules\sale\models\hotel\Hotel */
@@ -49,10 +49,10 @@ $this->registerJsFile(
             <div class="card-body">
                 <div class="row">
                     <div class="col-md">
-                        <?= $form->field($model, 'customerId')->widget(Select2::class, Helper::ajaxDropDown('customerId', '/sale/customer/get-customers', true, 'customerId'))->label('Customer') ?>
+                        <?= $form->field($model, 'customerId')->widget(Select2::class, Utilities::ajaxDropDown('customerId', '/sale/customer/get-customers', true, 'customerId'))->label('Customer') ?>
                     </div>
                     <div class="col-md">
-                        <?= $form->field($model, 'issueDate')->widget(DateRangePicker::class, Helper::dateFormat(false, true)) ?>
+                        <?= $form->field($model, 'issueDate')->widget(DateRangePicker::class, Utilities::dateFormat(false, true)) ?>
                     </div>
                     <div class="col-md">
                         <?= $form->field($model, 'voucherNumber')->textInput(['maxlength' => true]) ?>
@@ -74,7 +74,7 @@ $this->registerJsFile(
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md">
-                                <?= $form->field($model, 'identificationNumber')->textInput(['value' => ($model->isNewRecord) ? Helper::hotelIdentificationNumber() : $model->identificationNumber, 'readOnly' => 'readOnly']) ?>
+                                <?= $form->field($model, 'identificationNumber')->textInput(['value' => ($model->isNewRecord) ? Utilities::hotelIdentificationNumber() : $model->identificationNumber, 'readOnly' => 'readOnly']) ?>
                             </div>
                         </div>
                         <div class="row">
@@ -103,15 +103,15 @@ $this->registerJsFile(
                         </div>
                         <div class="row">
                             <div class="col-md">
-                                <?= $form->field($model, 'checkInDate')->widget(DateRangePicker::class, Helper::dateFormat(false, true)) ?>
+                                <?= $form->field($model, 'checkInDate')->widget(DateRangePicker::class, Utilities::dateFormat(false, true)) ?>
                             </div>
                             <div class="col-md">
-                                <?= $form->field($model, 'checkOutDate')->widget(DateRangePicker::class, Helper::dateFormat(false, true)) ?>
+                                <?= $form->field($model, 'checkOutDate')->widget(DateRangePicker::class, Utilities::dateFormat(false, true)) ?>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md">
-                                <?= $form->field($model, 'freeCancellationDate')->widget(DateRangePicker::class, Helper::dateFormat(false, true)) ?>
+                                <?= $form->field($model, 'freeCancellationDate')->widget(DateRangePicker::class, Utilities::dateFormat(false, true)) ?>
                             </div>
                             <div class="col-md">
                                 <?= $form->field($model, 'isRefundable')->dropDownList(GlobalConstant::YES_NO) ?>

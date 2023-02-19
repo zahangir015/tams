@@ -64,7 +64,7 @@ class AttachmentFile
     public static function uniqueFileName($modelName): string
     {
         $name = StringHelper::basename(strtolower($modelName));
-        return substr($name . Helper::uniqueCode(36), 0, 32);
+        return substr($name . Utilities::uniqueCode(36), 0, 32);
     }
 
     public static function uploadsById($model, $fieldName, $path = NULL)

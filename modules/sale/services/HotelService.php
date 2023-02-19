@@ -3,7 +3,7 @@
 namespace app\modules\sale\services;
 
 use app\components\GlobalConstant;
-use app\components\Helper;
+use app\components\Utilities;
 use app\modules\account\models\Invoice;
 use app\modules\account\services\InvoiceService;
 use app\modules\account\services\LedgerService;
@@ -55,7 +55,7 @@ class HotelService
                     $hotel->customerCategory = $customer->category;
                     $hotel = $this->hotelRepository->store($hotel);
                     if ($hotel->hasErrors()) {
-                        throw new Exception('Hotel create failed - ' . Helper::processErrorMessages($hotel->getErrors()));
+                        throw new Exception('Hotel create failed - ' . Utilities::processErrorMessages($hotel->getErrors()));
                     }
 
                     // Hotel Supplier data process
@@ -84,7 +84,7 @@ class HotelService
                         throw new Exception('Supplier Ledger creation failed - ' . $ledgerRequestResponse['message']);
                     }
                 } else {
-                    throw new Exception('Hotel data loading failed - ' . Helper::processErrorMessages($hotel->getErrors()));
+                    throw new Exception('Hotel data loading failed - ' . Utilities::processErrorMessages($hotel->getErrors()));
                 }
 
                 $dbTransaction->commit();
@@ -113,7 +113,7 @@ class HotelService
                     $hotel->invoiceId = $motherHotel->invoiceId;
                     $hotel = $this->hotelRepository->store($hotel);
                     if ($hotel->hasErrors()) {
-                        throw new Exception('Hotel refund creation failed - ' . Helper::processErrorMessages($hotel->getErrors()));
+                        throw new Exception('Hotel refund creation failed - ' . Utilities::processErrorMessages($hotel->getErrors()));
                     }
 
                     // Mother Hotel update
@@ -121,7 +121,7 @@ class HotelService
                     $motherHotel->refundRequestDate = $hotel->refundRequestDate;
                     $motherHotel = $this->hotelRepository->store($motherHotel);
                     if ($motherHotel->hasErrors()) {
-                        throw new Exception('Mother hotel update failed - ' . Helper::processErrorMessages($motherHotel->getErrors()));
+                        throw new Exception('Mother hotel update failed - ' . Utilities::processErrorMessages($motherHotel->getErrors()));
                     }
 
                     // Hotel Supplier data process
@@ -162,7 +162,7 @@ class HotelService
                     Yii::$app->session->setFlash('success', 'Hotel added successfully');
                     return true;
                 } else {
-                    throw new Exception('Hotel data loading failed - ' . Helper::processErrorMessages($hotel->getErrors()));
+                    throw new Exception('Hotel data loading failed - ' . Utilities::processErrorMessages($hotel->getErrors()));
                 }
             }
             // Ticket and supplier data can not be empty
@@ -191,7 +191,7 @@ class HotelService
             $hotel->netProfit = self::calculateNetProfit($hotel->quoteAmount, $hotel->costOfSale);
             $hotel->paymentStatus = InvoiceService::checkAndDetectPaymentStatus($hotel->quoteAmount, $hotel->receivedAmount);
             if (!$hotel->save()) {
-                throw new Exception('Hotel update failed - ' . Helper::processErrorMessages($hotel->getErrors()));
+                throw new Exception('Hotel update failed - ' . Utilities::processErrorMessages($hotel->getErrors()));
             }
 
             // TODO Invoice update
@@ -329,7 +329,7 @@ class HotelService
             $hotelSupplier->hotelId = $hotel->id;
             $hotelSupplier = $this->hotelRepository->store($hotelSupplier);
             if ($hotelSupplier->hasErrors()) {
-                throw new Exception('Hotel Supplier refund creation failed - ' . Helper::processErrorMessages($hotelSupplier->getErrors()));
+                throw new Exception('Hotel Supplier refund creation failed - ' . Utilities::processErrorMessages($hotelSupplier->getErrors()));
             }
 
             $serviceSupplierData[] = [
@@ -390,7 +390,7 @@ class HotelService
             $hotelRefund->load($requestData);
             $hotelRefund->load(['HotelRefund' => $ref]);
             if (!$hotelRefund->validate()) {
-                return ['error' => true, 'message' => 'Hotel Refund validation failed - ' . Helper::processErrorMessages($hotelRefund->getErrors())];
+                return ['error' => true, 'message' => 'Hotel Refund validation failed - ' . Utilities::processErrorMessages($hotelRefund->getErrors())];
             }
             $hotelRefundBatchData[] = $hotelRefund->getAttributes(null, ['id']);
         }

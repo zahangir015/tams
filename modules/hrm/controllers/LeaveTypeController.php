@@ -2,7 +2,7 @@
 
 namespace app\modules\hrm\controllers;
 
-use app\components\Helper;
+use app\components\Utilities;
 use app\modules\hrm\models\LeaveType;
 use app\modules\hrm\models\search\LeaveTypeSearch;
 use app\controllers\ParentController;
@@ -69,7 +69,7 @@ class LeaveTypeController extends ParentController
             if ($model->load($this->request->post())) {
                 $model = $this->hrmConfigurationRepository->store($model);
                 if ($model->hasErrors()) {
-                    Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
+                    Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
                 } else {
                     return $this->redirect(['view', 'uid' => $model->uid]);
                 }
@@ -97,7 +97,7 @@ class LeaveTypeController extends ParentController
             if ($model->load($this->request->post())) {
                 $model = $this->hrmConfigurationRepository->store($model);
                 if ($model->hasErrors()) {
-                    Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
+                    Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
                 } else {
                     return $this->redirect(['view', 'uid' => $model->uid]);
                 }
@@ -112,22 +112,8 @@ class LeaveTypeController extends ParentController
     /**
      * Deletes an existing LeaveType model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param string $uid UID
-     * @return Response
      */
-    public function actionDelete(string $uid): Response
-    {
-        $model = $this->hrmConfigurationService->deleteModel(['uid' => $uid], LeaveType::class, []);
-        if ($model->hasErrors()) {
-            Yii::$app->session->setFlash('danger', 'Deletion failed - ' . Helper::processErrorMessages($model->getErrors()));
-        } else {
-            Yii::$app->session->setFlash('success', 'Successfully Deleted.');
-        }
-
-        return $this->redirect(['index']);
-    }
-
-    public function actionGetLeaveTypes($query = null): array
+    /*public function actionGetLeaveTypes($query = null): array
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
         $types = LeaveType::query($query);
@@ -136,5 +122,5 @@ class LeaveTypeController extends ParentController
             $data[] = ['id' => $type->id, 'text' => $type->name];
         }
         return ['results' => $data];
-    }
+    }*/
 }

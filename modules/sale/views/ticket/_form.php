@@ -1,7 +1,7 @@
 <?php
 
 use app\components\GlobalConstant;
-use app\components\Helper;
+use app\components\Utilities;
 use app\modules\sale\models\ticket\TicketSupplier;
 use kartik\date\DatePicker;
 use kartik\select2\Select2;
@@ -49,7 +49,7 @@ $this->registerJsFile(
                 <div class="row pb-10">
                     <div class="col-md mb-5">
                         Select Customer
-                        <?= Select2::widget(Helper::ajaxDropDown('customerId', '/sale/customer/get-customers', true)); ?>
+                        <?= Select2::widget(Utilities::ajaxDropDown('customerId', '/sale/customer/get-customers', true)); ?>
                     </div>
                 </div>
                 <div class="row">

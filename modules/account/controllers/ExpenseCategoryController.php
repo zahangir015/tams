@@ -3,7 +3,7 @@
 namespace app\modules\account\controllers;
 
 use app\components\GlobalConstant;
-use app\components\Helper;
+use app\components\Utilities;
 use app\controllers\ParentController;
 use app\modules\account\models\BankAccount;
 use app\modules\account\models\ExpenseCategory;
@@ -60,7 +60,7 @@ class ExpenseCategoryController extends ParentController
             if ($model->load($this->request->post()) && $model->save()) {
                 return $this->redirect(['view', 'uid' => $model->uid]);
             }
-            Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
+            Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
         } else {
             $model->loadDefaultValues();
         }
@@ -85,7 +85,7 @@ class ExpenseCategoryController extends ParentController
             if ($model->load($this->request->post()) && $model->save()) {
                 return $this->redirect(['view', 'uid' => $model->uid]);
             }
-            Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
+            Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
         }
 
         return $this->render('update', [

@@ -1,7 +1,7 @@
 <?php
 
 use app\components\GlobalConstant;
-use app\components\Helper;
+use app\components\Utilities;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use kartik\grid\ActionColumn;
@@ -36,7 +36,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'class' => '\kartik\grid\DataColumn',
                 'attribute' => 'status',
                 'value' => function ($model) {
-                    $labelClass = Helper::statusLabelClass($model->status);
+                    $labelClass = Utilities::statusLabelClass($model->status);
                     return '<span class="right badge ' . $labelClass . '">' . GlobalConstant::DEFAULT_STATUS[$model->status] . '</span>';
                 },
                 'filter' => GlobalConstant::DEFAULT_STATUS,
@@ -50,7 +50,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'width' => '150px',
                 'template' => '{view} {edit} {delete}',
                 'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
-                'buttons' => Helper::getBasicActionColumnArray()
+                'buttons' => Utilities::getBasicActionColumnArray()
             ],
         ],
         'toolbar' => [

@@ -1,7 +1,7 @@
 <?php
 
 use app\components\GlobalConstant;
-use app\components\Helper;
+use app\components\Utilities;
 use app\modules\sale\models\SupplierCategory;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -27,7 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'class' => '\kartik\grid\DataColumn',
                 'attribute' => 'status',
                 'value' => function ($model) {
-                    $labelClass = Helper::statusLabelClass($model->status);
+                    $labelClass = Utilities::statusLabelClass($model->status);
                     $labelText = ($model->status) ? 'Active' : 'Inactive';
                     return '<span class="right badge ' . $labelClass . '">' . $labelText . '</span>';
                 },

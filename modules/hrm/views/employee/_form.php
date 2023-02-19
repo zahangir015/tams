@@ -8,7 +8,7 @@ use kartik\depdrop\DepDrop;
 use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
-use app\components\Helper;
+use app\components\Utilities;
 use yii\helpers\Url;
 use yii\web\JqueryAsset;
 
@@ -49,7 +49,7 @@ $this->registerJsFile(
                 </div>
                 <div class="row mb-5">
                     <div class="col-md">
-                        <?= $form->field($model, 'dateOfBirth')->widget(DatePicker::class, Helper::getDateWidget('dateOfBirth', 'dateOfBirth form-control')) ?>
+                        <?= $form->field($model, 'dateOfBirth')->widget(DatePicker::class, Utilities::getDateWidget('dateOfBirth', 'dateOfBirth form-control')) ?>
                     </div>
                     <div class="col-md">
                         <?= $form->field($model, 'gender')->dropDownList(HrmConstant::GENDER) ?>
@@ -86,10 +86,10 @@ $this->registerJsFile(
                     <div class="col-md"><?= $form->field($model, 'officialId')->textInput(['maxlength' => true]) ?></div>
                     <div class="col-md"><?= $form->field($model, 'officialEmail')->textInput(['maxlength' => true]) ?></div>
                     <div class="col-md"><?= $form->field($model, 'officialPhone')->textInput(['maxlength' => true]) ?></div>
-                    <div class="col-md"><?= $form->field($model, 'joiningDate')->widget(DatePicker::class, Helper::getDateWidget('joiningDate', 'joiningDate form-control')) ?></div>
+                    <div class="col-md"><?= $form->field($model, 'joiningDate')->widget(DatePicker::class, Utilities::getDateWidget('joiningDate', 'joiningDate form-control')) ?></div>
                 </div>
                 <div class="row">
-                    <div class="col-md"><?= $form->field($model, 'confirmationDate')->widget(DatePicker::class, Helper::getDateWidget('confirmationDate', 'confirmationDate form-control')) ?></div>
+                    <div class="col-md"><?= $form->field($model, 'confirmationDate')->widget(DatePicker::class, Utilities::getDateWidget('confirmationDate', 'confirmationDate form-control')) ?></div>
                     <div class="col-md"><?= $form->field($model, 'inProhibition')->dropDownList(GlobalConstant::YES_NO) ?></div>
                     <div class="col-md"><?= $form->field($model, 'jobCategory')->textInput(['maxlength' => true]) ?></div>
                     <div class="col-md">

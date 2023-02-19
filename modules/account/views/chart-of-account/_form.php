@@ -5,7 +5,7 @@ use kartik\depdrop\DepDrop;
 use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
-use app\components\Helper;
+use app\components\Utilities;
 
 /** @var yii\web\View $this */
 /** @var app\modules\account\models\ChartOfAccount $model */
@@ -32,10 +32,10 @@ use app\components\Helper;
             </div>
             <div class="row">
                 <div class="col-md">
-                    <?= $form->field($model, 'accountTypeId')->widget(Select2::class, Helper::ajaxDropDown('accountTypeId', '/account/account-type/search', true, 'accountTypeId', 'accountTypeId', ($model->isNewRecord) ? [] : [$model->accountType->id => $model->accountType->name])) ?>
+                    <?= $form->field($model, 'accountTypeId')->widget(Select2::class, Utilities::ajaxDropDown('accountTypeId', '/account/account-type/search', true, 'accountTypeId', 'accountTypeId', ($model->isNewRecord) ? [] : [$model->accountType->id => $model->accountType->name])) ?>
                 </div>
                 <div class="col-md">
-                    <?= $form->field($model, 'accountGroupId')->widget(DepDrop::class, Helper::depDropConfigurationGenerate($model, 'accountGroupId', 'accountTypeId', '/account/account-group/get-group-by-type', $model->isNewRecord ? [] : [$model->accountGroup->id => $model->accountGroup->name])); ?>
+                    <?= $form->field($model, 'accountGroupId')->widget(DepDrop::class, Utilities::depDropConfigurationGenerate($model, 'accountGroupId', 'accountTypeId', '/account/account-group/get-group-by-type', $model->isNewRecord ? [] : [$model->accountGroup->id => $model->accountGroup->name])); ?>
                 </div>
                 <div class="col-md">
                     <?= $form->field($model, 'description')->textInput(['maxlength' => true]) ?>

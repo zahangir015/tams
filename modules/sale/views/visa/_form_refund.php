@@ -6,7 +6,7 @@ use kartik\daterange\DateRangePicker;
 use kartik\select2\Select2;
 use yii\bootstrap4\ActiveForm;
 use yii\helpers\Html;
-use app\components\Helper;
+use app\components\Utilities;
 use yii\web\JqueryAsset;
 use yii\web\View;
 
@@ -47,7 +47,7 @@ $this->registerJsFile(
             <div class="card-body">
                 <div class="row">
                     <div class="col-md">
-                        <?= $form->field($model, 'refundRequestDate')->widget(DateRangePicker::class, Helper::dateFormat(false, true)) ?>
+                        <?= $form->field($model, 'refundRequestDate')->widget(DateRangePicker::class, Utilities::dateFormat(false, true)) ?>
                     </div>
                     <div class="col-md">
                         <?= $form->field($model, 'reference')->textInput(['maxlength' => true]) ?>
@@ -75,7 +75,7 @@ $this->registerJsFile(
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md">
-                                <?= $form->field($model, 'identificationNumber')->textInput(['value' => ($model->isNewRecord) ? Helper::visaIdentificationNumber() : $model->identificationNumber, 'readOnly' => 'readOnly']) ?>
+                                <?= $form->field($model, 'identificationNumber')->textInput(['value' => ($model->isNewRecord) ? Utilities::visaIdentificationNumber() : $model->identificationNumber, 'readOnly' => 'readOnly']) ?>
                             </div>
                         </div>
                         <div class="row">

@@ -3,7 +3,7 @@
 use kartik\date\DatePicker;
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
-use app\components\Helper;
+use app\components\Utilities;
 
 /** @var yii\web\View $this */
 /** @var app\modules\hrm\models\PublicHoliday $model */
@@ -22,7 +22,7 @@ use app\components\Helper;
                     <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
                 </div>
                 <div class="col-md">
-                    <?= $form->field($model, 'date')->widget(DatePicker::class, Helper::getDateWidget('date', 'date')) ?>
+                    <?= $form->field($model, 'date')->widget(DatePicker::class, Utilities::getDateWidget('date', 'date')) ?>
                 </div>
             </div>
 

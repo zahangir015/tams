@@ -3,7 +3,7 @@
 namespace app\modules\sale\controllers;
 
 use app\components\GlobalConstant;
-use app\components\Helper;
+use app\components\Utilities;
 use app\modules\sale\models\holiday\HolidayCategory;
 use app\modules\sale\models\holiday\HolidayCategorySearch;
 use app\controllers\ParentController;
@@ -60,7 +60,7 @@ class HolidayCategoryController extends ParentController
                 return $this->redirect(['view', 'uid' => $model->uid]);
             }
 
-            Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
+            Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
         } else {
             $model->loadDefaultValues();
         }
@@ -86,7 +86,7 @@ class HolidayCategoryController extends ParentController
                 Yii::$app->session->setFlash('success', 'Holiday Category updated successfully.');
                 return $this->redirect(['view', 'uid' => $model->uid]);
             }
-            Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
+            Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
         }
 
         return $this->render('update', [

@@ -1,7 +1,7 @@
 <?php
 
 use app\components\GlobalConstant;
-use app\components\Helper;
+use app\components\Utilities;
 use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
@@ -18,7 +18,7 @@ use yii\bootstrap4\ActiveForm;
         <div class="card-body">
             <?php $form = ActiveForm::begin(); ?>
             <div class="row">
-                <div class="col-4"><?= $form->field($model, 'countryId')->widget(Select2::class, Helper::ajaxDropDown('countryId', '/country/get-countries', true, 'countryId', 'company', ($model->isNewRecord) ? [] : [$model->country->id => $model->country->name.'('.$model->country->code.')'])) ?></div>
+                <div class="col-4"><?= $form->field($model, 'countryId')->widget(Select2::class, Utilities::ajaxDropDown('countryId', '/country/get-countries', true, 'countryId', 'company', ($model->isNewRecord) ? [] : [$model->country->id => $model->country->name.'('.$model->country->code.')'])) ?></div>
                 <div class="col-4"><?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?></div>
                 <div class="col-4"><?= $form->field($model, 'status')->dropDownList(GlobalConstant::DEFAULT_STATUS) ?></div>
                 <div class="form-group float-right">

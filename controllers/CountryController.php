@@ -2,7 +2,7 @@
 
 namespace app\controllers;
 
-use app\components\Helper;
+use app\components\Utilities;
 use app\models\Country;
 use app\models\CountrySearch;
 use yii\web\Response;
@@ -57,7 +57,7 @@ class CountryController extends ParentController
             if ($model->load($this->request->post()) && $model->save()) {
                 return $this->redirect(['view', 'uid' => $model->uid]);
             }
-            Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
+            Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
         } else {
             $model->loadDefaultValues();
         }
@@ -81,7 +81,7 @@ class CountryController extends ParentController
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['view', 'uid' => $model->uid]);
         } else {
-            Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
+            Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
         }
 
         return $this->render('update', [

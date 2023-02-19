@@ -1,6 +1,6 @@
 <?php
 
-use app\components\Helper;
+use app\components\Utilities;
 use app\modules\sale\components\ServiceConstant;
 use kartik\daterange\DateRangePicker;
 use kartik\select2\Select2;
@@ -33,7 +33,7 @@ use kartik\select2\Select2;
         </div>
         <div class="row">
             <div class="col-md-3">
-                <?= $form->field($visaSupplier, "[$row]issueDate")->widget(DateRangePicker::class, Helper::dateFormat(false, true)); ?>
+                <?= $form->field($visaSupplier, "[$row]issueDate")->widget(DateRangePicker::class, Utilities::dateFormat(false, true)); ?>
             </div>
             <div class="col-md-3">
                 <?= $form->field($visaSupplier, "[$row]type")->dropdownList(ServiceConstant::SERVICE_TYPE_FOR_CREATE, ['value' => ServiceConstant::ALL_SERVICE_TYPE['New']]) ?>

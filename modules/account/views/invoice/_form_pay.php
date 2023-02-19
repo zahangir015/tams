@@ -1,7 +1,7 @@
 <?php
 
 use app\components\GlobalConstant;
-use app\components\Helper;
+use app\components\Utilities;
 use app\models\Attachment;
 use kartik\date\DatePicker;
 use kartik\file\FileInput;
@@ -294,7 +294,7 @@ $this->registerJsFile(
                             <?= $form->field($transaction, 'paymentMode')->dropdownList(GlobalConstant::PAYMENT_MODE, ['prompt' => '']); ?>
                         </div>
                         <div class="col-md">
-                            <?= $form->field($transaction, 'paymentDate')->widget(DatePicker::class, Helper::getDateWidget('date')); ?>
+                            <?= $form->field($transaction, 'paymentDate')->widget(DatePicker::class, Utilities::getDateWidget('date')); ?>
                         </div>
                     </div>
                     <div class="row">

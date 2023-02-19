@@ -2,7 +2,10 @@
 
 namespace app\modules\hrm\models;
 
+use app\traits\BehaviorTrait;
 use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%yearly_leave_allocation}}".
@@ -20,12 +23,13 @@ use Yii;
  *
  * @property LeaveType $leaveType
  */
-class YearlyLeaveAllocation extends \yii\db\ActiveRecord
+class YearlyLeaveAllocation extends ActiveRecord
 {
+    use BehaviorTrait;
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%yearly_leave_allocation}}';
     }
@@ -33,13 +37,14 @@ class YearlyLeaveAllocation extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            [['uid', 'leaveTypeId', 'year', 'numberOfDays', 'createdBy', 'createdAt'], 'required'],
+            [['leaveTypeId', 'year', 'numberOfDays'], 'required'],
             [['leaveTypeId', 'year', 'numberOfDays', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['uid'], 'unique'],
+            [['leaveTypeId', 'year'], 'unique'],
             [['leaveTypeId'], 'exist', 'skipOnError' => true, 'targetClass' => LeaveType::class, 'targetAttribute' => ['leaveTypeId' => 'id']],
         ];
     }
@@ -47,12 +52,12 @@ class YearlyLeaveAllocation extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),
             'uid' => Yii::t('app', 'Uid'),
-            'leaveTypeId' => Yii::t('app', 'Leave Type ID'),
+            'leaveTypeId' => Yii::t('app', 'Leave Type'),
             'year' => Yii::t('app', 'Year'),
             'numberOfDays' => Yii::t('app', 'Number Of Days'),
             'status' => Yii::t('app', 'Status'),
@@ -66,9 +71,9 @@ class YearlyLeaveAllocation extends \yii\db\ActiveRecord
     /**
      * Gets query for [[LeaveType]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getLeaveType()
+    public function getLeaveType(): ActiveQuery
     {
         return $this->hasOne(LeaveType::class, ['id' => 'leaveTypeId']);
     }

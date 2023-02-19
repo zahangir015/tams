@@ -1,7 +1,7 @@
 <?php
 
 use app\components\GlobalConstant;
-use app\components\Helper;
+use app\components\Utilities;
 use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\ticket\TicketRefund;
 use kartik\date\DatePicker;
@@ -81,7 +81,7 @@ $this->registerJsFile(
                     <?= $form->field($model, 'seatClass')->textInput(['maxlength' => true, 'disabled' => 'disabled']) ?>
                 </div>
                 <div class="col-md">
-                    <?= $form->field($model, 'refundRequestDate')->widget(DatePicker::class, Helper::getDatewidget('refundRequestDate', 'refundRequestDate')); ?>
+                    <?= $form->field($model, 'refundRequestDate')->widget(DatePicker::class, Utilities::getDatewidget('refundRequestDate', 'refundRequestDate')); ?>
                 </div>
                 <div class="col-md">
                     <?= $form->field($model, 'pnrCode')->textInput(); ?>

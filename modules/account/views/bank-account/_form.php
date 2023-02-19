@@ -1,7 +1,7 @@
 <?php
 
 use app\components\GlobalConstant;
-use app\components\Helper;
+use app\components\Utilities;
 use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
@@ -56,7 +56,7 @@ use yii\bootstrap4\ActiveForm;
                     <?= $form->field($model, 'status')->dropdownList(GlobalConstant::DEFAULT_STATUS) ?>
                 </div>
                 <div class="col-md">
-                    <?= $form->field($model, 'tag')->widget(Select2::classname(), Helper::getTagWidget($model->tag))->label('Tag'); ?>
+                    <?= $form->field($model, 'tag')->widget(Select2::classname(), Utilities::getTagWidget($model->tag))->label('Tag'); ?>
                 </div>
             </div>
             <div class="row">

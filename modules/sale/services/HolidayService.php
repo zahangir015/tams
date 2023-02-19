@@ -2,7 +2,7 @@
 
 namespace app\modules\sale\services;
 
-use app\components\Helper;
+use app\components\Utilities;
 use app\modules\account\models\Invoice;
 use app\modules\account\services\InvoiceService;
 use app\modules\account\services\LedgerService;
@@ -43,7 +43,7 @@ class HolidayService
                     $holiday->customerCategory = $customer->category;
                     $holiday = $this->holidayRepository->store($holiday);
                     if ($holiday->hasErrors()) {
-                        throw new Exception('Holiday create failed - ' . Helper::processErrorMessages($holiday->getErrors()));
+                        throw new Exception('Holiday create failed - ' . Utilities::processErrorMessages($holiday->getErrors()));
                     }
 
                     // Holiday Supplier data process
@@ -72,7 +72,7 @@ class HolidayService
                         throw new Exception('Supplier Ledger creation failed - ' . $ledgerRequestResponse['message']);
                     }
                 } else {
-                    throw new Exception('Holiday data loading failed - ' . Helper::processErrorMessages($holiday->getErrors()));
+                    throw new Exception('Holiday data loading failed - ' . Utilities::processErrorMessages($holiday->getErrors()));
                 }
 
                 $dbTransaction->commit();
@@ -101,7 +101,7 @@ class HolidayService
                     $holiday->invoiceId = $motherHoliday->invoiceId;
                     $holiday = $this->holidayRepository->store($holiday);
                     if ($holiday->hasErrors()) {
-                        throw new Exception('Holiday refund creation failed - ' . Helper::processErrorMessages($holiday->getErrors()));
+                        throw new Exception('Holiday refund creation failed - ' . Utilities::processErrorMessages($holiday->getErrors()));
                     }
 
                     // Mother Holiday update
@@ -109,7 +109,7 @@ class HolidayService
                     $motherHoliday->refundRequestDate = $holiday->refundRequestDate;
                     $motherHoliday = $this->holidayRepository->store($motherHoliday);
                     if ($motherHoliday->hasErrors()) {
-                        throw new Exception('Mother holiday update failed - ' . Helper::processErrorMessages($motherHoliday->getErrors()));
+                        throw new Exception('Mother holiday update failed - ' . Utilities::processErrorMessages($motherHoliday->getErrors()));
                     }
 
                     // Holiday Supplier data process
@@ -142,7 +142,7 @@ class HolidayService
                     }
 
                 } else {
-                    throw new Exception('Holiday data loading failed - ' . Helper::processErrorMessages($holiday->getErrors()));
+                    throw new Exception('Holiday data loading failed - ' . Utilities::processErrorMessages($holiday->getErrors()));
                 }
 
                 $dbTransaction->commit();
@@ -176,7 +176,7 @@ class HolidayService
             $holiday->netProfit = self::calculateNetProfit($holiday->quoteAmount, $holiday->costOfSale);
             $holiday->paymentStatus = InvoiceService::checkAndDetectPaymentStatus($holiday->quoteAmount, $holiday->receivedAmount);
             if (!$holiday->save()) {
-                throw new Exception('Holiday update failed - ' . Helper::processErrorMessages($holiday->getErrors()));
+                throw new Exception('Holiday update failed - ' . Utilities::processErrorMessages($holiday->getErrors()));
             }
 
             // TODO Invoice update
@@ -229,7 +229,7 @@ class HolidayService
             $holidaySupplier->refundRequestDate = $holiday->refundRequestDate;
             $holidaySupplier = $this->holidayRepository->store($holidaySupplier);
             if ($holidaySupplier->hasErrors()) {
-                throw new Exception('Holiday Supplier refund creation failed - ' . Helper::processErrorMessages($holidaySupplier->getErrors()));
+                throw new Exception('Holiday Supplier refund creation failed - ' . Utilities::processErrorMessages($holidaySupplier->getErrors()));
             }
 
             $serviceSupplierData[] = [
@@ -288,7 +288,7 @@ class HolidayService
         foreach ($referenceData as $ref) {
             $holidayRefund = new HolidayRefund();
             if (!$holidayRefund->load($requestData) || !$holidayRefund->load(['HolidayRefund' => $ref]) || !$holidayRefund->validate()) {
-                return ['error' => true, 'message' => 'Holiday Refund validation failed - ' . Helper::processErrorMessages($holidayRefund->getErrors())];
+                return ['error' => true, 'message' => 'Holiday Refund validation failed - ' . Utilities::processErrorMessages($holidayRefund->getErrors())];
             }
             $holidayRefundBatchData[] = $holidayRefund->getAttributes(null, ['id']);
         }

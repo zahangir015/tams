@@ -1,6 +1,6 @@
 <?php
 
-use app\components\Helper;
+use app\components\Utilities;
 use kartik\date\DatePicker;
 use kartik\depdrop\DepDrop;
 use kartik\select2\Select2;
@@ -22,18 +22,18 @@ use yii\bootstrap4\ActiveForm;
             <?php $form = ActiveForm::begin(); ?>
             <div class="row">
                 <div class="col-md">
-                    <?= $form->field($model, 'categoryId')->widget(Select2::class, Helper::ajaxDropDown('categoryId', '/account/expense-category/get-categories', true, 'categoryId', 'categoryId', $model->isNewRecord ? [] : [$model->category->id => $model->category->name])) ?>
+                    <?= $form->field($model, 'categoryId')->widget(Select2::class, Utilities::ajaxDropDown('categoryId', '/account/expense-category/get-categories', true, 'categoryId', 'categoryId', $model->isNewRecord ? [] : [$model->category->id => $model->category->name])) ?>
                 </div>
                 <div class="col-md">
-                    <?= $form->field($model, 'subCategoryId')->widget(DepDrop::class, Helper::depDropConfigurationGenerate($model, 'subCategoryId', 'categoryId', '/account/expense/get-sub-category-by-category', $model->isNewRecord ? [] : [$model->subCategory->id => $model->subCategory->name])); ?>
+                    <?= $form->field($model, 'subCategoryId')->widget(DepDrop::class, Utilities::depDropConfigurationGenerate($model, 'subCategoryId', 'categoryId', '/account/expense/get-sub-category-by-category', $model->isNewRecord ? [] : [$model->subCategory->id => $model->subCategory->name])); ?>
                 </div>
                 <div class="col-md">
-                    <?= $form->field($model, 'supplierId')->widget(Select2::class, Helper::ajaxDropDown('supplierId', '/sale/supplier/get-suppliers', false, 'supplierId', 'supplierId', $model->isNewRecord ? [] : (isset($model->supplier) ? [$model->supplier->id => $model->supplier->name] : []))) ?>
+                    <?= $form->field($model, 'supplierId')->widget(Select2::class, Utilities::ajaxDropDown('supplierId', '/sale/supplier/get-suppliers', false, 'supplierId', 'supplierId', $model->isNewRecord ? [] : (isset($model->supplier) ? [$model->supplier->id => $model->supplier->name] : []))) ?>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md">
-                    <?= $form->field($model, 'accruingMonth')->widget(DatePicker::class, Helper::getDateWidget('accruingMonth', 'accruingMonth')) ?>
+                    <?= $form->field($model, 'accruingMonth')->widget(DatePicker::class, Utilities::getDateWidget('accruingMonth', 'accruingMonth')) ?>
                 </div>
                 <div class="col-md">
                     <?= $form->field($model, 'timingOfExp')->dropDownList(['Monthly' => 'Monthly', 'Prepaid' => 'Prepaid', 'Accrued' => 'Accrued',], ['prompt' => '']) ?>

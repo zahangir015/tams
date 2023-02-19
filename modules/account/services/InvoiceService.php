@@ -3,7 +3,7 @@
 namespace app\modules\account\services;
 
 use app\components\GlobalConstant;
-use app\components\Helper;
+use app\components\Utilities;
 use app\modules\account\models\BankAccount;
 use app\modules\account\models\Invoice;
 use app\modules\account\models\InvoiceDetail;
@@ -67,10 +67,10 @@ class InvoiceService
             // Invoice data process
             $invoice->dueAmount = $totalDue;
             $invoice->paidAmount = $totalReceived;
-            $invoice->invoiceNumber = Helper::invoiceNumber();
+            $invoice->invoiceNumber = Utilities::invoiceNumber();
             $invoice = $this->invoiceRepository->store($invoice);
             if ($invoice->hasErrors()) {
-                throw new Exception('Supplier Ledger creation failed - ' . Helper::processErrorMessages($invoice->getErrors()));
+                throw new Exception('Supplier Ledger creation failed - ' . Utilities::processErrorMessages($invoice->getErrors()));
             }
 
             //AttachmentFile::uploadsById($invoice, 'invoiceFile');
@@ -112,7 +112,7 @@ class InvoiceService
         $invoice->date = date('Y-m-d');
         $invoice->expectedPaymentDate = $invoice->date;
         $invoice->customerId = $customerId;
-        $invoice->invoiceNumber = Helper::invoiceNumber();
+        $invoice->invoiceNumber = Utilities::invoiceNumber();
         $invoice->dueAmount = array_sum(array_column($services, 'dueAmount'));;
         $invoice->paidAmount = 0;
         $invoice->remarks = 'Auto generated invoice';
@@ -122,7 +122,7 @@ class InvoiceService
         // Invoice data process
         $invoice = $this->invoiceRepository->store($invoice);
         if ($invoice->hasErrors()) {
-            return ['error' => true, 'message' => 'Invoice creation failed - ' . Helper::processErrorMessages($invoice->getErrors())];
+            return ['error' => true, 'message' => 'Invoice creation failed - ' . Utilities::processErrorMessages($invoice->getErrors())];
         }
 
         // Service process
@@ -161,7 +161,7 @@ class InvoiceService
         $invoiceDetail->status = GlobalConstant::ACTIVE_STATUS;
         $invoiceDetail = $this->invoiceRepository->store($invoiceDetail);
         if ($invoiceDetail->hasErrors()) {
-            return ['error' => true, 'message' => 'Invoice Detail creation failed - ' . Helper::processErrorMessages($invoiceDetail->getErrors())];
+            return ['error' => true, 'message' => 'Invoice Detail creation failed - ' . Utilities::processErrorMessages($invoiceDetail->getErrors())];
         }
 
         // Mother Invoice Detail status update
@@ -169,7 +169,7 @@ class InvoiceService
         $motherInvoiceDetail->status = 2;
         $motherInvoiceDetail = $this->invoiceRepository->store($motherInvoiceDetail);
         if ($motherInvoiceDetail->hasErrors()) {
-            return ['error' => true, 'message' => 'Mother Invoice details update failed - ' . Helper::processErrorMessages($motherInvoiceDetail->getErrors())];
+            return ['error' => true, 'message' => 'Mother Invoice details update failed - ' . Utilities::processErrorMessages($motherInvoiceDetail->getErrors())];
         }
 
         // Invoice due update
@@ -178,7 +178,7 @@ class InvoiceService
         $invoice->dueAmount = (double)array_sum(array_column($invoiceDetailArray, 'dueAmount'));
         $invoice = $this->invoiceRepository->store($invoice);
         if ($invoice->hasErrors()) {
-            return ['error' => true, 'message' => 'Invoice due update failed - ' . Helper::processErrorMessages($invoice->getErrors())];
+            return ['error' => true, 'message' => 'Invoice due update failed - ' . Utilities::processErrorMessages($invoice->getErrors())];
         }
 
         // Customer Ledger process
@@ -207,10 +207,10 @@ class InvoiceService
         $invoiceDetail = new InvoiceDetail();
         if ($invoiceDetail->load(['InvoiceDetail' => $service])) {
             if (!$invoiceDetail->save()) {
-                return ['error' => true, 'message' => 'Invoice Detail create failed - ' . Helper::processErrorMessages($invoiceDetail->getErrors())];
+                return ['error' => true, 'message' => 'Invoice Detail create failed - ' . Utilities::processErrorMessages($invoiceDetail->getErrors())];
             }
         } else {
-            return ['error' => true, 'message' => 'Invoice Detail loading failed - ' . Helper::processErrorMessages($invoiceDetail->getErrors())];
+            return ['error' => true, 'message' => 'Invoice Detail loading failed - ' . Utilities::processErrorMessages($invoiceDetail->getErrors())];
         }
 
         // Mother Invoice Detail status update
@@ -232,7 +232,7 @@ class InvoiceService
 
         $invoice->dueAmount = $invoiceDue[0]['dueAmount'];
         if (!$invoice->save()) {
-            return ['error' => false, 'message' => 'Invoice due update failed - ' . Helper::processErrorMessages($invoice->getErrors())];
+            return ['error' => false, 'message' => 'Invoice due update failed - ' . Utilities::processErrorMessages($invoice->getErrors())];
         }
 
         // Customer Ledger process
@@ -260,10 +260,10 @@ class InvoiceService
         $invoiceDetail = new InvoiceDetail();
         if ($invoiceDetail->load(['InvoiceDetail' => $service])) {
             if (!$invoiceDetail->save()) {
-                return ['error' => true, 'message' => 'Invoice Detail create failed - ' . Helper::processErrorMessages($invoiceDetail->getErrors())];
+                return ['error' => true, 'message' => 'Invoice Detail create failed - ' . Utilities::processErrorMessages($invoiceDetail->getErrors())];
             }
         } else {
-            return ['error' => true, 'message' => 'Invoice Detail loading failed - ' . Helper::processErrorMessages($invoiceDetail->getErrors())];
+            return ['error' => true, 'message' => 'Invoice Detail loading failed - ' . Utilities::processErrorMessages($invoiceDetail->getErrors())];
         }
 
         // Mother Invoice Detail status update
@@ -285,7 +285,7 @@ class InvoiceService
 
         $invoice->dueAmount = $invoiceDue[0]['dueAmount'];
         if (!$invoice->save()) {
-            return ['error' => false, 'message' => 'Invoice due update failed - ' . Helper::processErrorMessages($invoice->getErrors())];
+            return ['error' => false, 'message' => 'Invoice due update failed - ' . Utilities::processErrorMessages($invoice->getErrors())];
         }
 
         // Customer Ledger process
@@ -316,7 +316,7 @@ class InvoiceService
             $invoiceDetail = new InvoiceDetail();
             $invoiceDetail->invoiceId = $invoice->id;
             if (!$invoiceDetail->load(['InvoiceDetail' => $singleService]) || !$invoiceDetail->validate()) {
-                return ['error' => true, 'message' => 'Invoice Details validation failed - ' . Helper::processErrorMessages($invoiceDetail->getErrors())];
+                return ['error' => true, 'message' => 'Invoice Details validation failed - ' . Utilities::processErrorMessages($invoiceDetail->getErrors())];
             }
             $invoiceDetailBatchData[] = $invoiceDetail->getAttributes();
 
@@ -331,7 +331,7 @@ class InvoiceService
             }
             $serviceObject->invoiceId = $invoice->id;
             if (!$serviceObject->update()) {
-                return ['error' => true, 'message' => 'Service update failed - ' . Helper::processErrorMessages($serviceObject->getErrors())];
+                return ['error' => true, 'message' => 'Service update failed - ' . Utilities::processErrorMessages($serviceObject->getErrors())];
             }
         }
 
@@ -339,7 +339,7 @@ class InvoiceService
         if (empty($invoiceDetailBatchData)) {
             return ['error' => true, 'message' => 'Invoice Detail Batch Data can not be empty.'];
         }
-        if (!InvoiceRepository::batchStore(InvoiceDetail::tableName(), array_keys($invoiceDetailBatchData[0]), $invoiceDetailBatchData)) {
+        if (!(new InvoiceRepository())->batchStore(InvoiceDetail::tableName(), array_keys($invoiceDetailBatchData[0]), $invoiceDetailBatchData)) {
             return ['error' => true, 'message' => 'Invoice Details batch insert failed'];
         }
 
@@ -364,7 +364,7 @@ class InvoiceService
         $invoiceDetail->status = GlobalConstant::ACTIVE_STATUS;
         $invoiceDetail = $this->invoiceRepository->store($invoiceDetail);
         if ($invoiceDetail->hasErrors()) {
-            return ['error' => true, 'message' => 'Invoice Detail creation failed - ' . Helper::processErrorMessages($invoiceDetail->getErrors())];
+            return ['error' => true, 'message' => 'Invoice Detail creation failed - ' . Utilities::processErrorMessages($invoiceDetail->getErrors())];
         }
 
         // Mother Invoice Detail status update
@@ -372,7 +372,7 @@ class InvoiceService
         $motherInvoiceDetail->status = ServiceConstant::INVOICE_DETAIL_REISSUE_STATUS;
         $motherInvoiceDetail = $this->invoiceRepository->store($motherInvoiceDetail);
         if ($motherInvoiceDetail->hasErrors()) {
-            return ['error' => true, 'message' => 'Mother Invoice details update failed - ' . Helper::processErrorMessages($motherInvoiceDetail->getErrors())];
+            return ['error' => true, 'message' => 'Mother Invoice details update failed - ' . Utilities::processErrorMessages($motherInvoiceDetail->getErrors())];
         }
 
         // Invoice due update
@@ -380,7 +380,7 @@ class InvoiceService
         $invoice->dueAmount += $invoiceDetail->dueAmount;
         $invoice = $this->invoiceRepository->store($invoice);
         if ($invoice->hasErrors()) {
-            return ['error' => true, 'message' => 'Invoice due update failed - ' . Helper::processErrorMessages($invoice->getErrors())];
+            return ['error' => true, 'message' => 'Invoice due update failed - ' . Utilities::processErrorMessages($invoice->getErrors())];
         }
 
         // Customer Ledger process
@@ -445,7 +445,7 @@ class InvoiceService
             $invoice->dueAmount -= $distributionAmount;
             $invoice->paidAmount += $distributionAmount;
             if (!$invoice->save()) {
-                throw new Exception('Invoice update failed for payment - ' . Helper::processErrorMessages($invoice->getErrors()));
+                throw new Exception('Invoice update failed for payment - ' . Utilities::processErrorMessages($invoice->getErrors()));
             }
 
             // Refund status update
@@ -460,7 +460,7 @@ class InvoiceService
                     $singleRefundTransaction->adjustedAmount = $singleRefundTransaction->adjustmentAmount;
                     $singleRefundTransaction->isAdjusted = 1;
                     if (!$singleRefundTransaction->save()) {
-                        throw new Exception('Refund Adjustment not save' . Helper::processErrorMessages($singleRefundTransaction->getErrors()));
+                        throw new Exception('Refund Adjustment not save' . Utilities::processErrorMessages($singleRefundTransaction->getErrors()));
                     }
                 }
             }
@@ -555,7 +555,7 @@ class InvoiceService
             $invoiceDetail->paidAmount = $service->receivedAmount;
             $invoiceDetail = $this->invoiceRepository->store($invoiceDetail);
             if ($invoiceDetail->hasErrors()) {
-                return ['error' => true, 'message' => Helper::processErrorMessages($invoiceDetail->getErrors())];
+                return ['error' => true, 'message' => Utilities::processErrorMessages($invoiceDetail->getErrors())];
             }
 
             /*$servicePaymentDetailsStoreResponse = ServicePaymentDetail::storeServicePaymentDetail($invoiceDetail->refModel, $invoiceDetail->refId, Invoice::class, $service->invoiceId, $paidAmountThisTime, $amountDue, $user);
@@ -635,7 +635,7 @@ class InvoiceService
 
         $invoiceDetail = $this->invoiceRepository->store($invoiceDetail);
         if ($invoiceDetail->hasErrors()) {
-            return ['error' => true, 'message' => 'Invoice Details store failed - ' . Helper::processErrorMessages($invoiceDetail->getErrors())];
+            return ['error' => true, 'message' => 'Invoice Details store failed - ' . Utilities::processErrorMessages($invoiceDetail->getErrors())];
         }
 
         return ['error' => false, 'message' => 'Success'];

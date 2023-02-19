@@ -1,7 +1,7 @@
 <?php
 
 use app\components\GlobalConstant;
-use app\components\Helper;
+use app\components\Utilities;
 use app\modules\sale\models\Supplier;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -34,7 +34,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'class' => '\kartik\grid\DataColumn',
                 'attribute' => 'type',
                 'value' => function ($model) {
-                    $labelClass = Helper::typeLabelClass($model->status);
+                    $labelClass = Utilities::typeLabelClass($model->status);
                     return '<span class="right badge ' . $labelClass . '">' . GlobalConstant::SUPPLIER_TYPE[$model->type] . '</span>';
                 },
                 'filter' => GlobalConstant::SUPPLIER_TYPE,
@@ -45,7 +45,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'class' => '\kartik\grid\DataColumn',
                 'attribute' => 'status',
                 'value' => function ($model) {
-                    $labelClass = Helper::statusLabelClass($model->status);
+                    $labelClass = Utilities::statusLabelClass($model->status);
                     return '<span class="right badge ' . $labelClass . '">' . GlobalConstant::DEFAULT_STATUS[$model->status] . '</span>';
                 },
                 'filter' => GlobalConstant::DEFAULT_STATUS,

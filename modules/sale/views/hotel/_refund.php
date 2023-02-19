@@ -8,7 +8,7 @@ use yii\helpers\Html;
 use yii\web\JqueryAsset;
 use yii\web\View;
 use yii\bootstrap4\ActiveForm;
-use app\components\Helper;
+use app\components\Utilities;
 
 /* @var $this yii\web\View */
 /* @var $model app\modules\sale\models\hotel\Hotel */
@@ -40,7 +40,7 @@ $this->registerJsFile(
         <div class="card-body">
             <div class="row">
                 <div class="col-md">
-                    <?= $form->field($model, 'refundRequestDate')->widget(DateRangePicker::class, Helper::dateFormat(false, true)) ?>
+                    <?= $form->field($model, 'refundRequestDate')->widget(DateRangePicker::class, Utilities::dateFormat(false, true)) ?>
                 </div>
                 <div class="col-md">
                     <?= $form->field($model, 'customerId')->dropdownList([$motherHotel->customer->id => $motherHotel->customer->company], ['readOnly' => 'readOnly'])->label('Customer') ?>
@@ -68,7 +68,7 @@ $this->registerJsFile(
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($model, 'identificationNumber')->textInput(['value' => Helper::hotelIdentificationNumber(), 'readOnly' => 'readOnly']) ?>
+                            <?= $form->field($model, 'identificationNumber')->textInput(['value' => Utilities::hotelIdentificationNumber(), 'readOnly' => 'readOnly']) ?>
                         </div>
                     </div>
                     <div class="row">

@@ -1,7 +1,7 @@
 <?php
 
 use app\components\GlobalConstant;
-use app\components\Helper;
+use app\components\Utilities;
 use app\modules\account\models\AccountGroup;
 use kartik\select2\Select2;
 use yii\helpers\Html;
@@ -27,14 +27,14 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => function ($model) {
                     return $model->accountType->name;
                 },
-                'filter' => Select2::widget(Helper::ajaxDropDown('accountTypeId', '/account/account-type/get-types', false, 'accountTypeId', 'accountTypeId'))
+                'filter' => Select2::widget(Utilities::ajaxDropDown('accountTypeId', '/account/account-type/get-types', false, 'accountTypeId', 'accountTypeId'))
             ],
             'name',
             [
                 'class' => '\kartik\grid\DataColumn',
                 'attribute' => 'status',
                 'value' => function ($model) {
-                    $labelClass = Helper::statusLabelClass($model->status);
+                    $labelClass = Utilities::statusLabelClass($model->status);
                     return '<span class="right badge ' . $labelClass . '">' . GlobalConstant::DEFAULT_STATUS[$model->status] . '</span>';
                 },
                 'filter' => GlobalConstant::DEFAULT_STATUS,
@@ -52,7 +52,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'width' => '150px',
                 'template' => '{view} {edit} {delete}',
                 'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
-                'buttons' => Helper::getBasicActionColumnArray()
+                'buttons' => Utilities::getBasicActionColumnArray()
             ],
         ],
         'toolbar' => [

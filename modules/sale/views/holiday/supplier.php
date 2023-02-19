@@ -1,6 +1,6 @@
 <?php
 
-use app\components\Helper;
+use app\components\Utilities;
 use app\modules\sale\components\ServiceConstant;
 use kartik\daterange\DateRangePicker;
 use kartik\select2\Select2;
@@ -31,16 +31,16 @@ use yii\bootstrap4\Html;
     <div class="card-body">
         <div class="row">
             <div class="col-md">
-                <?= $form->field($holidaySupplier, "[$row]supplierId")->widget(Select2::class, Helper::ajaxDropDown('supplierId', '/sale/supplier/get-suppliers', true, 'supplierId' . $row, 'supplier', ($holidaySupplier->isNewRecord) ? [] : [$holidaySupplier->supplier->id => $holidaySupplier->supplier->company], !$holidaySupplier->isNewRecord))->label('Supplier') ?>
+                <?= $form->field($holidaySupplier, "[$row]supplierId")->widget(Select2::class, Utilities::ajaxDropDown('supplierId', '/sale/supplier/get-suppliers', true, 'supplierId' . $row, 'supplier', ($holidaySupplier->isNewRecord) ? [] : [$holidaySupplier->supplier->id => $holidaySupplier->supplier->company], !$holidaySupplier->isNewRecord))->label('Supplier') ?>
             </div>
             <div class="col-md">
                 <?= $form->field($holidaySupplier, "[$row]supplierRef")->textInput(['maxlength' => true, 'readOnly' => !(bool)$holidaySupplier->isNewRecord]); ?>
             </div>
             <div class="col-md">
-                <?= $form->field($holidaySupplier, "[$row]issueDate")->widget(DateRangePicker::class, Helper::dateFormat(!(bool)$holidaySupplier->isNewRecord, true)); ?>
+                <?= $form->field($holidaySupplier, "[$row]issueDate")->widget(DateRangePicker::class, Utilities::dateFormat(!(bool)$holidaySupplier->isNewRecord, true)); ?>
             </div>
             <div class="col-md">
-                <?= $form->field($holidaySupplier, "[$row]departureDate")->widget(DateRangePicker::class, Helper::dateFormat(!(bool)$holidaySupplier->isNewRecord, true)) ?>
+                <?= $form->field($holidaySupplier, "[$row]departureDate")->widget(DateRangePicker::class, Utilities::dateFormat(!(bool)$holidaySupplier->isNewRecord, true)) ?>
             </div>
         </div>
         <div class="row calcData">

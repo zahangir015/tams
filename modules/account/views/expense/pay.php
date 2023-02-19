@@ -5,7 +5,7 @@ use kartik\date\DatePicker;
 use kartik\select2\Select2;
 use yii\bootstrap4\ActiveForm;
 use yii\helpers\Html;
-use app\components\Helper;
+use app\components\Utilities;
 
 /** @var yii\web\View $this */
 /** @var app\modules\account\models\Expense $model */
@@ -50,7 +50,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Payment');
             <hr>
             <div class="row">
                 <div class="col-md">
-                    <?= $form->field($transaction, 'bankId')->widget(Select2::class, Helper::ajaxDropDown('bankId', '/account/bank-account/get-banks', 'true', 'bankId', 'bankId'))->label('Bank');
+                    <?= $form->field($transaction, 'bankId')->widget(Select2::class, Utilities::ajaxDropDown('bankId', '/account/bank-account/get-banks', 'true', 'bankId', 'bankId'))->label('Bank');
                     ?>
                 </div>
                 <div class="col-md">
@@ -68,7 +68,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Payment');
                     <?= $form->field($transaction, 'paymentMode')->dropdownList(GlobalConstant::PAYMENT_MODE, ['prompt' => '']); ?>
                 </div>
                 <div class="col-md">
-                    <?= $form->field($transaction, 'paymentDate')->widget(DatePicker::class, Helper::getDateWidget('date')); ?>
+                    <?= $form->field($transaction, 'paymentDate')->widget(DatePicker::class, Utilities::getDateWidget('date')); ?>
                 </div>
             </div>
 

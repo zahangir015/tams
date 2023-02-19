@@ -2,7 +2,7 @@
 
 namespace app\modules\sale\controllers;
 
-use app\components\Helper;
+use app\components\Utilities;
 use app\modules\sale\models\SupplierCategory;
 use app\modules\sale\models\search\SupplierCategorySearch;
 use app\controllers\ParentController;
@@ -61,7 +61,7 @@ class SupplierCategoryController extends ParentController
                 return $this->redirect(['view', 'uid' => $model->uid]);
             }
 
-            Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
+            Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
         } else {
             $model->loadDefaultValues();
         }
@@ -87,7 +87,7 @@ class SupplierCategoryController extends ParentController
                 Yii::$app->session->setFlash('success', 'Supplier Category updated successfully.');
                 return $this->redirect(['view', 'uid' => $model->uid]);
             }
-            Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
+            Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
         }
 
         return $this->render('update', [

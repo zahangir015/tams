@@ -2,7 +2,7 @@
 
 namespace app\models;
 
-use app\components\Helper;
+use app\components\Utilities;
 use Yii;
 
 /**
@@ -68,7 +68,7 @@ class History extends \yii\db\ActiveRecord
                 return true;
             }
             else {
-                Yii::$app->session->setFlash('danger','Error while saving snapshot - application.models.History - '.Helper::processErrorMessages($this->getErrors()));
+                Yii::$app->session->setFlash('danger','Error while saving snapshot - application.models.History - '.Utilities::processErrorMessages($this->getErrors()));
                 return false;
             }
         }

@@ -3,7 +3,7 @@
 namespace app\modules\account\services;
 
 use app\components\GlobalConstant;
-use app\components\Helper;
+use app\components\Utilities;
 use app\modules\account\models\BankAccount;
 use app\modules\account\models\Invoice;
 use app\modules\account\models\Ledger;
@@ -60,7 +60,7 @@ class LedgerService
         $newLedger->status = GlobalConstant::ACTIVE_STATUS;
         $newLedger = $this->ledgerRepository->store($newLedger);
         if ($newLedger->hasErrors()) {
-            return ['error' => true, 'message' => 'Ledger creation failed - ' . Helper::processErrorMessages($newLedger->getErrors())];
+            return ['error' => true, 'message' => 'Ledger creation failed - ' . Utilities::processErrorMessages($newLedger->getErrors())];
         }
 
         return ['error' => false, 'message' => 'Ledger created successfully.'];
@@ -148,7 +148,7 @@ class LedgerService
 
         $newLedger = $this->ledgerRepository->store($newLedger);
         if ($newLedger->hasErrors()) {
-            return ['error' => true, 'message' => 'Ledger creation failed - ' . Helper::processErrorMessages($newLedger->getErrors())];
+            return ['error' => true, 'message' => 'Ledger creation failed - ' . Utilities::processErrorMessages($newLedger->getErrors())];
         }
         return ['error' => false, 'message' => 'Supplier ledger processed successfully'];
     }

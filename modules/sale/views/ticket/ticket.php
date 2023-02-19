@@ -1,7 +1,7 @@
 <?php
 
 use app\components\GlobalConstant;
-use app\components\Helper;
+use app\components\Utilities;
 use app\modules\sale\components\ServiceConstant;
 use kartik\date\DatePicker;
 use kartik\select2\Select2;
@@ -29,7 +29,7 @@ use yii\bootstrap4\Html;
     <div class="card-body">
         <div class="row">
             <div class="col-md">
-                <?= $form->field($model, "[$row]airlineId")->widget(Select2::classname(), Helper::ajaxDropDown('airlineId', '/sale/airline/get-airlines', true, 'airlineId' . $row, 'airline', ($model->isNewRecord) ? [] : [$model->airlineId => $model->airline->name . ' | ' . $model->airline->code]))->label('Airline') ?>
+                <?= $form->field($model, "[$row]airlineId")->widget(Select2::classname(), Utilities::ajaxDropDown('airlineId', '/sale/airline/get-airlines', true, 'airlineId' . $row, 'airline', ($model->isNewRecord) ? [] : [$model->airlineId => $model->airline->name . ' | ' . $model->airline->code]))->label('Airline') ?>
             </div>
             <div class="col-md">
                 <?= $form->field($model, "[$row]commission")->textInput(['id' => 'commission' . $row, 'readOnly' => true]) ?>
@@ -46,18 +46,18 @@ use yii\bootstrap4\Html;
         </div>
         <div class="row">
             <div class="col-md">
-                <?= $form->field($ticketSupplier, "[$row]supplierId")->widget(Select2::class, Helper::ajaxDropDown('supplierId', '/sale/supplier/get-suppliers', true, 'supplierId' . $row, 'supplier', ($model->isNewRecord) ? [] : [$ticketSupplier->supplierId => $ticketSupplier->supplier->name . ' | ' . $ticketSupplier->supplier->company], $model->isNewRecord ? false : true))->label('Supplier') ?>
+                <?= $form->field($ticketSupplier, "[$row]supplierId")->widget(Select2::class, Utilities::ajaxDropDown('supplierId', '/sale/supplier/get-suppliers', true, 'supplierId' . $row, 'supplier', ($model->isNewRecord) ? [] : [$ticketSupplier->supplierId => $ticketSupplier->supplier->name . ' | ' . $ticketSupplier->supplier->company], $model->isNewRecord ? false : true))->label('Supplier') ?>
                 <?= $form->field($ticketSupplier, "[$row]status")->hiddenInput(['id' => 'status' . $row, 'class' => 'status', 'value' => GlobalConstant::ACTIVE_STATUS])->label(false) ?>
                 <?= $form->field($ticketSupplier, "[$row]paidAmount")->hiddenInput(['id' => 'paidAmount' . $row, 'class' => 'paidAmount', 'value' => 0])->label(false) ?>
             </div>
             <div class="col-md">
-                <?= $form->field($model, "[$row]providerId")->widget(Select2::className(), Helper::ajaxDropDown('providerId', '/sale/provider/get-providers', true, 'providerId' . $row, 'providerId' . $row, (!$model->isNewRecord && $model->provider) ? [$model->provider->id => $model->provider->name] : []))->label('Select GDS'); ?>
+                <?= $form->field($model, "[$row]providerId")->widget(Select2::className(), Utilities::ajaxDropDown('providerId', '/sale/provider/get-providers', true, 'providerId' . $row, 'providerId' . $row, (!$model->isNewRecord && $model->provider) ? [$model->provider->id => $model->provider->name] : []))->label('Select GDS'); ?>
             </div>
             <div class="col-md">
                 <?= $form->field($model, "[$row]type")->dropDownList(GlobalConstant::TICKET_TYPE_FOR_CREATE, ['disabled' => !$model->isNewRecord ? 'disabled' : false, 'class' => 'form-control type']) ?>
             </div>
             <div class="col-md">
-                <?= $form->field($model, "[$row]motherTicketId")->widget(Select2::classname(), Helper::ajaxDropDown('motherTicketId', 'get-mother-ticket', true, 'motherTicketId' . $row, 'motherTicket', (!$model->isNewRecord && $model->motherTicket) ? [$model->motherTicket => $model->motherTicket->eTicket . ' | ' . $model->motherTicket->pnrCode] : [], true))->label('Parent') ?>
+                <?= $form->field($model, "[$row]motherTicketId")->widget(Select2::classname(), Utilities::ajaxDropDown('motherTicketId', 'get-mother-ticket', true, 'motherTicketId' . $row, 'motherTicket', (!$model->isNewRecord && $model->motherTicket) ? [$model->motherTicket => $model->motherTicket->eTicket . ' | ' . $model->motherTicket->pnrCode] : [], true))->label('Parent') ?>
             </div>
         </div>
         <div class="row">
@@ -82,10 +82,10 @@ use yii\bootstrap4\Html;
                 <?= $form->field($model, "[$row]flightType")->dropDownList(ServiceConstant::FLIGHT_TYPE) ?>
             </div>
             <div class="col-md">
-                <?= $form->field($model, "[$row]issueDate")->widget(DatePicker::className(), Helper::getDatewidget('issueDate' . $row))->label('Issue'); ?>
+                <?= $form->field($model, "[$row]issueDate")->widget(DatePicker::className(), Utilities::getDatewidget('issueDate' . $row))->label('Issue'); ?>
             </div>
             <div class="col-md">
-                <?= $form->field($model, "[$row]departureDate")->widget(DatePicker::className(), Helper::getDatewidget('departureDate' . $row))->label('Departure'); ?>
+                <?= $form->field($model, "[$row]departureDate")->widget(DatePicker::className(), Utilities::getDatewidget('departureDate' . $row))->label('Departure'); ?>
             </div>
             <div class="col-md">
                 <?= $form->field($model, "[$row]numberOfSegment")->textInput(['maxlength' => true]) ?>

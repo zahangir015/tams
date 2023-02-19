@@ -2,7 +2,10 @@
 
 namespace app\modules\hrm\models;
 
+use app\traits\BehaviorTrait;
 use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%employee_leave_allocation}}".
@@ -24,12 +27,14 @@ use Yii;
  * @property Employee $employee
  * @property LeaveType $leaveType
  */
-class EmployeeLeaveAllocation extends \yii\db\ActiveRecord
+class EmployeeLeaveAllocation extends ActiveRecord
 {
+    use BehaviorTrait;
+
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%employee_leave_allocation}}';
     }
@@ -37,12 +42,13 @@ class EmployeeLeaveAllocation extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            [['uid', 'employeeId', 'leaveTypeId', 'year', 'totalDays', 'createdBy', 'createdAt'], 'required'],
+            [['employeeId', 'leaveTypeId', 'year', 'totalDays'], 'required'],
             [['employeeId', 'leaveTypeId', 'year', 'totalDays', 'availedDays', 'remainingDays', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['uid'], 'string', 'max' => 36],
+            [['uid'], 'unique'],
             [['uid'], 'unique'],
             [['employeeId'], 'exist', 'skipOnError' => true, 'targetClass' => Employee::class, 'targetAttribute' => ['employeeId' => 'id']],
             [['leaveTypeId'], 'exist', 'skipOnError' => true, 'targetClass' => LeaveType::class, 'targetAttribute' => ['leaveTypeId' => 'id']],
@@ -52,13 +58,13 @@ class EmployeeLeaveAllocation extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),
             'uid' => Yii::t('app', 'Uid'),
-            'employeeId' => Yii::t('app', 'Employee ID'),
-            'leaveTypeId' => Yii::t('app', 'Leave Type ID'),
+            'employeeId' => Yii::t('app', 'Employee'),
+            'leaveTypeId' => Yii::t('app', 'Leave Type'),
             'year' => Yii::t('app', 'Year'),
             'totalDays' => Yii::t('app', 'Total Days'),
             'availedDays' => Yii::t('app', 'Availed Days'),
@@ -74,9 +80,9 @@ class EmployeeLeaveAllocation extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Employee]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getEmployee()
+    public function getEmployee(): ActiveQuery
     {
         return $this->hasOne(Employee::class, ['id' => 'employeeId']);
     }
@@ -84,9 +90,9 @@ class EmployeeLeaveAllocation extends \yii\db\ActiveRecord
     /**
      * Gets query for [[LeaveType]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getLeaveType()
+    public function getLeaveType(): ActiveQuery
     {
         return $this->hasOne(LeaveType::class, ['id' => 'leaveTypeId']);
     }

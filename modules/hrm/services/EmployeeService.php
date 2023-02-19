@@ -3,7 +3,7 @@
 namespace app\modules\hrm\services;
 
 
-use app\components\Helper;
+use app\components\Utilities;
 use app\modules\admin\models\form\Signup;
 use app\modules\hrm\models\Employee;
 use app\modules\hrm\models\EmployeeDesignation;
@@ -41,7 +41,7 @@ class EmployeeService
                     $employee->userId = !is_null($user) ? $user->id : null;
                     $employee = $this->employeeRepository->store($employee);
                     if ($employee->hasErrors()) {
-                        throw new Exception('Employee creation failed - ' . Helper::processErrorMessages($employee->getErrors()));
+                        throw new Exception('Employee creation failed - ' . Utilities::processErrorMessages($employee->getErrors()));
                     }
 
                     // Hotel Supplier data process
@@ -50,13 +50,13 @@ class EmployeeService
                         $employeeDesignation->startDate = $employee->joiningDate;
                         $employeeDesignation = $this->employeeRepository->store($employeeDesignation);
                         if ($employeeDesignation->hasErrors()) {
-                            throw new Exception('Employee Designation creation failed - ' . Helper::processErrorMessages($employeeDesignation->getErrors()));
+                            throw new Exception('Employee Designation creation failed - ' . Utilities::processErrorMessages($employeeDesignation->getErrors()));
                         }
                     } else {
-                        throw new Exception('Employee Designation data loading failed - ' . Helper::processErrorMessages($employee->getErrors()));
+                        throw new Exception('Employee Designation data loading failed - ' . Utilities::processErrorMessages($employee->getErrors()));
                     }
                 } else {
-                    throw new Exception('Employee data loading failed - ' . Helper::processErrorMessages($employee->getErrors()));
+                    throw new Exception('Employee data loading failed - ' . Utilities::processErrorMessages($employee->getErrors()));
                 }
 
                 // Succeefully stored
@@ -82,7 +82,7 @@ class EmployeeService
                 if ($employee->load($requestData)) {
                     $employee = $this->employeeRepository->store($employee);
                     if ($employee->hasErrors()) {
-                        throw new Exception('Employee update failed - ' . Helper::processErrorMessages($employee->getErrors()));
+                        throw new Exception('Employee update failed - ' . Utilities::processErrorMessages($employee->getErrors()));
                     }
 
                     // Hotel Supplier data process
@@ -90,13 +90,13 @@ class EmployeeService
                         $employeeDesignation->startDate = $employee->joiningDate;
                         $employeeDesignation = $this->employeeRepository->store($employeeDesignation);
                         if ($employeeDesignation->hasErrors()) {
-                            throw new Exception('Employee Designation creation failed - ' . Helper::processErrorMessages($employeeDesignation->getErrors()));
+                            throw new Exception('Employee Designation creation failed - ' . Utilities::processErrorMessages($employeeDesignation->getErrors()));
                         }
                     } else {
-                        throw new Exception('Employee Designation data loading failed - ' . Helper::processErrorMessages($employee->getErrors()));
+                        throw new Exception('Employee Designation data loading failed - ' . Utilities::processErrorMessages($employee->getErrors()));
                     }
                 } else {
-                    throw new Exception('Employee data loading failed - ' . Helper::processErrorMessages($employee->getErrors()));
+                    throw new Exception('Employee data loading failed - ' . Utilities::processErrorMessages($employee->getErrors()));
                 }
 
                 // Succeefully stored

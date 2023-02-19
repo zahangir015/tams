@@ -3,7 +3,7 @@
 namespace app\modules\sale\controllers;
 
 use app\components\GlobalConstant;
-use app\components\Helper;
+use app\components\Utilities;
 use app\modules\sale\models\Supplier;
 use app\modules\sale\models\search\SupplierSearch;
 use app\controllers\ParentController;
@@ -64,7 +64,7 @@ class SupplierController extends ParentController
                     Yii::$app->session->setFlash('success', 'Supplier created successfully.');
                     return $this->redirect(['view', 'uid' => $model->uid]);
                 }
-                Yii::$app->session->setFlash('Error', Helper::processErrorMessages($model->getErrors()));
+                Yii::$app->session->setFlash('Error', Utilities::processErrorMessages($model->getErrors()));
             }
         } else {
             $model->loadDefaultValues();
@@ -94,7 +94,7 @@ class SupplierController extends ParentController
                 return $this->redirect(['view', 'uid' => $model->uid]);
             }
 
-            Yii::$app->session->setFlash('Error', Helper::processErrorMessages($model->getErrors()));
+            Yii::$app->session->setFlash('Error', Utilities::processErrorMessages($model->getErrors()));
         }
 
         return $this->render('update', [

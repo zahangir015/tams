@@ -1,7 +1,7 @@
 <?php
 
 use app\components\GlobalConstant;
-use app\components\Helper;
+use app\components\Utilities;
 use app\modules\sale\models\Customer;
 use kartik\daterange\DateRangePicker;
 use kartik\select2\Select2;
@@ -35,14 +35,14 @@ $this->registerJsFile(
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
-                            <?= $form->field($model, 'refId')->widget(Select2::classname(), Helper::ajaxDropDown('refId', '/sale/customer/get-customers', true, 'customerId', 'customer'))->label('Refund To'); ?>
+                            <?= $form->field($model, 'refId')->widget(Select2::classname(), Utilities::ajaxDropDown('refId', '/sale/customer/get-customers', true, 'customerId', 'customer'))->label('Refund To'); ?>
                             <?= $form->field($model, 'refModel')->hiddenInput(['value' => Customer::class])->label(false) ?>
                         </div>
                         <div class="col-md-6">
                             <label class="control-label" for="dateRange">Issue Date Range</label>
                             <?= $form->field($model, 'dateRange', [
                                 'options' => ['class' => 'drp-container mb-2']
-                            ])->widget(DateRangePicker::class, Helper::getDateRangeWidgetOptions())->label(false) ?>
+                            ])->widget(DateRangePicker::class, Utilities::getDateRangeWidgetOptions())->label(false) ?>
                         </div>
                     </div>
                     <div id="bills" style="border: 1px solid #ddd; background-color: #FFFFFF; padding: 10px;">
@@ -75,7 +75,7 @@ $this->registerJsFile(
                         <hr>
                         <div class="row">
                             <div class="col-md-6 col-sm-12 col-xs-12">
-                                <?= $form->field($transaction, 'bankId')->widget(Select2::class, Helper::ajaxDropDown('bankId', '/account/bank-account/get-banks', true, 'bankId', 'bank'))->label('Bank'); ?>
+                                <?= $form->field($transaction, 'bankId')->widget(Select2::class, Utilities::ajaxDropDown('bankId', '/account/bank-account/get-banks', true, 'bankId', 'bank'))->label('Bank'); ?>
                             </div>
                             <div class="col-md-6 col-sm-12 col-xs-12">
                                 <?= $form->field($transaction, 'reference')->textInput() ?>
@@ -84,7 +84,7 @@ $this->registerJsFile(
                                 <?= $form->field($transaction, 'paymentMode')->dropDownList(GlobalConstant::PAYMENT_MODE, ['prompt' => ''])->label('Payment Mode') ?>
                             </div>
                             <div class="col-md-6 col-sm-12 col-xs-12">
-                                <?= $form->field($transaction, 'paymentDate')->widget(DateRangePicker::className(), Helper::dateFormat()) ?>
+                                <?= $form->field($transaction, 'paymentDate')->widget(DateRangePicker::className(), Utilities::dateFormat()) ?>
                             </div>
                             <div class="col-md-6 col-sm-12 col-xs-12">
                                 <?= $form->field($model, 'payableAmount')->textInput(['value' => 0, 'type' => 'number', 'step' => 'any', 'readOnly' => true]) ?>

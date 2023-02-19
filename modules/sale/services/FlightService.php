@@ -3,7 +3,7 @@
 namespace app\modules\sale\services;
 
 use app\components\GlobalConstant;
-use app\components\Helper;
+use app\components\Utilities;
 use app\components\Uploader;
 use app\modules\account\models\Invoice;
 use app\modules\account\services\InvoiceService;
@@ -58,7 +58,7 @@ class FlightService
                         $ticket = self::processTicketData($ticket);
                         $ticket = $this->flightRepository->store($ticket);
                         if ($ticket->hasErrors()) {
-                            throw new Exception('Ticket create failed - ' . Helper::processErrorMessages($ticket->getErrors()));
+                            throw new Exception('Ticket create failed - ' . Utilities::processErrorMessages($ticket->getErrors()));
                         }
 
                         // Ticket Supplier data process
@@ -69,7 +69,7 @@ class FlightService
                         $ticketSupplier->serviceCharge = Airline::findOne($ticket->airlineId)->serviceCharge;
                         $ticketSupplier = $this->flightRepository->store($ticketSupplier);
                         if ($ticketSupplier->hasErrors()) {
-                            throw new Exception('Ticket Supplier create failed - ' . Helper::processErrorMessages($ticketSupplier->getErrors()));
+                            throw new Exception('Ticket Supplier create failed - ' . Utilities::processErrorMessages($ticketSupplier->getErrors()));
                         }
 
                         // Invoice details data process
@@ -112,7 +112,7 @@ class FlightService
                             ];
                         }
                     } else {
-                        throw new Exception('Ticket data loading failed - ' . Helper::processErrorMessages($ticket->getErrors()));
+                        throw new Exception('Ticket data loading failed - ' . Utilities::processErrorMessages($ticket->getErrors()));
                     }
                 }
 
@@ -228,7 +228,7 @@ class FlightService
             // Store New Refund ticket
             $newRefundTicket = self::storeRefundTicket($motherTicket, $requestData);
             if ($newRefundTicket->hasErrors()) {
-                throw new Exception('New Refund Ticket store failed - ' . Helper::processErrorMessages($newRefundTicket->getErrors()));
+                throw new Exception('New Refund Ticket store failed - ' . Utilities::processErrorMessages($newRefundTicket->getErrors()));
             }
 
             // Mother Ticket update
@@ -236,13 +236,13 @@ class FlightService
             $motherTicket->refundRequestDate = $newRefundTicket->refundRequestDate;
             $motherTicket = $this->flightRepository->store($motherTicket);
             if ($motherTicket->hasErrors()) {
-                throw new Exception('Mother ticket update failed - ' . Helper::processErrorMessages($motherTicket->getErrors()));
+                throw new Exception('Mother ticket update failed - ' . Utilities::processErrorMessages($motherTicket->getErrors()));
             }
 
             // Ticket Supplier data process
             $ticketSupplier = self::storeTicketSupplier($newRefundTicket, $requestData);
             if ($ticketSupplier->hasErrors()) {
-                throw new Exception('Ticket Supplier store failed - ' . Helper::processErrorMessages($ticketSupplier->getErrors()));
+                throw new Exception('Ticket Supplier store failed - ' . Utilities::processErrorMessages($ticketSupplier->getErrors()));
             }
 
             // Create refund for customer and supplier
@@ -336,7 +336,7 @@ class FlightService
         foreach ($referenceData as $ref) {
             $ticketRefund = new TicketRefund();
             if (!$ticketRefund->load($requestData) || !$ticketRefund->load(['TicketRefund' => $ref]) || !$ticketRefund->validate()) {
-                return ['error' => true, 'message' => 'Ticket Refund validation failed - ' . Helper::processErrorMessages($ticketRefund->getErrors())];
+                return ['error' => true, 'message' => 'Ticket Refund validation failed - ' . Utilities::processErrorMessages($ticketRefund->getErrors())];
             }
             $ticketRefundBatchData[] = $ticketRefund->getAttributes(null, ['id']);
         }
@@ -346,7 +346,7 @@ class FlightService
             return ['error' => true, 'message' => 'Ticket Refund batch data process failed.'];
         }
 
-        if (!FlightRepository::batchStore('ticket_refund', array_keys($ticketRefundBatchData[0]), $ticketRefundBatchData)) {
+        if (!(new \app\modules\sale\repositories\FlightRepository)->batchStore('ticket_refund', array_keys($ticketRefundBatchData[0]), $ticketRefundBatchData)) {
             return ['error' => true, 'message' => 'Ticket Refund batch insert failed'];
         }
 
@@ -374,7 +374,7 @@ class FlightService
                 $ticket->setAttributes($requestData['Ticket'][0]);
                 $ticket = self::processTicketData($ticket);
                 if (!$ticket->save()) {
-                    throw new Exception('Ticket update failed - ' . Helper::processErrorMessages($ticket->getErrors()));
+                    throw new Exception('Ticket update failed - ' . Utilities::processErrorMessages($ticket->getErrors()));
                 }
 
                 // Compare old quote and new quote
@@ -389,7 +389,7 @@ class FlightService
                 $ticketSupplier->load(['TicketSupplier' => $requestData['TicketSupplier'][0]]);
                 $ticketSupplier->costOfSale = $ticket->costOfSale;
                 if (!$ticketSupplier->update()) {
-                    throw new Exception('Ticket supplier update failed - ' . Helper::processErrorMessages($ticketSupplier->getErrors()));
+                    throw new Exception('Ticket supplier update failed - ' . Utilities::processErrorMessages($ticketSupplier->getErrors()));
                 }
 
                 // supplier Ledger update
@@ -406,8 +406,8 @@ class FlightService
                             'debit' => 0,
                             'credit' => 0
                         ];
-                        if (!TicketSupplier::updateAll(['status' => 0, 'updatedBy' => Yii::$app->user->id, 'updatedAt' => Helper::convertToTimestamp(date('Y-m-d h:i:s'))], ['id' => $oldSupplierId])) {
-                            throw new Exception(Helper::processErrorMessages('Ticket Supplier delete failed.'));
+                        if (!TicketSupplier::updateAll(['status' => 0, 'updatedBy' => Yii::$app->user->id, 'updatedAt' => Utilities::convertToTimestamp(date('Y-m-d h:i:s'))], ['id' => $oldSupplierId])) {
+                            throw new Exception(Utilities::processErrorMessages('Ticket Supplier delete failed.'));
                         }
                     }
 
@@ -425,7 +425,7 @@ class FlightService
                     foreach ($suppliersLedgerData as $singleLedger) {
                         $ledgerRequestResponse = LedgerService::updateLedger($singleLedger);
                         if (!$ledgerRequestResponse['status']) {
-                            throw new Exception(Helper::processErrorMessages('Not update ticket  ' . $ledgerRequestResponse['message']));
+                            throw new Exception(Utilities::processErrorMessages('Not update ticket  ' . $ledgerRequestResponse['message']));
                         }
                     }
                 }

@@ -3,7 +3,7 @@
 namespace app\modules\sale\services;
 
 use app\components\GlobalConstant;
-use app\components\Helper;
+use app\components\Utilities;
 use app\modules\account\models\Invoice;
 use app\modules\account\services\InvoiceService;
 use app\modules\account\services\LedgerService;
@@ -42,7 +42,7 @@ class VisaService
                     $visa->customerCategory = $customer->category;
                     $visa = $this->visaRepository->store($visa);
                     if ($visa->hasErrors()) {
-                        throw new Exception('Visa create failed - ' . Helper::processErrorMessages($visa->getErrors()));
+                        throw new Exception('Visa create failed - ' . Utilities::processErrorMessages($visa->getErrors()));
                     }
 
                     // Visa Supplier data process
@@ -71,7 +71,7 @@ class VisaService
                         throw new Exception('Supplier Ledger creation failed - ' . $ledgerRequestResponse['message']);
                     }
                 } else {
-                    throw new Exception('Visa data loading failed - ' . Helper::processErrorMessages($visa->getErrors()));
+                    throw new Exception('Visa data loading failed - ' . Utilities::processErrorMessages($visa->getErrors()));
                 }
 
                 $dbTransaction->commit();
@@ -100,7 +100,7 @@ class VisaService
                     $visa->invoiceId = $motherVisa->invoiceId;
                     $visa = $this->visaRepository->store($visa);
                     if ($visa->hasErrors()) {
-                        throw new Exception('Visa refund create failed - ' . Helper::processErrorMessages($visa->getErrors()));
+                        throw new Exception('Visa refund create failed - ' . Utilities::processErrorMessages($visa->getErrors()));
                     }
 
                     // Mother Visa update
@@ -108,7 +108,7 @@ class VisaService
                     $motherVisa->refundRequestDate = $visa->refundRequestDate;
                     $motherVisa = $this->visaRepository->store($motherVisa);
                     if ($motherVisa->hasErrors()) {
-                        throw new Exception('Mother visa update failed - ' . Helper::processErrorMessages($motherVisa->getErrors()));
+                        throw new Exception('Mother visa update failed - ' . Utilities::processErrorMessages($motherVisa->getErrors()));
                     }
 
                     // Visa Supplier data process
@@ -147,7 +147,7 @@ class VisaService
                     }*/
 
                 } else {
-                    throw new Exception('Visa data loading failed - ' . Helper::processErrorMessages($visa->getErrors()));
+                    throw new Exception('Visa data loading failed - ' . Utilities::processErrorMessages($visa->getErrors()));
                 }
 
                 $dbTransaction->commit();
@@ -176,7 +176,7 @@ class VisaService
             $visa->netProfit = self::calculateNetProfit($visa->quoteAmount, $visa->costOfSale);
             $visa->paymentStatus = InvoiceService::checkAndDetectPaymentStatus($visa->quoteAmount, $visa->receivedAmount);
             if (!$visa->save()) {
-                throw new Exception('Visa update failed - ' . Helper::processErrorMessages($visa->getErrors()));
+                throw new Exception('Visa update failed - ' . Utilities::processErrorMessages($visa->getErrors()));
             }
 
             //Create Package-Supplier Entity
@@ -313,7 +313,7 @@ class VisaService
             $visaSupplier->visaId = $visa->id;
             $visaSupplier = $this->visaRepository->store($visaSupplier);
             if ($visaSupplier->hasErrors()) {
-                throw new Exception('Visa Supplier creation failed - ' . Helper::processErrorMessages($visaSupplier->getErrors()));
+                throw new Exception('Visa Supplier creation failed - ' . Utilities::processErrorMessages($visaSupplier->getErrors()));
             }
 
             $serviceSupplierData[] = [
@@ -374,7 +374,7 @@ class VisaService
             $visaRefund->load($requestData);
             $visaRefund->load(['VisaRefund' => $ref]);
             if (!$visaRefund->validate()) {
-                return ['error' => true, 'message' => 'Visa Refund validation failed - ' . Helper::processErrorMessages($visaRefund->getErrors())];
+                return ['error' => true, 'message' => 'Visa Refund validation failed - ' . Utilities::processErrorMessages($visaRefund->getErrors())];
             }
             $visaRefundBatchData[] = $visaRefund->getAttributes(null, ['id']);
         }

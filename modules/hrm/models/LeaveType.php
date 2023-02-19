@@ -5,7 +5,6 @@ namespace app\modules\hrm\models;
 use app\components\GlobalConstant;
 use app\traits\BehaviorTrait;
 use Yii;
-use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
 /**

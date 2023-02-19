@@ -11,7 +11,7 @@ use app\modules\hrm\services\HrmConfigurationService;
 use Yii;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
-use app\components\Helper;
+use app\components\Utilities;
 
 /**
  * WeekendController implements the CRUD actions for Weekend model.
@@ -68,7 +68,7 @@ class WeekendController extends ParentController
             if ($model->load($this->request->post())) {
                 $model = $this->hrmConfigurationRepository->store($model);
                 if ($model->hasErrors()) {
-                    Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
+                    Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
                 } else {
                     return $this->redirect(['view', 'uid' => $model->uid]);
                 }
@@ -95,7 +95,7 @@ class WeekendController extends ParentController
             if ($model->load($this->request->post())) {
                 $model = $this->hrmConfigurationRepository->store($model);
                 if ($model->hasErrors()) {
-                    Yii::$app->session->setFlash('danger', Helper::processErrorMessages($model->getErrors()));
+                    Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
                 } else {
                     return $this->redirect(['view', 'uid' => $model->uid]);
                 }
@@ -117,7 +117,7 @@ class WeekendController extends ParentController
     {
         $model = $this->hrmConfigurationService->deleteModel(['uid' => $uid], Weekend::class, []);
         if ($model->hasErrors()) {
-            Yii::$app->session->setFlash('danger', 'Deletion failed - ' . Helper::processErrorMessages($model->getErrors()));
+            Yii::$app->session->setFlash('danger', 'Deletion failed - ' . Utilities::processErrorMessages($model->getErrors()));
         } else {
             Yii::$app->session->setFlash('success', 'Successfully Deleted.');
         }

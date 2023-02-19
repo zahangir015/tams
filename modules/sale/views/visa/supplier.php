@@ -1,6 +1,6 @@
 <?php
 
-use app\components\Helper;
+use app\components\Utilities;
 use app\modules\sale\components\ServiceConstant;
 use kartik\daterange\DateRangePicker;
 use kartik\select2\Select2;
@@ -31,13 +31,13 @@ use yii\bootstrap4\Html;
     <div class="card-body">
         <div class="row">
             <div class="col-md">
-                <?= $form->field($visaSupplier, "[$row]supplierId")->widget(Select2::class, Helper::ajaxDropDown('supplierId', '/sale/supplier/get-suppliers', true, 'supplierId'.$row, 'supplier', ($visaSupplier->isNewRecord) ? [] : [$visaSupplier->supplier->id => $visaSupplier->supplier->company], !$visaSupplier->isNewRecord))->label('Supplier') ?>
+                <?= $form->field($visaSupplier, "[$row]supplierId")->widget(Select2::class, Utilities::ajaxDropDown('supplierId', '/sale/supplier/get-suppliers', true, 'supplierId'.$row, 'supplier', ($visaSupplier->isNewRecord) ? [] : [$visaSupplier->supplier->id => $visaSupplier->supplier->company], !$visaSupplier->isNewRecord))->label('Supplier') ?>
             </div>
             <div class="col-md">
                 <?= $form->field($visaSupplier, "[$row]supplierRef")->textInput(['maxlength' => true]); ?>
             </div>
             <div class="col-md">
-                <?= $form->field($visaSupplier, "[$row]countryId")->widget(Select2::class, Helper::ajaxDropDown('countryId', '/country/get-countries', true, 'countryId'.$row, 'country',($visaSupplier->isNewRecord) ? [] : [$visaSupplier->country->id => $visaSupplier->country->name]))->label('Country') ?>
+                <?= $form->field($visaSupplier, "[$row]countryId")->widget(Select2::class, Utilities::ajaxDropDown('countryId', '/country/get-countries', true, 'countryId'.$row, 'country',($visaSupplier->isNewRecord) ? [] : [$visaSupplier->country->id => $visaSupplier->country->name]))->label('Country') ?>
             </div>
         </div>
         <div class="row calcData">
@@ -53,7 +53,7 @@ use yii\bootstrap4\Html;
         </div>
         <div class="row">
             <div class="col-md">
-                <?= $form->field($visaSupplier, "[$row]issueDate")->widget(DateRangePicker::class, Helper::dateFormat(false, true)); ?>
+                <?= $form->field($visaSupplier, "[$row]issueDate")->widget(DateRangePicker::class, Utilities::dateFormat(false, true)); ?>
             </div>
             <div class="col-md">
                 <?= $form->field($visaSupplier, "[$row]type")->textInput(['readOnly' => 'readOnly', 'value' => ServiceConstant::ALL_SERVICE_TYPE['New']]) ?>

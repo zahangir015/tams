@@ -2,7 +2,7 @@
 
 namespace app\modules\sale\models;
 
-use app\components\Helper;
+use app\components\Utilities;
 use app\traits\BehaviorTrait;
 use Yii;
 use yii\db\ActiveQuery;
@@ -91,7 +91,7 @@ class AirlineHistory extends ActiveRecord
         $mergedArray = array_merge($historyColumn, ['airlineId' => $airline->id]);
         $history->load(['AirlineHistory' => $mergedArray]);
         if (!$history->save()) {
-            return ['error' => true, 'message' => Helper::processErrorMessages($history->getErrors())];
+            return ['error' => true, 'message' => Utilities::processErrorMessages($history->getErrors())];
         }
         return ['error' => false, 'message' => 'History stored successfully'];
     }

@@ -2,6 +2,7 @@
 
 namespace app\modules\hrm\models\search;
 
+use app\components\GlobalConstant;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\hrm\models\YearlyLeaveAllocation;
@@ -14,7 +15,7 @@ class YearlyLeaveAllocationSearch extends YearlyLeaveAllocation
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['id', 'leaveTypeId', 'year', 'numberOfDays', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
@@ -25,7 +26,7 @@ class YearlyLeaveAllocationSearch extends YearlyLeaveAllocation
     /**
      * {@inheritdoc}
      */
-    public function scenarios()
+    public function scenarios(): array
     {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
@@ -38,14 +39,16 @@ class YearlyLeaveAllocationSearch extends YearlyLeaveAllocation
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search(array $params): ActiveDataProvider
     {
         $query = YearlyLeaveAllocation::find();
 
         // add conditions that should always apply here
+        $query->where(['status' => GlobalConstant::ACTIVE_STATUS]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => ['defaultOrder' => ['year' => SORT_DESC]]
         ]);
 
         $this->load($params);
@@ -63,14 +66,13 @@ class YearlyLeaveAllocationSearch extends YearlyLeaveAllocation
             'year' => $this->year,
             'numberOfDays' => $this->numberOfDays,
             'status' => $this->status,
-            'createdBy' => $this->createdBy,
+            /*'createdBy' => $this->createdBy,
             'createdAt' => $this->createdAt,
             'updatedBy' => $this->updatedBy,
-            'updatedAt' => $this->updatedAt,
+            'updatedAt' => $this->updatedAt,*/
         ]);
 
         $query->andFilterWhere(['like', 'uid', $this->uid]);
-
         return $dataProvider;
     }
 }
