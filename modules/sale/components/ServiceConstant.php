@@ -46,7 +46,7 @@ final class ServiceConstant
     const BD_AIRPORTS = ['DAC', 'CGP', 'CXB', 'ZYL', 'RJH', 'BZL', 'JSR', 'SPD', 'IRD'];
     const TRIP_TYPE = ['One Way' => 'One Way', 'Return' => 'Return'];
     const BOOKING_TYPE = ['Offline', 'Online'];
-    const FLIGHT_TYPE = ['Domestic', 'International'];
+    const FLIGHT_TYPE = ['Domestic', 'International', 'SOTO'];
     const PAYMENT_STATUS = ['Due' => 'Due', 'Partially Paid' => 'Partially Paid', 'Full Paid' => 'Full Paid'];
     const REFUND_STATUS = ['NO SHOW' => 'NO SHOW', 'NOT NO SHOW' => 'NOT NO SHOW', 'TAX REFUND' => 'TAX REFUND', 'HALF PORTION REFUND' => 'HALF PORTION REFUND', 'FULL REFUND' => 'FULL REFUND', 'VOID' => 'VOID', 'HALF PORTION TAX REFUND' => 'HALF PORTION TAX REFUND'];
     const REFUND_MEDIUM = ['GDS' => 'GDS', 'BSP' => 'BSP', 'SUPPLIER' => 'SUPPLIER'];

@@ -31,23 +31,23 @@ class WidgetHelper
     public static function getDateRangeWidget(): array
     {
         return [
-                'presetDropdown' => false,
-                'convertFormat' => false,
-                'pluginOptions' => [
-                    'separator' => ' - ',
-                    'format' => 'YYYY-MM-DD',
-                    'locale' => [
-                        'format' => 'YYYY-MM-DD'
-                    ],
+            'presetDropdown' => false,
+            'convertFormat' => false,
+            'pluginOptions' => [
+                'separator' => ' - ',
+                'format' => 'YYYY-MM-DD',
+                'locale' => [
+                    'format' => 'YYYY-MM-DD'
                 ],
-                'pluginEvents' => [
-                    'apply.daterangepicker' => 'function(ev, picker) {
+            ],
+            'pluginEvents' => [
+                'apply.daterangepicker' => 'function(ev, picker) {
                         console.log(picker)
                             if($(this).val() == "") {
                             picker.callback(picker.startDate.clone(), picker.endDate.clone(), picker.chosenLabel);
                             }
                         }'],
-            ];
+        ];
     }
 
     public static function ajaxSelect2Widget($name, $endPoint, $required = false, $id = null, $class = null, array $data = null, $disabled = false): array
@@ -118,12 +118,13 @@ class WidgetHelper
             'value' => self::date('Y-m-d'),
             'pluginOptions' => [
                 'autoclose' => true,
-                'format' => 'yyyy-mm-dd'
+                'format' => 'yyyy-mm-dd',
+
             ]
         ];
     }
 
-    public static function getDateWidget($id, $class = null, $disable = false): array
+    public static function getDateWidget($id, $class = null, $disable = false, $disableDatesAfterToday = false): array
     {
         return [
             'options' => [
@@ -133,8 +134,11 @@ class WidgetHelper
                 'required' => true,
             ],
             'pluginOptions' => [
+                'todayHighlight' => true,
+                'todayBtn' => true,
                 'autoclose' => true,
-                'format' => 'yyyy-mm-dd'
+                'format' => 'yyyy-mm-dd',
+                'endDate' => ($disableDatesAfterToday) ? "0d" : "",
             ]
         ];
     }

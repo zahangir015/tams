@@ -184,6 +184,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 'label' => 'Cost'
             ],
             [
+                'attribute' => 'discount',
+                'value' => 'discount',
+            ],
+            [
                 'attribute' => 'receivedAmount',
                 'value' => 'receivedAmount',
                 'label' => 'Received'

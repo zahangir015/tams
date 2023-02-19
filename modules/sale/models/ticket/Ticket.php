@@ -91,7 +91,7 @@ class Ticket extends ActiveRecord
     public function rules(): array
     {
         return [
-            [['airlineId', 'providerId', 'customerId', 'customerCategory', 'paxName', 'eTicket', 'pnrCode', 'type', 'seatClass', 'issueDate'], 'required'],
+            [['airlineId', 'customerId', 'customerCategory', 'paxName', 'eTicket', 'pnrCode', 'type', 'seatClass', 'issueDate'], 'required'],
             [['motherTicketId', 'airlineId', 'providerId', 'invoiceId', 'customerId', 'bookedOnline', 'flightType', 'codeShare', 'numberOfSegment', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['eTicket', 'airlineId', 'type'], 'unique', 'targetAttribute' => ['eTicket', 'airlineId', 'type'], 'on' => 'create'],
             [['type', 'tripType', 'paymentStatus'], 'string'],
