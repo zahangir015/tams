@@ -44,7 +44,7 @@ class LeaveTypeSearch extends LeaveType
         $query = LeaveType::find();
 
         // add conditions that should always apply here
-        $query->where(['status' => GlobalConstant::ACTIVE_STATUS]);
+        //$query->where(['status' => GlobalConstant::ACTIVE_STATUS]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -64,14 +64,13 @@ class LeaveTypeSearch extends LeaveType
             'id' => $this->id,
             'defaultDays' => $this->defaultDays,
             'status' => $this->status,
-            'createdBy' => $this->createdBy,
+            /*'createdBy' => $this->createdBy,
             'createdAt' => $this->createdAt,
             'updatedBy' => $this->updatedBy,
-            'updatedAt' => $this->updatedAt,
+            'updatedAt' => $this->updatedAt,*/
         ]);
 
         $query->andFilterWhere(['like', 'name', $this->name]);
-
         return $dataProvider;
     }
 }

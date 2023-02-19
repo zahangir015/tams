@@ -19,7 +19,7 @@ trait BehaviorTrait
                 'attributes' => [
                     ActiveRecord::EVENT_BEFORE_INSERT => ($this->hasAttribute('createdAt')) ? ['createdAt'] : [],
                     ActiveRecord::EVENT_BEFORE_UPDATE => ($this->hasAttribute('updatedAt')) ? ['updatedAt'] : [],
-                    ActiveRecord::EVENT_BEFORE_VALIDATE => ($this->hasAttribute('createdAt')) ? ['createdAt'] : [],
+                    //ActiveRecord::EVENT_BEFORE_VALIDATE => ($this->hasAttribute('createdAt')) ? ['createdAt'] : [],
                 ],
             ],
         ];

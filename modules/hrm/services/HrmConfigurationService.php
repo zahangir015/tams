@@ -28,7 +28,7 @@ class HrmConfigurationService
         return $this->hrmConfigurationRepository->findAll($queryArray, $model, $withArray, $asArray);
     }
 
-    public function findModel(array $queryArray, string $model, array $withArray): ActiveRecord
+    public function findModel(array $queryArray, string $model, array $withArray = []): ActiveRecord
     {
         return $this->hrmConfigurationRepository->findOne($queryArray, $model, $withArray);
     }
@@ -102,12 +102,13 @@ class HrmConfigurationService
             foreach ($employees as $singleEmployee) {
                 foreach ($requestData['YearlyLeaveAllocation'] as $datum) {
                     $employeeLeaveAllocation = new EmployeeLeaveAllocation();
+                    $employeeLeaveAllocation->scenario = 'create';
                     $employeeLeaveAllocation->load(['EmployeeLeaveAllocation' => $datum]);
                     $employeeLeaveAllocation->employeeId = $singleEmployee->id;
                     // Todo old employee leave allocation check
                     $employeeLeaveAllocation->totalDays = ($singleEmployee->inProhibition) ? 1 : $datum['numberOfDays'];
                     $employeeLeaveAllocation->availedDays = 0;
-                    $employeeLeaveAllocation->remainingDays = 0;
+                    $employeeLeaveAllocation->remainingDays = $employeeLeaveAllocation->totalDays;
                     if (!$employeeLeaveAllocation->validate()) {
                         throw new Exception('Employee Leave allocation failed - ' . Utilities::processErrorMessages($model->getErrors()));
                     }
@@ -121,6 +122,30 @@ class HrmConfigurationService
             $employeeLeaveAllocationResponse = $this->hrmConfigurationRepository->batchStore(EmployeeLeaveAllocation::tableName(), array_keys($employeeLeaveAllocationBatchData[0]), $employeeLeaveAllocationBatchData);
             if (!$employeeLeaveAllocationResponse) {
                 throw new Exception('Employee leave allocation failed.');
+            }
+
+            $dbTransaction->commit();
+            return ['error' => false, 'message' => 'Successfully stored'];
+        } catch (Exception $exception) {
+            $dbTransaction->rollBack();
+            return ['error' => true, 'message' => $exception->getMessage()];
+        }
+    }
+
+    public function updateYearlyAllocation(ActiveRecord $model): array
+    {
+        $dbTransaction = Yii::$app->db->beginTransaction();
+        try {
+            //Yearly Allocation update
+            $yearlyLeaveAllocation = $this->hrmConfigurationRepository->store($model);
+            if ($yearlyLeaveAllocation->hasErrors()) {
+                return ['error' => true, 'message' => 'Yearly Allocation update failed - ' . Utilities::processErrorMessages($yearlyLeaveAllocation->getErrors())];
+            }
+
+            // Employee allocation process
+            $employeeAllocationUpdateResponse = $this->hrmConfigurationRepository->update(['totalDays' => $yearlyLeaveAllocation->numberOfDays, 'remainingDays' => 'totalDays-availedDays'], ['and', ['year' => $yearlyLeaveAllocation->year], ['status' => GlobalConstant::ACTIVE_STATUS], ['leaveTypeId' => $yearlyLeaveAllocation->leaveTypeId]], EmployeeLeaveAllocation::class);
+            if (!$employeeAllocationUpdateResponse) {
+                return ['error' => true, 'message' => 'Employee Leave Allocation update failed.'];
             }
 
             $dbTransaction->commit();

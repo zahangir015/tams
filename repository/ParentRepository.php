@@ -2,6 +2,7 @@
 
 namespace app\repository;
 
+use app\modules\hrm\models\EmployeeLeaveAllocation;
 use Yii;
 use yii\db\ActiveRecord;
 
@@ -53,5 +54,10 @@ class ParentRepository
         }
 
         return $query->all();
+    }
+
+    public function update(array $setArray, array $queryArray, $model): int
+    {
+        return $model::updateAll($setArray, $queryArray);
     }
 }

@@ -113,7 +113,7 @@ class LeaveTypeController extends ParentController
      * Deletes an existing LeaveType model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      */
-    /*public function actionGetLeaveTypes($query = null): array
+    public function actionGetTypes($query = null): array
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
         $types = LeaveType::query($query);
@@ -122,5 +122,5 @@ class LeaveTypeController extends ParentController
             $data[] = ['id' => $type->id, 'text' => $type->name];
         }
         return ['results' => $data];
-    }*/
+    }
 }

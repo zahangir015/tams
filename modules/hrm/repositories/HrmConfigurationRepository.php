@@ -5,6 +5,7 @@ namespace app\modules\hrm\repositories;
 use app\components\GlobalConstant;
 use app\modules\hrm\models\Employee;
 use app\repository\ParentRepository;
+use yii\db\ActiveRecord;
 
 class HrmConfigurationRepository extends ParentRepository
 {
@@ -14,4 +15,5 @@ class HrmConfigurationRepository extends ParentRepository
             $query->where($subQueryArray);
         }])->where($queryArray)->all();
     }
+
 }

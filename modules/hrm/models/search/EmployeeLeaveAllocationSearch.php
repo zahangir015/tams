@@ -14,7 +14,7 @@ class EmployeeLeaveAllocationSearch extends EmployeeLeaveAllocation
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['id', 'employeeId', 'leaveTypeId', 'year', 'totalDays', 'availedDays', 'remainingDays', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
@@ -25,7 +25,7 @@ class EmployeeLeaveAllocationSearch extends EmployeeLeaveAllocation
     /**
      * {@inheritdoc}
      */
-    public function scenarios()
+    public function scenarios(): array
     {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
@@ -38,7 +38,7 @@ class EmployeeLeaveAllocationSearch extends EmployeeLeaveAllocation
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search(array $params): ActiveDataProvider
     {
         $query = EmployeeLeaveAllocation::find();
 

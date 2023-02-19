@@ -2,7 +2,10 @@
 
 use app\components\GlobalConstant;
 use app\components\Utilities;
+use app\components\WidgetHelper;
 use app\modules\hrm\models\YearlyLeaveAllocation;
+use kartik\select2\Select2;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use kartik\grid\ActionColumn;
@@ -22,6 +25,14 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'kartik\grid\SerialColumn'],
             'year',
+            [
+                'attribute' => 'leaveTypeId',
+                'value' => function ($model) {
+                    return $model->leaveType->name;
+                },
+                'filter' => ArrayHelper::map($types, 'id', 'name')
+            ],
+            'numberOfDays',
             [
                 'class' => '\kartik\grid\DataColumn',
                 'attribute' => 'status',
@@ -63,7 +74,7 @@ $this->params['breadcrumbs'][] = $this->title;
             '{export}',
             '{toggleData}'
         ],
-        'pjax' => true,
+        //'pjax' => true,
         'bordered' => true,
         'striped' => false,
         'condensed' => false,

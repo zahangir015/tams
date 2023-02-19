@@ -44,7 +44,7 @@ class YearlyLeaveAllocation extends ActiveRecord
             [['leaveTypeId', 'year', 'numberOfDays', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['uid'], 'unique'],
-            [['leaveTypeId', 'year'], 'unique'],
+            [['leaveTypeId', 'year'], 'unique', 'on' => ['create']],
             [['leaveTypeId'], 'exist', 'skipOnError' => true, 'targetClass' => LeaveType::class, 'targetAttribute' => ['leaveTypeId' => 'id']],
         ];
     }

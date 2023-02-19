@@ -44,6 +44,7 @@ class YearlyLeaveAllocationController extends ParentController
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'types' => $this->hrmConfigurationRepository->findAll(['status' => GlobalConstant::ACTIVE_STATUS], LeaveType::class, [], true, ['id', 'name'])
         ]);
     }
 
@@ -67,6 +68,12 @@ class YearlyLeaveAllocationController extends ParentController
     public function actionCreate(): Response|string
     {
         $model = new YearlyLeaveAllocation();
+        $types = $this->hrmConfigurationRepository->findAll(['status' => GlobalConstant::ACTIVE_STATUS], LeaveType::class, [], true, ['id', 'name']);
+        if (empty($types)) {
+            Yii::$app->session->setFlash('warning', "Please setup leave type first.");
+            return $this->redirect(['index']);
+        }
+
         if ($this->request->isPost) {
             $requestData = $this->request->post();
             $allocationInsertResponse = $this->hrmConfigurationService->batchInsertYearlyAllocation($requestData);
@@ -94,13 +101,13 @@ class YearlyLeaveAllocationController extends ParentController
      */
     public function actionUpdate(string $uid): Response|string
     {
-        $model = $this->hrmConfigurationService->findModel(['uid' => $uid], YearlyLeaveAllocation::class, []);
+        $model = $this->hrmConfigurationService->findModel(['uid' => $uid], YearlyLeaveAllocation::class, ['leaveType']);
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
-                $model = $this->hrmConfigurationRepository->store($model);
-                if ($model->hasErrors()) {
-                    Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
+                $response = $this->hrmConfigurationService->updateYearlyAllocation($model);
+                if ($response['error']) {
+                    Yii::$app->session->setFlash('danger', $response['message']);
                 } else {
                     return $this->redirect(['view', 'uid' => $model->uid]);
                 }

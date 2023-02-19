@@ -6,6 +6,7 @@ use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
+
 /** @var yii\web\View $this */
 /** @var app\modules\hrm\models\search\EmployeeLeaveAllocationSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
@@ -29,15 +30,22 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
-            'uid',
-            'employeeId',
-            'leaveTypeId',
+            [
+                'attribute' => 'employeeId',
+                'value' => function ($model) {
+                    return $model->employee->firstName . '' . $model->employee->lastName;
+                },
+            ],
             'year',
-            //'totalDays',
-            //'availedDays',
-            //'remainingDays',
+            [
+                'attribute' => 'leaveTypeId',
+                'value' => function ($model) {
+                    return $model->leaveType->name;
+                },
+            ],
+            'totalDays',
+            'availedDays',
+            'remainingDays',
             //'status',
             //'createdBy',
             //'createdAt',
@@ -47,7 +55,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, EmployeeLeaveAllocation $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'id' => $model->id]);
-                 }
+                }
             ],
         ],
     ]); ?>
