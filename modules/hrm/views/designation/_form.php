@@ -12,7 +12,6 @@ use app\components\Utilities;
 ?>
 
 <div class="designation-form">
-
     <div class="card">
         <div class="card-header bg-gray-dark">
             <?= Html::encode($this->title) ?>

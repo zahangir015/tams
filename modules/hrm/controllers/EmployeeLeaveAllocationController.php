@@ -2,23 +2,42 @@
 
 namespace app\modules\hrm\controllers;
 
+use app\components\GlobalConstant;
+use app\components\Utilities;
 use app\modules\hrm\models\EmployeeLeaveAllocation;
+use app\modules\hrm\models\EmployeeShift;
+use app\modules\hrm\models\LeaveType;
 use app\modules\hrm\models\search\EmployeeLeaveAllocationSearch;
 use app\controllers\ParentController;
+use app\modules\hrm\repositories\HrmConfigurationRepository;
+use app\modules\hrm\services\HrmConfigurationService;
+use Yii;
+use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Response;
 
 /**
  * EmployeeLeaveAllocationController implements the CRUD actions for EmployeeLeaveAllocation model.
  */
 class EmployeeLeaveAllocationController extends ParentController
 {
+    private HrmConfigurationService $hrmConfigurationService;
+    private HrmConfigurationRepository $hrmConfigurationRepository;
+
+    public function __construct($uid, $module, $config = [])
+    {
+        $this->hrmConfigurationService = new HrmConfigurationService();
+        $this->hrmConfigurationRepository = new HrmConfigurationRepository();
+        parent::__construct($uid, $module, $config);
+    }
+
     /**
      * Lists all EmployeeLeaveAllocation models.
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $searchModel = new EmployeeLeaveAllocationSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
@@ -26,34 +45,39 @@ class EmployeeLeaveAllocationController extends ParentController
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'types' => $this->hrmConfigurationRepository->findAll(['status' => GlobalConstant::ACTIVE_STATUS], LeaveType::class, [], true, ['id', 'name'])
         ]);
     }
 
     /**
      * Displays a single EmployeeLeaveAllocation model.
-     * @param int $id ID
+     * @param string $uid UID
      * @return string
-     * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id)
+    public function actionView(string $uid): string
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $this->hrmConfigurationService->findModel(['uid' => $uid], EmployeeLeaveAllocation::class, []),
         ]);
     }
 
     /**
      * Creates a new EmployeeLeaveAllocation model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
+     * @return string|Response
      */
-    public function actionCreate()
+    public function actionCreate(): Response|string
     {
         $model = new EmployeeLeaveAllocation();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+            if ($model->load($this->request->post())) {
+                $model = $this->hrmConfigurationRepository->store($model);
+                if ($model->hasErrors()) {
+                    Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
+                } else {
+                    return $this->redirect(['view', 'uid' => $model->uid]);
+                }
             }
         } else {
             $model->loadDefaultValues();
@@ -61,56 +85,53 @@ class EmployeeLeaveAllocationController extends ParentController
 
         return $this->render('create', [
             'model' => $model,
+            'types' => ArrayHelper::map($this->hrmConfigurationRepository->findAll(['status' => GlobalConstant::ACTIVE_STATUS], LeaveType::class, [], true, ['id', 'name']), 'id', 'name')
         ]);
     }
 
     /**
      * Updates an existing EmployeeLeaveAllocation model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id ID
-     * @return string|\yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param string $uid UID
+     * @return string|Response
      */
-    public function actionUpdate($id)
+    public function actionUpdate(string $uid): Response|string
     {
-        $model = $this->findModel($id);
+        $model = $this->hrmConfigurationService->findModel(['uid' => $uid], EmployeeLeaveAllocation::class, ['employee', 'leaveType']);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post())) {
+                $model = $this->hrmConfigurationRepository->store($model);
+                if ($model->hasErrors()) {
+                    Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
+                } else {
+                    return $this->redirect(['view', 'uid' => $model->uid]);
+                }
+            }
         }
 
         return $this->render('update', [
             'model' => $model,
+            'types' => ArrayHelper::map($this->hrmConfigurationRepository->findAll(['status' => GlobalConstant::ACTIVE_STATUS], LeaveType::class, [], true, ['id', 'name']), 'id', 'name')
         ]);
     }
 
     /**
      * Deletes an existing EmployeeLeaveAllocation model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id ID
-     * @return \yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param string $uid UID
+     * @return Response
      */
-    public function actionDelete($id)
+    public function actionDelete(string $uid): Response
     {
-        $this->findModel($id)->delete();
+        $model = $this->hrmConfigurationService->deleteModel(['uid' => $uid], EmployeeLeaveAllocation::class, []);
+        if ($model->hasErrors()) {
+            Yii::$app->session->setFlash('danger', 'Deletion failed - ' . Utilities::processErrorMessages($model->getErrors()));
+        } else {
+            Yii::$app->session->setFlash('success', 'Successfully Deleted.');
+        }
 
         return $this->redirect(['index']);
     }
 
-    /**
-     * Finds the EmployeeLeaveAllocation model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id ID
-     * @return EmployeeLeaveAllocation the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id)
-    {
-        if (($model = EmployeeLeaveAllocation::findOne(['id' => $id])) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
-    }
 }

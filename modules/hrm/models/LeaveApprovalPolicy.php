@@ -2,7 +2,10 @@
 
 namespace app\modules\hrm\models;
 
+use app\traits\BehaviorTrait;
 use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%leave_approval_policy}}".
@@ -21,12 +24,13 @@ use Yii;
  * @property Employee $employee
  * @property Employee $requestedTo0
  */
-class LeaveApprovalPolicy extends \yii\db\ActiveRecord
+class LeaveApprovalPolicy extends ActiveRecord
 {
+    use BehaviorTrait;
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%leave_approval_policy}}';
     }
@@ -34,13 +38,14 @@ class LeaveApprovalPolicy extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            [['uid', 'approvalLevel', 'employeeId', 'requestedTo', 'createdBy', 'createdAt'], 'required'],
+            [['approvalLevel', 'employeeId', 'requestedTo'], 'required'],
             [['approvalLevel', 'employeeId', 'requestedTo', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['uid'], 'unique'],
+            [['employeeId', 'requestedTo'], 'unique', 'on' => 'create'],
             [['employeeId'], 'exist', 'skipOnError' => true, 'targetClass' => Employee::class, 'targetAttribute' => ['employeeId' => 'id']],
             [['requestedTo'], 'exist', 'skipOnError' => true, 'targetClass' => Employee::class, 'targetAttribute' => ['requestedTo' => 'id']],
         ];
@@ -49,7 +54,7 @@ class LeaveApprovalPolicy extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),
@@ -68,9 +73,9 @@ class LeaveApprovalPolicy extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Employee]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getEmployee()
+    public function getEmployee(): ActiveQuery
     {
         return $this->hasOne(Employee::class, ['id' => 'employeeId']);
     }
@@ -78,9 +83,9 @@ class LeaveApprovalPolicy extends \yii\db\ActiveRecord
     /**
      * Gets query for [[RequestedTo0]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getRequestedTo0()
+    public function getRequestedTo(): ActiveQuery
     {
         return $this->hasOne(Employee::class, ['id' => 'requestedTo']);
     }

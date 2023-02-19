@@ -3,10 +3,12 @@
 namespace app\modules\hrm\controllers;
 
 use app\components\GlobalConstant;
+use app\components\Utilities;
 use app\modules\hrm\models\Department;
 use app\modules\hrm\models\Designation;
 use app\controllers\ParentController;
 use app\modules\hrm\models\search\DesignationSearch;
+use app\modules\hrm\repositories\HrmConfigurationRepository;
 use app\modules\hrm\services\HrmConfigurationService;
 use Yii;
 use yii\helpers\ArrayHelper;
@@ -18,11 +20,13 @@ use yii\web\Response;
  */
 class DesignationController extends ParentController
 {
-    public HrmConfigurationService $hrmConfigurationService;
+    private HrmConfigurationService $hrmConfigurationService;
+    private HrmConfigurationRepository $hrmConfigurationRepository;
 
     public function __construct($uid, $module, $config = [])
     {
         $this->hrmConfigurationService = new HrmConfigurationService();
+        $this->hrmConfigurationRepository = new HrmConfigurationRepository();
         parent::__construct($uid, $module, $config);
     }
 
@@ -45,9 +49,8 @@ class DesignationController extends ParentController
      * Displays a single Designation model.
      * @param string $uid UID
      * @return string
-     * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView(string $uid)
+    public function actionView(string $uid): string
     {
         return $this->render('view', [
             'model' => $this->hrmConfigurationService->findModel(['status' => GlobalConstant::ACTIVE_STATUS], Designation::class, ['department']),
@@ -65,8 +68,13 @@ class DesignationController extends ParentController
         $departments = $this->hrmConfigurationService->getAll(['status' => GlobalConstant::ACTIVE_STATUS], Department::class, [], true);
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'uid' => $model->uid]);
+            if ($model->load($this->request->post())) {
+                $model = $this->hrmConfigurationRepository->store($model);
+                if ($model->hasErrors()) {
+                    Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
+                } else {
+                    return $this->redirect(['view', 'uid' => $model->uid]);
+                }
             }
         } else {
             $model->loadDefaultValues();
@@ -83,15 +91,21 @@ class DesignationController extends ParentController
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param string $uid UID
      * @return string|Response
-     * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionUpdate(string $uid): Response|string
     {
         $model = $this->hrmConfigurationService->findModel(['uid' => $uid], Designation::class, ['department']);
         $departments = $this->hrmConfigurationService->getAll(['status' => GlobalConstant::ACTIVE_STATUS], Department::class, [], true);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'uid' => $model->uid]);
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post())) {
+                $model = $this->hrmConfigurationRepository->store($model);
+                if ($model->hasErrors()) {
+                    Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
+                } else {
+                    return $this->redirect(['view', 'uid' => $model->uid]);
+                }
+            }
         }
 
         return $this->render('update', [

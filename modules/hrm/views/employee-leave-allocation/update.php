@@ -6,18 +6,15 @@ use yii\helpers\Html;
 /** @var app\modules\hrm\models\EmployeeLeaveAllocation $model */
 
 $this->title = Yii::t('app', 'Update Employee Leave Allocation: {name}', [
-    'name' => $model->id,
+    'name' => $model->employee->firstName.' - '.$model->leaveType->name,
 ]);
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Employee Leave Allocations'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
+$this->params['breadcrumbs'][] = ['label' => $model->employee->firstName.' - '.$model->leaveType->name, 'url' => ['view', 'uid' => $model->uid]];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 ?>
 <div class="employee-leave-allocation-update">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
     <?= $this->render('_form', [
         'model' => $model,
+        'types' => $types,
     ]) ?>
-
 </div>

@@ -1,5 +1,7 @@
 <?php
 
+use app\components\WidgetHelper;
+use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -10,30 +12,29 @@ use yii\widgets\ActiveForm;
 
 <div class="leave-approval-policy-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <div class="card">
+        <div class="card-header bg-gray-dark">
+            <?= Html::encode($this->title) ?>
+        </div>
+        <div class="card-body">
+            <?php $form = ActiveForm::begin(); ?>
+            <div class="row">
+                <div class="col-md">
+                    <?= $form->field($model, 'employeeId')->widget(Select2::class, WidgetHelper::ajaxSelect2Widget('employeeId', '/hrm/employee/get-employees', true, 'employeeId', 'employeeId', $model->isNewRecord? [] : [$model->employeeId => $model->employee->firstName.' '.$model->employee->lastName])) ?>
+                </div>
+                <div class="col-md">
+                    <?= $form->field($model, 'requestedTo')->widget(Select2::class, WidgetHelper::ajaxSelect2Widget('requestedTo', '/hrm/employee/get-employees', true, 'requestedTo', 'requestedTo', $model->isNewRecord? [] : [$model->requestedTo => $model->requestedTo->firstName.' '.$model->requestedTo->lastName])) ?>
+                </div>
+                <div class="col-md">
+                    <?= $form->field($model, 'approvalLevel')->textInput(['type' => 'number']) ?>
+                </div>
+            </div>
+            <div class="form-group">
+                <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
+            </div>
 
-    <?= $form->field($model, 'uid')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'approvalLevel')->textInput() ?>
-
-    <?= $form->field($model, 'employeeId')->textInput() ?>
-
-    <?= $form->field($model, 'requestedTo')->textInput() ?>
-
-    <?= $form->field($model, 'status')->textInput() ?>
-
-    <?= $form->field($model, 'createdBy')->textInput() ?>
-
-    <?= $form->field($model, 'createdAt')->textInput() ?>
-
-    <?= $form->field($model, 'updatedBy')->textInput() ?>
-
-    <?= $form->field($model, 'updatedAt')->textInput() ?>
-
-    <div class="form-group">
-        <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
+            <?php ActiveForm::end(); ?>
+        </div>
     </div>
-
-    <?php ActiveForm::end(); ?>
 
 </div>

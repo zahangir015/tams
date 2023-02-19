@@ -3,9 +3,11 @@
 namespace app\modules\hrm\controllers;
 
 use app\components\GlobalConstant;
+use app\components\Utilities;
 use app\modules\hrm\models\Department;
 use app\modules\hrm\models\search\DepartmentSearch;
 use app\controllers\ParentController;
+use app\modules\hrm\repositories\HrmConfigurationRepository;
 use app\modules\hrm\services\HrmConfigurationService;
 use Yii;
 use yii\db\ActiveRecord;
@@ -18,11 +20,13 @@ use yii\web\Response;
  */
 class DepartmentController extends ParentController
 {
-    public HrmConfigurationService $hrmConfigurationService;
+    private HrmConfigurationService $hrmConfigurationService;
+    private HrmConfigurationRepository $hrmConfigurationRepository;
 
     public function __construct($uid, $module, $config = [])
     {
         $this->hrmConfigurationService = new HrmConfigurationService();
+        $this->hrmConfigurationRepository = new HrmConfigurationRepository();
         parent::__construct($uid, $module, $config);
     }
 
@@ -52,7 +56,7 @@ class DepartmentController extends ParentController
     public function actionView(string $uid): string
     {
         return $this->render('view', [
-            'model' => $this->findModel($uid),
+            'model' => $this->hrmConfigurationService->findModel(['uid' => $uid], Department::class),
         ]);
     }
 
@@ -67,8 +71,13 @@ class DepartmentController extends ParentController
         $departments = $this->hrmConfigurationService->getAll(['status' => GlobalConstant::ACTIVE_STATUS], Department::class, [], true);
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'uid' => $model->uid]);
+            if ($model->load($this->request->post())) {
+                $model = $this->hrmConfigurationRepository->store($model);
+                if ($model->hasErrors()) {
+                    Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
+                } else {
+                    return $this->redirect(['view', 'uid' => $model->uid]);
+                }
             }
         } else {
             $model->loadDefaultValues();
@@ -85,19 +94,25 @@ class DepartmentController extends ParentController
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param string $uid UID
      * @return string|Response
-     * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionUpdate(string $uid): Response|string
     {
-        $model = $this->findModel($uid);
+        $model = $this->hrmConfigurationService->findModel(['uid' => $uid], Department::class);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'uid' => $model->uid]);
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post())) {
+                $model = $this->hrmConfigurationRepository->store($model);
+                if ($model->hasErrors()) {
+                    Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
+                } else {
+                    return $this->redirect(['view', 'uid' => $model->uid]);
+                }
+            }
         }
 
         return $this->render('update', [
             'model' => $model,
-            'departments' => $this->findModels()
+            'departments' => $this->hrmConfigurationRepository->findAll(['uid' => $uid], Department::class)
         ]);
     }
 
@@ -118,8 +133,7 @@ class DepartmentController extends ParentController
     /**
      * Finds all the Department models.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @return Department the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
+     * @return array the loaded model
      */
     protected function findModels(): array
     {

@@ -2,33 +2,31 @@
 
 namespace app\modules\hrm\controllers;
 
+use app\components\Utilities;
+use app\modules\hrm\models\EmployeeLeaveAllocation;
 use app\modules\hrm\models\LeaveApprovalPolicy;
 use app\modules\hrm\models\search\LeaveApprovalPolicySearch;
 use app\controllers\ParentController;
+use app\modules\hrm\repositories\HrmConfigurationRepository;
+use app\modules\hrm\services\HrmConfigurationService;
+use Yii;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Response;
 
 /**
  * LeaveApprovalPolicyController implements the CRUD actions for LeaveApprovalPolicy model.
  */
 class LeaveApprovalPolicyController extends ParentController
 {
-    /**
-     * @inheritDoc
-     */
-    public function behaviors()
+    private HrmConfigurationService $hrmConfigurationService;
+    private HrmConfigurationRepository $hrmConfigurationRepository;
+
+    public function __construct($uid, $module, $config = [])
     {
-        return array_merge(
-            parent::behaviors(),
-            [
-                'verbs' => [
-                    'class' => VerbFilter::className(),
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
-                ],
-            ]
-        );
+        $this->hrmConfigurationService = new HrmConfigurationService();
+        $this->hrmConfigurationRepository = new HrmConfigurationRepository();
+        parent::__construct($uid, $module, $config);
     }
 
     /**
@@ -36,7 +34,7 @@ class LeaveApprovalPolicyController extends ParentController
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $searchModel = new LeaveApprovalPolicySearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
@@ -49,29 +47,33 @@ class LeaveApprovalPolicyController extends ParentController
 
     /**
      * Displays a single LeaveApprovalPolicy model.
-     * @param int $id ID
+     * @param string $uid UID
      * @return string
-     * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id)
+    public function actionView(string $uid): string
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $this->hrmConfigurationService->findModel(['uid' => $uid], LeaveApprovalPolicy::class, []),
         ]);
     }
 
     /**
      * Creates a new LeaveApprovalPolicy model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
+     * @return string|Response
      */
-    public function actionCreate()
+    public function actionCreate(): Response|string
     {
         $model = new LeaveApprovalPolicy();
-
+        $model->scenario = 'create';
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+            if ($model->load($this->request->post())) {
+                $model = $this->hrmConfigurationRepository->store($model);
+                if ($model->hasErrors()) {
+                    Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
+                } else {
+                    return $this->redirect(['view', 'uid' => $model->uid]);
+                }
             }
         } else {
             $model->loadDefaultValues();
@@ -85,16 +87,22 @@ class LeaveApprovalPolicyController extends ParentController
     /**
      * Updates an existing LeaveApprovalPolicy model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id ID
-     * @return string|\yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param string $uid UID
+     * @return string|Response
      */
-    public function actionUpdate($id)
+    public function actionUpdate(string $uid): Response|string
     {
-        $model = $this->findModel($id);
+        $model = $this->hrmConfigurationService->findModel(['uid' => $uid], LeaveApprovalPolicy::class, []);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post())) {
+                $model = $this->hrmConfigurationRepository->store($model);
+                if ($model->hasErrors()) {
+                    Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
+                } else {
+                    return $this->redirect(['view', 'uid' => $model->uid]);
+                }
+            }
         }
 
         return $this->render('update', [
@@ -105,30 +113,18 @@ class LeaveApprovalPolicyController extends ParentController
     /**
      * Deletes an existing LeaveApprovalPolicy model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id ID
-     * @return \yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param string $uid UID
+     * @return Response
      */
-    public function actionDelete($id)
+    public function actionDelete(string $uid): Response
     {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
-    }
-
-    /**
-     * Finds the LeaveApprovalPolicy model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id ID
-     * @return LeaveApprovalPolicy the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id)
-    {
-        if (($model = LeaveApprovalPolicy::findOne(['id' => $id])) !== null) {
-            return $model;
+        $model = $this->hrmConfigurationService->deleteModel(['uid' => $uid], LeaveApprovalPolicy::class, []);
+        if ($model->hasErrors()) {
+            Yii::$app->session->setFlash('danger', 'Deletion failed - ' . Utilities::processErrorMessages($model->getErrors()));
+        } else {
+            Yii::$app->session->setFlash('success', 'Successfully Deleted.');
         }
 
-        throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+        return $this->redirect(['index']);
     }
 }

@@ -14,7 +14,7 @@ class LeaveApprovalPolicySearch extends LeaveApprovalPolicy
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['id', 'approvalLevel', 'employeeId', 'requestedTo', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
@@ -25,7 +25,7 @@ class LeaveApprovalPolicySearch extends LeaveApprovalPolicy
     /**
      * {@inheritdoc}
      */
-    public function scenarios()
+    public function scenarios(): array
     {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
@@ -38,7 +38,7 @@ class LeaveApprovalPolicySearch extends LeaveApprovalPolicy
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search(array $params): ActiveDataProvider
     {
         $query = LeaveApprovalPolicy::find();
 
