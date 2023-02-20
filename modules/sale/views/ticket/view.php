@@ -13,7 +13,7 @@ use yii\widgets\DetailView;
 
 $this->title = $model->eTicket;
 if ($model->type == ServiceConstant::TICKET_TYPE_FOR_REFUND['Refund']) {
-    if ($model->ticketRefund->refundStatus == ServiceConstant::REFUND_STATUS['VOID']) {
+    if ($model->ticketRefund->refundType == ServiceConstant::REFUND_TYPE['VOID']) {
         $label = Yii::t('app', 'Void List');
         $url = 'void-list';
     } else {

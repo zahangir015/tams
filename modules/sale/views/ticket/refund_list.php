@@ -203,6 +203,14 @@ $this->params['breadcrumbs'][] = $this->title;
                 'filter' => ServiceConstant::REFUND_STATUS
             ],
             [
+                'attribute' => 'refundType',
+                'label' => 'Refund Type',
+                'value' => function ($model) {
+                    return $model->ticketRefund->refundType;
+                },
+                'filter' => ServiceConstant::REFUND_TYPE
+            ],
+            [
                 'attribute' => 'refundMedium',
                 'label' => 'Medium',
                 'value' => function ($model) {

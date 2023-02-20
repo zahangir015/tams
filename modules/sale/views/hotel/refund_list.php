@@ -143,7 +143,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => function ($model) {
                     return $model->hotelRefund->refundStatus;
                 },
-                'filter' => ServiceConstant::REFUND_STATUS
+                'filter' => ServiceConstant::REFUND_TYPE
             ],
             [
                 'attribute' => 'refundMedium',

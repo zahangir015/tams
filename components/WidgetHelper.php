@@ -132,6 +132,8 @@ class WidgetHelper
                 'class' => $class ?? '',
                 'disabled' => $disable,
                 'required' => true,
+                'value' => date('Y-m-d'),
+
             ],
             'pluginOptions' => [
                 'todayHighlight' => true,

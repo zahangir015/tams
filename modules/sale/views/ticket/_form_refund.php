@@ -134,6 +134,9 @@ $this->registerJsFile(
             </div>
             <div class="row">
                 <div class="col-md">
+                    <?= $form->field($ticketRefund, 'refundType')->dropDownList(ServiceConstant::REFUND_TYPE, ['prompt' => 'Select refund type...']) ?>
+                </div>
+                <div class="col-md">
                     <?= $form->field($ticketRefund, 'refundStatus')->dropDownList(ServiceConstant::REFUND_STATUS, ['prompt' => 'Select refund status...']) ?>
                 </div>
                 <div class="col-md">

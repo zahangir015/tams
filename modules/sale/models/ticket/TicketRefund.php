@@ -20,6 +20,7 @@ use yii\db\ActiveRecord;
  * @property string $refModel
  * @property string $refundRequestDate
  * @property string|null $refundStatus
+ * @property string|null $refundType
  * @property string|null $refundMedium
  * @property string|null $refundMethod
  * @property float|null $supplierRefundCharge
@@ -55,7 +56,7 @@ class TicketRefund extends ActiveRecord
             [['uid', 'ticketId', 'refId', 'refModel', 'refundRequestDate'], 'required'],
             [['ticketId', 'refId', 'refundTransactionId', 'isRefunded', 'status'], 'integer'],
             [['refundRequestDate', 'refundDate'], 'safe'],
-            [['refundStatus', 'refundMedium', 'refundMethod', 'remarks'], 'string'],
+            [['refundStatus', 'refundMedium', 'refundMethod', 'remarks', 'refundType'], 'string'],
             [['supplierRefundCharge', 'airlineRefundCharge', 'serviceCharge', 'refundedAmount'], 'number'],
             [['uid'], 'string', 'max' => 36],
             [['refModel'], 'string', 'max' => 150],
@@ -79,6 +80,7 @@ class TicketRefund extends ActiveRecord
             'refModel' => Yii::t('app', 'Ref Model'),
             'refundRequestDate' => Yii::t('app', 'Refund Request Date'),
             'refundStatus' => Yii::t('app', 'Refund Status'),
+            'refundType' => Yii::t('app', 'Refund Type'),
             'refundMedium' => Yii::t('app', 'Refund Medium'),
             'refundMethod' => Yii::t('app', 'Refund Method'),
             'supplierRefundCharge' => Yii::t('app', 'Supplier Refund Charge'),
