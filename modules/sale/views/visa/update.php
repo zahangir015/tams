@@ -13,7 +13,7 @@ $this->params['breadcrumbs'][] = ['label' => $model->identificationNumber, 'url'
 $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 ?>
 <div class="visa-update">
-    <?= $this->render('_update', [
+    <?= $this->render('_form', [
         'model' => $model,
     ]) ?>
 </div>
