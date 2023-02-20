@@ -6,6 +6,7 @@ use kartik\daterange\DateRangePicker;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use kartik\grid\GridView;
+
 /* @var $this yii\web\View */
 /* @var $searchModel app\modules\sale\models\VisaSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -77,7 +78,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 ])
             ],
             'totalQuantity',
-            'processStatus',
+            [
+                'attribute' => 'processStatus',
+                'value' => function ($model) {
+                    return ServiceConstant::VISA_PROCESS_STATUS[$model->processStatus];
+                },
+                'filter' => ServiceConstant::VISA_PROCESS_STATUS
+            ],
             [
                 'attribute' => 'quoteAmount',
                 'label' => 'Quote',

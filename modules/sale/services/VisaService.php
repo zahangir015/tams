@@ -398,7 +398,7 @@ class VisaService
 
     public function findVisa(string $uid, $withArray = []): ActiveRecord
     {
-        return $this->visaRepository->findOne($uid, Visa::class,$withArray);
+        return $this->visaRepository->findOne(['uid' => $uid], Visa::class,$withArray);
     }
 
     public function findVisaSupplier(string $uid, $withArray = []): ActiveRecord

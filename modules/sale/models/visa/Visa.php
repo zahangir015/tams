@@ -88,7 +88,7 @@ class Visa extends ActiveRecord
             'customerId' => Yii::t('app', 'Customer'),
             'customerCategory' => Yii::t('app', 'Customer Category'),
             'type' => Yii::t('app', 'Type'),
-            'issueDate' => Yii::t('app', 'Issue Date'),
+            'issueDate' => Yii::t('app', 'Passport/Document received date'),
             'refundRequestDate' => Yii::t('app', 'Refund Request Date'),
             'totalQuantity' => Yii::t('app', 'Total Quantity'),
             'processStatus' => Yii::t('app', 'Process Status'),

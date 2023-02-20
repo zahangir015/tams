@@ -312,7 +312,7 @@ class HolidayService
 
     public function findHoliday(string $uid, $withArray = []): ActiveRecord
     {
-        return $this->holidayRepository->findOne($uid, Holiday::class, $withArray);
+        return $this->holidayRepository->findOne(['uid' => $uid], Holiday::class, $withArray);
     }
 
     public function getCategories(): array
