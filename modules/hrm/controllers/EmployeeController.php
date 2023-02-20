@@ -182,7 +182,7 @@ class EmployeeController extends ParentController
         $employees = $this->employeeRepository->employeeQuery($query);
         $data = [];
         foreach ($employees as $employee) {
-            $data[] = ['id' => $employee->id, 'text' => $employee->officialId.' '.$employee->firstName.' '.$employee->lastName.' | '.$employee->officialEmail];
+            $data[] = ['id' => $employee->id, 'text' => $employee->officialId.' |'.$employee->firstName.' '.$employee->lastName.' | '.$employee->officialEmail];
         }
         return ['results' => $data];
     }

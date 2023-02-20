@@ -2,7 +2,10 @@
 
 namespace app\modules\hrm\models;
 
+use app\traits\BehaviorTrait;
 use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%leave_application}}".
@@ -27,12 +30,14 @@ use Yii;
  * @property LeaveApprovalHistory[] $leaveApprovalHistories
  * @property LeaveType $leaveType
  */
-class LeaveApplication extends \yii\db\ActiveRecord
+class LeaveApplication extends ActiveRecord
 {
+    use BehaviorTrait;
+
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%leave_application}}';
     }
@@ -40,10 +45,10 @@ class LeaveApplication extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            [['uid', 'employeeId', 'leaveTypeId', 'numberOfDays', 'from', 'to', 'createdBy', 'createdAt'], 'required'],
+            [['employeeId', 'leaveTypeId', 'numberOfDays', 'from', 'to'], 'required'],
             [['employeeId', 'leaveTypeId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['numberOfDays'], 'number'],
             [['from', 'to', 'availableFrom'], 'safe'],
@@ -59,13 +64,13 @@ class LeaveApplication extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),
             'uid' => Yii::t('app', 'Uid'),
-            'employeeId' => Yii::t('app', 'Employee ID'),
-            'leaveTypeId' => Yii::t('app', 'Leave Type ID'),
+            'employeeId' => Yii::t('app', 'Employee'),
+            'leaveTypeId' => Yii::t('app', 'Leave Type'),
             'numberOfDays' => Yii::t('app', 'Number Of Days'),
             'from' => Yii::t('app', 'From'),
             'to' => Yii::t('app', 'To'),
@@ -83,9 +88,9 @@ class LeaveApplication extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Employee]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getEmployee()
+    public function getEmployee(): ActiveQuery
     {
         return $this->hasOne(Employee::class, ['id' => 'employeeId']);
     }
@@ -93,9 +98,9 @@ class LeaveApplication extends \yii\db\ActiveRecord
     /**
      * Gets query for [[LeaveApprovalHistories]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getLeaveApprovalHistories()
+    public function getLeaveApprovalHistories(): ActiveQuery
     {
         return $this->hasMany(LeaveApprovalHistory::class, ['leaveApplicationId' => 'id']);
     }
@@ -103,9 +108,9 @@ class LeaveApplication extends \yii\db\ActiveRecord
     /**
      * Gets query for [[LeaveType]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getLeaveType()
+    public function getLeaveType(): ActiveQuery
     {
         return $this->hasOne(LeaveType::class, ['id' => 'leaveTypeId']);
     }

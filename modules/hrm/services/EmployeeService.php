@@ -55,11 +55,15 @@ class EmployeeService
                     } else {
                         throw new Exception('Employee Designation data loading failed - ' . Utilities::processErrorMessages($employee->getErrors()));
                     }
+                    // Todo Employee shift assign based on department
+                    // Todo Employee leave allocation
+                    // Todo Employee leave approval policy setup
+
                 } else {
                     throw new Exception('Employee data loading failed - ' . Utilities::processErrorMessages($employee->getErrors()));
                 }
 
-                // Succeefully stored
+                // Successfully stored
                 $dbTransaction->commit();
                 Yii::$app->session->setFlash('success', 'Employee profile created successfully');
                 return true;

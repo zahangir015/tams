@@ -2,33 +2,30 @@
 
 namespace app\modules\hrm\controllers;
 
+use app\components\Utilities;
 use app\modules\hrm\models\LeaveApplication;
 use app\modules\hrm\models\search\LeaveApplicationSearch;
 use app\controllers\ParentController;
+use app\modules\hrm\repositories\AttendanceRepository;
+use app\modules\hrm\services\AttendanceService;
+use Yii;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Response;
 
 /**
  * LeaveApplicationController implements the CRUD actions for LeaveApplication model.
  */
 class LeaveApplicationController extends ParentController
 {
-    /**
-     * @inheritDoc
-     */
-    public function behaviors()
+    private AttendanceService $attendanceService;
+    private AttendanceRepository $attendanceRepository;
+
+    public function __construct($uid, $module, $config = [])
     {
-        return array_merge(
-            parent::behaviors(),
-            [
-                'verbs' => [
-                    'class' => VerbFilter::className(),
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
-                ],
-            ]
-        );
+        $this->attendanceService = new AttendanceService();
+        $this->attendanceRepository = new AttendanceRepository();
+        parent::__construct($uid, $module, $config);
     }
 
     /**
@@ -36,7 +33,7 @@ class LeaveApplicationController extends ParentController
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $searchModel = new LeaveApplicationSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
@@ -49,29 +46,33 @@ class LeaveApplicationController extends ParentController
 
     /**
      * Displays a single LeaveApplication model.
-     * @param int $id ID
+     * @param string $uid UID
      * @return string
-     * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id)
+    public function actionView(string $uid): string
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $this->attendanceService->findModel(['uid' => $uid], LeaveApplication::class, []),
         ]);
     }
 
     /**
      * Creates a new LeaveApplication model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
+     * @return string|Response
      */
-    public function actionCreate()
+    public function actionCreate(): Response|string
     {
         $model = new LeaveApplication();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+            if ($model->load($this->request->post())) {
+                $model = $this->attendanceRepository->store($model);
+                if ($model->hasErrors()) {
+                    Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
+                } else {
+                    return $this->redirect(['view', 'uid' => $model->uid]);
+                }
             }
         } else {
             $model->loadDefaultValues();
@@ -85,16 +86,22 @@ class LeaveApplicationController extends ParentController
     /**
      * Updates an existing LeaveApplication model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id ID
-     * @return string|\yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param string $uid UID
+     * @return string|Response
      */
-    public function actionUpdate($id)
+    public function actionUpdate(string $uid): Response|string
     {
-        $model = $this->findModel($id);
+        $model = $this->attendanceService->findModel(['uid' => $uid], LeaveApplication::class, []);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post())) {
+                $model = $this->attendanceRepository->store($model);
+                if ($model->hasErrors()) {
+                    Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
+                } else {
+                    return $this->redirect(['view', 'uid' => $model->uid]);
+                }
+            }
         }
 
         return $this->render('update', [
@@ -105,30 +112,18 @@ class LeaveApplicationController extends ParentController
     /**
      * Deletes an existing LeaveApplication model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id ID
-     * @return \yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param string $uid UID
+     * @return Response
      */
-    public function actionDelete($id)
+    public function actionDelete(string $uid): Response
     {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
-    }
-
-    /**
-     * Finds the LeaveApplication model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id ID
-     * @return LeaveApplication the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id)
-    {
-        if (($model = LeaveApplication::findOne(['id' => $id])) !== null) {
-            return $model;
+        $model = $this->attendanceService->deleteModel(['uid' => $uid], LeaveApplication::class, []);
+        if ($model->hasErrors()) {
+            Yii::$app->session->setFlash('danger', 'Deletion failed - ' . Utilities::processErrorMessages($model->getErrors()));
+        } else {
+            Yii::$app->session->setFlash('success', 'Successfully Deleted.');
         }
 
-        throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+        return $this->redirect(['index']);
     }
 }
