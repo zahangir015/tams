@@ -38,7 +38,7 @@ class HotelService
 
     public function findHotel(string $uid, $withArray = []): ActiveRecord
     {
-        return $this->hotelRepository->findOne($uid, Hotel::class, $withArray);
+        return $this->hotelRepository->findOne(['uid' => $uid], Hotel::class, $withArray);
     }
 
     public function storeHotel(array $requestData): bool
