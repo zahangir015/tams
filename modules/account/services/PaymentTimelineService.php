@@ -53,7 +53,7 @@ class PaymentTimelineService
         if (empty($rowData)) {
             return ['error' => true, 'message' => 'Payment Timeline Batch Data can not be empty.'];
         }
-        if (!$this->paymentTimelineRepository->batchStore(ServicePaymentTimeline::tableName(), array_keys($rowData[0]), $rowData)) {
+        if (!(new PaymentTimelineRepository())->batchStore(ServicePaymentTimeline::tableName(), array_keys($rowData[0]), $rowData)) {
             return ['error' => true, 'message' => 'Payment Timeline batch insert failed'];
         }
 
@@ -71,9 +71,9 @@ class PaymentTimelineService
         $servicePaymentDetail->subRefId = $subRefId;
         $servicePaymentDetail->subRefModel = $subRefModel;
         $servicePaymentDetail->due = $due;*/
-        $servicePaymentTimeline->status = Constant::ACTIVE_STATUS;
+        $servicePaymentTimeline->status = GlobalConstant::ACTIVE_STATUS;
         if (!$servicePaymentTimeline->save()) {
-            return ['error' => true, 'message' => 'Service Payment Detail - ' . Utils::processErrorMessages($servicePaymentTimeline->getErrors())];
+            return ['error' => true, 'message' => 'Service Payment Detail - ' . Utilities::processErrorMessages($servicePaymentTimeline->getErrors())];
         }
 
         return ['error' => false, 'message' => 'Success'];
