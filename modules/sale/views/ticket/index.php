@@ -35,7 +35,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'provider',
                 'value' => function ($model) {
-                    return $model->provider->name;
+                    return $model->provider ? $model->provider->name : null;
                 },
                 'label' => 'Provider',
             ],
