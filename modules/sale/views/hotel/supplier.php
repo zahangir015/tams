@@ -1,7 +1,9 @@
 <?php
 
 use app\components\Utilities;
+use app\components\WidgetHelper;
 use app\modules\sale\components\ServiceConstant;
+use kartik\date\DatePicker;
 use kartik\daterange\DateRangePicker;
 use kartik\select2\Select2;
 
@@ -36,7 +38,7 @@ use kartik\select2\Select2;
                 <?= $form->field($hotelSupplier, "[$row]supplierRef")->textInput(['maxlength' => true]); ?>
             </div>
             <div class="col-md">
-                <?= $form->field($hotelSupplier, "[$row]issueDate")->widget(DateRangePicker::class, Utilities::dateFormat(false, true)); ?>
+                <?= $form->field($hotelSupplier, "[$row]issueDate")->widget(DatePicker::class, WidgetHelper::getDateWidget('issueDate'.$row, 'issue'.$row, false, true)); ?>
             </div>
         </div>
         <div class="row">

@@ -35,7 +35,7 @@ class HolidayService
         try {
             if (!empty($requestData['Holiday']) || !empty($requestData['HolidaySupplier'])) {
                 $services = [];
-                $supplierLedgerArray = [];
+                $invoice = null;
                 $customer = Customer::findOne(['id' => $requestData['Holiday']['customerId']]);
                 $holiday = new Holiday();
                 if ($holiday->load($requestData)) {
@@ -60,11 +60,13 @@ class HolidayService
                     $supplierLedgerArray = $holidaySupplierProcessedData['supplierLedgerArray'];
 
                     // Invoice process and create
-                    $autoInvoiceCreateResponse = $this->invoiceService->autoInvoice($customer->id, $services, 1, Yii::$app->user);
-                    if ($autoInvoiceCreateResponse['error']) {
-                        throw new Exception('Auto Invoice creation failed - ' . $autoInvoiceCreateResponse['message']);
+                    if (isset($requestData['invoice'])) {
+                        $autoInvoiceCreateResponse = $this->invoiceService->autoInvoice($customer->id, $services, 1, Yii::$app->user);
+                        if ($autoInvoiceCreateResponse['error']) {
+                            throw new Exception('Auto Invoice creation failed - ' . $autoInvoiceCreateResponse['message']);
+                        }
+                        $invoice = $autoInvoiceCreateResponse['data'];
                     }
-                    $invoice = $autoInvoiceCreateResponse['data'];
 
                     // Supplier Ledger process
                     $ledgerRequestResponse = LedgerService::batchInsert($invoice, $supplierLedgerArray);

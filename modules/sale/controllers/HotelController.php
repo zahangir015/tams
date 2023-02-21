@@ -35,7 +35,7 @@ class HotelController extends ParentController
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $searchModel = new HotelSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
@@ -51,7 +51,7 @@ class HotelController extends ParentController
      *
      * @return string
      */
-    public function actionHotelSupplierList()
+    public function actionHotelSupplierList(): string
     {
         $searchModel = new HotelSupplierSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
@@ -82,9 +82,8 @@ class HotelController extends ParentController
      * Displays a single Hotel model.
      * @param string $uid UID
      * @return string
-     * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView(string $uid)
+    public function actionView(string $uid): string
     {
         $model = $this->hotelService->findHotel($uid, ['hotelSuppliers', 'customer']);
         return $this->render('view', [
@@ -98,7 +97,7 @@ class HotelController extends ParentController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|Response
      */
-    public function actionCreate()
+    public function actionCreate(): Response|string
     {
         $model = new Hotel();
         $hotelSupplier = new HotelSupplier();
@@ -123,7 +122,7 @@ class HotelController extends ParentController
      * If creation is successful, the browser will be redirected to the 'refund list' page.
      * @return string|Response
      */
-    public function actionRefund(string $uid)
+    public function actionRefund(string $uid): Response|string
     {
         $model = new Hotel();
         $motherHotel = $this->hotelService->findHotel($uid, ['hotelSuppliers', 'invoice', 'customer']);
@@ -149,9 +148,8 @@ class HotelController extends ParentController
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param string $uid UID
      * @return string|Response
-     * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate(string $uid)
+    public function actionUpdate(string $uid): Response|string
     {
         $model = $this->hotelService->findHotel($uid, ['hotelSuppliers', 'customer']);
 
@@ -160,6 +158,8 @@ class HotelController extends ParentController
             $model = $this->hotelService->updateHotel(Yii::$app->request->post(), $model);
             if ($model) {
                 return $this->redirect(['view', 'uid' => $model->uid]);
+            }else{
+
             }
         }
 

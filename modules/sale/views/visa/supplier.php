@@ -1,7 +1,9 @@
 <?php
 
 use app\components\Utilities;
+use app\components\WidgetHelper;
 use app\modules\sale\components\ServiceConstant;
+use kartik\date\DatePicker;
 use kartik\daterange\DateRangePicker;
 use kartik\select2\Select2;
 use yii\bootstrap4\Html;
@@ -45,7 +47,7 @@ use yii\bootstrap4\Html;
                 <?= $form->field($visaSupplier, "[$row]quantity")->textInput(['type' => 'number', 'value' => $visaSupplier->isNewRecord ? 0 : $visaSupplier->quantity, 'onChange' => 'calculateQuoteAmount()', 'min' => 0, 'class' => 'form-control quantity'])->label('Number Of Visa') ?>
             </div>
             <div class="col-md">
-                <?= $form->field($visaSupplier, "[$row]unitPrice")->textInput(['type' => 'number', 'value' => $visaSupplier->isNewRecord ? 0 : $visaSupplier->unitPrice, 'onChange' => 'calculateQuoteAmount()', 'min' => 0, 'class' => 'form-control unitPrice'])->label('Per Visa Price') ?>
+                <?= $form->field($visaSupplier, "[$row]unitPrice")->textInput(['type' => 'number', 'value' => $visaSupplier->isNewRecord ? 0 : $visaSupplier->unitPrice, 'onChange' => 'calculateQuoteAmount()', 'min' => 0, 'class' => 'form-control unitPrice'])->label('Per Visa Quote') ?>
             </div>
             <div class="col-md">
                 <?= $form->field($visaSupplier, "[$row]costOfSale")->textInput(['type' => 'number', 'value' => $visaSupplier->isNewRecord ? 0 : $visaSupplier->costOfSale, 'onChange' => 'calculateCostOfSale()', 'min' => 0, 'class' => 'form-control costOfSale']) ?>
@@ -53,7 +55,7 @@ use yii\bootstrap4\Html;
         </div>
         <div class="row">
             <div class="col-md">
-                <?= $form->field($visaSupplier, "[$row]issueDate")->widget(DateRangePicker::class, Utilities::dateFormat(false, true)); ?>
+                <?= $form->field($visaSupplier, "[$row]issueDate")->widget(DatePicker::class, WidgetHelper::getDateWidget('issueDate'.$row, 'issueDate'.$row, false, true)); ?>
             </div>
             <div class="col-md">
                 <?= $form->field($visaSupplier, "[$row]type")->textInput(['readOnly' => 'readOnly', 'value' => ServiceConstant::ALL_SERVICE_TYPE['New']]) ?>

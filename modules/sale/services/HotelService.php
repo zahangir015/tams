@@ -48,6 +48,7 @@ class HotelService
             if (!empty($requestData['Hotel']) || !empty($requestData['HotelSupplier'])) {
                 $services = [];
                 $supplierLedgerArray = [];
+                $invoice = null;
                 $customer = Customer::findOne(['id' => $requestData['Hotel']['customerId']]);
                 $hotel = new Hotel();
                 if ($hotel->load($requestData)) {
@@ -72,11 +73,13 @@ class HotelService
                     $supplierLedgerArray = $hotelSupplierProcessedData['supplierLedgerArray'];
 
                     // Invoice process and create
-                    $autoInvoiceCreateResponse = $this->invoiceService->autoInvoice($customer->id, $services, 1, Yii::$app->user);
-                    if ($autoInvoiceCreateResponse['error']) {
-                        throw new Exception('Auto Invoice creation failed - ' . $autoInvoiceCreateResponse['message']);
+                    if (isset($requestData['invoice'])) {
+                        $autoInvoiceCreateResponse = $this->invoiceService->autoInvoice($customer->id, $services);
+                        if ($autoInvoiceCreateResponse['error']) {
+                            throw new Exception('Auto Invoice creation failed - ' . $autoInvoiceCreateResponse['message']);
+                        }
+                        $invoice = $autoInvoiceCreateResponse['data'];
                     }
-                    $invoice = $autoInvoiceCreateResponse['data'];
 
                     // Supplier Ledger process
                     $ledgerRequestResponse = LedgerService::batchInsert($invoice, $supplierLedgerArray);
@@ -91,9 +94,8 @@ class HotelService
                 Yii::$app->session->setFlash('success', 'Hotel added successfully');
                 return true;
             }
-            // Ticket and supplier data can not be empty
+            // Hotel and supplier data can not be empty
             throw new Exception('Hotel and supplier data can not be empty.');
-
         } catch (Exception $e) {
             $dbTransaction->rollBack();
             Yii::$app->session->setFlash('danger', $e->getMessage() . ' - in file - ' . $e->getFile() . ' - in line -' . $e->getLine());
@@ -178,13 +180,14 @@ class HotelService
     {
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
-            if (empty($requestData['Hotel']) || !empty($requestData['HotelSupplier'])) {
+            if (empty($requestData['Hotel']) || empty($requestData['HotelSupplier'])) {
                 throw new Exception('Hotel and supplier data can not be empty.');
             }
 
             $oldQuoteAmount = $hotel->quoteAmount;
             $oldReceivedAmount = $hotel->receivedAmount;
             $oldCustomerId = $hotel->customerId;
+            $oldCostOfSale = $hotel->costOfSale;
 
             // Update Hotel Model
             $hotel->load($requestData);

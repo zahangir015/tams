@@ -59,10 +59,10 @@ function calculateQuoteAmount() {
     let totalQuoteAmount = 0;
     if ($('.quantity').length > 0) {
         $(".quantity").each(function (index) {
-            var quantity = parseFloat($(this).parents('.calcData').find('.quantity').val());
+            // var quantity = parseFloat($(this).parents('.calcData').find('.quantity').val());
             var perServicePrice = parseFloat($(this).parents('.calcData').find('.perServicePrice').val());
-            var holidayQuoteAmount = quantity * perServicePrice;
-            totalQuoteAmount += holidayQuoteAmount;
+            // var holidayQuoteAmount = quantity * perServicePrice;
+            totalQuoteAmount += perServicePrice;
         });
         $('#holiday-quoteamount').val(totalQuoteAmount);
     } else {

@@ -4,6 +4,7 @@ use app\components\GlobalConstant;
 use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\hotel\Hotel;
 use kartik\daterange\DateRangePicker;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use kartik\grid\ActionColumn;
@@ -48,6 +49,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => 'customerCategory',
                 'label' => 'Category',
                 'filter' => GlobalConstant::CUSTOMER_CATEGORY
+            ],
+            [
+                'attribute' => 'hotelSuppliers',
+                'value' => function($model){
+                    return implode(',', ArrayHelper::map($model->hotelSuppliers, 'hotelName', 'hotelName'));
+                },
             ],
             [
                 'attribute' => 'type',
@@ -123,11 +130,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 'filter' => GlobalConstant::BOOKING_TYPE
             ],
             'reference',
-            /*'status',
-            'createdBy',
-            'createdAt',
-            'updatedBy',
-            'updatedAt',*/
             [
                 'class' => 'kartik\grid\ActionColumn',
                 'urlCreator' => function ($action, $model) {
