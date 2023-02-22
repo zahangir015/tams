@@ -37,6 +37,8 @@ class VisaService
                 $services = [];
                 $customer = Customer::findOne(['id' => $requestData['Visa']['customerId']]);
                 $visa = new Visa();
+                $invoice = null;
+
                 if ($visa->load($requestData)) {
                     $visa->type = ServiceConstant::TYPE['New'];
                     $visa->customerCategory = $customer->category;
@@ -59,11 +61,13 @@ class VisaService
                     $supplierLedgerArray = $visaSupplierProcessedData['supplierLedgerArray'];
 
                     // Invoice process and create
-                    $autoInvoiceCreateResponse = $this->invoiceService->autoInvoice($customer->id, $services, 1, Yii::$app->user);
-                    if ($autoInvoiceCreateResponse['error']) {
-                        throw new Exception('Auto Invoice creation failed - ' . $autoInvoiceCreateResponse['message']);
+                    if (isset($requestData['invoice'])) {
+                        $autoInvoiceCreateResponse = $this->invoiceService->autoInvoice($customer->id, $services, 1, Yii::$app->user);
+                        if ($autoInvoiceCreateResponse['error']) {
+                            throw new Exception('Auto Invoice creation failed - ' . $autoInvoiceCreateResponse['message']);
+                        }
+                        $invoice = $autoInvoiceCreateResponse['data'];
                     }
-                    $invoice = $autoInvoiceCreateResponse['data'];
 
                     // Supplier Ledger process
                     $ledgerRequestResponse = LedgerService::batchInsert($invoice, $supplierLedgerArray);
@@ -78,7 +82,7 @@ class VisaService
                 Yii::$app->session->setFlash('success', 'Visa added successfully');
                 return true;
             }
-            // Ticket and supplier data can not be empty
+            // Visa and supplier data can not be empty
             throw new Exception('Visa and supplier data can not be empty.');
 
         } catch (Exception $e) {
@@ -398,7 +402,7 @@ class VisaService
 
     public function findVisa(string $uid, $withArray = []): ActiveRecord
     {
-        return $this->visaRepository->findOne(['uid' => $uid], Visa::class,$withArray);
+        return $this->visaRepository->findOne(['uid' => $uid], Visa::class, $withArray);
     }
 
     public function findVisaSupplier(string $uid, $withArray = []): ActiveRecord

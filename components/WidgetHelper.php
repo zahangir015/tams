@@ -133,9 +133,9 @@ class WidgetHelper
                 'disabled' => $disable,
                 'required' => true,
                 'value' => date('Y-m-d'),
-
             ],
             'pluginOptions' => [
+                'orientation' => 'bottom',
                 'todayHighlight' => true,
                 'todayBtn' => true,
                 'autoclose' => true,

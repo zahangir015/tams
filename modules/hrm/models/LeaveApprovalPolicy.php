@@ -60,7 +60,7 @@ class LeaveApprovalPolicy extends ActiveRecord
             'id' => Yii::t('app', 'ID'),
             'uid' => Yii::t('app', 'Uid'),
             'approvalLevel' => Yii::t('app', 'Approval Level'),
-            'employeeId' => Yii::t('app', 'Employee ID'),
+            'employeeId' => Yii::t('app', 'Employee'),
             'requestedTo' => Yii::t('app', 'Requested To'),
             'status' => Yii::t('app', 'Status'),
             'createdBy' => Yii::t('app', 'Created By'),
@@ -85,7 +85,7 @@ class LeaveApprovalPolicy extends ActiveRecord
      *
      * @return ActiveQuery
      */
-    public function getRequestedTo(): ActiveQuery
+    public function getRequestedEmployee(): ActiveQuery
     {
         return $this->hasOne(Employee::class, ['id' => 'requestedTo']);
     }

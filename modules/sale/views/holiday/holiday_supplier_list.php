@@ -48,6 +48,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'label' => 'Category',
             ],
             'supplierRef',
+            'title',
             'issueDate',
             'departureDate',
             'refundRequestDate',

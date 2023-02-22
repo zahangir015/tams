@@ -68,6 +68,11 @@ class LeaveApprovalPolicyController extends ParentController
         $model->scenario = 'create';
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
+
+                if ($model->employeeId == $model->requestedTo){
+                    Yii::$app->session->setFlash('danger', 'Employee and approver should not be the same person.');
+                }
+
                 $model = $this->hrmConfigurationRepository->store($model);
                 if ($model->hasErrors()) {
                     Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
@@ -96,6 +101,9 @@ class LeaveApprovalPolicyController extends ParentController
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
+                if ($model->employeeId == $model->requestedTo){
+                    Yii::$app->session->setFlash('danger', 'Employee and approver should not be the same person.');
+                }
                 $model = $this->hrmConfigurationRepository->store($model);
                 if ($model->hasErrors()) {
                     Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));

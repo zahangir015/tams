@@ -51,7 +51,7 @@ final class ServiceConstant
     const REFUND_TYPE = ['NO SHOW' => 'NO SHOW', 'NOT NO SHOW' => 'NOT NO SHOW', 'TAX REFUND' => 'TAX REFUND', 'HALF PORTION REFUND' => 'HALF PORTION REFUND', 'FULL REFUND' => 'FULL REFUND', 'VOID' => 'VOID', 'HALF PORTION TAX REFUND' => 'HALF PORTION TAX REFUND'];
     const REFUND_STATUS = ['Refund Submitted' => 'Refund Submitted','Refund Received' => 'Refund Received','Refund Paid' => 'Refund Paid','Refund Adjusted' => 'Refund Adjusted'];
     const REFUND_MEDIUM = ['GDS' => 'GDS', 'BSP' => 'BSP', 'SUPPLIER' => 'SUPPLIER'];
-    const REFUND_METHOD = ['Credit/Debit Card' => 'Credit/Debit Card', 'Bank Account' => 'Bank Account', 'Refund Adjustment' => 'Refund Adjustment', 'Cash' => 'Cash'];
+    const REFUND_METHOD = ['Credit/Debit Card' => 'Credit/Debit Card', 'Bank Account' => 'Bank Account', 'Refund Adjustment' => 'Refund Adjustment', 'Cash' => 'Cash', 'MFS' => "MFS"];
     const TYPE = ['New' => 'New', 'Reissue' => 'Reissue', 'Refund' => 'Refund', 'EMD Voucher' => 'EMD Voucher', 'Refund Requested' => 'Refund Requested'];
     const VISA_PROCESS_STATUS = [
         'Document Received',

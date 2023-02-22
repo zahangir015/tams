@@ -480,7 +480,7 @@ class Utilities
         return $result;
     }
 
-    public static function dateFormat($disabled = false, $required = false, $format = 'Y-m-d', $value = null): array
+    public static function dateFormat($disabled = false, $required = false, $format = 'Y-m-d', $value = null, $disableDatesAfterToday = false): array
     {
         return [
             'options' => [
@@ -489,14 +489,14 @@ class Utilities
                 'required' => $required,
                 'class' => 'form-control',
                 'disabled' => $disabled ? 'disabled' : false,
-                'value' => $value ?? null
+                'value' => $value ?? self::date('Y-m-d')
             ],
             'convertFormat' => true,
             'pluginOptions' => [
                 'singleDatePicker' => true,
                 'showDropdowns' => true,
-                'endDate' => "0d",
                 'locale' => ['format' => $format],
+                'endDate' => ($disableDatesAfterToday) ? "0d" : "",
             ],
             'pluginEvents' => [
                 'apply.daterangepicker' => 'function(ev, picker) {

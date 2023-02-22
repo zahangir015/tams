@@ -54,8 +54,6 @@ function calculateQuoteAmount() {
     $(".quantity").each(function (index) {
         var quantity = parseFloat($(this).parents('.calcData').find('.quantity').val());
         var perServicePrice = parseFloat($(this).parents('.calcData').find('.unitPrice').val());
-        console.log(quantity);
-        console.log(perServicePrice);
         if (!isNaN(quantity) && !isNaN(perServicePrice)) {
             totalQuoteAmount += parseFloat(quantity * perServicePrice);
             totalQuantity += quantity;

@@ -25,7 +25,7 @@ class HolidaySupplierSearch extends HolidaySupplier
     {
         return [
             [['id', 'holidayId', 'billId', 'supplierId', 'quantity', 'unitPrice', 'status', 'holidayCategoryId', 'motherId'], 'integer'],
-            [['uid', 'supplierRef', 'issueDate', 'departureDate', 'refundRequestDate', 'type', 'serviceDetails', 'paymentStatus', 'holiday', 'supplier', 'category', 'bill'], 'safe'],
+            [['uid', 'supplierRef', 'issueDate', 'departureDate', 'refundRequestDate', 'type', 'serviceDetails', 'paymentStatus', 'holiday', 'supplier', 'category', 'bill', 'title'], 'safe'],
             [['costOfSale', 'paidAmount'], 'number'],
         ];
     }
@@ -126,6 +126,7 @@ class HolidaySupplierSearch extends HolidaySupplier
             ->andFilterWhere(['like', HolidayCategory::tableName() . '.name', $this->category])
             ->andFilterWhere(['like', 'supplierRef', $this->supplierRef])
             ->andFilterWhere(['like', 'type', $this->type])
+            ->andFilterWhere(['like', 'title', $this->title])
             ->andFilterWhere(['like', 'serviceDetails', $this->serviceDetails])
             ->andFilterWhere(['like', 'paymentStatus', $this->paymentStatus]);
 

@@ -23,7 +23,7 @@ use yii\widgets\ActiveForm;
                     <?= $form->field($model, 'employeeId')->widget(Select2::class, WidgetHelper::ajaxSelect2Widget('employeeId', '/hrm/employee/get-employees', true, 'employeeId', 'employeeId', $model->isNewRecord? [] : [$model->employeeId => $model->employee->firstName.' '.$model->employee->lastName])) ?>
                 </div>
                 <div class="col-md">
-                    <?= $form->field($model, 'requestedTo')->widget(Select2::class, WidgetHelper::ajaxSelect2Widget('requestedTo', '/hrm/employee/get-employees', true, 'requestedTo', 'requestedTo', $model->isNewRecord? [] : [$model->requestedTo => $model->requestedTo->firstName.' '.$model->requestedTo->lastName])) ?>
+                    <?= $form->field($model, 'requestedTo')->widget(Select2::class, WidgetHelper::ajaxSelect2Widget('requestedTo', '/hrm/employee/get-employees', true, 'requestedTo', 'requestedTo', $model->isNewRecord? [] : [$model->requestedTo => $model->requestedEmployee->firstName.' '.$model->requestedEmployee->lastName])) ?>
                 </div>
                 <div class="col-md">
                     <?= $form->field($model, 'approvalLevel')->textInput(['type' => 'number']) ?>

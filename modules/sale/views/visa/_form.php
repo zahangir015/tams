@@ -1,6 +1,8 @@
 <?php
 
+use app\components\WidgetHelper;
 use app\modules\sale\components\ServiceConstant;
+use kartik\date\DatePicker;
 use kartik\daterange\DateRangePicker;
 use kartik\select2\Select2;
 use yii\bootstrap4\ActiveForm;
@@ -52,7 +54,7 @@ $this->registerJsFile(
                         <?= $form->field($model, 'customerId')->widget(Select2::class, Utilities::ajaxDropDown('customerId', '/sale/customer/get-customers', true, 'customerId'))->label('Customer') ?>
                     </div>
                     <div class="col-md">
-                        <?= $form->field($model, 'issueDate')->widget(DateRangePicker::class, Utilities::dateFormat(false, true)) ?>
+                        <?= $form->field($model, 'issueDate')->widget(DatePicker::class, WidgetHelper::getDateWidget('issueDate', 'issueDate form-control', false, true)) ?>
                     </div>
                     <div class="col-md">
                         <?= $form->field($model, 'identificationNumber')->textInput(['value' => ($model->isNewRecord) ? Utilities::visaIdentificationNumber() : $model->identificationNumber, 'readOnly' => 'readOnly']) ?>

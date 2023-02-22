@@ -19,6 +19,7 @@ use yii\db\ActiveRecord;
  * @property int|null $billId
  * @property int $supplierId
  * @property string $supplierRef
+ * @property string|null $title
  * @property string $issueDate
  * @property string $departureDate
  * @property string|null $refundRequestDate
@@ -40,6 +41,7 @@ use yii\db\ActiveRecord;
 class HolidaySupplier extends ActiveRecord
 {
     use BehaviorTrait;
+
     /**
      * {@inheritdoc}
      */
@@ -55,9 +57,9 @@ class HolidaySupplier extends ActiveRecord
     {
         return [
             [['holidayId', 'supplierId', 'supplierRef', 'issueDate', 'departureDate', 'type', 'quantity', 'unitPrice', 'costOfSale', 'holidayCategoryId'], 'required'],
-            [['holidayId', 'motherId','billId', 'supplierId', 'quantity', 'unitPrice', 'status', 'holidayCategoryId'], 'integer'],
+            [['holidayId', 'motherId', 'billId', 'supplierId', 'quantity', 'unitPrice', 'status', 'holidayCategoryId'], 'integer'],
             [['issueDate', 'departureDate', 'refundRequestDate', 'description'], 'safe'],
-            [['type', 'paymentStatus'], 'string'],
+            [['type', 'paymentStatus', 'title'], 'string'],
             [['costOfSale', 'paidAmount'], 'number'],
             [['uid'], 'string', 'max' => 36],
             [['supplierRef', 'serviceDetails'], 'string', 'max' => 255],
@@ -76,10 +78,11 @@ class HolidaySupplier extends ActiveRecord
         return [
             'id' => Yii::t('app', 'ID'),
             'uid' => Yii::t('app', 'Uid'),
-            'holidayId' => Yii::t('app', 'Holiday ID'),
-            'billId' => Yii::t('app', 'Bill ID'),
-            'supplierId' => Yii::t('app', 'Supplier ID'),
+            'holidayId' => Yii::t('app', 'Holiday'),
+            'billId' => Yii::t('app', 'Bill'),
+            'supplierId' => Yii::t('app', 'Supplier'),
             'supplierRef' => Yii::t('app', 'Supplier Ref'),
+            'title' => Yii::t('app', 'Title'),
             'issueDate' => Yii::t('app', 'Issue Date'),
             'departureDate' => Yii::t('app', 'Departure Date'),
             'refundRequestDate' => Yii::t('app', 'Refund Request Date'),

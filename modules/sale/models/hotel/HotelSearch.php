@@ -15,6 +15,7 @@ class HotelSearch extends Hotel
 {
     public $invoice;
     public $customer;
+    public $hotelSuppliers;
 
     /**
      * {@inheritdoc}
@@ -23,7 +24,7 @@ class HotelSearch extends Hotel
     {
         return [
             [['id', 'motherId', 'invoiceId', 'customerId', 'totalNights', 'isRefundable', 'isOnlineBooked', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
-            [['invoice', 'customer', 'identificationNumber', 'customerCategory', 'voucherNumber', 'reservationCode', 'type', 'issueDate', 'refundRequestDate', 'checkInDate', 'checkOutDate', 'freeCancellationDate', 'route', 'paymentStatus', 'reference'], 'safe'],
+            [['invoice', 'customer', 'identificationNumber', 'customerCategory', 'voucherNumber', 'reservationCode', 'type', 'issueDate', 'refundRequestDate', 'checkInDate', 'checkOutDate', 'freeCancellationDate', 'route', 'paymentStatus', 'reference', 'hotelSuppliers'], 'safe'],
             [['quoteAmount', 'costOfSale', 'netProfit', 'receivedAmount'], 'number'],
         ];
     }
@@ -49,7 +50,7 @@ class HotelSearch extends Hotel
         $query = Hotel::find();
 
         // add conditions that should always apply here
-        $query->joinWith(['invoice', 'customer']);
+        $query->joinWith(['invoice', 'customer', 'hotelSuppliers']);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -64,6 +65,11 @@ class HotelSearch extends Hotel
         $dataProvider->sort->attributes['customer'] = [
             'asc' => [Customer::tableName() . '.company' => SORT_ASC],
             'desc' => [Customer::tableName() . '.company' => SORT_DESC],
+        ];
+
+        $dataProvider->sort->attributes['hotelSuppliers'] = [
+            'asc' => [HotelSupplier::tableName() . '.hotelName' => SORT_ASC],
+            'desc' => [HotelSupplier::tableName() . '.hotelName' => SORT_DESC],
         ];
 
         $this->load($params);
@@ -103,6 +109,7 @@ class HotelSearch extends Hotel
             ->andFilterWhere(['like', Invoice::tableName() . '.invoiceNumber', $this->invoice])
             ->andFilterWhere(['like', Customer::tableName() . '.company', $this->customer])
             ->orFilterWhere(['like', Customer::tableName() . '.customerCode', $this->customer])
+            ->orFilterWhere(['like', HotelSupplier::tableName() . '.hotelName', $this->hotelSuppliers])
             ->andFilterWhere(['like', 'identificationNumber', $this->identificationNumber])
             ->andFilterWhere(['like', 'customerCategory', $this->customerCategory])
             ->andFilterWhere(['like', 'voucherNumber', $this->voucherNumber])

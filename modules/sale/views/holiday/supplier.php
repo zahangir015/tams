@@ -51,17 +51,20 @@ use yii\bootstrap4\Html;
                 <?= $form->field($holidaySupplier, "[$row]quantity")->textInput(['type' => 'number', 'value' => $holidaySupplier->isNewrecord ? 0 : $holidaySupplier->quantity, 'onChange' => 'calculateQuoteAmount()', 'min' => 0, 'class' => 'form-control quantity', 'readOnly' => !(bool)$holidaySupplier->isNewRecord])->label('Quantity') ?>
             </div>
             <div class="col-md">
-                <?= $form->field($holidaySupplier, "[$row]unitPrice")->textInput(['type' => 'number', 'value' => $holidaySupplier->isNewrecord ? 0 : $holidaySupplier->unitPrice, 'onChange' => 'calculateQuoteAmount()', 'min' => 0, 'class' => 'form-control perServicePrice'])->label('Quote Rate') ?>
+                <?= $form->field($holidaySupplier, "[$row]unitPrice")->textInput(['type' => 'number', 'value' => $holidaySupplier->isNewrecord ? 0 : $holidaySupplier->unitPrice, 'onChange' => 'calculateQuoteAmount()', 'min' => 0, 'class' => 'form-control perServicePrice'])->label('Total Quote') ?>
             </div>
             <div class="col-md">
                 <?= $form->field($holidaySupplier, "[$row]costOfSale")->textInput(['type' => 'number', 'value' => $holidaySupplier->isNewrecord ? 0 : $holidaySupplier->costOfSale, 'onChange' => 'calculateCostOfSale()', 'min' => 0, 'class' => 'form-control supplierCostOfSale']) ?>
             </div>
         </div>
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md">
+                <?= $form->field($holidaySupplier, "[$row]title")->textInput() ?>
+            </div>
+            <div class="col-md">
                 <?= $form->field($holidaySupplier, "[$row]type")->textInput(['readOnly' => 'readOnly', 'value' => ServiceConstant::ALL_SERVICE_TYPE['New']]) ?>
             </div>
-            <div class="col-md-8">
+            <div class="col-md">
                 <?= $form->field($holidaySupplier, "[$row]serviceDetails")->textInput(['maxlength' => true]); ?>
             </div>
         </div>
