@@ -53,7 +53,7 @@ class TicketRefund extends ActiveRecord
     public function rules(): array
     {
         return [
-            [['uid', 'ticketId', 'refId', 'refModel', 'refundRequestDate'], 'required'],
+            [['ticketId', 'refId', 'refModel', 'refundRequestDate', 'refundMedium', 'refundMethod', 'refundType'], 'required'],
             [['ticketId', 'refId', 'refundTransactionId', 'isRefunded', 'status'], 'integer'],
             [['refundRequestDate', 'refundDate'], 'safe'],
             [['refundStatus', 'refundMedium', 'refundMethod', 'remarks', 'refundType'], 'string'],
