@@ -24,7 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'invoice',
                 'value' => function ($model) {
-                    return $model->invoice->invoiceNumber;
+                    return ($model->invoice) ? $model->invoice->invoiceNumber : null;
                 },
                 'label' => 'Invoice',
             ],

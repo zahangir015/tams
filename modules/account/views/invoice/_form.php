@@ -39,7 +39,7 @@ $this->registerJsFile(
                             <label class="control-label" for="dateRange">Issue Date</label>
                             <?= $form->field($model, 'dateRange', [
                                 'options' => ['class' => 'drp-container mb-2']
-                            ])->widget(DateRangePicker::class, Utilities::getDateRangeWidgetOptions())->label(false) ?>
+                            ])->widget(DateRangePicker::class, \app\components\WidgetHelper::getDateRangeWidget())->label(false) ?>
                         </div>
                     </div>
                     <div class="separator separator-dashed my-10"></div>
