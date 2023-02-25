@@ -117,6 +117,15 @@ use yii\helpers\Url;
                             ['label' => 'Apply Leave', 'icon' => 'calendar-check', 'url' => ['/hrm/leave-application/apply']],
                         ]
                     ],
+                    [
+                        'label' => 'Attendance Management',
+                        'icon' => 'users',
+                        'badge' => '<span class="right badge badge-info">2</span>',
+                        'items' => [
+                            ['label' => 'Attendance', 'icon' => 'calendar-plus', 'url' => ['/hrm/attendance/index']],
+                            //['label' => 'Apply Leave', 'icon' => 'calendar-check', 'url' => ['/hrm/leave-application/apply']],
+                        ]
+                    ],
                     ['label' => 'SALES', 'header' => true],
                     ['label' => 'Providers', 'icon' => 'paper-plane', 'url' => ['/sale/provider/index']],
                     [

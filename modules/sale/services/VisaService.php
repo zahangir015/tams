@@ -4,9 +4,7 @@ namespace app\modules\sale\services;
 
 use app\components\GlobalConstant;
 use app\components\Utilities;
-use app\modules\account\models\Invoice;
 use app\modules\account\services\InvoiceService;
-use app\modules\account\services\LedgerService;
 use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\Customer;
 use app\modules\sale\models\visa\Visa;
@@ -14,6 +12,7 @@ use app\modules\sale\models\visa\VisaRefund;
 use app\modules\sale\models\visa\VisaSupplier;
 use app\modules\sale\models\Supplier;
 use app\modules\sale\repositories\VisaRepository;
+use app\modules\sales\components\ServiceComponent;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\db\Exception;
@@ -29,323 +28,231 @@ class VisaService
         $this->invoiceService = new InvoiceService();
     }
 
-    public function storeVisa(array $requestData): bool
+    public function storeVisa(array $requestData): array
     {
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
             if (!empty($requestData['Visa']) || !empty($requestData['VisaSupplier'])) {
-                $services = [];
-                $customer = Customer::findOne(['id' => $requestData['Visa']['customerId']]);
-                $visa = new Visa();
-                $invoice = null;
-
-                if ($visa->load($requestData)) {
-                    $visa->type = ServiceConstant::TYPE['New'];
-                    $visa->customerCategory = $customer->category;
-                    $visa = $this->visaRepository->store($visa);
-                    if ($visa->hasErrors()) {
-                        throw new Exception('Visa create failed - ' . Utilities::processErrorMessages($visa->getErrors()));
-                    }
-
-                    // Visa Supplier data process
-                    $visaSupplierProcessedData = self::visaSupplierProcess($visa, $requestData['VisaSupplier']);
-
-                    // Invoice details data process
-                    $services[] = [
-                        'refId' => $visa->id,
-                        'refModel' => Visa::class,
-                        'dueAmount' => $visa->quoteAmount,
-                        'paidAmount' => 0,
-                        'supplierData' => $visaSupplierProcessedData['serviceSupplierData']
-                    ];
-                    $supplierLedgerArray = $visaSupplierProcessedData['supplierLedgerArray'];
-
-                    // Invoice process and create
-                    if (isset($requestData['invoice'])) {
-                        $autoInvoiceCreateResponse = $this->invoiceService->autoInvoice($customer->id, $services, 1, Yii::$app->user);
-                        if ($autoInvoiceCreateResponse['error']) {
-                            throw new Exception('Auto Invoice creation failed - ' . $autoInvoiceCreateResponse['message']);
-                        }
-                        $invoice = $autoInvoiceCreateResponse['data'];
-                    }
-
-                    // Supplier Ledger process
-                    $ledgerRequestResponse = LedgerService::batchInsert($invoice, $supplierLedgerArray);
-                    if ($ledgerRequestResponse['error']) {
-                        throw new Exception('Supplier Ledger creation failed - ' . $ledgerRequestResponse['message']);
-                    }
-                } else {
-                    throw new Exception('Visa data loading failed - ' . Utilities::processErrorMessages($visa->getErrors()));
-                }
-
-                $dbTransaction->commit();
-                Yii::$app->session->setFlash('success', 'Visa added successfully');
-                return true;
+                throw new Exception('Visa and supplier data can not be empty.');
             }
+
+            // Visa data processing
+            $customer = Customer::findOne(['id' => $requestData['Visa']['customerId']]);
+            $visa = new Visa();
+            if (!$visa->load($requestData)) {
+                throw new Exception('Visa data loading failed - ' . Utilities::processErrorMessages($visa->getErrors()));
+            }
+            $visa->type = ServiceConstant::TYPE['New'];
+            $visa->customerCategory = $customer->category;
+            $visa = $this->visaRepository->store($visa);
+            if ($visa->hasErrors()) {
+                throw new Exception('Visa create failed - ' . Utilities::processErrorMessages($visa->getErrors()));
+            }
+
+            // Visa Supplier data process
+            foreach ($requestData['VisaSupplier'] as $singleSupplierArray) {
+                $visaSupplier = new VisaSupplier();
+                $visaSupplier->load(['VisaSupplier' => $singleSupplierArray]);
+                $visaSupplier->visaId = $visa->id;
+                $visaSupplier = $this->visaRepository->store($visaSupplier);
+                if ($visaSupplier->hasErrors()) {
+                    throw new Exception('Visa Supplier creation failed - ' . Utilities::processErrorMessages($visaSupplier->getErrors()));
+                }
+            }
+
+            // Invoice process and create
+            if (isset($requestData['invoice'])) {
+                // Invoice details data process
+                $services[] = [
+                    'refId' => $visa->id,
+                    'refModel' => Visa::class,
+                    'dueAmount' => $visa->quoteAmount,
+                    'paidAmount' => 0,
+                ];
+                // Auto invoice process
+                $autoInvoiceCreateResponse = $this->invoiceService->autoInvoice($customer->id, $services);
+                if ($autoInvoiceCreateResponse['error']) {
+                    throw new Exception('Auto Invoice creation failed - ' . $autoInvoiceCreateResponse['message']);
+                }
+            }
+
+            $dbTransaction->commit();
+            return ['error' => false, 'message' => 'Visa added successfully', 'model' => $visa];
+        } catch (Exception $e) {
+            $dbTransaction->rollBack();
+            return ['error' => true, 'message' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    public
+    function refundVisa(array $requestData, ActiveRecord $motherVisa): array
+    {
+        $dbTransaction = Yii::$app->db->beginTransaction();
+        try {
             // Visa and supplier data can not be empty
-            throw new Exception('Visa and supplier data can not be empty.');
-
-        } catch (Exception $e) {
-            $dbTransaction->rollBack();
-            Yii::$app->session->setFlash('danger', $e->getMessage() . ' - in file - ' . $e->getFile() . ' - in line -' . $e->getLine());
-            return false;
-        }
-    }
-
-    public function refundVisa(array $requestData, ActiveRecord $motherVisa): bool
-    {
-        $dbTransaction = Yii::$app->db->beginTransaction();
-        try {
             if (!empty($requestData['Visa']) || !empty($requestData['VisaSupplier'])) {
-                $customer = Customer::findOne(['id' => $requestData['Visa']['customerId']]);
-                $visa = new Visa();
-                if ($visa->load($requestData)) {
-                    $visa->customerCategory = $customer->category;
-                    $visa->invoiceId = $motherVisa->invoiceId;
-                    $visa = $this->visaRepository->store($visa);
-                    if ($visa->hasErrors()) {
-                        throw new Exception('Visa refund create failed - ' . Utilities::processErrorMessages($visa->getErrors()));
-                    }
-
-                    // Mother Visa update
-                    $motherVisa->type = ServiceConstant::TICKET_TYPE_FOR_REFUND['Refund Requested'];
-                    $motherVisa->refundRequestDate = $visa->refundRequestDate;
-                    $motherVisa = $this->visaRepository->store($motherVisa);
-                    if ($motherVisa->hasErrors()) {
-                        throw new Exception('Mother visa update failed - ' . Utilities::processErrorMessages($motherVisa->getErrors()));
-                    }
-
-                    // Visa Supplier data process
-                    $visaSupplierProcessedData = self::visaSupplierProcess($visa, $requestData['VisaSupplier']);
-
-                    // Create refund for customer and supplier
-                    $refundDataProcessResponse = self::processRefundModelData($visa, $requestData);
-                    if ($refundDataProcessResponse['error']) {
-                        throw new Exception('Visa refund creation failed - ' . $refundDataProcessResponse['message']);
-                    }
-
-                    // Invoice details data process
-                    $service = [
-                        'invoiceId' => $motherVisa->invoiceId ?? null,
-                        'refId' => $visa->id,
-                        'refModel' => Visa::class,
-                        'dueAmount' => ($visa->quoteAmount - $visa->receivedAmount),
-                        'paidAmount' => $visa->receivedAmount,
-                        'motherId' => $motherVisa->id,
-                        'supplierData' => $visaSupplierProcessedData['serviceSupplierData']
-                    ];
-                    $supplierLedgerArray = $visaSupplierProcessedData['supplierLedgerArray'];
-
-                    if ($motherVisa->invoiceId) {
-                        // Invoice process
-                        $autoInvoiceCreateResponse = $this->invoiceService->autoInvoiceForRefund($motherVisa->invoice, $service, Yii::$app->user);
-                        if ($autoInvoiceCreateResponse['error']) {
-                            throw new Exception('Auto Invoice creation failed - ' . $autoInvoiceCreateResponse['message']);
-                        }
-                    }
-
-                    // Supplier Ledger process
-                    /*$ledgerRequestResponse = LedgerService::batchInsert($invoice, $supplierLedgerArray);
-                    if ($ledgerRequestResponse['error']) {
-                        throw new Exception('Supplier Ledger creation failed - ' . $ledgerRequestResponse['message']);
-                    }*/
-
-                } else {
-                    throw new Exception('Visa data loading failed - ' . Utilities::processErrorMessages($visa->getErrors()));
-                }
-
-                $dbTransaction->commit();
-                Yii::$app->session->setFlash('success', 'Visa added successfully');
-                return true;
+                throw new Exception('Visa and supplier data can not be empty.');
             }
-            // Ticket and supplier data can not be empty
-            throw new Exception('Visa and supplier data can not be empty.');
+            // Visa data processing
+            $customer = Customer::findOne(['id' => $requestData['Visa']['customerId']]);
+            $visa = new Visa();
+            if (!$visa->load($requestData)) {
+                throw new Exception('Visa data loading failed - ' . Utilities::processErrorMessages($visa->getErrors()));
+            }
+            $visa->customerCategory = $customer->category;
+            $visa->invoiceId = $motherVisa->invoiceId;
+            $visa = $this->visaRepository->store($visa);
+            if ($visa->hasErrors()) {
+                throw new Exception('Visa refund create failed - ' . Utilities::processErrorMessages($visa->getErrors()));
+            }
 
+            // Mother Visa update
+            $motherVisa->type = ServiceConstant::TICKET_TYPE_FOR_REFUND['Refund Requested'];
+            $motherVisa->refundRequestDate = $visa->refundRequestDate;
+            $motherVisa = $this->visaRepository->store($motherVisa);
+            if ($motherVisa->hasErrors()) {
+                throw new Exception('Mother visa update failed - ' . Utilities::processErrorMessages($motherVisa->getErrors()));
+            }
+
+            // Visa Supplier data process
+            foreach ($requestData['VisaSupplier'] as $singleSupplierArray) {
+                $visaSupplier = new VisaSupplier();
+                $visaSupplier->load(['VisaSupplier' => $singleSupplierArray]);
+                $visaSupplier->visaId = $visa->id;
+                $visaSupplier = $this->visaRepository->store($visaSupplier);
+                if ($visaSupplier->hasErrors()) {
+                    throw new Exception('Visa Supplier storing failed - ' . Utilities::processErrorMessages($visaSupplier->getErrors()));
+                }
+            }
+
+            // Create refund for customer and supplier
+            $refundDataProcessResponse = self::processRefundModelData($visa, $requestData);
+            if ($refundDataProcessResponse['error']) {
+                throw new Exception('Visa refund creation failed - ' . $refundDataProcessResponse['message']);
+            }
+
+            if ($motherVisa->invoiceId) {
+                // Invoice details data process
+                $service = [
+                    'invoiceId' => $motherVisa->invoiceId ?? null,
+                    'refId' => $visa->id,
+                    'refModel' => Visa::class,
+                    'dueAmount' => ($visa->quoteAmount - $visa->receivedAmount),
+                    'paidAmount' => $visa->receivedAmount,
+                    'motherId' => $motherVisa->id,
+                ];
+
+                // Invoice process
+                $autoInvoiceCreateResponse = $this->invoiceService->autoInvoiceForRefund($motherVisa->invoice, $service, Yii::$app->user);
+                if ($autoInvoiceCreateResponse['error']) {
+                    throw new Exception('Auto Invoice creation failed - ' . $autoInvoiceCreateResponse['message']);
+                }
+            }
+
+            $dbTransaction->commit();
+            return ['error' => false, 'message' => 'Visa refund added successfully', 'model' => $visa];
         } catch (Exception $e) {
             $dbTransaction->rollBack();
-            Yii::$app->session->setFlash('danger', $e->getMessage() . ' - in file - ' . $e->getFile() . ' - in line -' . $e->getLine());
-            return false;
+            return ['error' => true, 'message' => $e->getMessage()];
         }
     }
 
-    public function updateVisa(array $requestData, ActiveRecord $visa): bool
+    public
+    function updateVisa(array $requestData, Visa $visa): array
     {
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
-            $invoice = $visa->invoice;
+            // Visa and supplier data can not be empty
+            if (!empty($requestData['Visa']) || !empty($requestData['VisaSupplier'])) {
+                throw new Exception('Visa and supplier data required.');
+            }
+
             $oldQuoteAmount = $visa->quoteAmount;
 
-            // Update Package
-            $visa->setAttributes($requestData['Visa']);
+            // Update Visa
+            if ($visa->load($requestData)){
+                throw new Exception('Visa data loading failed - ' . Utilities::processErrorMessages($visa->getErrors()));
+            }
             $visa->netProfit = self::calculateNetProfit($visa->quoteAmount, $visa->costOfSale);
-            $visa->paymentStatus = InvoiceService::checkAndDetectPaymentStatus($visa->quoteAmount, $visa->receivedAmount);
-            if (!$visa->save()) {
+            $visa->paymentStatus = (new InvoiceService())->checkAndDetectPaymentStatus($visa->quoteAmount, $visa->receivedAmount);
+            $visa = $this->visaRepository->store($visa);
+            if ($visa->hasErrors()) {
                 throw new Exception('Visa update failed - ' . Utilities::processErrorMessages($visa->getErrors()));
             }
 
-            //Create Package-Supplier Entity
-            $suppliers = $requestData['VisaSupplier'];
-            if (!$suppliers) {
-                throw new Exception('At least 1 Supplier is required');
-            }
-            $updateVisaSupplierResponse = self::updateVisaSupplier($visa, $suppliers, $invoice);
-            if (!$updateVisaSupplierResponse['status']) {
+            //Update Visa Supplier Entity
+            $updateVisaSupplierResponse = $this->updateVisaSupplier($visa, $requestData['VisaSupplier']);
+            if ($updateVisaSupplierResponse['error']) {
                 throw new Exception($updateVisaSupplierResponse['message']);
             }
 
-            if (!empty($invoice) && ($oldQuoteAmount != $visa->quoteAmount)) {
+            // If invoice created and quote updated then process related data
+            if (isset($visa->invoice) && ($oldQuoteAmount != $visa->quoteAmount)) {
                 //Update Invoice Entity
                 $services[] = [
                     'refId' => $visa->id,
-                    'refModel' => get_class($visa),
+                    'refModel' => Visa::class,
                     'due' => ($visa->quoteAmount - $visa->receivedAmount),
                     'amount' => $visa->receivedAmount
                 ];
 
-                $updateServiceQuoteResponse = ServiceComponent::updatedServiceRelatedData($visa, $services);
-                if ($updateServiceQuoteResponse['error']) {
-                    throw new Exception($updateServiceQuoteResponse['message']);
+                $serviceRelatedDataProcessResponse = SaleService::updatedServiceRelatedData($visa, $services);
+                if ($serviceRelatedDataProcessResponse['error']) {
+                    throw new Exception($serviceRelatedDataProcessResponse['message']);
                 }
             }
+
             $dbTransaction->commit();
-            Yii::$app->session->setFlash('success', 'Package has been updated successfully');
-            return true;
-        } catch (\Exception $e) {
+            return ['error' => false, 'message' => 'Visa updated successfully', 'model' => $visa];
+        } catch (Exception $e) {
             $dbTransaction->rollBack();
-            Yii::$app->session->setFlash('error', $e->getMessage());
-            return false;
+            return ['error' => true, 'message' => $e->getMessage()];
         }
     }
 
-    private static function updateVisaSupplier(ActiveRecord $visa, mixed $suppliers, mixed $invoice)
+    private function updateVisaSupplier(ActiveRecord $visa, mixed $visaSuppliers): array
     {
-        $selectedVisaSuppliers = [];
-        $deletedSuppliers = [];
-        $suppliersLedgerData = [];
-
-        foreach ($suppliers as $supplier) {
-            $checkSupplier = Supplier::findOne(['id' => $supplier['supplierId']]);
-            if (!$checkSupplier)
-                return ['status' => false, 'message' => 'Supplier not found'];
-
-            if (!empty($supplier['id'])) {
-                $model = VisaSupplier::findOne(['id' => $supplier['id']]);
-                $selectedVisaSuppliers[] = $model->id;
+        foreach ($visaSuppliers as $supplier) {
+            if (isset($supplier['id'])) {
+                $visaSupplier = $this->visaRepository->findOne(['id' => $supplier['id']], VisaSupplier::class, []);
             } else {
-                $model = new VisaSupplier();
-                $model->packageId = $visa->id;
-                $model->identificationNo = $visa->identificationNo;
-                $model->status = GlobalConstant::ACTIVE_STATUS;
-                $model->paymentStatus = ServiceConstant::PAYMENT_STATUS['Due'];
+                $visaSupplier = new VisaSupplier();
+                $visaSupplier->visaId = $visa->id;
+                $visaSupplier->status = GlobalConstant::ACTIVE_STATUS;
+                $visaSupplier->paymentStatus = ServiceConstant::PAYMENT_STATUS['Due'];
             }
-            $model->setAttributes($supplier);
-            $model->type = $supplier['type'] ?? ServiceConstant::TYPE['New'];
-            $model->supplierName = $checkSupplier->name;
-
-            if (!$model->save()) {
-                return ['status' => false, 'message' => 'Not saved Package Supplier Model- ' . Utils::processErrorMessages($model->getErrors())];
-            }
-            if (!empty($invoice)) {
-                // Supplier Ledger process
-                if (isset($suppliersLedgerData[$model->supplierId]['credit'])) {
-                    $suppliersLedgerData[$model->supplierId]['credit'] += $model->costOfSale;
-                } else {
-                    $suppliersLedgerData[$model->supplierId] = [
-                        'title' => 'Service Purchase',
-                        'reference' => 'Invoice Number - ' . $invoice->invoiceNumber,
-                        'refId' => $model->supplierId,
-                        'refModel' => Supplier::className(),
-                        'subRefId' => $invoice->id,
-                        'subRefModel' => $invoice::className(),
-                        'debit' => 0,
-                        'credit' => $model->costOfSale
-                    ];
-                }
-            }
-        }
-        $updateSuppliers = [];
-        if (!empty($invoice)) {
-            foreach ($visa->packageSuppliers as $oldVisaSupplier) {
-                if (!in_array($oldVisaSupplier->id, $selectedVisaSuppliers)) {
-                    $suppliersLedgerData[$oldVisaSupplier->supplierId] = [
-                        'title' => 'Service Purchase Update',
-                        'reference' => 'Invoice Number - ' . $invoice->invoiceNumber,
-                        'refId' => $oldVisaSupplier->supplierId,
-                        'refModel' => Supplier::class,
-                        'subRefId' => $invoice->id,
-                        'subRefModel' => $invoice::className(),
-                        'debit' => 0,
-                        'credit' => 0
-                    ];
-                    $deletedSuppliers[] = $oldVisaSupplier->id;
-                } else {
-                    if (isset($updateSuppliers[$oldVisaSupplier->supplierId]['costOfSale'])) {
-                        $updateSuppliers[$oldVisaSupplier->supplierId]['costOfSale'] += $oldVisaSupplier->costOfSale;
-                    } else {
-                        $updateSuppliers[$oldVisaSupplier->supplierId]['costOfSale'] = $oldVisaSupplier->costOfSale;
-                    }
-                }
-            }
-            foreach ($suppliersLedgerData as $key => $supplierLedger) {
-                if (isset($updateSuppliers[$key]['costOfSale']) && ($updateSuppliers[$key]['costOfSale'] == $supplierLedger['credit'])) {
-                    continue;
-                }
-                $ledgerRequestResponse = LedgerComponent::updateLedger($supplierLedger);
-                if (!$ledgerRequestResponse['status']) {
-                    return ['status' => false, 'message' => $ledgerRequestResponse['message']];
-                }
+            $visaSupplier->load(['VisaSupplier' => $supplier]);
+            $visaSupplier->type = $supplier['type'] ?? ServiceConstant::TYPE['New'];
+            $visaSupplier = $this->visaRepository->store($visaSupplier);
+            if ($visaSupplier->hasErrors()) {
+                return ['error' => true, 'message' => 'Visa Supplier update failed - ' . Utilities::processErrorMessages($visaSupplier->getErrors())];
             }
         }
 
-        // delete removed packageSuppliers
-        if (count($deletedSuppliers)) {
-            if (!VisaSupplier::updateAll(['status' => Constant::INACTIVE_STATUS, 'updatedBy' => Yii::$app->user->id, 'updatedAt' => Utils::convertToTimestamp(date('Y-m-d h:i:s'))], ['in', 'id', $deletedSuppliers])) {
-                return ['status' => false, 'message' => 'Package Supplier not deleted with given supplier id(s)'];
-            }
-        }
-
-        return ['status' => true, 'message' => 'Package Supplier Saved Successfully'];
+        return ['error' => false, 'message' => 'Visa Supplier updated successfully'];
     }
 
-    private function visaSupplierProcess(ActiveRecord $visa, mixed $visaSuppliers): array
+    private
+    function visaSupplierProcess(ActiveRecord $visa, mixed $visaSuppliers): array
     {
-        $serviceSupplierData = [];
-        $supplierLedgerArray = [];
         foreach ($visaSuppliers as $singleSupplierArray) {
             $visaSupplier = new VisaSupplier();
             $visaSupplier->load(['VisaSupplier' => $singleSupplierArray]);
             $visaSupplier->visaId = $visa->id;
             $visaSupplier = $this->visaRepository->store($visaSupplier);
             if ($visaSupplier->hasErrors()) {
-                throw new Exception('Visa Supplier creation failed - ' . Utilities::processErrorMessages($visaSupplier->getErrors()));
-            }
-
-            $serviceSupplierData[] = [
-                'refId' => $visaSupplier->id,
-                'refModel' => VisaSupplier::class,
-                'subRefModel' => Invoice::class,
-                'dueAmount' => $visaSupplier->costOfSale,
-                'paidAmount' => $visaSupplier->paidAmount,
-            ];
-
-            // Supplier ledger data process
-            if (isset($supplierLedgerArray[$visaSupplier->supplierId])) {
-                $supplierLedgerArray[$visaSupplier->supplierId]['credit'] += $visaSupplier->costOfSale;
-            } else {
-                $supplierLedgerArray[$visaSupplier->supplierId] = [
-                    'debit' => 0,
-                    'credit' => $visaSupplier->costOfSale,
-                    'refId' => $visaSupplier->supplierId,
-                    'refModel' => Supplier::class,
-                    'subRefId' => null
-                ];
+                return ['error' => true, 'message' => 'Visa Supplier creation failed - ' . Utilities::processErrorMessages($visaSupplier->getErrors())];
             }
         }
 
-        return ['serviceSupplierData' => $serviceSupplierData, 'supplierLedgerArray' => $supplierLedgerArray];
+        return ['error' => false, 'message' => 'Visa Supplier added successfully.'];
     }
 
-    private function processRefundModelData($visa, array $requestData): array
+    private
+    function processRefundModelData($visa, array $requestData): array
     {
         $referenceData = [
             [
@@ -395,17 +302,20 @@ class VisaService
         return ['error' => false, 'message' => 'Visa Refund process done.'];
     }
 
-    private static function calculateNetProfit(mixed $quoteAmount, mixed $costOfSale)
+    private
+    static function calculateNetProfit(mixed $quoteAmount, mixed $costOfSale)
     {
         return ($quoteAmount - $costOfSale);
     }
 
-    public function findVisa(string $uid, $withArray = []): ActiveRecord
+    public
+    function findVisa(string $uid, $withArray = []): ActiveRecord
     {
         return $this->visaRepository->findOne(['uid' => $uid], Visa::class, $withArray);
     }
 
-    public function findVisaSupplier(string $uid, $withArray = []): ActiveRecord
+    public
+    function findVisaSupplier(string $uid, $withArray = []): ActiveRecord
     {
         return $this->visaRepository->findOne($uid, VisaSupplier::class, $withArray);
     }

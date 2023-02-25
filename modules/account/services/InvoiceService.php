@@ -578,31 +578,6 @@ class InvoiceService
             if ($invoiceDetailResponse['error']) {
                 return $invoiceDetailResponse;
             }
-
-            // Service Payment Details entry   for customer
-            /*$servicePaymentDetailResponse = ServicePaymentDetail::storeServicePaymentDetail($service['refModel'], $service['refId'], $invoice::class, $invoice->id, $service['paidAmount'], $service['dueAmount'], $user);
-            if ($servicePaymentDetailResponse['error']) {
-                return ['error' => true, 'message' => $servicePaymentDetailResponse['message']];
-            }*/
-
-            // Service Payment Details entry  for Supplier
-            /*if (!empty($service['supplierData'])) {
-                foreach ($service['supplierData'] as $supplierDatum) {
-                    $servicePaymentDetailResponse = ServicePaymentDetail::storeServicePaymentDetail($supplierDatum['refModel'], $supplierDatum['refId'], $supplierDatum['subRefModel'] ?? null, $supplierDatum['subRefId'] ?? null, $supplierDatum['paidAmount'], $supplierDatum['dueAmount'], $user);
-                    if ($servicePaymentDetailResponse['error']) {
-                        return ['error' => true, 'message' => $servicePaymentDetailResponse['message']];
-                    }
-                }
-            }*/
-
-            // Update InvoiceId column in Service (Ticket/Hotel/Visa/Package etc) Model
-            /*$AllServices = $service['refModel']::find()->where(['id' => $service['refId']])->all();
-            foreach ($AllServices as $storedService) {
-                $storedService->invoiceId = $invoice->id;
-                if (!$storedService->save()) {
-                    return ['error' => true, 'message' => Utils::processErrorMessages($storedService->getErrors())];
-                }
-            }*/
             $updatableServices[] = [
                 'refModel' => $service['refModel'],
                 'query' => ['id' => $service['refId']],
@@ -651,54 +626,55 @@ class InvoiceService
         $totalInvoiceDueDifference = 0;
         // Invoice Detail update
         foreach ($services as $service) {
-            // Invoice details update
+            // Invoice details finding
             $invoiceDetail = InvoiceDetail::find()->where(['invoiceId' => $invoice->id, 'refId' => $service['refId'], 'refModel' => $service['refModel']])->one();
             if (!$invoiceDetail) {
                 return ['status' => false, 'message' => "Invoice Detail not found for sales Id: {$service['refId']} and sales: {$service['refModel']}"];
             }
-            //$invoiceDetailDueDifference = $service['due'] - $invoiceDetail->due;
-            if ($invoiceDetail->load(['InvoiceDetail' => $service])) {
-                if (!$invoiceDetail->save()) {
-                    return ['status' => false, 'message' => "Invoice Detail update failed - " . Utils::processErrorMessages($invoiceDetail->getErrors())];
+
+            // Invoice Detail update
+            if (!$invoiceDetail->load(['InvoiceDetail' => $service])) {
+                return ['status' => false, 'message' => "Invoice Detail loading failed - " . Utilities::processErrorMessages($invoiceDetail->getErrors())];
+            }
+            $invoiceDetail = (new InvoiceRepository)->store($invoiceDetail);
+            if ($invoiceDetail->hasErrors()) {
+                return ['error' => false, 'message' => "Invoice Detail update failed - " . Utilities::processErrorMessages($invoiceDetail->getErrors())];
+            }
+
+            if ($updateService) {
+                $paymentStatusResponse = self::checkAndDetectPaymentStatus($invoiceDetail->due, $invoiceDetail->amount);
+                $updateAbleServiceArray[] = [
+                    'refModel' => $invoiceDetail->refModel,
+                    'query' => [
+                        'id' => $invoiceDetail->refId,
+                        'invoiceId' => $invoice->id
+                    ],
+                    'data' => [
+                        'receivedAmount' => sprintf('%.2f', $invoiceDetail->amount),
+                        'paymentStatus' => $paymentStatusResponse,
+                        'updatedAt' => Utilities::convertToTimestamp(date('Y-m-d H:i:s')),
+                        'updatedBy' => Yii::$app->user->id
+                    ],
+                ];
+                $updateSaleResponse = SaleService::serviceUpdate($updateAbleServiceArray);
+                if ($updateSaleResponse['error']) {
+                    return ['error' => true, 'message' => "Service update failed - " . $updateSaleResponse['message']];
                 }
-                if ($updateService) {
-                    $paymentStatusResponse = self::checkAndDetectPaymentStatus($invoiceDetail->due, $invoiceDetail->amount);
-                    $updateAbleServiceArray[] = [
-                        'refModel' => $invoiceDetail->refModel,
-                        'query' => [
-                            'id' => $invoiceDetail->refId,
-                            'invoiceId' => $invoice->id
-                        ],
-                        'data' => [
-                            'receivedAmount' => sprintf('%.2f', $invoiceDetail->amount),
-                            'paymentStatus' => $paymentStatusResponse,
-                            'updatedAt' => Utilities::convertToTimestamp(date('Y-m-d H:i:s')),
-                            'updatedBy' => Yii::$app->user->id
-                        ],
-                    ];
-                    $updateSaleResponse = SaleService::serviceUpdate($updateAbleServiceArray);
-                    if (!$updateSaleResponse['status']) {
-                        return ['status' => false, 'message' => "Service not updated after updating Invoice Detail " . $updateSaleResponse['message']];
-                    }
-                }
-                //$totalInvoiceDueDifference += $invoiceDetailDueDifference;
-            } else {
-                return ['status' => false, 'message' => "Invoice Detail loading failed - " . Utils::processErrorMessages($invoiceDetail->getErrors())];
             }
         }
 
         // Invoice due update
         $invoiceDue = InvoiceDetail::find()->select([new Expression('SUM(due) AS due')])->where(['status' => 1])->andWhere(['invoiceId' => $invoiceDetail->invoiceId])->asArray()->one();
         if (!$invoiceDue) {
-            return ['status' => false, 'message' => 'Mother Invoice details update failed'];
+            return ['error' => true, 'message' => 'Invoice due calculation failed.'];
         }
-        $invoice = $invoiceDetail->invoice;
         $invoice->due = $invoiceDue['due'];
-        if (!$invoice->save()) {
-            return ['status' => false, 'message' => "Invoice update failed - " . Utils::processErrorMessages($invoice->getErrors())];
+        $invoice = (new InvoiceRepository)->store($invoice);
+        if (!$invoice->hasErrors()) {
+            return ['error' => true, 'message' => "Invoice due update failed - " . Utilities::processErrorMessages($invoice->getErrors())];
         }
 
-        return ['status' => true, 'message' => "Invoice updated successfully", 'data' => $invoice];
+        return ['error' => false, 'message' => "Invoice due updated successfully", 'data' => $invoice];
     }
 
 }

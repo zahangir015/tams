@@ -24,13 +24,13 @@ class LedgerService
     {
         //dd($ledgerArray);
         foreach ($ledgerArray as $value) {
-            $invoiceNumber = !$invoice ? '' : ' - '.$invoice->invoiceNumber;
+            $invoiceNumber = !$invoice ? '' : ' - ' . $invoice->invoiceNumber;
             $ledgerRequestData = [
-                'title' => 'Service Purchase'.$invoiceNumber,
+                'title' => 'Service Purchase' . $invoiceNumber,
                 'reference' => 'Invoice Number' . $invoiceNumber,
                 'refId' => $value['refId'],
                 'refModel' => $value['refModel'],
-                'subRefId' => isset($value['subRefId']) ? $value['subRefId'] :  (($invoice) ? $invoice->id : null),
+                'subRefId' => isset($value['subRefId']) ? $value['subRefId'] : (($invoice) ? $invoice->id : null),
                 'subRefModel' => isset($value['subRefModel']) ? $value['subRefModel'] : (($invoice) ? Invoice::class : null),
                 'debit' => $value['debit'],
                 'credit' => $value['credit']
@@ -151,5 +151,42 @@ class LedgerService
             return ['error' => true, 'message' => 'Ledger creation failed - ' . Utilities::processErrorMessages($newLedger->getErrors())];
         }
         return ['error' => false, 'message' => 'Supplier ledger processed successfully'];
+    }
+
+    public static function updateLedger($data): array
+    {
+        $currentLedger = Ledger::find()->where(['refId' => $data['refId'], 'refModel' => $data['refModel'], 'subRefId' => $data['subRefId'], 'subRefModel' => $data['subRefModel']])->one();
+        // if ledger not found create new one
+        if (!$currentLedger) {
+            return ['error' => true, 'message' => 'Ledger not found.'];
+        }
+
+        $oldBalance = $currentLedger->balance;
+        if (!$currentLedger->load(['Ledger' => $data])) {
+            return ['error' => true, 'message' => 'Ledger data loading failed.'];
+        }
+
+        $balanceDifference = ((double)$currentLedger->balance - (double)$oldBalance);
+
+        // Current Ledger update
+        $currentLedger->debit = $data['debit'];
+        $currentLedger->credit = $data['credit'];
+        $currentLedger->balance += $balanceDifference;
+        $currentLedger = (new LedgerRepository())->store($currentLedger);
+        if (!$currentLedger->hasErrors()) {
+            return ['error' => true, 'message' => 'Requested Ledger update failed ' . Utilities::processErrorMessages($currentLedger->errors)];
+        }
+
+        // Following ledger update
+        $ledgersToUpdate = Ledger::find()->where(['refId' => $data['refId'], 'refModel' => $data['refModel']])->andWhere(['>', 'id', $currentLedger->id])->orderBy(['id' => SORT_ASC])->all();
+        if (count($ledgersToUpdate)) {
+            $balanceEquation = ($balanceDifference > 0) ? 'balance + ' . $balanceDifference : 'balance -' . $balanceDifference;
+            $ledgerUpdateResponse = (new LedgerRepository())->update(['balance' => $balanceEquation], ['and', ['refId' => $data['refId']], ['refModel' => $data['refModel']], ['status' => GlobalConstant::ACTIVE_STATUS], ['>', 'id', $currentLedger->id]], Ledger::class);
+            if (!$ledgerUpdateResponse) {
+                return ['error' => true, 'message' => 'Following ledger update failed.'];
+            }
+        }
+
+        return ['status' => true, 'message' => 'Ledger updated successfully.'];
     }
 }

@@ -1,28 +1,25 @@
 <?php
 
-use app\components\GlobalConstant;
 use app\components\Utilities;
-use app\modules\hrm\models\LeaveApprovalPolicy;
+use app\modules\hrm\models\Attendance;
 use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use kartik\grid\ActionColumn;
 use kartik\grid\GridView;
-
 /** @var yii\web\View $this */
-/** @var app\modules\hrm\models\search\LeaveApprovalPolicySearch $searchModel */
+/** @var app\modules\hrm\models\search\AttendanceSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = Yii::t('app', 'Leave Approval Policies');
+$this->title = Yii::t('app', 'Attendances');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="leave-approval-policy-index">
+<div class="attendance-index">
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'kartik\grid\SerialColumn'],
-            'approvalLevel',
             [
                 'attribute' => 'employeeId',
                 'value' => function ($model) {
@@ -30,27 +27,26 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
                 'filter' => Select2::widget(Utilities::ajaxDropDown('LeaveApprovalPolicySearch[employeeId]', '/hrm/employee/get-employees', false, 'employeeId', 'employeeId'))
             ],
-            [
-                'attribute' => 'requestedTo',
-                'value' => function ($model) {
-                    return $model->requestedEmployee->firstName.' '.$model->requestedEmployee->lastName;
-                },
-                'filter' => Select2::widget(Utilities::ajaxDropDown('LeaveApprovalPolicySearch[requestedTo]', '/hrm/employee/get-employees', false, 'requestedTo', 'requestedTo'))
-            ],
-            [
-                'class' => '\kartik\grid\DataColumn',
-                'attribute' => 'status',
-                'value' => function ($model) {
-                    $labelClass = Utilities::statusLabelClass($model->status);
-                    $labelText = ($model->status) ? 'Active' : 'Inactive';
-                    return '<span class="right badge ' . $labelClass . '">' . $labelText . '</span>';
-                },
-                'filter' => GlobalConstant::DEFAULT_STATUS,
-                'format' => 'html',
-            ],
+            'date',
+            'entry',
+            'exit',
+            'isAbsent',
+            'isLate',
+            'isEarlyOut',
+            'totalLateInTime',
+            'totalEarlyOutTime',
+            'totalWorkingHours',
+            'overTime',
+            'remarks',
+            'employeeNote',
+            //'status',
+            //'createdBy',
+            //'updatedBy',
+            //'createdAt',
+            //'updatedAt',
             [
                 'class' => ActionColumn::class,
-                'urlCreator' => function ($action, LeaveApprovalPolicy $model, $key, $index, $column) {
+                'urlCreator' => function ($action, Attendance $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'uid' => $model->uid]);
                 },
                 'width' => '150px',
@@ -62,11 +58,11 @@ $this->params['breadcrumbs'][] = $this->title;
         'toolbar' => [
             [
                 'content' =>
-                    Html::a('<i class="fas fa-plus"></i>', ['/hrm/leave-approval-policy/create'], [
-                        'title' => Yii::t('app', 'Add Approval Policy'),
+                    Html::a('<i class="fas fa-plus"></i>', ['/hrm/attendance/create'], [
+                        'title' => Yii::t('app', 'Add Attendance'),
                         'class' => 'btn btn-success'
                     ]) . ' ' .
-                    Html::a('<i class="fas fa-redo"></i>', ['/hrm/leave-approval-policy/index'], [
+                    Html::a('<i class="fas fa-redo"></i>', ['/hrm/attendance/index'], [
                         'class' => 'btn btn-primary',
                         'title' => Yii::t('app', 'Reset Grid')
                     ]),

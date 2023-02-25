@@ -13,6 +13,7 @@ use app\modules\sale\services\VisaService;
 use app\modules\sale\models\visa\VisaSupplierSearch;
 use Yii;
 use yii\bootstrap4\ActiveForm;
+use yii\db\Exception;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
@@ -34,7 +35,7 @@ class VisaController extends ParentController
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $searchModel = new VisaSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
@@ -66,7 +67,7 @@ class VisaController extends ParentController
      *
      * @return string
      */
-    public function actionVisaSupplierList()
+    public function actionVisaSupplierList(): string
     {
         $searchModel = new VisaSupplierSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
@@ -79,11 +80,10 @@ class VisaController extends ParentController
 
     /**
      * Displays a single Visa model.
-     * @param int $id ID
+     * @param string $uid UID
      * @return string
-     * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView(string $uid)
+    public function actionView(string $uid): string
     {
         $model = $this->visaService->findVisa($uid, ['visaSuppliers', 'customer']);
         return $this->render('view', [
@@ -97,7 +97,7 @@ class VisaController extends ParentController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|Response
      */
-    public function actionCreate()
+    public function actionCreate(): Response|string
     {
         $model = new Visa();
         $visaSupplier = new VisaSupplier();
@@ -121,8 +121,9 @@ class VisaController extends ParentController
      * Creates a new Visa model.
      * If creation is successful, the browser will be redirected to the 'refund list' page.
      * @return string|Response
+     * @throws Exception
      */
-    public function actionRefund(string $uid)
+    public function actionRefund(string $uid): Response|string
     {
         $model = new Visa();
         $motherVisa = $this->visaService->findVisa($uid, ['visaSuppliers', 'invoice', 'customer']);
@@ -148,11 +149,10 @@ class VisaController extends ParentController
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param string $uid UID
      * @return string|Response
-     * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate(string $uid)
+    public function actionUpdate(string $uid): Response|string
     {
-        $model = $this->visaService->findVisa($uid, ['visaSuppliers', 'customer']);
+        $model = $this->visaService->findVisa($uid, ['visaSuppliers', 'customer', 'invoice']);
 
         if ($this->request->isPost) {
             // Update Visa
@@ -174,7 +174,7 @@ class VisaController extends ParentController
      * @return Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete(string $uid)
+    public function actionDelete(string $uid): Response
     {
         $this->findVisa($uid)->delete();
 

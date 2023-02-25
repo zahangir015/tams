@@ -18,22 +18,17 @@ use yii\bootstrap4\Html;
             <span class="card-icon"><i class="flaticon2-paper-plane text-primary"></i></span>
             <h5 class="card-label" id="card-label-<?= $row ?>">Visa Supplier <?= ($row + 1) ?></h5>
         </div>
-        <div class="card-toolbar float-right">
-                <a href="#" class="btn btn-danger btn-sm" onclick="remove(<?= $row ?>)">
-                    <span class="fa fa-times-circle"></span>
-                </a>
-        </div>
     </div>
     <div class="card-body">
         <div class="row">
             <div class="col-md">
-                <?= $form->field($visaSupplier, "[$row]supplierId")->widget(Select2::class, Utilities::ajaxDropDown('supplierId', '/sale/supplier/get-suppliers', true, 'supplierId'.$row, 'supplier'))->label('Supplier') ?>
+                <?= $form->field($visaSupplier, "[$row]supplierId")->widget(Select2::class, Utilities::ajaxDropDown('supplierId', '/sale/supplier/get-suppliers', true, 'supplierId'.$row, 'supplier', [$visaSupplier->supplier->id => $visaSupplier->supplier->company]))->label('Supplier') ?>
             </div>
             <div class="col-md">
                 <?= $form->field($visaSupplier, "[$row]supplierRef")->textInput(['maxlength' => true]); ?>
             </div>
             <div class="col-md">
-                <?= $form->field($visaSupplier, "[$row]countryId")->widget(Select2::class, Utilities::ajaxDropDown('countryId', '/country/get-countries', true, 'countryId'.$row, 'country'))->label('Country') ?>
+                <?= $form->field($visaSupplier, "[$row]countryId")->widget(Select2::class, Utilities::ajaxDropDown('countryId', '/country/get-countries', true, 'countryId'.$row, 'country',[$visaSupplier->country->id => $visaSupplier->country->name]))->label('Country') ?>
             </div>
         </div>
         <div class="row calcData">
@@ -60,10 +55,11 @@ use yii\bootstrap4\Html;
         </div>
         <div class="row">
             <div class="col-md-4">
-                <?= $form->field($visaSupplier, "[$row]securityDeposit")->textInput(['type' => 'number', 'value' => 0, 'min' => 0, 'class' => 'form-control']) ?>
+                <?= $form->field($visaSupplier, "[$row]securityDeposit")->textInput(['type' => 'number', 'value' => $visaSupplier->isNewRecord ? 0 : $visaSupplier->securityDeposit, 'min' => 0, 'class' => 'form-control']) ?>
             </div>
             <div class="col-md-8">
                 <?= $form->field($visaSupplier, "[$row]serviceDetails")->textInput() ?>
+                <?= $form->field($visaSupplier, "[$row]id")->hiddenInput()->label(false) ?>
             </div>
         </div>
     </div>

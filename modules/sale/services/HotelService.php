@@ -46,318 +46,223 @@ class HotelService
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
             if (!empty($requestData['Hotel']) || !empty($requestData['HotelSupplier'])) {
-                $services = [];
-                $supplierLedgerArray = [];
-                $invoice = null;
-                $customer = Customer::findOne(['id' => $requestData['Hotel']['customerId']]);
-                $hotel = new Hotel();
-                if ($hotel->load($requestData)) {
-                    $hotel->type = ServiceConstant::TYPE['New'];
-                    $hotel->customerCategory = $customer->category;
-                    $hotel = $this->hotelRepository->store($hotel);
-                    if ($hotel->hasErrors()) {
-                        throw new Exception('Hotel create failed - ' . Utilities::processErrorMessages($hotel->getErrors()));
-                    }
-
-                    // Hotel Supplier data process
-                    $hotelSupplierProcessedData = self::hotelSupplierProcess($hotel, $requestData['HotelSupplier']);
-
-                    // Invoice details data process
-                    $services[] = [
-                        'refId' => $hotel->id,
-                        'refModel' => Hotel::class,
-                        'dueAmount' => $hotel->quoteAmount,
-                        'paidAmount' => 0,
-                        'supplierData' => $hotelSupplierProcessedData['serviceSupplierData']
-                    ];
-                    $supplierLedgerArray = $hotelSupplierProcessedData['supplierLedgerArray'];
-
-                    // Invoice process and create
-                    if (isset($requestData['invoice'])) {
-                        $autoInvoiceCreateResponse = $this->invoiceService->autoInvoice($customer->id, $services);
-                        if ($autoInvoiceCreateResponse['error']) {
-                            throw new Exception('Auto Invoice creation failed - ' . $autoInvoiceCreateResponse['message']);
-                        }
-                        $invoice = $autoInvoiceCreateResponse['data'];
-                    }
-
-                    // Supplier Ledger process
-                    $ledgerRequestResponse = LedgerService::batchInsert($invoice, $supplierLedgerArray);
-                    if ($ledgerRequestResponse['error']) {
-                        throw new Exception('Supplier Ledger creation failed - ' . $ledgerRequestResponse['message']);
-                    }
-                } else {
-                    throw new Exception('Hotel data loading failed - ' . Utilities::processErrorMessages($hotel->getErrors()));
-                }
-
-                $dbTransaction->commit();
-                Yii::$app->session->setFlash('success', 'Hotel added successfully');
-                return true;
+                throw new Exception('Hotel and supplier data can not be empty.');
             }
+            // Hotel Data process
+            $customer = Customer::findOne(['id' => $requestData['Hotel']['customerId']]);
+            $hotel = new Hotel();
+            if (!$hotel->load($requestData)) {
+                throw new Exception('Hotel data loading failed - ' . Utilities::processErrorMessages($hotel->getErrors()));
+            }
+            $hotel->type = ServiceConstant::TYPE['New'];
+            $hotel->customerCategory = $customer->category;
+            $hotel = $this->hotelRepository->store($hotel);
+            if ($hotel->hasErrors()) {
+                throw new Exception('Hotel create failed - ' . Utilities::processErrorMessages($hotel->getErrors()));
+            }
+
+            // Hotel Supplier data process
+            foreach ($requestData['HotelSupplier'] as $singleSupplierArray) {
+                $hotelSupplier = new HotelSupplier();
+                $hotelSupplier->load(['HotelSupplier' => $singleSupplierArray]);
+                $hotelSupplier->hotelId = $hotel->id;
+                $hotelSupplier = $this->hotelRepository->store($hotelSupplier);
+                if ($hotelSupplier->hasErrors()) {
+                    throw new Exception('Hotel Supplier refund creation failed - ' . Utilities::processErrorMessages($hotelSupplier->getErrors()));
+                }
+            }
+
+            // Invoice process and create
+            if (isset($requestData['invoice'])) {
+                // Invoice details data process
+                $services[] = [
+                    'refId' => $hotel->id,
+                    'refModel' => Hotel::class,
+                    'dueAmount' => $hotel->quoteAmount,
+                    'paidAmount' => 0,
+                ];
+
+                // Auto Invoice process
+                $autoInvoiceCreateResponse = $this->invoiceService->autoInvoice($customer->id, $services);
+                if ($autoInvoiceCreateResponse['error']) {
+                    throw new Exception('Auto Invoice creation failed - ' . $autoInvoiceCreateResponse['message']);
+                }
+            }
+
+            $dbTransaction->commit();
+            Yii::$app->session->setFlash('success', 'Hotel added successfully');
+            return true;
+        } catch (Exception $e) {
+            $dbTransaction->rollBack();
+            Yii::$app->session->setFlash('danger', $e->getMessage());
+            return false;
+        }
+    }
+
+    public function refundHotel(array $requestData, Hotel $motherHotel): bool
+    {
+        $dbTransaction = Yii::$app->db->beginTransaction();
+        try {
             // Hotel and supplier data can not be empty
-            throw new Exception('Hotel and supplier data can not be empty.');
-        } catch (Exception $e) {
-            $dbTransaction->rollBack();
-            Yii::$app->session->setFlash('danger', $e->getMessage() . ' - in file - ' . $e->getFile() . ' - in line -' . $e->getLine());
-            return false;
-        }
-    }
-
-    public function refundHotel(array $requestData, ActiveRecord $motherHotel): bool
-    {
-        $dbTransaction = Yii::$app->db->beginTransaction();
-        try {
             if (!empty($requestData['Hotel']) || !empty($requestData['HotelSupplier'])) {
-                $customer = Customer::findOne(['id' => $requestData['Hotel']['customerId']]);
-                $hotel = new Hotel();
-                if ($hotel->load($requestData)) {
-                    $hotel->customerCategory = $customer->category;
-                    $hotel->invoiceId = $motherHotel->invoiceId;
-                    $hotel = $this->hotelRepository->store($hotel);
-                    if ($hotel->hasErrors()) {
-                        throw new Exception('Hotel refund creation failed - ' . Utilities::processErrorMessages($hotel->getErrors()));
-                    }
 
-                    // Mother Hotel update
-                    $motherHotel->type = ServiceConstant::TICKET_TYPE_FOR_REFUND['Refund Requested'];
-                    $motherHotel->refundRequestDate = $hotel->refundRequestDate;
-                    $motherHotel = $this->hotelRepository->store($motherHotel);
-                    if ($motherHotel->hasErrors()) {
-                        throw new Exception('Mother hotel update failed - ' . Utilities::processErrorMessages($motherHotel->getErrors()));
-                    }
-
-                    // Hotel Supplier data process
-                    $hotelSupplierProcessedData = self::hotelSupplierProcess($hotel, $requestData['HotelSupplier']);
-
-                    // Create refund for customer and supplier
-                    $refundDataProcessResponse = self::processRefundModelData($hotel, $requestData);
-                    if ($refundDataProcessResponse['error']) {
-                        throw new Exception('Hotel refund creation failed - ' . $refundDataProcessResponse['message']);
-                    }
-
-                    // Invoice details data process
-                    $service = [
-                        'invoiceId' => $motherHotel->invoiceId ?? null,
-                        'refId' => $hotel->id,
-                        'refModel' => Hotel::class,
-                        'dueAmount' => ($hotel->quoteAmount - $hotel->receivedAmount),
-                        'paidAmount' => $hotel->receivedAmount,
-                        'motherId' => $motherHotel->id,
-                        'supplierData' => $hotelSupplierProcessedData['serviceSupplierData']
-                    ];
-                    $supplierLedgerArray = $hotelSupplierProcessedData['supplierLedgerArray'];
-
-                    if ($motherHotel->invoiceId) {
-                        // Invoice process
-                        $autoInvoiceCreateResponse = $this->invoiceService->autoInvoiceForRefund($motherHotel->invoice, $service, Yii::$app->user);
-                        if ($autoInvoiceCreateResponse['error']) {
-                            throw new Exception('Auto Invoice detail creation failed - ' . $autoInvoiceCreateResponse['message']);
-                        }
-                    }
-
-                    // Supplier Ledger process
-                    /*$ledgerRequestResponse = LedgerService::batchInsert($invoice, $supplierLedgerArray);
-                    if ($ledgerRequestResponse['error']) {
-                        throw new Exception('Supplier Ledger creation failed - ' . $ledgerRequestResponse['message']);
-                    }*/
-                    $dbTransaction->commit();
-                    Yii::$app->session->setFlash('success', 'Hotel added successfully');
-                    return true;
-                } else {
-                    throw new Exception('Hotel data loading failed - ' . Utilities::processErrorMessages($hotel->getErrors()));
-                }
-            }
-            // Ticket and supplier data can not be empty
-            throw new Exception('Hotel and supplier data can not be empty.');
-        } catch (Exception $e) {
-            $dbTransaction->rollBack();
-            Yii::$app->session->setFlash('danger', $e->getMessage() . ' - in file - ' . $e->getFile() . ' - in line -' . $e->getLine());
-            return false;
-        }
-    }
-
-    public function updateHotel(array $requestData, ActiveRecord $hotel): bool
-    {
-        $dbTransaction = Yii::$app->db->beginTransaction();
-        try {
-            if (empty($requestData['Hotel']) || empty($requestData['HotelSupplier'])) {
                 throw new Exception('Hotel and supplier data can not be empty.');
             }
 
-            $oldQuoteAmount = $hotel->quoteAmount;
-            $oldReceivedAmount = $hotel->receivedAmount;
-            $oldCustomerId = $hotel->customerId;
-            $oldCostOfSale = $hotel->costOfSale;
-
-            // Update Hotel Model
-            $hotel->load($requestData);
-            $hotel->netProfit = self::calculateNetProfit($hotel->quoteAmount, $hotel->costOfSale);
-            $hotel->paymentStatus = InvoiceService::checkAndDetectPaymentStatus($hotel->quoteAmount, $hotel->receivedAmount);
-            if (!$hotel->save()) {
-                throw new Exception('Hotel update failed - ' . Utilities::processErrorMessages($hotel->getErrors()));
+            $customer = Customer::findOne(['id' => $requestData['Hotel']['customerId']]);
+            $hotel = new Hotel();
+            if (!$hotel->load($requestData)) {
+                throw new Exception('Hotel data loading failed - ' . Utilities::processErrorMessages($hotel->getErrors()));
+            }
+            $hotel->customerCategory = $customer->category;
+            $hotel->invoiceId = $motherHotel->invoiceId;
+            $hotel = $this->hotelRepository->store($hotel);
+            if ($hotel->hasErrors()) {
+                throw new Exception('Hotel refund creation failed - ' . Utilities::processErrorMessages($hotel->getErrors()));
             }
 
-            // TODO Invoice update
-            $quoteAmountDiff = ($hotel->quoteAmount - $oldQuoteAmount);
-            if ($hotel->invoiceId && $quoteAmountDiff) {
-                $invoiceUpdateResponse = InvoiceService::updateInvoice($hotel->invoice, $hotel, $quoteAmountDiff);
+            // Mother Hotel update
+            $motherHotel->type = ServiceConstant::TICKET_TYPE_FOR_REFUND['Refund Requested'];
+            $motherHotel->refundRequestDate = $hotel->refundRequestDate;
+            $motherHotel = $this->hotelRepository->store($motherHotel);
+            if ($motherHotel->hasErrors()) {
+                throw new Exception('Mother hotel update failed - ' . Utilities::processErrorMessages($motherHotel->getErrors()));
             }
-            // TODO Customer ledger update
-            // TODO Service Payment timeline update
 
+            // Hotel Supplier data process
+            foreach ($requestData['HotelSupplier'] as $singleSupplierArray) {
+                $hotelSupplier = new HotelSupplier();
+                $hotelSupplier->load(['HotelSupplier' => $singleSupplierArray]);
+                $hotelSupplier->hotelId = $hotel->id;
+                $hotelSupplier = $this->hotelRepository->store($hotelSupplier);
+                if ($hotelSupplier->hasErrors()) {
+                    throw new Exception('Hotel Supplier refund creation failed - ' . Utilities::processErrorMessages($hotelSupplier->getErrors()));
+                }
+            }
 
-            // Update Hotel Supplier
-            // TODO Supplier ledger update
-            // TODO Bill update
-            $hotelSupplierProcessedData = self::updateHotelSupplier($hotel, $requestData['HotelSupplier'],);
-            // Invoice details data process
-            $services[] = [
-                'invoiceId' => $motherHotel->invoiceId ?? null,
-                'refId' => $hotel->id,
-                'refModel' => Hotel::class,
-                'dueAmount' => ($hotel->quoteAmount - $hotel->receivedAmount),
-                'paidAmount' => $hotel->receivedAmount,
-                'supplierData' => $hotelSupplierProcessedData['serviceSupplierData']
-            ];
-            $supplierLedgerArray = $hotelSupplierProcessedData['supplierLedgerArray'];
+            // Create refund for customer and supplier
+            $refundDataProcessResponse = self::processRefundModelData($hotel, $requestData);
+            if ($refundDataProcessResponse['error']) {
+                throw new Exception('Hotel refund creation failed - ' . $refundDataProcessResponse['message']);
+            }
 
+            // Invoice process
+            if ($motherHotel->invoiceId) {
+                // Invoice details data process
+                $service = [
+                    'invoiceId' => $motherHotel->invoiceId ?? null,
+                    'refId' => $hotel->id,
+                    'refModel' => Hotel::class,
+                    'dueAmount' => ($hotel->quoteAmount - $hotel->receivedAmount),
+                    'paidAmount' => $hotel->receivedAmount,
+                    'motherId' => $motherHotel->id,
+                ];
+
+                $autoInvoiceCreateResponse = $this->invoiceService->autoInvoiceForRefund($motherHotel->invoice, $service, Yii::$app->user);
+                if ($autoInvoiceCreateResponse['error']) {
+                    throw new Exception('Auto Invoice detail creation failed - ' . $autoInvoiceCreateResponse['message']);
+                }
+            }
 
             $dbTransaction->commit();
-            Yii::$app->session->setFlash('success', 'Package has been updated successfully');
+            Yii::$app->session->setFlash('success', 'Hotel added successfully');
             return true;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $dbTransaction->rollBack();
-            Yii::$app->session->setFlash('error', $e->getMessage());
+            Yii::$app->session->setFlash('danger', $e->getMessage() . ' - in file - ' . $e->getFile() . ' - in line -' . $e->getLine());
             return false;
         }
     }
 
-    private static function updateHotelSupplier(ActiveRecord $hotel, mixed $suppliers, mixed $invoice)
+    public
+    function updateHotel(array $requestData, Hotel $hotel): array
     {
-        $selectedPackageSuppliers = [];
-        $deletedSuppliers = [];
-        $suppliersLedgerData = [];
-
-        foreach ($suppliers as $supplier) {
-            $checkSupplier = Supplier::findOne(['id' => $supplier['supplierId']]);
-            if (!$checkSupplier)
-                return ['status' => false, 'message' => 'Supplier not found'];
-
-            if (!empty($packageSupplier['id'])) {
-                $model = HotelSupplier::findOne(['id' => $packageSupplier['id']]);
-                $selectedPackageSuppliers[] = $model->id;
-            } else {
-                $model = new HotelSupplier();
-                $model->packageId = $hotel->id;
-                $model->identificationNo = $hotel->identificationNumber;
-                $model->status = Constant::ACTIVE_STATUS;
-                $model->paymentStatus = ServiceConstant::PAYMENT_STATUS['Due'];
+        $dbTransaction = Yii::$app->db->beginTransaction();
+        try {
+            // Hotel and supplier data can not be empty
+            if (!empty($requestData['Hotel']) || !empty($requestData['HotelSupplier'])) {
+                throw new Exception('Hotel and supplier data required.');
             }
-            $model->setAttributes($packageSupplier);
-            $model->type = $packageSupplier['type'] ?? ServiceConstant::TYPE['New'];
-            $model->supplierName = $checkSupplier->name;
 
-            if (!$model->save()) {
-                return ['status' => false, 'message' => 'Not saved Package Supplier Model- ' . Utils::processErrorMessages($model->getErrors())];
+            $oldQuoteAmount = $hotel->quoteAmount;
+
+            // Update Hotel
+            if ($hotel->load($requestData)){
+                throw new Exception('Hotel data loading failed - ' . Utilities::processErrorMessages($hotel->getErrors()));
             }
-            if (!empty($invoice)) {
-                // Supplier Ledger process
-                if (isset($suppliersLedgerData[$model->supplierId]['credit'])) {
-                    $suppliersLedgerData[$model->supplierId]['credit'] += $model->costOfSale;
-                } else {
-                    $suppliersLedgerData[$model->supplierId] = [
-                        'title' => 'Service Purchase',
-                        'reference' => 'Invoice Number - ' . $invoice->invoiceNumber,
-                        'refId' => $model->supplierId,
-                        'refModel' => Supplier::className(),
-                        'subRefId' => $invoice->id,
-                        'subRefModel' => $invoice::className(),
-                        'debit' => 0,
-                        'credit' => $model->costOfSale
-                    ];
+            $hotel->netProfit = self::calculateNetProfit($hotel->quoteAmount, $hotel->costOfSale);
+            $hotel->paymentStatus = (new InvoiceService())->checkAndDetectPaymentStatus($hotel->quoteAmount, $hotel->receivedAmount);
+            $hotel = $this->hotelRepository->store($hotel);
+            if ($hotel->hasErrors()) {
+                throw new Exception('Hotel update failed - ' . Utilities::processErrorMessages($hotel->getErrors()));
+            }
+
+            //Update Hotel Supplier Entity
+            $updateHotelSupplierResponse = $this->updateHotelSupplier($hotel, $requestData['HotelSupplier']);
+            if ($updateHotelSupplierResponse['error']) {
+                throw new Exception($updateHotelSupplierResponse['message']);
+            }
+
+            // If invoice created and quote updated then process related data
+            if (isset($hotel->invoice) && ($oldQuoteAmount != $hotel->quoteAmount)) {
+                //Update Invoice Entity
+                $services[] = [
+                    'refId' => $hotel->id,
+                    'refModel' => Hotel::class,
+                    'due' => ($hotel->quoteAmount - $hotel->receivedAmount),
+                    'amount' => $hotel->receivedAmount
+                ];
+
+                $serviceRelatedDataProcessResponse = SaleService::updatedServiceRelatedData($hotel, $services);
+                if ($serviceRelatedDataProcessResponse['error']) {
+                    throw new Exception($serviceRelatedDataProcessResponse['message']);
                 }
             }
+
+            $dbTransaction->commit();
+            return ['error' => false, 'message' => 'Hotel updated successfully', 'model' => $hotel];
+        } catch (Exception $e) {
+            $dbTransaction->rollBack();
+            return ['error' => true, 'message' => $e->getMessage()];
         }
-        $updateSuppliers = [];
-        if (!empty($invoice)) {
-            foreach ($package->packageSuppliers as $oldPackageSupplier) {
-                if (!in_array($oldPackageSupplier->id, $selectedPackageSuppliers)) {
-                    $suppliersLedgerData[$oldPackageSupplier->supplierId] = [
-                        'title' => 'Service Purchase Update',
-                        'reference' => 'Invoice Number - ' . $invoice->invoiceNumber,
-                        'refId' => $oldPackageSupplier->supplierId,
-                        'refModel' => Supplier::class,
-                        'subRefId' => $invoice->id,
-                        'subRefModel' => $invoice::className(),
-                        'debit' => 0,
-                        'credit' => 0
-                    ];
-                    $deletedSuppliers[] = $oldPackageSupplier->id;
-                } else {
-                    if (isset($updateSuppliers[$oldPackageSupplier->supplierId]['costOfSale'])) {
-                        $updateSuppliers[$oldPackageSupplier->supplierId]['costOfSale'] += $oldPackageSupplier->costOfSale;
-                    } else {
-                        $updateSuppliers[$oldPackageSupplier->supplierId]['costOfSale'] = $oldPackageSupplier->costOfSale;
-                    }
-                }
-            }
-            foreach ($suppliersLedgerData as $key => $supplierLedger) {
-                if (isset($updateSuppliers[$key]['costOfSale']) && ($updateSuppliers[$key]['costOfSale'] == $supplierLedger['credit'])) {
-                    continue;
-                }
-                $ledgerRequestResponse = LedgerComponent::updateLedger($supplierLedger);
-                if (!$ledgerRequestResponse['status']) {
-                    return ['status' => false, 'message' => $ledgerRequestResponse['message']];
-                }
-            }
-        }
-
-        // delete removed packageSuppliers
-        if (count($deletedSuppliers)) {
-            if (!PackageSupplier::updateAll(['status' => Constant::INACTIVE_STATUS, 'updatedBy' => Yii::$app->user->id, 'updatedAt' => Utils::convertToTimestamp(date('Y-m-d h:i:s'))], ['in', 'id', $deletedSuppliers])) {
-                return ['status' => false, 'message' => 'Package Supplier not deleted with given supplier id(s)'];
-            }
-        }
-
-        return ['status' => true, 'message' => 'Package Supplier Saved Successfully'];
     }
 
-    private function hotelSupplierProcess(ActiveRecord $hotel, mixed $hotelSuppliers): array
+    private function updateHotelSupplier(ActiveRecord $hotel, mixed $hotelSuppliers): array
     {
-        $serviceSupplierData = [];
-        $supplierLedgerArray = [];
+        foreach ($hotelSuppliers as $supplier) {
+            if (isset($supplier['id'])) {
+                $hotelSupplier = $this->hotelRepository->findOne(['id' => $supplier['id']], HotelSupplier::class, []);
+            } else {
+                $hotelSupplier = new HotelSupplier();
+                $hotelSupplier->hotelId = $hotel->id;
+                $hotelSupplier->status = GlobalConstant::ACTIVE_STATUS;
+                $hotelSupplier->paymentStatus = ServiceConstant::PAYMENT_STATUS['Due'];
+            }
+            $hotelSupplier->load(['HotelSupplier' => $supplier]);
+            $hotelSupplier->type = $supplier['type'] ?? ServiceConstant::TYPE['New'];
+            $hotelSupplier = $this->hotelRepository->store($hotelSupplier);
+            if ($hotelSupplier->hasErrors()) {
+                return ['error' => true, 'message' => 'Hotel Supplier update failed - ' . Utilities::processErrorMessages($hotelSupplier->getErrors())];
+            }
+        }
+
+        return ['error' => false, 'message' => 'Hotel Supplier updated successfully'];
+    }
+
+    private
+    function hotelSupplierProcess(ActiveRecord $hotel, mixed $hotelSuppliers): array
+    {
         foreach ($hotelSuppliers as $singleSupplierArray) {
             $hotelSupplier = new HotelSupplier();
             $hotelSupplier->load(['HotelSupplier' => $singleSupplierArray]);
             $hotelSupplier->hotelId = $hotel->id;
             $hotelSupplier = $this->hotelRepository->store($hotelSupplier);
             if ($hotelSupplier->hasErrors()) {
-                throw new Exception('Hotel Supplier refund creation failed - ' . Utilities::processErrorMessages($hotelSupplier->getErrors()));
-            }
-
-            $serviceSupplierData[] = [
-                'refId' => $hotelSupplier->id,
-                'refModel' => HotelSupplier::class,
-                'subRefModel' => Invoice::class,
-                'dueAmount' => $hotelSupplier->costOfSale,
-                'paidAmount' => $hotelSupplier->paidAmount,
-            ];
-
-            // Supplier ledger data process
-            if (isset($supplierLedgerArray[$hotelSupplier->supplierId])) {
-                $supplierLedgerArray[$hotelSupplier->supplierId]['credit'] += $hotelSupplier->costOfSale;
-            } else {
-                $supplierLedgerArray[$hotelSupplier->supplierId] = [
-                    'debit' => 0,
-                    'credit' => $hotelSupplier->costOfSale,
-                    'refId' => $hotelSupplier->supplierId,
-                    'refModel' => Supplier::class,
-                    'subRefId' => null
-                ];
+                return ['error' => true, 'message' => 'Hotel Supplier creation failed - ' . Utilities::processErrorMessages($hotelSupplier->getErrors())];
             }
         }
 
-        return ['serviceSupplierData' => $serviceSupplierData, 'supplierLedgerArray' => $supplierLedgerArray];
+        return ['error' => false, 'message' => 'Hotel Supplier added successfully.'];
     }
 
     private function processRefundModelData(ActiveRecord $hotel, array $requestData): array

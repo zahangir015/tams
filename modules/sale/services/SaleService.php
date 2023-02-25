@@ -8,6 +8,7 @@ use app\modules\account\models\ServicePaymentTimeline;
 use app\modules\account\services\InvoiceService;
 use app\modules\account\services\LedgerService;
 use app\modules\account\services\PaymentTimelineService;
+use app\modules\sale\models\Customer;
 use yii\db\ActiveRecord;
 
 class SaleService
@@ -60,36 +61,29 @@ class SaleService
 
     }
 
-    public static function updatedServiceRelatedData(ActiveRecord $model, array $services)
+    public static function updatedServiceRelatedData(ActiveRecord $model, array $services): array
     {
         // Invoice update
         $invoiceUpdateResponse = InvoiceService::updateInvoice($model->invoice, $services);
-        if (!$invoiceUpdateResponse['status']) {
-            return ['error' => true, 'message' => $invoiceUpdateResponse['message']];
+        if ($invoiceUpdateResponse['error']) {
+            return $invoiceUpdateResponse;
         }
 
         // Ledger update
-        $customerLedgerUpdateData = LedgerService::formCustomerLedgerData($model);
-        $customerLedgerUpdateData['date'] = $invoiceUpdateResponse['data']->date;
+        $customerLedgerUpdateData = [
+            'refId' => $model->customerId,
+            'refModel' => Customer::class,
+            'subRefId' => $model->invoiceId,
+            'subRefModel' => Invoice::class,
+            'debit' => $model->quoteAmount,
+            'credit' => 0,
+            'date' => $invoiceUpdateResponse['data']->date,
+        ];
         $ledgerUpdateResponse = LedgerService::updateLedger($customerLedgerUpdateData);
         if (!$ledgerUpdateResponse['status']) {
             return ['error' => true, 'message' => $ledgerUpdateResponse['message']];
         }
 
-        // update service payment details
-        $servicePaymentUpdateData = [
-            'refId' => $model->id,
-            'refModel' => $model::className(),
-            'subRefId' => $model->invoiceId,
-            'subRefModel' => Invoice::class,
-            'dueAmount' => $model->quoteAmount,
-            'paidAmount' => 0
-        ];
-        $servicePaymentDetailUpdateResponse = PaymentTimelineService::updateServicePaymentDetail($servicePaymentUpdateData);
-        if (!$servicePaymentDetailUpdateResponse['status']) {
-            return ['error' => true, 'message' => $servicePaymentDetailUpdateResponse['message']];
-        }
-
-        return ['error' => false, 'message' => 'Invoice, ledger and service payment detail updated successfully'];
+        return ['error' => false, 'message' => 'Invoice and ledger updated successfully'];
     }
 }

@@ -12,11 +12,6 @@ use yii\web\View;
 /* @var $this yii\web\View */
 /* @var $model app\modules\sale\models\visa\Visa */
 /* @var $form yii\bootstrap4\ActiveForm */
-
-$this->title = Yii::t('app', 'Update Visa');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Visa'), 'url' => ['refund-list']];
-$this->params['breadcrumbs'][] = $this->title;
-
 $this->registerJs(
     "var supplier = '" . Yii::$app->request->baseUrl . '/sale/visa/add-supplier' . "';",
     View::POS_HEAD,
@@ -103,7 +98,7 @@ $this->registerJsFile(
                     <?php
                     foreach ($model->visaSuppliers as $key => $visaSupplier) {
                         ?>
-                        <?= $this->render('supplier', ['row' => $key, 'model' => $model, 'visaSupplier' => $visaSupplier, 'form' => $form]); ?>
+                        <?= $this->render('supplier_update', ['row' => $key, 'model' => $model, 'visaSupplier' => $visaSupplier, 'form' => $form]); ?>
                         <?php
                     }
                     ?>

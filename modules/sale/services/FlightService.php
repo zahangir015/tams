@@ -39,115 +39,80 @@ class FlightService
     {
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
+            // Ticket and supplier data can not be empty
             if (!empty($requestData['Ticket']) || !empty($requestData['TicketSupplier'])) {
-                $tickets = [];
-                $invoice = null;
-                $supplierLedgerArray = [];
-                $customer = Customer::findOne(['id' => $requestData['Ticket'][0]['customerId']]);
+                throw new Exception('Ticket and supplier data can not be empty.');
+            }
+            // Ticket Process
+            $tickets = [];
+            $customer = Customer::findOne(['id' => $requestData['Ticket'][0]['customerId']]);
+            foreach ($requestData['Ticket'] as $key => $ticketData) {
+                $ticket = new Ticket();
+                $ticket->scenario = 'create';
 
-                foreach ($requestData['Ticket'] as $key => $ticketData) {
-                    $ticket = new Ticket();
-                    $ticket->scenario = 'create';
-
-                    if (($ticketData['type'] == ServiceConstant::TICKET_TYPE_FOR_CREATE['Reissue']) && !isset($ticketData['motherTicketId'])) {
-                        throw new Exception('Ticket create failed - Mother ticket is required.');
-                    }
-
-                    if ($ticket->load(['Ticket' => $ticketData])) {
-                        // Ticket data process
-                        $ticket = self::processTicketData($ticket);
-                        $ticket = $this->flightRepository->store($ticket);
-                        if ($ticket->hasErrors()) {
-                            throw new Exception('Ticket create failed - ' . Utilities::processErrorMessages($ticket->getErrors()));
-                        }
-
-                        // Ticket Supplier data process
-                        $ticketSupplier = new TicketSupplier();
-                        $ticketSupplier->load(['TicketSupplier' => $ticket->getAttributes(['issueDate', 'eTicket', 'pnrCode', 'airlineId', 'paymentStatus', 'type', 'costOfSale', 'baseFare', 'tax'])]);
-                        $ticketSupplier->load(['TicketSupplier' => $requestData['TicketSupplier'][$key]]);
-                        $ticketSupplier->ticketId = $ticket->id;
-                        $ticketSupplier->serviceCharge = Airline::findOne($ticket->airlineId)->serviceCharge;
-                        $ticketSupplier = $this->flightRepository->store($ticketSupplier);
-                        if ($ticketSupplier->hasErrors()) {
-                            throw new Exception('Ticket Supplier create failed - ' . Utilities::processErrorMessages($ticketSupplier->getErrors()));
-                        }
-
-                        // Invoice details data process
-                        if (($ticket->type == ServiceConstant::TICKET_TYPE_FOR_CREATE['Reissue']) && ($ticket->invoiceId)) {
-                            $autoInvoiceCreateResponse = $this->invoiceService->addReissueServiceToInvoice($ticket);
-                            if ($autoInvoiceCreateResponse['error']) {
-                                $dbTransaction->rollBack();
-                                throw new Exception('Invoice - ' . $autoInvoiceCreateResponse['message']);
-                            }
-                            $invoice = $autoInvoiceCreateResponse['data'];
-                        } elseif (isset($requestData['invoice']) && ($ticket->type != ServiceConstant::TICKET_TYPE_FOR_CREATE['Reissue'])) {
-                            $tickets[] = [
-                                'refId' => $ticket->id,
-                                'refModel' => Ticket::class,
-                                'dueAmount' => $ticket->quoteAmount,
-                                'paidAmount' => 0,
-                                'supplierData' => [
-                                    [
-                                        'refId' => $ticketSupplier->id,
-                                        'refModel' => $ticketSupplier::class,
-                                        'subRefModel' => Invoice::class,
-                                        'dueAmount' => $ticketSupplier->costOfSale,
-                                        'paidAmount' => $ticketSupplier->paidAmount,
-                                    ]
-                                ]
-                            ];
-                        }
-
-                        // Supplier ledger data process
-                        if (isset($supplierLedgerArray[$ticketSupplier->supplier->id])) {
-                            $supplierLedgerArray[$ticketSupplier->supplier->id]['credit'] += $ticketSupplier->costOfSale;
-                        } else {
-                            $supplierLedgerArray[$ticketSupplier->supplier->id] = [
-                                'debit' => 0,
-                                'credit' => $ticketSupplier->costOfSale,
-                                'refId' => $ticketSupplier->supplier->id,
-                                'refModel' => Supplier::class,
-                                'subRefId' => $ticket->id,
-                                'subRefModel' => Ticket::class
-                            ];
-                        }
-                    } else {
-                        throw new Exception('Ticket data loading failed - ' . Utilities::processErrorMessages($ticket->getErrors()));
-                    }
+                if (($ticketData['type'] == ServiceConstant::TICKET_TYPE_FOR_CREATE['Reissue']) && !isset($ticketData['motherTicketId'])) {
+                    throw new Exception('Ticket storing failed - Mother ticket is required.');
                 }
 
-                // Invoice process and create
-                if (!empty($tickets)) {
-                    if ($requestData['group'] == 1) {
-                        $autoInvoiceCreateResponse = $this->invoiceService->autoInvoice($customer->id, $tickets);
+                if (!$ticket->load(['Ticket' => $ticketData])) {
+                    throw new Exception('Ticket data loading failed - ' . Utilities::processErrorMessages($ticket->getErrors()));
+                }
+
+                // Ticket data process
+                $ticket = self::processTicketData($ticket);
+                $ticket = $this->flightRepository->store($ticket);
+                if ($ticket->hasErrors()) {
+                    throw new Exception('Ticket storing failed - ' . Utilities::processErrorMessages($ticket->getErrors()));
+                }
+
+                // Ticket Supplier data process
+                $ticketSupplier = new TicketSupplier();
+                $ticketSupplier->load(['TicketSupplier' => $ticket->getAttributes(['issueDate', 'eTicket', 'pnrCode', 'airlineId', 'paymentStatus', 'type', 'costOfSale', 'baseFare', 'tax'])]);
+                $ticketSupplier->load(['TicketSupplier' => $requestData['TicketSupplier'][$key]]);
+                $ticketSupplier->ticketId = $ticket->id;
+                $ticketSupplier->serviceCharge = Airline::findOne($ticket->airlineId)->serviceCharge;
+                $ticketSupplier = $this->flightRepository->store($ticketSupplier);
+                if ($ticketSupplier->hasErrors()) {
+                    throw new Exception('Ticket Supplier create failed - ' . Utilities::processErrorMessages($ticketSupplier->getErrors()));
+                }
+
+                // Invoice details data process
+                if (($ticket->type == ServiceConstant::TICKET_TYPE_FOR_CREATE['Reissue']) && ($ticket->invoiceId)) {
+                    $autoInvoiceCreateResponse = $this->invoiceService->addReissueServiceToInvoice($ticket);
+                    if ($autoInvoiceCreateResponse['error']) {
+                        $dbTransaction->rollBack();
+                        throw new Exception('Invoice - ' . $autoInvoiceCreateResponse['message']);
+                    }
+                } elseif (isset($requestData['invoice']) && ($ticket->type != ServiceConstant::TICKET_TYPE_FOR_CREATE['Reissue'])) {
+                    $tickets[] = [
+                        'refId' => $ticket->id,
+                        'refModel' => Ticket::class,
+                        'dueAmount' => $ticket->quoteAmount,
+                        'paidAmount' => 0,
+                    ];
+                }
+            }
+
+            // Invoice process and create
+            if (!empty($tickets)) {
+                if ($requestData['group'] == 1) {
+                    $autoInvoiceCreateResponse = $this->invoiceService->autoInvoice($customer->id, $tickets);
+                    if ($autoInvoiceCreateResponse['error']) {
+                        throw new Exception('Invoice - ' . $autoInvoiceCreateResponse['message']);
+                    }
+                } else {
+                    foreach ($tickets as $ticket) {
+                        $autoInvoiceCreateResponse = $this->invoiceService->autoInvoice($customer->id, [$ticket]);
                         if ($autoInvoiceCreateResponse['error']) {
                             throw new Exception('Invoice - ' . $autoInvoiceCreateResponse['message']);
                         }
-                        $invoice = $autoInvoiceCreateResponse['data'];
-                    } else {
-                        foreach ($tickets as $ticket) {
-                            $autoInvoiceCreateResponse = $this->invoiceService->autoInvoice($customer->id, [$ticket]);
-                            if ($autoInvoiceCreateResponse['error']) {
-                                throw new Exception('Invoice - ' . $autoInvoiceCreateResponse['message']);
-                            }
-                            $invoice = $autoInvoiceCreateResponse['data'];
-                        }
                     }
                 }
-
-                // Supplier Ledger process
-                $ledgerRequestResponse = LedgerService::batchInsert($invoice, $supplierLedgerArray);
-                if ($ledgerRequestResponse['error']) {
-                    throw new Exception('Supplier Ledger creation failed - ' . $ledgerRequestResponse['message']);
-                }
-
-                $dbTransaction->commit();
-                Yii::$app->session->setFlash('success', 'Ticket added successfully');
-                return true;
             }
-            // Ticket and supplier data can not be empty
-            throw new Exception('Ticket and supplier data can not be empty.');
 
+            $dbTransaction->commit();
+            Yii::$app->session->setFlash('success', 'Ticket added successfully');
+            return true;
         } catch (Exception $e) {
             $dbTransaction->rollBack();
             Yii::$app->session->setFlash('danger', $e->getMessage() . ' - in file - ' . $e->getFile() . ' - in line -' . $e->getLine());
@@ -264,13 +229,6 @@ class FlightService
                 throw new Exception('Supplier Ledger creation failed - ' . $processSupplierLedgerResponse['message']);
             }
 
-            // Create Service Payment Detail for refund
-            /*$servicePaymentDetailData = PaymentTimelineService::storeServicePaymentDetailData(['refundService' => $newRefundTicket, 'parentService' => $motherTicket], $invoiceDetail);
-            if ($servicePaymentDetailData['error']) {
-                throw new Exception('Service payment detail process failed - ' . $servicePaymentDetailData['message']);
-            }*/
-            //dd($servicePaymentDetailData);
-
             $dbTransaction->commit();
             Yii::$app->session->setFlash('success', ' Refund Ticket added successfully');
             return true;
@@ -363,7 +321,7 @@ class FlightService
         return $totalReceived;
     }
 
-    public function updateTicket(array $requestData, Ticket $ticket): bool
+    public function updateTicket(array $requestData, Ticket $ticket): array
     {
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
@@ -377,28 +335,40 @@ class FlightService
             // Update ticket model
             $ticket->setAttributes($requestData['Ticket'][0]);
             $ticket = self::processTicketData($ticket);
-            if (!$ticket->save()) {
+            $ticket = $this->flightRepository->store($ticket);
+            if ($ticket->hasErrors()) {
                 throw new Exception('Ticket update failed - ' . Utilities::processErrorMessages($ticket->getErrors()));
             }
 
-            // Compare old quote and new quote
-            $updateServiceQuoteResponse = self::compareOldQuoteAndNewQuoteAndProcessData($ticket, $oldQuoteAmount);
-            if ($updateServiceQuoteResponse['error']) {
-                throw new Exception($updateServiceQuoteResponse['message']);
-            }
-
+            // Ticket Supplier data update
             $ticketSupplier = $ticket->ticketSupplier;
             $oldSupplierId = $ticketSupplier->supplierId;
             $ticketSupplier->load(['TicketSupplier' => $ticket->getAttributes(['issueDate', 'eTicket', 'pnrCode', 'airlineId', 'paymentStatus', 'type'])]);
             $ticketSupplier->load(['TicketSupplier' => $requestData['TicketSupplier'][0]]);
             $ticketSupplier->costOfSale = $ticket->costOfSale;
-            if (!$ticketSupplier->update()) {
+            $ticketSupplier = $this->flightRepository->store($ticketSupplier);
+            if ($ticketSupplier->hasErrors()) {
                 throw new Exception('Ticket supplier update failed - ' . Utilities::processErrorMessages($ticketSupplier->getErrors()));
             }
 
-            // supplier Ledger update
-            if (!empty($ticket->invoice) && ($ticketSupplier->costOfSale != $oldCostOfSale)) {
+            // Compare old quote and new quote
+            if (($oldQuoteAmount != $ticket->quoteAmount) && !empty($ticket->invoice)) {
+                // Update Invoice Entity
+                $tickets[] = [
+                    'refId' => $ticket->id,
+                    'refModel' => Ticket::class,
+                    'amount' => $ticket->receivedAmount,
+                    'due' => ($ticket->quoteAmount - $ticket->receivedAmount),
+                ];
 
+                $serviceRelatedDataProcessResponse = SaleService::updatedServiceRelatedData($ticket, $tickets);
+                if ($serviceRelatedDataProcessResponse['error']) {
+                    throw new Exception($serviceRelatedDataProcessResponse['message']);
+                }
+            }
+
+            // supplier Ledger update
+            /*if (!empty($ticket->invoice) && ($ticketSupplier->costOfSale != $oldCostOfSale)) {
                 if ($ticket->ticketSupplier->supplierId != $oldSupplierId) {
                     $suppliersLedgerData[] = [
                         'title' => 'Service Purchase Update',
@@ -432,15 +402,13 @@ class FlightService
                         throw new Exception(Utilities::processErrorMessages('Not update ticket  ' . $ledgerRequestResponse['message']));
                     }
                 }
-            }
+            }*/
 
             $dbTransaction->commit();
-            Yii::$app->session->setFlash('success', 'Ticket updated successfully');
-            return true;
+            return ['error' => false, 'message' => 'Ticket updated successfully', 'model' => $ticket];
         } catch (Exception $e) {
             $dbTransaction->rollBack();
-            Yii::$app->session->setFlash('error', $e->getMessage() . ' - in file - ' . $e->getFile() . ' - in line -' . $e->getLine());
-            return false;
+            return ['error' => true, 'message' => $e->getMessage()];
         }
     }
 
@@ -468,23 +436,6 @@ class FlightService
             $ticket->invoiceId = Ticket::findOne(['id' => $ticket->motherTicketId])->invoiceId;
         }
         return $ticket;
-    }
-
-    private static function compareOldQuoteAndNewQuoteAndProcessData(Ticket $ticket, float $oldQuoteAmount): array
-    {
-        if (($oldQuoteAmount != $ticket->quoteAmount) && !empty($ticket->invoice)) {
-            // Update Invoice Entity
-            $tickets[] = [
-                'refId' => $ticket->id,
-                'refModel' => Ticket::class,
-                'amount' => $ticket->receivedAmount,
-                'due' => ($ticket->quoteAmount - $ticket->receivedAmount),
-            ];
-            return SaleService::updatedServiceRelatedData($ticket, $tickets);
-
-        }
-
-        return ['error' => false, 'message' => 'Quote amount is not updated'];
     }
 
     public static function calculateAIT(float $baseFare, float $tax, mixed $govtTax): float

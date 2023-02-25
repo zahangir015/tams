@@ -3,6 +3,7 @@
 namespace app\modules\hrm\services;
 
 use app\components\GlobalConstant;
+use app\modules\hrm\models\Attendance;
 use app\modules\hrm\repositories\AttendanceRepository;
 use yii\db\ActiveRecord;
 
@@ -30,6 +31,11 @@ class AttendanceService
         $model = self::findModel($queryArray, $class, $withArray);
         $model->status = GlobalConstant::INACTIVE_STATUS;
         return $this->attendanceRepository->store($model);
+    }
+
+    public function storeAttendance(Attendance $model): Attendance
+    {
+
     }
 
 }

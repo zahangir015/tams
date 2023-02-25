@@ -29,237 +29,239 @@ class HolidayService
         $this->invoiceService = new InvoiceService();
     }
 
+    /**
+     * @throws Exception
+     */
     public function storeHoliday(array $requestData): bool
     {
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
             if (!empty($requestData['Holiday']) || !empty($requestData['HolidaySupplier'])) {
-                $services = [];
-                $invoice = null;
-                $customer = Customer::findOne(['id' => $requestData['Holiday']['customerId']]);
-                $holiday = new Holiday();
-                if ($holiday->load($requestData)) {
-                    $holiday->type = ServiceConstant::TYPE['New'];
-                    $holiday->customerCategory = $customer->category;
-                    $holiday = $this->holidayRepository->store($holiday);
-                    if ($holiday->hasErrors()) {
-                        throw new Exception('Holiday create failed - ' . Utilities::processErrorMessages($holiday->getErrors()));
-                    }
-
-                    // Holiday Supplier data process
-                    $holidaySupplierProcessedData = self::holidaySupplierProcess($holiday, $requestData['HolidaySupplier']);
-
-                    // Invoice details data process
-                    $services[] = [
-                        'refId' => $holiday->id,
-                        'refModel' => Holiday::class,
-                        'dueAmount' => $holiday->quoteAmount,
-                        'paidAmount' => 0,
-                        'supplierData' => $holidaySupplierProcessedData['serviceSupplierData']
-                    ];
-                    $supplierLedgerArray = $holidaySupplierProcessedData['supplierLedgerArray'];
-
-                    // Invoice process and create
-                    if (isset($requestData['invoice'])) {
-                        $autoInvoiceCreateResponse = $this->invoiceService->autoInvoice($customer->id, $services, 1, Yii::$app->user);
-                        if ($autoInvoiceCreateResponse['error']) {
-                            throw new Exception('Auto Invoice creation failed - ' . $autoInvoiceCreateResponse['message']);
-                        }
-                        $invoice = $autoInvoiceCreateResponse['data'];
-                    }
-
-                    // Supplier Ledger process
-                    $ledgerRequestResponse = LedgerService::batchInsert($invoice, $supplierLedgerArray);
-                    if ($ledgerRequestResponse['error']) {
-                        throw new Exception('Supplier Ledger creation failed - ' . $ledgerRequestResponse['message']);
-                    }
-                } else {
-                    throw new Exception('Holiday data loading failed - ' . Utilities::processErrorMessages($holiday->getErrors()));
-                }
-
-                $dbTransaction->commit();
-                Yii::$app->session->setFlash('success', 'Holiday added successfully');
-                return true;
+                throw new Exception('Holiday and supplier data can not be empty.');
             }
-            // Holiday and supplier data can not be empty
-            throw new Exception('Holiday and supplier data can not be empty.');
+            $services = [];
+            $invoice = null;
 
+            // Holiday data process and store
+            $customer = Customer::findOne(['id' => $requestData['Holiday']['customerId']]);
+            $holiday = new Holiday();
+            if (!$holiday->load($requestData)) {
+                throw new Exception('Holiday data loading failed - ' . Utilities::processErrorMessages($holiday->getErrors()));
+            }
+            $holiday->type = ServiceConstant::TYPE['New'];
+            $holiday->customerCategory = $customer->category;
+            $holiday = $this->holidayRepository->store($holiday);
+            if ($holiday->hasErrors()) {
+                throw new Exception('Holiday create failed - ' . Utilities::processErrorMessages($holiday->getErrors()));
+            }
+
+            // Holiday Supplier data process
+            foreach ($requestData['HolidaySupplier'] as $singleSupplierArray) {
+                $holidaySupplier = new HolidaySupplier();
+                $holidaySupplier->load(['HolidaySupplier' => $singleSupplierArray]);
+                $holidaySupplier->holidayId = $holiday->id;
+                $holidaySupplier->refundRequestDate = $holiday->refundRequestDate;
+                $holidaySupplier = $this->holidayRepository->store($holidaySupplier);
+                if ($holidaySupplier->hasErrors()) {
+                    throw new Exception('Holiday Supplier refund creation failed - ' . Utilities::processErrorMessages($holidaySupplier->getErrors()));
+                }
+            }
+
+            // Invoice process and create
+            if (isset($requestData['invoice'])) {
+                // Invoice details data process
+                $services[] = [
+                    'refId' => $holiday->id,
+                    'refModel' => Holiday::class,
+                    'dueAmount' => $holiday->quoteAmount,
+                    'paidAmount' => 0,
+                ];
+                // Invoice data process and storing
+                $autoInvoiceCreateResponse = $this->invoiceService->autoInvoice($customer->id, $services);
+                if ($autoInvoiceCreateResponse['error']) {
+                    throw new Exception('Auto Invoice creation failed - ' . $autoInvoiceCreateResponse['message']);
+                }
+            }
+
+            $dbTransaction->commit();
+            Yii::$app->session->setFlash('success', 'Holiday added successfully');
+            return true;
         } catch (Exception $e) {
             $dbTransaction->rollBack();
-            Yii::$app->session->setFlash('danger', $e->getMessage() . ' - in file - ' . $e->getFile() . ' - in line -' . $e->getLine());
+            Yii::$app->session->setFlash('danger', $e->getMessage());
             return false;
         }
     }
 
-    public function refundHoliday(array $requestData, ActiveRecord $motherHoliday): bool
+    public
+    function refundHoliday(array $requestData, Holiday $motherHoliday): bool
     {
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
+            // Holiday and supplier data can not be empty
             if (!empty($requestData['Holiday']) || !empty($requestData['HolidaySupplier'])) {
-                $customer = Customer::findOne(['id' => $requestData['Holiday']['customerId']]);
-                $holiday = new Holiday();
-                if ($holiday->load($requestData)) {
-                    $holiday->customerCategory = $customer->category;
-                    $holiday->invoiceId = $motherHoliday->invoiceId;
-                    $holiday = $this->holidayRepository->store($holiday);
-                    if ($holiday->hasErrors()) {
-                        throw new Exception('Holiday refund creation failed - ' . Utilities::processErrorMessages($holiday->getErrors()));
-                    }
-
-                    // Mother Holiday update
-                    $motherHoliday->type = ServiceConstant::TICKET_TYPE_FOR_REFUND['Refund Requested'];
-                    $motherHoliday->refundRequestDate = $holiday->refundRequestDate;
-                    $motherHoliday = $this->holidayRepository->store($motherHoliday);
-                    if ($motherHoliday->hasErrors()) {
-                        throw new Exception('Mother holiday update failed - ' . Utilities::processErrorMessages($motherHoliday->getErrors()));
-                    }
-
-                    // Holiday Supplier data process
-                    $holidaySupplierProcessedData = self::holidaySupplierProcess($holiday, $requestData['HolidaySupplier']);
-
-                    // Create refund for customer and supplier
-                    $refundDataProcessResponse = self::processRefundModelData($holiday, $requestData);
-                    if ($refundDataProcessResponse['error']) {
-                        throw new Exception('Holiday refund creation failed - ' . $refundDataProcessResponse['message']);
-                    }
-
-                    // Invoice details data process
-                    $service = [
-                        'invoiceId' => $motherHoliday->invoiceId ?? null,
-                        'refId' => $holiday->id,
-                        'refModel' => Holiday::class,
-                        'dueAmount' => ($holiday->quoteAmount - $holiday->receivedAmount),
-                        'paidAmount' => $holiday->receivedAmount,
-                        'motherId' => $motherHoliday->id,
-                        'supplierData' => $holidaySupplierProcessedData['serviceSupplierData']
-                    ];
-                    $supplierLedgerArray = $holidaySupplierProcessedData['supplierLedgerArray'];
-
-                    if ($motherHoliday->invoiceId) {
-                        // Invoice process
-                        $autoInvoiceDetailCreateResponse = $this->invoiceService->autoInvoiceForRefund($motherHoliday->invoice, $service, Yii::$app->user);
-                        if ($autoInvoiceDetailCreateResponse['error']) {
-                            throw new Exception('Auto Invoice detail creation failed - ' . $autoInvoiceDetailCreateResponse['message']);
-                        }
-                    }
-
-                } else {
-                    throw new Exception('Holiday data loading failed - ' . Utilities::processErrorMessages($holiday->getErrors()));
-                }
-
-                $dbTransaction->commit();
-                Yii::$app->session->setFlash('success', 'Holiday added successfully');
-                return true;
-            }
-            // Holiday and supplier data can not be empty
-            throw new Exception('Holiday and supplier data can not be empty.');
-
-        } catch (Exception $e) {
-            $dbTransaction->rollBack();
-            Yii::$app->session->setFlash('danger', $e->getMessage() . ' - in file - ' . $e->getFile() . ' - in line -' . $e->getLine());
-            return false;
-        }
-    }
-
-    public function updateHoliday(array $requestData, ActiveRecord $holiday): bool
-    {
-        $dbTransaction = Yii::$app->db->beginTransaction();
-        try {
-            if (empty($requestData['Holiday']) || !empty($requestData['HolidaySupplier'])) {
                 throw new Exception('Holiday and supplier data can not be empty.');
             }
 
-            $oldQuoteAmount = $holiday->quoteAmount;
-            $oldReceivedAmount = $holiday->receivedAmount;
-            $oldCustomerId = $holiday->customerId;
-
-            // Update Holiday Model
-            $holiday->load($requestData);
-            $holiday->netProfit = self::calculateNetProfit($holiday->quoteAmount, $holiday->costOfSale);
-            $holiday->paymentStatus = InvoiceService::checkAndDetectPaymentStatus($holiday->quoteAmount, $holiday->receivedAmount);
-            if (!$holiday->save()) {
-                throw new Exception('Holiday update failed - ' . Utilities::processErrorMessages($holiday->getErrors()));
+            // Holiday data processing
+            $customer = Customer::findOne(['id' => $requestData['Holiday']['customerId']]);
+            $holiday = new Holiday();
+            if (!$holiday->load($requestData)) {
+                throw new Exception('Holiday data loading failed - ' . Utilities::processErrorMessages($holiday->getErrors()));
+            }
+            $holiday->customerCategory = $customer->category;
+            $holiday->invoiceId = $motherHoliday->invoiceId;
+            $holiday = $this->holidayRepository->store($holiday);
+            if ($holiday->hasErrors()) {
+                throw new Exception('Holiday refund creation failed - ' . Utilities::processErrorMessages($holiday->getErrors()));
             }
 
-            // TODO Invoice update
-            // TODO Customer ledger update
-            // TODO Service Payment timeline update
-            $quoteAmountDiff = ($holiday->quoteAmount - $oldQuoteAmount);
-            if ($holiday->invoiceId && $quoteAmountDiff) {
-                $invoiceUpdateResponse = InvoiceService::updateInvoiceUpdate($holiday->invoice, $holiday, $quoteAmountDiff);
+            // Mother Holiday update
+            $motherHoliday->type = ServiceConstant::TICKET_TYPE_FOR_REFUND['Refund Requested'];
+            $motherHoliday->refundRequestDate = $holiday->refundRequestDate;
+            $motherHoliday = $this->holidayRepository->store($motherHoliday);
+            if ($motherHoliday->hasErrors()) {
+                throw new Exception('Mother holiday update failed - ' . Utilities::processErrorMessages($motherHoliday->getErrors()));
             }
 
-            // Update Holiday Supplier
-            // TODO Supplier ledger update
-            // TODO Bill update
-            $holidaySupplierProcessedData = self::updateHolidaySupplier($holiday, $requestData['HolidaySupplier']);
-            // Invoice details data process
-            $services[] = [
-                'invoiceId' => $motherHoliday->invoiceId ?? null,
-                'refId' => $holiday->id,
-                'refModel' => Holiday::class,
-                'dueAmount' => ($holiday->quoteAmount - $holiday->receivedAmount),
-                'paidAmount' => $holiday->receivedAmount,
-                'supplierData' => $holidaySupplierProcessedData['serviceSupplierData']
-            ];
-            $supplierLedgerArray = $holidaySupplierProcessedData['supplierLedgerArray'];
+            // Holiday Supplier data process
+            foreach ($requestData['HolidaySupplier'] as $singleSupplierArray) {
+                $holidaySupplier = new HolidaySupplier();
+                $holidaySupplier->load(['HolidaySupplier' => $singleSupplierArray]);
+                $holidaySupplier->holidayId = $holiday->id;
+                $holidaySupplier->refundRequestDate = $holiday->refundRequestDate;
+                $holidaySupplier = $this->holidayRepository->store($holidaySupplier);
+                if ($holidaySupplier->hasErrors()) {
+                    throw new Exception('Holiday Supplier refund creation failed - ' . Utilities::processErrorMessages($holidaySupplier->getErrors()));
+                }
+            }
 
+            // Create refund for customer and supplier
+            $refundDataProcessResponse = self::processRefundModelData($holiday, $requestData);
+            if ($refundDataProcessResponse['error']) {
+                throw new Exception('Holiday refund creation failed - ' . $refundDataProcessResponse['message']);
+            }
+
+            // Invoice Process
+            if ($motherHoliday->invoiceId) {
+                // Invoice details data process
+                $service = [
+                    'invoiceId' => $motherHoliday->invoiceId ?? null,
+                    'refId' => $holiday->id,
+                    'refModel' => Holiday::class,
+                    'dueAmount' => ($holiday->quoteAmount - $holiday->receivedAmount),
+                    'paidAmount' => $holiday->receivedAmount,
+                    'motherId' => $motherHoliday->id,
+                ];
+                $autoInvoiceDetailCreateResponse = $this->invoiceService->autoInvoiceForRefund($motherHoliday->invoice, $service, Yii::$app->user);
+                if ($autoInvoiceDetailCreateResponse['error']) {
+                    throw new Exception('Auto Invoice detail creation failed - ' . $autoInvoiceDetailCreateResponse['message']);
+                }
+            }
 
             $dbTransaction->commit();
-            Yii::$app->session->setFlash('success', 'Package has been updated successfully');
+            Yii::$app->session->setFlash('success', 'Holiday added successfully');
             return true;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $dbTransaction->rollBack();
-            Yii::$app->session->setFlash('error', $e->getMessage());
+            Yii::$app->session->setFlash('danger', $e->getMessage());
             return false;
         }
     }
 
-    private static function updateHolidaySupplier(ActiveRecord $holiday, array $suppliers)
+    public
+    function updateHoliday(array $requestData, Holiday $holiday): array
     {
-        return ['error' => true, 'message' => 'Package Supplier Saved Successfully'];
+        $dbTransaction = Yii::$app->db->beginTransaction();
+        try {
+            // Holiday and supplier data can not be empty
+            if (!empty($requestData['Holiday']) || !empty($requestData['HolidaySupplier'])) {
+                throw new Exception('Holiday and supplier data required.');
+            }
+
+            $oldQuoteAmount = $holiday->quoteAmount;
+
+            // Update Holiday
+            if ($holiday->load($requestData)){
+                throw new Exception('Holiday data loading failed - ' . Utilities::processErrorMessages($holiday->getErrors()));
+            }
+            $holiday->netProfit = self::calculateNetProfit($holiday->quoteAmount, $holiday->costOfSale);
+            $holiday->paymentStatus = (new InvoiceService())->checkAndDetectPaymentStatus($holiday->quoteAmount, $holiday->receivedAmount);
+            $holiday = $this->holidayRepository->store($holiday);
+            if ($holiday->hasErrors()) {
+                throw new Exception('Holiday update failed - ' . Utilities::processErrorMessages($holiday->getErrors()));
+            }
+
+            //Update Holiday Supplier Entity
+            $updateHolidaySupplierResponse = $this->updateHolidaySupplier($holiday, $requestData['HolidaySupplier']);
+            if ($updateHolidaySupplierResponse['error']) {
+                throw new Exception($updateHolidaySupplierResponse['message']);
+            }
+
+            // If invoice created and quote updated then process related data
+            if (isset($holiday->invoice) && ($oldQuoteAmount != $holiday->quoteAmount)) {
+                //Update Invoice Entity
+                $services[] = [
+                    'refId' => $holiday->id,
+                    'refModel' => Holiday::class,
+                    'due' => ($holiday->quoteAmount - $holiday->receivedAmount),
+                    'amount' => $holiday->receivedAmount
+                ];
+
+                $serviceRelatedDataProcessResponse = SaleService::updatedServiceRelatedData($holiday, $services);
+                if ($serviceRelatedDataProcessResponse['error']) {
+                    throw new Exception($serviceRelatedDataProcessResponse['message']);
+                }
+            }
+
+            $dbTransaction->commit();
+            return ['error' => false, 'message' => 'Holiday updated successfully', 'model' => $holiday];
+        } catch (Exception $e) {
+            $dbTransaction->rollBack();
+            return ['error' => true, 'message' => $e->getMessage()];
+        }
     }
 
-    private function holidaySupplierProcess(ActiveRecord $holiday, mixed $holidaySuppliers): array
+    private function updateHolidaySupplier(ActiveRecord $holiday, mixed $holidaySuppliers): array
     {
-        $serviceSupplierData = [];
-        $supplierLedgerArray = [];
+        foreach ($holidaySuppliers as $supplier) {
+            if (isset($supplier['id'])) {
+                $holidaySupplier = $this->holidayRepository->findOne(['id' => $supplier['id']], HolidaySupplier::class, []);
+            } else {
+                $holidaySupplier = new HolidaySupplier();
+                $holidaySupplier->holidayId = $holiday->id;
+                $holidaySupplier->status = GlobalConstant::ACTIVE_STATUS;
+                $holidaySupplier->paymentStatus = ServiceConstant::PAYMENT_STATUS['Due'];
+            }
+            $holidaySupplier->load(['HolidaySupplier' => $supplier]);
+            $holidaySupplier->type = $supplier['type'] ?? ServiceConstant::TYPE['New'];
+            $holidaySupplier = $this->holidayRepository->store($holidaySupplier);
+            if ($holidaySupplier->hasErrors()) {
+                return ['error' => true, 'message' => 'Holiday Supplier update failed - ' . Utilities::processErrorMessages($holidaySupplier->getErrors())];
+            }
+        }
+
+        return ['error' => false, 'message' => 'Holiday Supplier updated successfully'];
+    }
+
+    private
+    function holidaySupplierProcess(ActiveRecord $holiday, mixed $holidaySuppliers): array
+    {
         foreach ($holidaySuppliers as $singleSupplierArray) {
             $holidaySupplier = new HolidaySupplier();
             $holidaySupplier->load(['HolidaySupplier' => $singleSupplierArray]);
             $holidaySupplier->holidayId = $holiday->id;
-            $holidaySupplier->refundRequestDate = $holiday->refundRequestDate;
             $holidaySupplier = $this->holidayRepository->store($holidaySupplier);
             if ($holidaySupplier->hasErrors()) {
-                throw new Exception('Holiday Supplier refund creation failed - ' . Utilities::processErrorMessages($holidaySupplier->getErrors()));
-            }
-
-            $serviceSupplierData[] = [
-                'refId' => $holidaySupplier->id,
-                'refModel' => HolidaySupplier::class,
-                'subRefModel' => Invoice::class,
-                'dueAmount' => $holidaySupplier->costOfSale,
-                'paidAmount' => $holidaySupplier->paidAmount,
-            ];
-
-            // Supplier ledger data process
-            if (isset($supplierLedgerArray[$holidaySupplier->supplierId])) {
-                $supplierLedgerArray[$holidaySupplier->supplierId]['credit'] += $holidaySupplier->costOfSale;
-            } else {
-                $supplierLedgerArray[$holidaySupplier->supplierId] = [
-                    'debit' => 0,
-                    'credit' => $holidaySupplier->costOfSale,
-                    'refId' => $holidaySupplier->supplierId,
-                    'refModel' => Supplier::class,
-                    'subRefId' => null
-                ];
+                return ['error' => true, 'message' => 'Holiday Supplier creation failed - ' . Utilities::processErrorMessages($holidaySupplier->getErrors())];
             }
         }
 
-        return ['serviceSupplierData' => $serviceSupplierData, 'supplierLedgerArray' => $supplierLedgerArray];
+        return ['error' => false, 'message' => 'Holiday Supplier added successfully.'];
     }
 
-    private function processRefundModelData(ActiveRecord $holiday, array $requestData): array
+    private
+    function processRefundModelData(ActiveRecord $holiday, array $requestData): array
     {
         $referenceData = [
             [
@@ -307,17 +309,20 @@ class HolidayService
         return ['error' => false, 'message' => 'Holiday Refund process done.'];
     }
 
-    private static function calculateNetProfit(mixed $quoteAmount, mixed $costOfSale)
+    private
+    static function calculateNetProfit(mixed $quoteAmount, mixed $costOfSale)
     {
         return ($quoteAmount - $costOfSale);
     }
 
-    public function findHoliday(string $uid, $withArray = []): ActiveRecord
+    public
+    function findHoliday(string $uid, $withArray = []): ActiveRecord
     {
         return $this->holidayRepository->findOne(['uid' => $uid], Holiday::class, $withArray);
     }
 
-    public function getCategories(): array
+    public
+    function getCategories(): array
     {
         return ArrayHelper::map($this->holidayRepository->findCategories(), 'id', 'name');
     }
