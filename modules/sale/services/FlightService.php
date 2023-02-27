@@ -512,6 +512,4 @@ class FlightService
 
         return self::calculateCostOfSale($tax, $airline->serviceCharge, $ait, $baseFare, $commissionReceived, $incentiveReceived);
     }
-
-
 }

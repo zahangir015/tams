@@ -104,10 +104,10 @@ class Ticket extends ActiveRecord
             [['eTicket', 'pnrCode'], 'string', 'max' => 50],
             [['seatClass', 'reference', 'route', 'baggage', 'refundPolicy'], 'string', 'max' => 255],
             [['uid'], 'unique'],
-            [['airlineId'], 'exist', 'skipOnError' => true, 'targetClass' => Airline::className(), 'targetAttribute' => ['airlineId' => 'id']],
-            [['customerId'], 'exist', 'skipOnError' => true, 'targetClass' => Customer::className(), 'targetAttribute' => ['customerId' => 'id']],
-            [['invoiceId'], 'exist', 'skipOnError' => true, 'targetClass' => Invoice::className(), 'targetAttribute' => ['invoiceId' => 'id']],
-            [['providerId'], 'exist', 'skipOnError' => true, 'targetClass' => Provider::className(), 'targetAttribute' => ['providerId' => 'id']],
+            [['airlineId'], 'exist', 'skipOnError' => true, 'targetClass' => Airline::class, 'targetAttribute' => ['airlineId' => 'id']],
+            [['customerId'], 'exist', 'skipOnError' => true, 'targetClass' => Customer::class, 'targetAttribute' => ['customerId' => 'id']],
+            [['invoiceId'], 'exist', 'skipOnError' => true, 'targetClass' => Invoice::class, 'targetAttribute' => ['invoiceId' => 'id']],
+            [['providerId'], 'exist', 'skipOnError' => true, 'targetClass' => Provider::class, 'targetAttribute' => ['providerId' => 'id']],
         ];
     }
 
@@ -173,7 +173,7 @@ class Ticket extends ActiveRecord
      */
     public function getAirline(): ActiveQuery
     {
-        return $this->hasOne(Airline::className(), ['id' => 'airlineId']);
+        return $this->hasOne(Airline::class, ['id' => 'airlineId']);
     }
 
     /**
@@ -183,7 +183,7 @@ class Ticket extends ActiveRecord
      */
     public function getCustomer(): ActiveQuery
     {
-        return $this->hasOne(Customer::className(), ['id' => 'customerId']);
+        return $this->hasOne(Customer::class, ['id' => 'customerId']);
     }
 
     /**
@@ -193,7 +193,7 @@ class Ticket extends ActiveRecord
      */
     public function getInvoice(): ActiveQuery
     {
-        return $this->hasOne(Invoice::className(), ['id' => 'invoiceId']);
+        return $this->hasOne(Invoice::class, ['id' => 'invoiceId']);
     }
 
     /**
@@ -203,7 +203,7 @@ class Ticket extends ActiveRecord
      */
     public function getProvider(): ActiveQuery
     {
-        return $this->hasOne(Provider::className(), ['id' => 'providerId']);
+        return $this->hasOne(Provider::class, ['id' => 'providerId']);
     }
 
     /**
@@ -213,7 +213,7 @@ class Ticket extends ActiveRecord
      */
     public function getTicketRefund(): ActiveQuery
     {
-        return $this->hasOne(TicketRefund::className(), ['ticketId' => 'id']);
+        return $this->hasOne(TicketRefund::class, ['ticketId' => 'id'])->onCondition(['ticket_refund.refModel' => 'app\\modules\\sale\\models\\Customer']);
     }
 
     /**
@@ -223,7 +223,7 @@ class Ticket extends ActiveRecord
      */
     public function getTicketSupplier(): ActiveQuery
     {
-        return $this->hasOne(TicketSupplier::className(), ['ticketId' => 'id']);
+        return $this->hasOne(TicketSupplier::class, ['ticketId' => 'id']);
     }
 
     public function getMotherTicket(): ActiveQuery

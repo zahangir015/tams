@@ -187,13 +187,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
                 'filter' => GlobalConstant::YES_NO
             ],
-            /*[
-                'attribute' => 'refundFromSupplierStatus',
-                'label' => 'Refund From Supplier Status',
-                'value' => function ($model) {
-                    return $model->ticketRefund->refundFromSupplierStatus;
-                }
-            ],*/
             [
                 'attribute' => 'refundStatus',
                 'label' => 'Refund Status',
@@ -272,16 +265,17 @@ $this->params['breadcrumbs'][] = $this->title;
                 'urlCreator' => function ($action, $model) {
                     return Url::to([$action, 'uid' => $model->uid]);
                 },
-                'template' => '{view} {update} {delete} {refund}',
+                'template' => '{view} {update} {delete}',
                 'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
-                //'updateOptions' => ['role' => 'modal-remote', 'title' => 'Update', 'data-toggle' => 'tooltip'],
+                'updateOptions' => ['role' => 'modal-remote', 'title' => 'Update', 'data-toggle' => 'tooltip'],
                 'buttons' => [
-                    'refund' => function ($url, $model) {
-                        if ($model->type === ServiceConstant::TYPE['Refund'] || $model->type === ServiceConstant::TYPE['Refund Requested']) {
+                    'update' => function ($url, $model) {
+                        dd($model->ticketRefund);
+                        if ($model->ticketRefund->refundStatus === 'Refund Paid') {
                             return false;
                         }
-                        return Html::a('<span class="fas fa-minus-square"></span>', ['/sale/ticket/refund', 'uid' => $model->uid], [
-                            'title' => 'Refund',
+                        return Html::a('<span class="fas fa-pencil"></span>', ['/sale/ticket/refund-update', 'uid' => $model->uid], [
+                            'title' => 'Update',
                             'data-toggle' => 'tooltip'
                         ]);
                     },

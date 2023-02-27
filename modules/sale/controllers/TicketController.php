@@ -102,11 +102,10 @@ class TicketController extends ParentController
      * Displays a single Ticket model.
      * @param string $uid UID
      * @return string
-     * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView(string $uid)
+    public function actionView(string $uid): string
     {
-        $model = $this->flightService->findTicket($uid, Ticket::class, ['customer', 'ticketSupplier', 'airline', 'provider']);
+        $model = $this->flightService->findTicket($uid, Ticket::class, ['customer', 'ticketSupplier', 'airline', 'provider', 'ticketRefund']);
         return $this->render('view', [
             'model' => $model,
             'histories' => History::find()->where(['tableName' => Ticket::tableName(), 'tableId' => $model->id])->orderBy(['id' => SORT_DESC])->all()
@@ -225,7 +224,6 @@ class TicketController extends ParentController
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param string $uid UID
      * @return string|Response
-     * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionUpdate(string $uid): Response|string
     {
@@ -241,6 +239,30 @@ class TicketController extends ParentController
         }
 
         return $this->render('update', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * Updates an existing Ticket model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param string $uid UID
+     * @return string|Response
+     */
+    public function actionRefundUpdate(string $uid): Response|string
+    {
+        $model = $this->flightService->findTicket($uid, Ticket::class, ['customer', 'ticketSupplier', 'airline', 'provider', 'ticketRefund']);
+
+        if ($this->request->isPost) {
+            // Update Ticket
+            $model = $this->flightService->updateTicket(Yii::$app->request->post(), $model);
+            if ($model) {
+                return $this->redirect(['view', 'uid' => $model->uid]);
+            }
+            return $this->redirect(['view', 'id' => $model->id]);
+        }
+
+        return $this->render('refund_update', [
             'model' => $model,
         ]);
     }
