@@ -80,7 +80,7 @@ class SaleService
             'date' => $invoiceUpdateResponse['data']->date,
         ];
         $ledgerUpdateResponse = LedgerService::updateLedger($customerLedgerUpdateData);
-        if (!$ledgerUpdateResponse['status']) {
+        if ($ledgerUpdateResponse['error']) {
             return ['error' => true, 'message' => $ledgerUpdateResponse['message']];
         }
 

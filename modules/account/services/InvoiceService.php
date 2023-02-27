@@ -664,13 +664,13 @@ class InvoiceService
         }
 
         // Invoice due update
-        $invoiceDue = InvoiceDetail::find()->select([new Expression('SUM(due) AS due')])->where(['status' => 1])->andWhere(['invoiceId' => $invoiceDetail->invoiceId])->asArray()->one();
+        $invoiceDue = InvoiceDetail::find()->select([new Expression('SUM(dueAmount) AS dueAmount')])->where(['status' => 1])->andWhere(['invoiceId' => $invoiceDetail->invoiceId])->asArray()->one();
         if (!$invoiceDue) {
             return ['error' => true, 'message' => 'Invoice due calculation failed.'];
         }
-        $invoice->due = $invoiceDue['due'];
+        $invoice->dueAmount = $invoiceDue['dueAmount'];
         $invoice = (new InvoiceRepository)->store($invoice);
-        if (!$invoice->hasErrors()) {
+        if ($invoice->hasErrors()) {
             return ['error' => true, 'message' => "Invoice due update failed - " . Utilities::processErrorMessages($invoice->getErrors())];
         }
 

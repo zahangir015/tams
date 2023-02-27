@@ -231,11 +231,12 @@ class TicketController extends ParentController
 
         if ($this->request->isPost) {
             // Update Ticket
-            $model = $this->flightService->updateTicket(Yii::$app->request->post(), $model);
-            if ($model) {
+            $response = $this->flightService->updateTicket(Yii::$app->request->post(), $model);
+            if (!$response['error']) {
                 return $this->redirect(['view', 'uid' => $model->uid]);
+            } else {
+                Yii::$app->session->setFlash('danger', $response['message']);
             }
-            return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
@@ -255,11 +256,12 @@ class TicketController extends ParentController
 
         if ($this->request->isPost) {
             // Update Ticket
-            $model = $this->flightService->updateTicket(Yii::$app->request->post(), $model);
-            if ($model) {
+            $response = $this->flightService->updateRefundTicket(Yii::$app->request->post(), $model);
+            if (!$response['error']) {
                 return $this->redirect(['view', 'uid' => $model->uid]);
+            } else {
+                Yii::$app->session->setFlash('danger', $response['message']);
             }
-            return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('refund_update', [

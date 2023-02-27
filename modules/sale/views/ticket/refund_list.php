@@ -265,18 +265,32 @@ $this->params['breadcrumbs'][] = $this->title;
                 'urlCreator' => function ($action, $model) {
                     return Url::to([$action, 'uid' => $model->uid]);
                 },
-                'template' => '{view} {update} {delete}',
+                'width' => '150px',
+                'template' => '{view} {edit} {delete}',
                 'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
-                'updateOptions' => ['role' => 'modal-remote', 'title' => 'Update', 'data-toggle' => 'tooltip'],
                 'buttons' => [
-                    'update' => function ($url, $model) {
-                        dd($model->ticketRefund);
-                        if ($model->ticketRefund->refundStatus === 'Refund Paid') {
-                            return false;
-                        }
-                        return Html::a('<span class="fas fa-pencil"></span>', ['/sale/ticket/refund-update', 'uid' => $model->uid], [
-                            'title' => 'Update',
-                            'data-toggle' => 'tooltip'
+                    'view' => function ($url, $model) {
+                        return Html::a('<i class="fa fa-info-circle"></i>', ['view', 'uid' => $model->uid], [
+                            'title' => 'view',
+                            'data-pjax' => '0',
+                            'class' => 'btn btn-primary btn-xs'
+                        ]);
+                    },
+                    'edit' => function ($url, $model, $key) {
+                        return Html::a('<i class="fa fa-edit"></i>', ['refund-update', 'uid' => $model->uid], [
+                            'title' => Yii::t('app', 'Update'),
+                            'class' => 'btn btn-primary btn-xs'
+                        ]);
+                    },
+                    'delete' => function ($url, $model, $key) {
+                        return Html::a('<i class="fa fa-trash-alt"></i>', ['delete', 'uid' => $model->uid], [
+                            'title' => 'delete',
+                            'data-pjax' => '0',
+                            'data' => [
+                                'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
+                                'method' => 'post',
+                            ],
+                            'class' => 'btn btn-primary btn-xs'
                         ]);
                     },
                 ]

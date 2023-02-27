@@ -21,7 +21,7 @@ $this->registerJs(
 );
 $this->registerJsFile(
     '@web/js/flight_refund.js',
-    ['depends' => [JqueryAsset::className()]]
+    ['depends' => [JqueryAsset::class]]
 );
 ?>
 <div class="ticket-refund-form">
@@ -141,13 +141,13 @@ $this->registerJsFile(
                     </div>
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($ticketRefund, 'refundCharge')->textInput(['type' => 'number', 'value' => $ticketRefund->isNewRecord ? 0 : $ticketRefund->refundCharge, 'min' => 0, 'class' => 'quotePart serviceCharge form-control']) ?>
+                            <?= $form->field($ticketRefund, 'serviceCharge')->textInput(['type' => 'number', 'value' => $ticketRefund->isNewRecord ? 0 : $ticketRefund->serviceCharge, 'min' => 0, 'class' => 'quotePart serviceCharge form-control']) ?>
                         </div>
                         <div class="col-md">
                             <?= $form->field($model, 'costOfSale')->textInput(['type' => 'number', 'value' => $ticketRefund->isNewRecord ? ($model->ticketSupplier->supplier->refundCharge + $model->airline->serviceCharge) : $model->costOfSale, 'readonly' => 'readonly']) ?>
                         </div>
                         <div class="col-md">
-                            <?= $form->field($model, 'quoteAmount')->textInput(['type' => 'number', 'value' => $ticketRefund->isNewRecord ? ($model->ticketSupplier->supplier->refundCharge + $model->airline->serviceCharge) : $model->quoteAmount, 'readonly' => 'readonly', 'class' => 'form-control', 'type' => 'number']) ?>
+                            <?= $form->field($model, 'quoteAmount')->textInput(['type' => 'number', 'value' => $ticketRefund->isNewRecord ? 0 : $model->quoteAmount, 'readonly' => 'readonly', 'class' => 'form-control quotePart quoteAmount', 'type' => 'number']) ?>
                         </div>
                     </div>
                     <div class="row">

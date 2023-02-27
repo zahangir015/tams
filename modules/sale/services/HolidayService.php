@@ -36,7 +36,7 @@ class HolidayService
     {
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
-            if (!empty($requestData['Holiday']) || !empty($requestData['HolidaySupplier'])) {
+            if (empty($requestData['Holiday']) || empty($requestData['HolidaySupplier'])) {
                 throw new Exception('Holiday and supplier data can not be empty.');
             }
             $services = [];
@@ -99,7 +99,7 @@ class HolidayService
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
             // Holiday and supplier data can not be empty
-            if (!empty($requestData['Holiday']) || !empty($requestData['HolidaySupplier'])) {
+            if (empty($requestData['Holiday']) || empty($requestData['HolidaySupplier'])) {
                 throw new Exception('Holiday and supplier data can not be empty.');
             }
 
@@ -175,7 +175,7 @@ class HolidayService
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
             // Holiday and supplier data can not be empty
-            if (!empty($requestData['Holiday']) || !empty($requestData['HolidaySupplier'])) {
+            if (empty($requestData['Holiday']) || empty($requestData['HolidaySupplier'])) {
                 throw new Exception('Holiday and supplier data required.');
             }
 

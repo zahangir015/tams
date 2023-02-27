@@ -32,7 +32,7 @@ class VisaService
     {
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
-            if (!empty($requestData['Visa']) || !empty($requestData['VisaSupplier'])) {
+            if (empty($requestData['Visa']) || empty($requestData['VisaSupplier'])) {
                 throw new Exception('Visa and supplier data can not be empty.');
             }
 
@@ -93,7 +93,7 @@ class VisaService
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
             // Visa and supplier data can not be empty
-            if (!empty($requestData['Visa']) || !empty($requestData['VisaSupplier'])) {
+            if (empty($requestData['Visa']) || empty($requestData['VisaSupplier'])) {
                 throw new Exception('Visa and supplier data can not be empty.');
             }
             // Visa data processing
@@ -166,7 +166,7 @@ class VisaService
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
             // Visa and supplier data can not be empty
-            if (!empty($requestData['Visa']) || !empty($requestData['VisaSupplier'])) {
+            if (empty($requestData['Visa']) || empty($requestData['VisaSupplier'])) {
                 throw new Exception('Visa and supplier data required.');
             }
 

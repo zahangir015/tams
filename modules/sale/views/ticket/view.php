@@ -111,7 +111,7 @@ YiiAsset::register($this);
                                 <td><?= ($model->motherTicket) ? $model->motherTicket->eTicket : '' ?></td>
                                 <td><?= $model->pnrCode ?></td>
                                 <td>
-                                    <?= $model->type?>
+                                    <?= $model->type ?>
                                 </td>
                                 <?php
                                 if ($model->type == ServiceConstant::TICKET_TYPE_FOR_REFUND['Refund']) {
@@ -145,7 +145,7 @@ YiiAsset::register($this);
                                 <td><?= $model->ticketSupplier->supplier->company ?></td>
                                 <td>BDT <?= number_format($model->ticketSupplier->costOfSale) ?></td>
                                 <td>
-                                    <?= $model->ticketSupplier->paymentStatus?>
+                                    <?= $model->ticketSupplier->paymentStatus ?>
                                 </td>
                                 <td>BDT <?= number_format($model->ticketSupplier->paidAmount) ?></td>
                                 <td>
@@ -155,6 +155,47 @@ YiiAsset::register($this);
                             </tbody>
                         </table>
                     </div>
+                    <?php
+                    if (isset($model->ticketRefund)) {
+                        ?>
+                        <div class="col-md-12">
+                            <p class="lead">Refund Details</p>
+                            <table class="table table-bordered">
+                                <tbody>
+                                <tr>
+                                    <th>Refund Request Date</th>
+                                    <th>Refund Status</th>
+                                    <th>Refund Type</th>
+                                    <th>Refund Medium</th>
+                                    <th>Refund Method</th>
+                                    <th>Supplier Charge</th>
+                                    <th>Airline Charge</th>
+                                    <th>Service Charge</th>
+                                    <th>Is Refunded</th>
+                                    <th>Refund Date</th>
+                                    <th>Refund Amount</th>
+                                </tr>
+
+                                <tr>
+                                    <td><?= $model->ticketRefund->refundRequestDate ?></td>
+                                    <td><?= $model->ticketRefund->refundStatus ?></td>
+                                    <td><?= $model->ticketRefund->refundType ?></td>
+                                    <td><?= $model->ticketRefund->refundMedium ?></td>
+                                    <td><?= $model->ticketRefund->refundMethod ?></td>
+                                    <td>BDT <?= number_format($model->ticketRefund->supplierRefundCharge) ?></td>
+                                    <td>BDT <?= number_format($model->ticketRefund->airlineRefundCharge) ?></td>
+                                    <td><?= $model->ticketRefund->serviceCharge ?></td>
+                                    <td><?= $model->ticketRefund->isRefunded ?></td>
+                                    <td><?= $model->ticketRefund->refundDate ?></td>
+                                    <td>
+                                        BDT <?= ($model->ticketRefund->refundedAmount) ? number_format($model->ticketRefund->refundedAmount) : 0 ?></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <?php
+                    }
+                    ?>
                     <div class="col-md-12">
                         <p class="lead">Payment Details</p>
                         <table class="table table-bordered">

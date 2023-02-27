@@ -5,14 +5,15 @@ $(function () {
         var otherTax = parseFloat($('#ticket-othertax').val());
         var airlineId = parseInt($('#ticket-airlineid').val());
 
-        calculateCostOfSale(baseFare, tax, otherTax, airlineId)
+        calculateCostOfSale(baseFare, tax, otherTax, airlineId);
     });
 
     $(document).on('change', '.serviceCharge', function () {
         var quoteAmount;
-        var serviceCharge = parseFloat($('#ticketrefund-refundcharge').val());
+        var serviceCharge = parseFloat($('#ticketrefund-servicecharge').val());
         var costOfSale = parseFloat($('#ticket-costofsale').val());
         quoteAmount = costOfSale + serviceCharge;
+        console.log(quoteAmount)
         $('#ticket-quoteamount').val(quoteAmount);
     });
 
@@ -33,7 +34,7 @@ $(function () {
                 costOfSale += parseFloat(airlineCharge + supplierCharge)
                 $('#ticket-costofsale').val(costOfSale);
                 var quoteAmount;
-                var serviceCharge = parseFloat($('#ticketrefund-refundcharge').val());
+                var serviceCharge = parseFloat($('#ticketrefund-servicecharge').val());
                 quoteAmount = parseFloat(costOfSale + serviceCharge);
                 $('#ticket-quoteamount').val(quoteAmount);
             },

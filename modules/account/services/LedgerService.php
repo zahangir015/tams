@@ -167,13 +167,16 @@ class LedgerService
         }
 
         $balanceDifference = ((double)$currentLedger->balance - (double)$oldBalance);
+        if ($balanceDifference == 0){
+            return ['error' => false, 'message' => 'Balance is not updated.'];
+        }
 
         // Current Ledger update
         $currentLedger->debit = $data['debit'];
         $currentLedger->credit = $data['credit'];
         $currentLedger->balance += $balanceDifference;
         $currentLedger = (new LedgerRepository())->store($currentLedger);
-        if (!$currentLedger->hasErrors()) {
+        if ($currentLedger->hasErrors()) {
             return ['error' => true, 'message' => 'Requested Ledger update failed ' . Utilities::processErrorMessages($currentLedger->errors)];
         }
 
@@ -187,6 +190,6 @@ class LedgerService
             }
         }
 
-        return ['status' => true, 'message' => 'Ledger updated successfully.'];
+        return ['error' => false, 'message' => 'Ledger updated successfully.'];
     }
 }

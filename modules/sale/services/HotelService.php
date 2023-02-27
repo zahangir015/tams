@@ -45,7 +45,7 @@ class HotelService
     {
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
-            if (!empty($requestData['Hotel']) || !empty($requestData['HotelSupplier'])) {
+            if (empty($requestData['Hotel']) || empty($requestData['HotelSupplier'])) {
                 throw new Exception('Hotel and supplier data can not be empty.');
             }
             // Hotel Data process
@@ -104,8 +104,7 @@ class HotelService
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
             // Hotel and supplier data can not be empty
-            if (!empty($requestData['Hotel']) || !empty($requestData['HotelSupplier'])) {
-
+            if (empty($requestData['Hotel']) || empty($requestData['HotelSupplier'])) {
                 throw new Exception('Hotel and supplier data can not be empty.');
             }
 
@@ -180,7 +179,7 @@ class HotelService
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
             // Hotel and supplier data can not be empty
-            if (!empty($requestData['Hotel']) || !empty($requestData['HotelSupplier'])) {
+            if (empty($requestData['Hotel']) || empty($requestData['HotelSupplier'])) {
                 throw new Exception('Hotel and supplier data required.');
             }
 
