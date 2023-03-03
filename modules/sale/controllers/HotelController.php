@@ -136,7 +136,7 @@ class HotelController extends ParentController
             $model->loadDefaultValues();
         }
 
-        return $this->render('_refund', [
+        return $this->render('refund', [
             'model' => $model,
             'motherHotel' => $motherHotel,
             'hotelRefund' => new HotelRefund(),
@@ -155,11 +155,36 @@ class HotelController extends ParentController
 
         if ($this->request->isPost) {
             // Update Hotel
-            $model = $this->hotelService->updateHotel(Yii::$app->request->post(), $model);
-            if ($model) {
+            $updateResponse = $this->hotelService->updateHotel(Yii::$app->request->post(), $model);
+            if ($updateResponse['error']) {
+                Yii::$app->session->setFlash('danger', $updateResponse['message']);
+            } else {
                 return $this->redirect(['view', 'uid' => $model->uid]);
-            }else{
+            }
+        }
 
+        return $this->render('update', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * Refund an existing Hotel model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param string $uid UID
+     * @return string|Response
+     */
+    public function actionRefundUpdate(string $uid): Response|string
+    {
+        $model = $this->hotelService->findHotel($uid, ['hotelSuppliers', 'customer']);
+
+        if ($this->request->isPost) {
+            // Update Hotel
+            $refundUpdateResponse = $this->hotelService->updateRefundHotel(Yii::$app->request->post(), $model);
+            if ($refundUpdateResponse['error']) {
+                Yii::$app->session->setFlash('danger', $refundUpdateResponse['message']);
+            } else {
+                return $this->redirect(['view', 'uid' => $model->uid]);
             }
         }
 
@@ -175,7 +200,7 @@ class HotelController extends ParentController
      * @return Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete(string $uid)
+    public function actionDelete(string $uid): Response
     {
         $model = $this->findModel($uid);
         $model->status = GlobalConstant::INACTIVE_STATUS;

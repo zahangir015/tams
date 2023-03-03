@@ -1,5 +1,6 @@
 <?php
 
+use app\modules\sale\components\ServiceConstant;
 use yii\helpers\Html;
 use yii\web\YiiAsset;
 use yii\widgets\DetailView;
@@ -34,8 +35,13 @@ YiiAsset::register($this);
                            aria-haspopup="true" aria-expanded="false"> Actions
                         </a>
                         <div class="dropdown-menu dropdown-menu-sm dropdown-menu-right">
-                            <?= Html::a(Yii::t('app', '<i class="fa fa-edit"></i> Update'), ['update', 'uid' => $model->uid], ['class' => 'dropdown-item']) ?>
-                            <?= Html::a(Yii::t('app', '<i class="fa fa-minus-circle"></i> Refund'), ['refund', 'uid' => $model->uid], ['class' => 'dropdown-item']) ?>
+                            <?= Html::a(Yii::t('app', '<i class="fa fa-edit"></i> Update'), [($model->type == ServiceConstant::TYPE['Refund']) ? 'refund-update' : 'update', 'uid' => $model->uid], ['class' => 'dropdown-item']) ?>
+                            <?php
+                            if ($model->type != ServiceConstant::TYPE['Refund']) {
+                                echo Html::a(Yii::t('app', '<i class="fa fa-minus-circle"></i> Refund'), ['refund', 'uid' => $model->uid], ['class' => 'dropdown-item']);
+                            }
+                            ?>
+
                             <?= Html::a(Yii::t('app', '<i class="fa fa-trash-alt"></i> Delete'), ['delete', 'uid' => $model->uid], [
                                 'class' => 'dropdown-item',
                                 'data' => [
@@ -77,8 +83,6 @@ YiiAsset::register($this);
                             </tbody>
                         </table>
                     </div>
-                    <br>
-                    <hr>
                     <div class="col-md-12">
                         <p class="lead">Suppliers Details</p>
                         <table class="table table-bordered">
@@ -114,8 +118,43 @@ YiiAsset::register($this);
                             </tbody>
                         </table>
                     </div>
-                    <br>
-                    <hr>
+                    <?php
+                    if (isset($model->holidayRefund)) {
+                        ?>
+                        <div class="col-md-12">
+                            <p class="lead">Refund Details</p>
+                            <table class="table table-bordered">
+                                <tbody>
+                                <tr>
+                                    <th>Refund Request Date</th>
+                                    <th>Refund Status</th>
+                                    <th>Refund Medium</th>
+                                    <th>Refund Method</th>
+                                    <th>Supplier Charge</th>
+                                    <th>Service Charge</th>
+                                    <th>Is Refunded</th>
+                                    <th>Refund Date</th>
+                                    <th>Refund Amount</th>
+                                </tr>
+
+                                <tr>
+                                    <td><?= $model->holidayRefund->refundRequestDate ?></td>
+                                    <td><?= $model->holidayRefund->refundStatus ?></td>
+                                    <td><?= $model->holidayRefund->refundMedium ?></td>
+                                    <td><?= $model->holidayRefund->refundMethod ?></td>
+                                    <td>BDT <?= $model->holidayRefund->supplierRefundCharge ? number_format($model->holidayRefund->supplierRefundCharge) : null ?></td>
+                                    <td><?= $model->holidayRefund->serviceCharge ?></td>
+                                    <td><?= $model->holidayRefund->isRefunded ?></td>
+                                    <td><?= $model->holidayRefund->refundDate ?></td>
+                                    <td>
+                                        BDT <?= ($model->holidayRefund->refundedAmount) ? number_format($model->holidayRefund->refundedAmount) : 0 ?></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <?php
+                    }
+                    ?>
                     <div class="col-md-12">
                         <p class="lead">Payment Details</p>
                         <table class="table table-bordered">

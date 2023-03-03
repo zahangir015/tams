@@ -1,7 +1,9 @@
 <?php
 
 use app\components\GlobalConstant;
+use app\components\WidgetHelper;
 use app\modules\sale\components\ServiceConstant;
+use kartik\date\DatePicker;
 use kartik\daterange\DateRangePicker;
 use kartik\select2\Select2;
 use yii\helpers\Html;
@@ -43,7 +45,7 @@ $this->registerJsFile(
         <div class="card-body">
             <div class="row">
                 <div class="col-md">
-                    <?= $form->field($model, 'refundRequestDate')->widget(DateRangePicker::class, Utilities::dateFormat(false, true)) ?>
+                    <?= $form->field($model, 'refundRequestDate')->widget(DatePicker::class, WidgetHelper::getDateWidget('refundRequestDate', 'refundRequestDate', false, true)) ?>
                 </div>
                 <div class="col-md">
                     <?= $form->field($model, 'customerId')->dropdownList([$motherHoliday->customer->id => $motherHoliday->customer->company], ['readOnly' => 'readOnly'])->label('Customer') ?>
@@ -79,7 +81,7 @@ $this->registerJsFile(
                             <?= $form->field($model, 'costOfSale')->textInput(['type' => 'number', 'value' => $motherHoliday->costOfSale, 'min' => 0, 'step' => 'any', 'readOnly' => 'readOnly'])->label('Total Cost Of Sale') ?>
                         </div>
                         <div class="col-md">
-                            <?= $form->field($holidayRefund, 'supplierServiceCharge')->textInput(['type' => 'number', 'value' => 0, 'min' => 0, 'step' => 'any']) ?>
+                            <?= $form->field($holidayRefund, 'supplierRefundCharge')->textInput(['type' => 'number', 'value' => 0, 'min' => 0, 'step' => 'any']) ?>
                         </div>
                     </div>
                     <div class="row">

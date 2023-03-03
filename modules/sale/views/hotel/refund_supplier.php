@@ -23,13 +23,13 @@ use yii\bootstrap4\Html;
     <div class="card-body">
         <div class="row">
             <div class="col-md">
-                <?= $form->field($hotelSupplier, "[$row]supplierId")->dropdownList([$hotelSupplier->supplier->id => $hotelSupplier->supplier->company])->label('Supplier') ?>
+                <?= $form->field($hotelSupplier, "[$row]supplierId")->dropdownList([$hotelSupplier->supplier->id => $hotelSupplier->supplier->company], ['readOnly' => 'readOnly'])->label('Supplier') ?>
             </div>
             <div class="col-md">
-                <?= $form->field($hotelSupplier, "[$row]supplierRef")->textInput(['maxlength' => true]); ?>
+                <?= $form->field($hotelSupplier, "[$row]supplierRef")->textInput(['maxlength' => true, 'readOnly' => 'readOnly']); ?>
             </div>
             <div class="col-md">
-                <?= $form->field($hotelSupplier, "[$row]issueDate")->widget(DateRangePicker::class, Utilities::dateFormat(false, true)); ?>
+                <?= $form->field($hotelSupplier, "[$row]issueDate")->textInput(['value' => $hotelSupplier->issueDate, 'readOnly' => 'readOnly']); ?>
             </div>
         </div>
         <div class="row calcData">
@@ -54,6 +54,7 @@ use yii\bootstrap4\Html;
                 <?= $form->field($hotelSupplier, "[$row]serviceDetails")->textInput(['maxlength' => true]); ?>
             </div>
         </div>
-        <?= $form->field($hotelSupplier, "[$row]motherId")->hiddenInput(['maxlength' => true, 'value' => $hotelSupplier->id])->label(false) ?>
+        <?= $form->field($hotelSupplier, "[$row]motherId")->hiddenInput(['maxlength' => true, 'value' => $hotelSupplier->motherId])->label(false) ?>
+        <?= $form->field($hotelSupplier, "[$row]id")->hiddenInput(['maxlength' => true, 'value' => $hotelSupplier->id])->label(false) ?>
     </div>
 </div>

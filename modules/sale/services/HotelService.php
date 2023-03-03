@@ -248,6 +248,97 @@ class HotelService
         return ['error' => false, 'message' => 'Hotel Supplier updated successfully'];
     }
 
+    public function updateRefundHotel(array $requestData, ActiveRecord $hotel): array
+    {
+        $dbTransaction = Yii::$app->db->beginTransaction();
+        try {
+            // Hotel and supplier data can not be empty
+            if (empty($requestData['Hotel']) || empty($requestData['HotelSupplier'])) {
+                throw new Exception('Hotel and supplier data is required.');
+            }
+            $oldQuoteAmount = $hotel->quoteAmount;
+
+            // Hotel data processing
+            $customer = Customer::findOne(['id' => $requestData['Hotel']['customerId']]);
+            if (!$hotel->load($requestData)) {
+                throw new Exception('Hotel data loading failed - ' . Utilities::processErrorMessages($hotel->getErrors()));
+            }
+
+            $hotel = $this->hotelRepository->store($hotel);
+            if ($hotel->hasErrors()) {
+                throw new Exception('Hotel update failed - ' . Utilities::processErrorMessages($hotel->getErrors()));
+            }
+
+            // Customer Refund data update
+            $customerHotelRefund = HotelRefund::find()->where(['refId' => $customer->id, 'refModel' => 'app\\modules\\sale\\models\\Customer', 'hotelId' => $hotel->id])->one();
+            if (!$customerHotelRefund) {
+                throw new Exception('Customer Hotel refund not found.');
+            }
+            $customerHotelRefund->load($requestData);
+            $customerHotelRefund->serviceCharge = $hotel->quoteAmount;
+            $customerHotelRefund->refundRequestDate = $hotel->refundRequestDate;
+            $customerHotelRefund = $this->hotelRepository->store($customerHotelRefund);
+            if ($customerHotelRefund->hasErrors()) {
+                throw new Exception('Customer hotel refund update failed - ' . Utilities::processErrorMessages($customerHotelRefund->getErrors()));
+            }
+
+            // Mother Hotel update
+            $motherHotel = $this->hotelRepository->findOne(['id' => $hotel->motherId], Hotel::class);
+            $motherHotel->refundRequestDate = $hotel->refundRequestDate;
+            $motherHotel = $this->hotelRepository->store($motherHotel);
+            if ($motherHotel->hasErrors()) {
+                throw new Exception('Mother hotel update failed - ' . Utilities::processErrorMessages($motherHotel->getErrors()));
+            }
+
+            // Hotel Supplier data process
+            foreach ($requestData['HotelSupplier'] as $singleSupplierArray) {
+                $hotelSupplier = HotelSupplier::findOne(['id' => $singleSupplierArray['id']]);
+                $hotelSupplier->load(['HotelSupplier' => $singleSupplierArray]);
+                $hotelSupplier->hotelId = $hotel->id;
+                $hotelSupplier->refundRequestDate = $hotel->refundRequestDate;
+                $hotelSupplier = $this->hotelRepository->store($hotelSupplier);
+                if ($hotelSupplier->hasErrors()) {
+                    throw new Exception('Hotel Supplier refund creation failed - ' . Utilities::processErrorMessages($hotelSupplier->getErrors()));
+                }
+
+                // Supplier refund data update
+                $supplierHotelRefund = HotelRefund::find()->where(['refId' => $hotelSupplier->supplierId, 'refModel' => 'app\\modules\\sale\\models\\Supplier', 'hotelId' => $hotel->id])->one();
+                if (!$supplierHotelRefund) {
+                    throw new Exception('Supplier Hotel refund not found.');
+                }
+                $supplierHotelRefund->load($requestData);
+                $supplierHotelRefund->serviceCharge = $hotelSupplier->costOfSale;
+                $supplierHotelRefund->refundRequestDate = $hotelSupplier->refundRequestDate;
+                $supplierHotelRefund = $this->hotelRepository->store($supplierHotelRefund);
+                if ($supplierHotelRefund->hasErrors()) {
+                    throw new Exception('Supplier hotel refund update failed - ' . Utilities::processErrorMessages($supplierHotelRefund->getErrors()));
+                }
+            }
+
+            // If invoice created and quote updated then process related data
+            if (isset($hotel->invoice) && ($oldQuoteAmount != $hotel->quoteAmount)) {
+                //Update Invoice Entity
+                $services[] = [
+                    'refId' => $hotel->id,
+                    'refModel' => Hotel::class,
+                    'dueAmount' => ($hotel->quoteAmount - $hotel->receivedAmount),
+                    'paidAmount' => $hotel->receivedAmount
+                ];
+
+                $serviceRelatedDataProcessResponse = SaleService::updatedServiceRelatedData($hotel, $services);
+                if ($serviceRelatedDataProcessResponse['error']) {
+                    throw new Exception($serviceRelatedDataProcessResponse['message']);
+                }
+            }
+
+            $dbTransaction->commit();
+            return ['error' => false, 'message' => 'Refund Hotel updated successfully.'];
+        } catch (Exception $e) {
+            $dbTransaction->rollBack();
+            return ['error' => false, 'message' => $e->getMessage()];
+        }
+    }
+
     private
     function hotelSupplierProcess(ActiveRecord $hotel, mixed $hotelSuppliers): array
     {

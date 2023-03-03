@@ -37,7 +37,7 @@ use yii\bootstrap4\Html;
                 <?= $form->field($holidaySupplier, "[$row]supplierRef")->textInput(['maxlength' => true, 'readOnly' => !(bool)$holidaySupplier->isNewRecord]); ?>
             </div>
             <div class="col-md">
-                <?= $form->field($holidaySupplier, "[$row]issueDate")->widget(DateRangePicker::class, Utilities::dateFormat(!(bool)$holidaySupplier->isNewRecord, true)); ?>
+                <?= $form->field($holidaySupplier, "[$row]issueDate")->widget(\kartik\date\DatePicker::class, \app\components\WidgetHelper::getDateWidget('issueDate'.$row, 'issueDate', false, true)); ?>
             </div>
             <div class="col-md">
                 <?= $form->field($holidaySupplier, "[$row]departureDate")->widget(DateRangePicker::class, Utilities::dateFormat(!(bool)$holidaySupplier->isNewRecord, true)) ?>

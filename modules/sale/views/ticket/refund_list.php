@@ -270,21 +270,21 @@ $this->params['breadcrumbs'][] = $this->title;
                 'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
                 'buttons' => [
                     'view' => function ($url, $model) {
-                        return Html::a('<i class="fa fa-info-circle"></i>', ['view', 'uid' => $model->uid], [
-                            'title' => 'view',
+                        return \yii\bootstrap4\Html::a('<i class="fa fa-info-circle"></i>', ['view', 'uid' => $model->uid], [
+                            'title' => Yii::t('app', 'View'),
                             'data-pjax' => '0',
                             'class' => 'btn btn-primary btn-xs'
                         ]);
                     },
                     'edit' => function ($url, $model, $key) {
-                        return Html::a('<i class="fa fa-edit"></i>', ['refund-update', 'uid' => $model->uid], [
+                        return Html::a('<i class="fa fa-pencil-alt"></i>', ['refund-update', 'uid' => $model->uid], [
                             'title' => Yii::t('app', 'Update'),
                             'class' => 'btn btn-primary btn-xs'
                         ]);
                     },
                     'delete' => function ($url, $model, $key) {
                         return Html::a('<i class="fa fa-trash-alt"></i>', ['delete', 'uid' => $model->uid], [
-                            'title' => 'delete',
+                            'title' => Yii::t('app', 'Delete'),
                             'data-pjax' => '0',
                             'data' => [
                                 'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),

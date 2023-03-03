@@ -357,8 +357,8 @@ class FlightService
                 $tickets[] = [
                     'refId' => $ticket->id,
                     'refModel' => Ticket::class,
-                    'amount' => $ticket->receivedAmount,
-                    'due' => ($ticket->quoteAmount - $ticket->receivedAmount),
+                    'paidAmount' => $ticket->receivedAmount,
+                    'dueAmount' => ($ticket->quoteAmount - $ticket->receivedAmount),
                 ];
 
                 $serviceRelatedDataProcessResponse = SaleService::updatedServiceRelatedData($ticket, $tickets);
@@ -456,8 +456,8 @@ class FlightService
                 $tickets[] = [
                     'refId' => $ticket->id,
                     'refModel' => Ticket::class,
-                    'amount' => (double)$ticket->receivedAmount,
-                    'due' => ((double)$ticket->quoteAmount - (double)$ticket->receivedAmount),
+                    'paidAmount' => (double)$ticket->receivedAmount,
+                    'dueAmount' => ((double)$ticket->quoteAmount - (double)$ticket->receivedAmount),
                 ];
 
                 $serviceRelatedDataProcessResponse = SaleService::updatedServiceRelatedData($ticket, $tickets);

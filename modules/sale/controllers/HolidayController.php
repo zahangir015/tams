@@ -38,7 +38,7 @@ class HolidayController extends ParentController
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $searchModel = new HolidaySearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
@@ -55,7 +55,7 @@ class HolidayController extends ParentController
      *
      * @return string
      */
-    public function actionHolidaySupplierList()
+    public function actionHolidaySupplierList(): string
     {
         $searchModel = new HolidaySupplierSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
@@ -88,7 +88,6 @@ class HolidayController extends ParentController
      * Displays a single Holiday model.
      * @param string $uid UID
      * @return string
-     * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionView(string $uid): string
     {
@@ -104,7 +103,7 @@ class HolidayController extends ParentController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|Response
      */
-    public function actionCreate()
+    public function actionCreate(): Response|string
     {
         $model = new Holiday();
         $holidaySupplier = new HolidaySupplier();
@@ -130,7 +129,7 @@ class HolidayController extends ParentController
      * If creation is successful, the browser will be redirected to the 'refund list' page.
      * @return string|Response
      */
-    public function actionRefund(string $uid)
+    public function actionRefund(string $uid): Response|string
     {
         $model = new Holiday();
         $motherHoliday = $this->holidayService->findHoliday($uid, ['holidaySuppliers', 'holidayCategory', 'invoice']);
@@ -144,7 +143,7 @@ class HolidayController extends ParentController
             $model->loadDefaultValues();
         }
 
-        return $this->render('_refund', [
+        return $this->render('refund', [
             'model' => $model,
             'motherHoliday' => $motherHoliday,
             'holidayRefund' => new HolidayRefund(),
@@ -157,12 +156,38 @@ class HolidayController extends ParentController
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param string $uid UID
      * @return string|Response
-     * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate(string $uid)
+    public function actionUpdate(string $uid): Response|string
     {
         $model = $this->holidayService->findHoliday($uid, ['holidaySuppliers', 'customer', 'holidayCategory']);
 
+        if ($this->request->isPost) {
+            // Update Holiday
+            $updateResponse = $this->holidayService->updateRefundHoliday(Yii::$app->request->post(), $model);
+            if ($updateResponse['error']) {
+                Yii::$app->session->setFlash('danger', $updateResponse['message']);
+            } else {
+                return $this->redirect(['view', 'uid' => $model->uid]);
+            }
+        }
+
+        return $this->render('update', [
+            'model' => $model,
+            'holidayCategories' => $this->holidayService->getCategories()
+        ]);
+    }
+
+
+    /**
+     * Updates an existing Holiday model for refund.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param string $uid UID
+     * @return string|Response
+     */
+    public function actionRefundUpdate(string $uid): Response|string
+    {
+        $model = $this->holidayService->findHoliday($uid, ['holidaySuppliers', 'customer', 'holidayCategory', 'holidayRefund']);
+        //dd($model->holidayRefund);
         if ($this->request->isPost) {
             // Update Holiday
             $model = $this->holidayService->updateHoliday(Yii::$app->request->post(), $model);
@@ -171,8 +196,9 @@ class HolidayController extends ParentController
             }
         }
 
-        return $this->render('update', [
+        return $this->render('refund_update', [
             'model' => $model,
+            'holidayRefund' => $model->holidayRefund,
             'holidayCategories' => $this->holidayService->getCategories()
         ]);
     }

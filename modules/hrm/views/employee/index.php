@@ -92,7 +92,7 @@ $this->params['breadcrumbs'][] = $this->title;
             //'updatedBy',
             //'updatedAt',
             [
-                'class' => ActionColumn::className(),
+                'class' => ActionColumn::class,
                 'urlCreator' => function ($action, Employee $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'uid' => $model->uid]);
                  },

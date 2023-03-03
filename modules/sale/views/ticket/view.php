@@ -62,8 +62,13 @@ YiiAsset::register($this);
                             <span class="nav-text">Actions</span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-sm dropdown-menu-right">
-                            <?= Html::a(Yii::t('app', '<span class="nav-icon"><i class="flaticon2-edit"></i> </span> <span class="nav-text">&nbsp;Edit</span>'), ['update', 'uid' => $model->uid], ['class' => 'dropdown-item']) ?>
-                            <?= Html::a(Yii::t('app', '<span class="nav-icon"><i class="flaticon2-refresh"></i> </span> <span class="nav-text">&nbsp;Refund</span>'), ['refund', 'uid' => $model->uid], ['class' => 'dropdown-item']) ?>
+                            <?= Html::a(Yii::t('app', '<i class="fa fa-edit"></i> Update'), [($model->type == ServiceConstant::TYPE['Refund']) ? 'refund-update' : 'update', 'uid' => $model->uid], ['class' => 'dropdown-item']) ?>
+                            <?php
+                            if ($model->type != ServiceConstant::TYPE['Refund']) {
+                                echo Html::a(Yii::t('app', '<i class="fa fa-minus-circle"></i> Refund'), ['refund', 'uid' => $model->uid], ['class' => 'dropdown-item']);
+                            }
+                            ?>
+                            
                             <?= Html::a(Yii::t('app', '<span class="nav-icon"><i class="flaticon2-trash"></i></span> <span class="nav-text">&nbsp;Delete</span>'), ['delete', 'uid' => $model->uid], [
                                 'class' => 'dropdown-item',
                                 'data' => [

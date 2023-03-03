@@ -40,7 +40,6 @@ class HolidayService
                 throw new Exception('Holiday and supplier data can not be empty.');
             }
             $services = [];
-            $invoice = null;
 
             // Holiday data process and store
             $customer = Customer::findOne(['id' => $requestData['Holiday']['customerId']]);
@@ -65,6 +64,13 @@ class HolidayService
                 if ($holidaySupplier->hasErrors()) {
                     throw new Exception('Holiday Supplier refund creation failed - ' . Utilities::processErrorMessages($holidaySupplier->getErrors()));
                 }
+                $supplierData[] = [
+                    'refId' => $holidaySupplier->id,
+                    'refModel' => HolidaySupplier::class,
+                    'subRefModel' => Invoice::class,
+                    'dueAmount' => $holidaySupplier->costOfSale,
+                    'paidAmount' => $holidaySupplier->paidAmount,
+                ];
             }
 
             // Invoice process and create
@@ -75,6 +81,7 @@ class HolidayService
                     'refModel' => Holiday::class,
                     'dueAmount' => $holiday->quoteAmount,
                     'paidAmount' => 0,
+                    'supplierData' => $supplierData
                 ];
                 // Invoice data process and storing
                 $autoInvoiceCreateResponse = $this->invoiceService->autoInvoice($customer->id, $services);
@@ -182,7 +189,7 @@ class HolidayService
             $oldQuoteAmount = $holiday->quoteAmount;
 
             // Update Holiday
-            if ($holiday->load($requestData)){
+            if ($holiday->load($requestData)) {
                 throw new Exception('Holiday data loading failed - ' . Utilities::processErrorMessages($holiday->getErrors()));
             }
             $holiday->netProfit = self::calculateNetProfit($holiday->quoteAmount, $holiday->costOfSale);
@@ -204,8 +211,8 @@ class HolidayService
                 $services[] = [
                     'refId' => $holiday->id,
                     'refModel' => Holiday::class,
-                    'due' => ($holiday->quoteAmount - $holiday->receivedAmount),
-                    'amount' => $holiday->receivedAmount
+                    'dueAmount' => ($holiday->quoteAmount - $holiday->receivedAmount),
+                    'paidAmount' => $holiday->receivedAmount
                 ];
 
                 $serviceRelatedDataProcessResponse = SaleService::updatedServiceRelatedData($holiday, $services);
@@ -242,6 +249,97 @@ class HolidayService
         }
 
         return ['error' => false, 'message' => 'Holiday Supplier updated successfully'];
+    }
+
+    public function updateRefundHoliday(array $requestData, ActiveRecord $holiday): array
+    {
+        $dbTransaction = Yii::$app->db->beginTransaction();
+        try {
+            // Holiday and supplier data can not be empty
+            if (empty($requestData['Holiday']) || empty($requestData['HolidaySupplier'])) {
+                throw new Exception('Holiday and supplier data is required.');
+            }
+            $oldQuoteAmount = $holiday->quoteAmount;
+
+            // Holiday data processing
+            $customer = Customer::findOne(['id' => $requestData['Holiday']['customerId']]);
+            if (!$holiday->load($requestData)) {
+                throw new Exception('Holiday data loading failed - ' . Utilities::processErrorMessages($holiday->getErrors()));
+            }
+
+            $holiday = $this->holidayRepository->store($holiday);
+            if ($holiday->hasErrors()) {
+                throw new Exception('Holiday update failed - ' . Utilities::processErrorMessages($holiday->getErrors()));
+            }
+
+            // Customer Refund data update
+            $customerHolidayRefund = HolidayRefund::find()->where(['refId' => $customer->id, 'refModel' => 'app\\modules\\sale\\models\\Customer', 'holidayId' => $holiday->id])->one();
+            if (!$customerHolidayRefund) {
+                throw new Exception('Customer Holiday refund not found.');
+            }
+            $customerHolidayRefund->load($requestData);
+            $customerHolidayRefund->serviceCharge = $holiday->quoteAmount;
+            $customerHolidayRefund->refundRequestDate = $holiday->refundRequestDate;
+            $customerHolidayRefund = $this->holidayRepository->store($customerHolidayRefund);
+            if ($customerHolidayRefund->hasErrors()) {
+                throw new Exception('Customer holiday refund update failed - ' . Utilities::processErrorMessages($customerHolidayRefund->getErrors()));
+            }
+
+            // Mother Holiday update
+            $motherHoliday = $this->holidayRepository->findOne(['id' => $holiday->motherId], Holiday::class);
+            $motherHoliday->refundRequestDate = $holiday->refundRequestDate;
+            $motherHoliday = $this->holidayRepository->store($motherHoliday);
+            if ($motherHoliday->hasErrors()) {
+                throw new Exception('Mother holiday update failed - ' . Utilities::processErrorMessages($motherHoliday->getErrors()));
+            }
+
+            // Holiday Supplier data process
+            foreach ($requestData['HolidaySupplier'] as $singleSupplierArray) {
+                $holidaySupplier = HolidaySupplier::findOne(['id' => $singleSupplierArray['id']]);
+                $holidaySupplier->load(['HolidaySupplier' => $singleSupplierArray]);
+                $holidaySupplier->holidayId = $holiday->id;
+                $holidaySupplier->refundRequestDate = $holiday->refundRequestDate;
+                $holidaySupplier = $this->holidayRepository->store($holidaySupplier);
+                if ($holidaySupplier->hasErrors()) {
+                    throw new Exception('Holiday Supplier refund creation failed - ' . Utilities::processErrorMessages($holidaySupplier->getErrors()));
+                }
+
+                // Supplier refund data update
+                $supplierHolidayRefund = HolidayRefund::find()->where(['refId' => $holidaySupplier->supplierId, 'refModel' => 'app\\modules\\sale\\models\\Supplier', 'holidayId' => $holiday->id])->one();
+                if (!$supplierHolidayRefund) {
+                    throw new Exception('Supplier Holiday refund not found.');
+                }
+                $supplierHolidayRefund->load($requestData);
+                $supplierHolidayRefund->serviceCharge = $holidaySupplier->costOfSale;
+                $supplierHolidayRefund->refundRequestDate = $holidaySupplier->refundRequestDate;
+                $supplierHolidayRefund = $this->holidayRepository->store($supplierHolidayRefund);
+                if ($supplierHolidayRefund->hasErrors()) {
+                    throw new Exception('Supplier holiday refund update failed - ' . Utilities::processErrorMessages($supplierHolidayRefund->getErrors()));
+                }
+            }
+
+            // If invoice created and quote updated then process related data
+            if (isset($holiday->invoice) && ($oldQuoteAmount != $holiday->quoteAmount)) {
+                //Update Invoice Entity
+                $services[] = [
+                    'refId' => $holiday->id,
+                    'refModel' => Holiday::class,
+                    'dueAmount' => ($holiday->quoteAmount - $holiday->receivedAmount),
+                    'paidAmount' => $holiday->receivedAmount
+                ];
+
+                $serviceRelatedDataProcessResponse = SaleService::updatedServiceRelatedData($holiday, $services);
+                if ($serviceRelatedDataProcessResponse['error']) {
+                    throw new Exception($serviceRelatedDataProcessResponse['message']);
+                }
+            }
+
+            $dbTransaction->commit();
+            return ['error' => false, 'message' => 'Refund Holiday updated successfully.'];
+        } catch (Exception $e) {
+            $dbTransaction->rollBack();
+            return ['error' => false, 'message' => $e->getMessage()];
+        }
     }
 
     private
