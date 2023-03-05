@@ -321,8 +321,8 @@ class InvoiceService
             $invoiceDetailBatchData[] = $invoiceDetail->getAttributes();
 
             // Payment timeline process
-            $processedData = PaymentTimelineService::processData($invoice, $singleService);
-            $paymentTimelineBatchData = array_merge($paymentTimelineBatchData, $processedData);
+            /*$processedData = PaymentTimelineService::processData($invoice, $singleService);
+            $paymentTimelineBatchData = array_merge($paymentTimelineBatchData, $processedData);*/
 
             // service update
             $serviceObject = $singleService['refModel']::findOne(['id' => $singleService['refId']]);
