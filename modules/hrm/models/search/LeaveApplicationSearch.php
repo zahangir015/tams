@@ -47,6 +47,7 @@ class LeaveApplicationSearch extends LeaveApplication
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => ['defaultOrder' => ['from' => SORT_DESC]]
         ]);
 
         $this->load($params);

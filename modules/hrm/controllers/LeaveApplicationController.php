@@ -2,13 +2,16 @@
 
 namespace app\modules\hrm\controllers;
 
+use app\components\GlobalConstant;
 use app\components\Utilities;
 use app\modules\hrm\models\LeaveApplication;
+use app\modules\hrm\models\LeaveType;
 use app\modules\hrm\models\search\LeaveApplicationSearch;
 use app\controllers\ParentController;
 use app\modules\hrm\repositories\AttendanceRepository;
 use app\modules\hrm\services\AttendanceService;
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
@@ -64,7 +67,6 @@ class LeaveApplicationController extends ParentController
     public function actionCreate(): Response|string
     {
         $model = new LeaveApplication();
-
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
                 $model = $this->attendanceRepository->store($model);
