@@ -22,7 +22,7 @@ class ParentRepository
         return $object;
     }
 
-    public function findOne(array $queryArray, $model, array $withArray = [], array $selectArray = []): ActiveRecord
+    public function findOne(array $queryArray, $model, array $withArray = [], array $selectArray = []): ActiveRecord|null
     {
         $query = $model::find();
 

@@ -598,7 +598,7 @@ class InvoiceService
     protected function storeOrUpdateInvoiceDetail(ActiveRecord $invoice, $service, $user): array
     {
         $invoiceDetail = $this->invoiceRepository->findOne(['refModel' => $service['refModel'], 'refId' => $service['refId'], 'invoiceId' => $invoice->id], InvoiceDetail::class, []);
-        if (!empty($invoiceDetail)) {
+        if ($invoiceDetail) {
             $invoiceDetail->dueAmount = $service['dueAmount'];
             $invoiceDetail->paidAmount = $service['paidAmount'];
         } else {
