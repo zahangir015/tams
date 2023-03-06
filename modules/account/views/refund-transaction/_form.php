@@ -42,7 +42,7 @@ $this->registerJsFile(
                             <label class="control-label" for="dateRange">Issue Date Range</label>
                             <?= $form->field($model, 'dateRange', [
                                 'options' => ['class' => 'drp-container mb-2']
-                            ])->widget(DateRangePicker::class, Utilities::getDateRangeWidgetOptions())->label(false) ?>
+                            ])->widget(DateRangePicker::class, \app\components\WidgetHelper::getDateRangeWidget())->label(false) ?>
                         </div>
                     </div>
                     <div id="bills" style="border: 1px solid #ddd; background-color: #FFFFFF; padding: 10px;">

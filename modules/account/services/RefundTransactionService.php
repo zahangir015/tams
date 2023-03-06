@@ -155,6 +155,7 @@ class RefundTransactionService
         //dd($requestData);
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
+            dd($requestData);
             $refundTransaction->load($requestData);
             $refundTransaction->identificationNumber = Utilities::refundTransactionNumber();
 
@@ -165,6 +166,22 @@ class RefundTransactionService
             $refundTransaction = $this->refundTransactionRepository->store($refundTransaction);
             if ($refundTransaction->hasErrors()) {
                 throw new Exception(Utilities::processErrorMessages($refundTransaction->getErrors()));
+            }
+
+            // process customer ledger
+            $ledgerRequestData = [
+                'title' => 'Refund Transaction',
+                'reference' => 'Refund Transaction - ' . $refundTransaction->identificationNumber,
+                'refId' => $refundTransaction->refId,
+                'refModel' => Customer::class,
+                'subRefId' => $refundTransaction->id,
+                'subRefModel' => RefundTransaction::class,
+                'debit' => $refundTransaction->receivableAmount,
+                'credit' => $refundTransaction->payableAmount,
+            ];
+            $ledgerRequestResponse = $this->ledgerService->store($ledgerRequestData);
+            if ($ledgerRequestResponse['error']) {
+                return ['error' => true, 'message' => $ledgerRequestResponse['message']];
             }
 
             // store refund transaction detail
@@ -180,23 +197,10 @@ class RefundTransactionService
                 if ($refundTransactionDetail->hasErrors()) {
                     return ['status' => false, 'message' => $model->errors];
                 }
+
+                $serviceData[] = self::formDataForServiceUpdate($datum, $refundTransaction);
             }
 
-            // process customer ledger
-            /*$ledgerRequestData = [
-                'title' => 'Service Refund',
-                'reference' => 'Refund Transaction - ' . $refundTransaction->identificationNumber,
-                'refId' => $refundTransaction->refId,
-                'refModel' => Customer::class,
-                'subRefId' => $refundTransaction->id,
-                'subRefModel' => get_class($refundTransaction),
-                'debit' => $refundTransaction->receivableAmount,
-                'credit' => $refundTransaction->payableAmount,
-            ];
-            $ledgerRequestResponse = $this->ledgerService->store($ledgerRequestData);
-            if ($ledgerRequestResponse['error']) {
-                return ['error' => true, 'message' => $ledgerRequestResponse['message']];
-            }*/
 
             // process bank ledger
             /*$bankLedgerRequestData = [
