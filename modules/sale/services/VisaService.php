@@ -17,7 +17,7 @@ use Yii;
 use yii\db\ActiveRecord;
 use yii\db\Exception;
 
-class VisaService
+class VisaServices
 {
     private VisaRepository $visaRepository;
     private InvoiceService $invoiceService;
@@ -235,6 +235,98 @@ class VisaService
         return ['error' => false, 'message' => 'Visa Supplier updated successfully'];
     }
 
+
+    public function updateRefundVisa(array $requestData, ActiveRecord $visa): array
+    {
+        $dbTransaction = Yii::$app->db->beginTransaction();
+        try {
+            // Visa and supplier data can not be empty
+            if (empty($requestData['Visa']) || empty($requestData['VisaSupplier'])) {
+                throw new Exception('Visa and supplier data is required.');
+            }
+            $oldQuoteAmount = $visa->quoteAmount;
+
+            // Visa data processing
+            $customer = Customer::findOne(['id' => $requestData['Visa']['customerId']]);
+            if (!$visa->load($requestData)) {
+                throw new Exception('Visa data loading failed - ' . Utilities::processErrorMessages($visa->getErrors()));
+            }
+
+            $visa = $this->visaRepository->store($visa);
+            if ($visa->hasErrors()) {
+                throw new Exception('Visa update failed - ' . Utilities::processErrorMessages($visa->getErrors()));
+            }
+
+            // Customer Refund data update
+            $customerVisaRefund = VisaRefund::find()->where(['refId' => $customer->id, 'refModel' => 'app\\modules\\sale\\models\\Customer', 'visaId' => $visa->id])->one();
+            if (!$customerVisaRefund) {
+                throw new Exception('Customer Visa refund not found.');
+            }
+            $customerVisaRefund->load($requestData);
+            $customerVisaRefund->serviceCharge = $visa->quoteAmount;
+            $customerVisaRefund->refundRequestDate = $visa->refundRequestDate;
+            $customerVisaRefund = $this->visaRepository->store($customerVisaRefund);
+            if ($customerVisaRefund->hasErrors()) {
+                throw new Exception('Customer visa refund update failed - ' . Utilities::processErrorMessages($customerVisaRefund->getErrors()));
+            }
+
+            // Mother Visa update
+            $motherVisa = $this->visaRepository->findOne(['id' => $visa->motherId], Visa::class);
+            $motherVisa->refundRequestDate = $visa->refundRequestDate;
+            $motherVisa = $this->visaRepository->store($motherVisa);
+            if ($motherVisa->hasErrors()) {
+                throw new Exception('Mother visa update failed - ' . Utilities::processErrorMessages($motherVisa->getErrors()));
+            }
+
+            // Visa Supplier data process
+            foreach ($requestData['VisaSupplier'] as $singleSupplierArray) {
+                $visaSupplier = VisaSupplier::findOne(['id' => $singleSupplierArray['id']]);
+                $visaSupplier->load(['VisaSupplier' => $singleSupplierArray]);
+                $visaSupplier->visaId = $visa->id;
+                $visaSupplier->refundRequestDate = $visa->refundRequestDate;
+                $visaSupplier = $this->visaRepository->store($visaSupplier);
+                if ($visaSupplier->hasErrors()) {
+                    throw new Exception('Visa Supplier refund creation failed - ' . Utilities::processErrorMessages($visaSupplier->getErrors()));
+                }
+
+                // Supplier refund data update
+                $supplierVisaRefund = VisaRefund::find()->where(['refId' => $visaSupplier->supplierId, 'refModel' => 'app\\modules\\sale\\models\\Supplier', 'visaId' => $visa->id])->one();
+                if (!$supplierVisaRefund) {
+                    throw new Exception('Supplier Visa refund not found.');
+                }
+                $supplierVisaRefund->load($requestData);
+                $supplierVisaRefund->serviceCharge = $visaSupplier->costOfSale;
+                $supplierVisaRefund->refundRequestDate = $visaSupplier->refundRequestDate;
+                $supplierVisaRefund = $this->visaRepository->store($supplierVisaRefund);
+                if ($supplierVisaRefund->hasErrors()) {
+                    throw new Exception('Supplier visa refund update failed - ' . Utilities::processErrorMessages($supplierVisaRefund->getErrors()));
+                }
+            }
+
+            // If invoice created and quote updated then process related data
+            if (isset($visa->invoice) && ($oldQuoteAmount != $visa->quoteAmount)) {
+                //Update Invoice Entity
+                $services[] = [
+                    'refId' => $visa->id,
+                    'refModel' => Visa::class,
+                    'dueAmount' => ($visa->quoteAmount - $visa->receivedAmount),
+                    'paidAmount' => $visa->receivedAmount
+                ];
+
+                $serviceRelatedDataProcessResponse = SaleService::updatedServiceRelatedData($visa, $services);
+                if ($serviceRelatedDataProcessResponse['error']) {
+                    throw new Exception($serviceRelatedDataProcessResponse['message']);
+                }
+            }
+
+            $dbTransaction->commit();
+            return ['error' => false, 'message' => 'Refund Visa updated successfully.'];
+        } catch (Exception $e) {
+            $dbTransaction->rollBack();
+            return ['error' => false, 'message' => $e->getMessage()];
+        }
+    }
+
     private
     function visaSupplierProcess(ActiveRecord $visa, mixed $visaSuppliers): array
     {
@@ -308,15 +400,4 @@ class VisaService
         return ($quoteAmount - $costOfSale);
     }
 
-    public
-    function findVisa(string $uid, $withArray = []): ActiveRecord
-    {
-        return $this->visaRepository->findOne(['uid' => $uid], Visa::class, $withArray);
-    }
-
-    public
-    function findVisaSupplier(string $uid, $withArray = []): ActiveRecord
-    {
-        return $this->visaRepository->findOne($uid, VisaSupplier::class, $withArray);
-    }
 }

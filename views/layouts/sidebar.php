@@ -114,7 +114,8 @@ use yii\helpers\Url;
                         'badge' => '<span class="right badge badge-info">2</span>',
                         'items' => [
                             ['label' => 'Leave Applications', 'icon' => 'calendar-plus', 'url' => ['/hrm/leave-application/index']],
-                            ['label' => 'Apply Leave', 'icon' => 'calendar-check', 'url' => ['/hrm/leave-application/apply']],
+                            ['label' => 'Applied Leaves', 'icon' => 'calendar-plus', 'url' => ['/hrm/leave-application/applied-leaves']],
+                            ['label' => 'Apply', 'icon' => 'calendar-check', 'url' => ['/hrm/leave-application/apply']],
                         ]
                     ],
                     [
@@ -123,7 +124,6 @@ use yii\helpers\Url;
                         'badge' => '<span class="right badge badge-info">2</span>',
                         'items' => [
                             ['label' => 'Attendance', 'icon' => 'calendar-plus', 'url' => ['/hrm/attendance/index']],
-                            //['label' => 'Apply Leave', 'icon' => 'calendar-check', 'url' => ['/hrm/leave-application/apply']],
                         ]
                     ],
                     ['label' => 'SALES', 'header' => true],

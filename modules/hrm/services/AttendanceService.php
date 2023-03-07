@@ -4,7 +4,11 @@ namespace app\modules\hrm\services;
 
 use app\components\GlobalConstant;
 use app\modules\hrm\models\Attendance;
+use app\modules\hrm\models\Employee;
+use app\modules\hrm\models\LeaveApplication;
 use app\modules\hrm\repositories\AttendanceRepository;
+use app\modules\sale\models\Customer;
+use yii\base\Exception;
 use yii\db\ActiveRecord;
 
 class AttendanceService
@@ -36,6 +40,33 @@ class AttendanceService
     public function storeAttendance(Attendance $model): Attendance
     {
 
+    }
+
+    public function storeLeave(LeaveApplication $model, array $requestData): array
+    {
+        $dbTransaction = \Yii::$app->db->beginTransaction();
+        try {
+
+
+            $dbTransaction->commit();
+            return [
+                'error' => false,
+                'message' => 'Leave application created successfully.'
+            ];
+        } catch (Exception $exception) {
+            $dbTransaction->rollBack();
+            return [
+                'error' => true,
+                'message' => $exception->getMessage()
+            ];
+        }
+    }
+
+    public function applicationValidityCheck(Employee $employee, array $requestData): array
+    {
+        // Todo Leave allocation check
+        // Todo Leave Approval Policy check
+        // Todo Leave type availability check
     }
 
 }

@@ -67,14 +67,19 @@ class LeaveApplicationController extends ParentController
     public function actionCreate(): Response|string
     {
         $model = new LeaveApplication();
+
         if ($this->request->isPost) {
-            if ($model->load($this->request->post())) {
-                $model = $this->attendanceRepository->store($model);
-                if ($model->hasErrors()) {
-                    Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
-                } else {
-                    return $this->redirect(['view', 'uid' => $model->uid]);
-                }
+            $requestData = Yii::$app->request->post();
+
+            // Check Validity
+            $employee = $requestData['employeeId'];
+            $validityCheckResponse = $this->attendanceService->applicationValidityCheck($employee, $requestData);
+
+            $leaveStoringResponse = $this->attendanceService->storeLeave($model, Yii::$app->request->post());
+            if ($leaveStoringResponse['error']) {
+                Yii::$app->session->setFlash('danger', $leaveStoringResponse['message']);
+            } else {
+                return $this->redirect(['view', 'uid' => $model->uid]);
             }
         } else {
             $model->loadDefaultValues();
