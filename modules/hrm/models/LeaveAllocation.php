@@ -27,7 +27,7 @@ use yii\db\ActiveRecord;
  * @property Employee $employee
  * @property LeaveType $leaveType
  */
-class EmployeeLeaveAllocation extends ActiveRecord
+class LeaveAllocation extends ActiveRecord
 {
     use BehaviorTrait;
 

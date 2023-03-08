@@ -6,7 +6,7 @@ use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
 
 /** @var yii\web\View $this */
-/** @var app\modules\hrm\models\EmployeeLeaveAllocation $model */
+/** @var app\modules\hrm\models\LeaveAllocation $model */
 /** @var yii\bootstrap4\ActiveForm $form */
 ?>
 

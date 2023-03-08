@@ -20,7 +20,7 @@ use yii\db\ActiveRecord;
  * @property int|null $updatedBy
  * @property int|null $updatedAt
  *
- * @property EmployeeLeaveAllocation[] $employeeLeaveAllocations
+ * @property LeaveAllocation[] $employeeLeaveAllocations
  * @property LeaveApplication[] $leaveApplications
  * @property YearlyLeaveAllocation[] $yearlyLeaveAllocations
  */

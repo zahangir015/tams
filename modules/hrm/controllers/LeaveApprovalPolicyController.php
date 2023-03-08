@@ -3,7 +3,7 @@
 namespace app\modules\hrm\controllers;
 
 use app\components\Utilities;
-use app\modules\hrm\models\EmployeeLeaveAllocation;
+use app\modules\hrm\models\LeaveAllocation;
 use app\modules\hrm\models\LeaveApprovalPolicy;
 use app\modules\hrm\models\search\LeaveApprovalPolicySearch;
 use app\controllers\ParentController;

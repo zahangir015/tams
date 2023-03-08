@@ -4,12 +4,12 @@ namespace app\modules\hrm\models\search;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\hrm\models\EmployeeLeaveAllocation;
+use app\modules\hrm\models\LeaveAllocation;
 
 /**
- * EmployeeLeaveAllocationSearch represents the model behind the search form of `app\modules\hrm\models\EmployeeLeaveAllocation`.
+ * LeaveAllocationSearch represents the model behind the search form of `app\modules\hrm\models\LeaveAllocation`.
  */
-class EmployeeLeaveAllocationSearch extends EmployeeLeaveAllocation
+class LeaveAllocationSearch extends LeaveAllocation
 {
     /**
      * {@inheritdoc}
@@ -40,7 +40,7 @@ class EmployeeLeaveAllocationSearch extends EmployeeLeaveAllocation
      */
     public function search(array $params): ActiveDataProvider
     {
-        $query = EmployeeLeaveAllocation::find();
+        $query = LeaveAllocation::find();
 
         // add conditions that should always apply here
 

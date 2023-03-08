@@ -2,7 +2,7 @@
 
 namespace app\repository;
 
-use app\modules\hrm\models\EmployeeLeaveAllocation;
+use app\modules\hrm\models\LeaveAllocation;
 use Yii;
 use yii\db\ActiveRecord;
 

@@ -8,7 +8,7 @@ use yii\web\YiiAsset;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
-/** @var app\modules\hrm\models\EmployeeLeaveAllocation $model */
+/** @var app\modules\hrm\models\LeaveAllocation $model */
 
 $this->title = $model->employee->firstName . ' - ' . $model->leaveType->name;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Employee Leave Allocations'), 'url' => ['index']];

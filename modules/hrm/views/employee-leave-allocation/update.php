@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var app\modules\hrm\models\EmployeeLeaveAllocation $model */
+/** @var app\modules\hrm\models\LeaveAllocation $model */
 
 $this->title = Yii::t('app', 'Update Employee Leave Allocation: {name}', [
     'name' => $model->employee->firstName.' - '.$model->leaveType->name,

@@ -72,15 +72,18 @@ class LeaveApplicationController extends ParentController
             $requestData = Yii::$app->request->post();
 
             // Check Validity
-            $employee = $requestData['employeeId'];
-            $validityCheckResponse = $this->attendanceService->applicationValidityCheck($employee, $requestData);
-
-            $leaveStoringResponse = $this->attendanceService->storeLeave($model, Yii::$app->request->post());
-            if ($leaveStoringResponse['error']) {
-                Yii::$app->session->setFlash('danger', $leaveStoringResponse['message']);
+            $validityCheckResponse = $this->attendanceService->applicationValidityCheck($requestData['employeeId'], $requestData);
+            if (!$validityCheckResponse['error']) {
+                $leaveStoringResponse = $this->attendanceService->storeLeave($model, Yii::$app->request->post(), $validityCheckResponse['data']);
+                if ($leaveStoringResponse['error']) {
+                    Yii::$app->session->setFlash('danger', $leaveStoringResponse['message']);
+                } else {
+                    return $this->redirect(['view', 'uid' => $model->uid]);
+                }
             } else {
-                return $this->redirect(['view', 'uid' => $model->uid]);
+                Yii::$app->session->setFlash('danger', $validityCheckResponse['message']);
             }
+
         } else {
             $model->loadDefaultValues();
         }

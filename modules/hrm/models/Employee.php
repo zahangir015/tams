@@ -153,4 +153,24 @@ class Employee extends ActiveRecord
     {
         return $this->hasOne(User::class, ['id' => 'userId']);
     }
+
+    /**
+     * Gets query for [[LeaveAllocation]].
+     *
+     * @return ActiveQuery
+     */
+    public function getLeaveAllocations(): ActiveQuery
+    {
+        return $this->hasMany(LeaveAllocation::class, ['employeeId' => 'id']);
+    }
+
+    /**
+     * Gets query for [[LeaveApprovalPolicy]].
+     *
+     * @return ActiveQuery
+     */
+    public function getLeaveApprovalPolicies(): ActiveQuery
+    {
+        return $this->hasMany(LeaveApprovalPolicy::class, ['employeeId' => 'id']);
+    }
 }

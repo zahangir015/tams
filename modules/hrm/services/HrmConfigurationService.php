@@ -7,7 +7,7 @@ use app\components\Utilities;
 use app\modules\hrm\models\DepartmentShift;
 use app\modules\hrm\models\Designation;
 use app\modules\hrm\models\Employee;
-use app\modules\hrm\models\EmployeeLeaveAllocation;
+use app\modules\hrm\models\LeaveAllocation;
 use app\modules\hrm\models\YearlyLeaveAllocation;
 use app\modules\hrm\repositories\HrmConfigurationRepository;
 use Yii;
@@ -101,9 +101,9 @@ class HrmConfigurationService
             $employeeLeaveAllocationBatchData = [];
             foreach ($employees as $singleEmployee) {
                 foreach ($requestData['YearlyLeaveAllocation'] as $datum) {
-                    $employeeLeaveAllocation = new EmployeeLeaveAllocation();
+                    $employeeLeaveAllocation = new LeaveAllocation();
                     $employeeLeaveAllocation->scenario = 'create';
-                    $employeeLeaveAllocation->load(['EmployeeLeaveAllocation' => $datum]);
+                    $employeeLeaveAllocation->load(['LeaveAllocation' => $datum]);
                     $employeeLeaveAllocation->employeeId = $singleEmployee->id;
                     // Todo old employee leave allocation check
                     $employeeLeaveAllocation->totalDays = ($singleEmployee->inProhibition) ? 1 : $datum['numberOfDays'];
@@ -119,7 +119,7 @@ class HrmConfigurationService
             if (empty($employeeLeaveAllocationBatchData)) {
                 throw new Exception('Employee allocation data is required.');
             }
-            $employeeLeaveAllocationResponse = $this->hrmConfigurationRepository->batchStore(EmployeeLeaveAllocation::tableName(), array_keys($employeeLeaveAllocationBatchData[0]), $employeeLeaveAllocationBatchData);
+            $employeeLeaveAllocationResponse = $this->hrmConfigurationRepository->batchStore(LeaveAllocation::tableName(), array_keys($employeeLeaveAllocationBatchData[0]), $employeeLeaveAllocationBatchData);
             if (!$employeeLeaveAllocationResponse) {
                 throw new Exception('Employee leave allocation failed.');
             }
@@ -143,7 +143,7 @@ class HrmConfigurationService
             }
 
             // Employee allocation process
-            $employeeAllocationUpdateResponse = $this->hrmConfigurationRepository->update(['totalDays' => $yearlyLeaveAllocation->numberOfDays, 'remainingDays' => 'totalDays-availedDays'], ['and', ['year' => $yearlyLeaveAllocation->year], ['status' => GlobalConstant::ACTIVE_STATUS], ['leaveTypeId' => $yearlyLeaveAllocation->leaveTypeId]], EmployeeLeaveAllocation::class);
+            $employeeAllocationUpdateResponse = $this->hrmConfigurationRepository->update(['totalDays' => $yearlyLeaveAllocation->numberOfDays, 'remainingDays' => 'totalDays-availedDays'], ['and', ['year' => $yearlyLeaveAllocation->year], ['status' => GlobalConstant::ACTIVE_STATUS], ['leaveTypeId' => $yearlyLeaveAllocation->leaveTypeId]], LeaveAllocation::class);
             if (!$employeeAllocationUpdateResponse) {
                 return ['error' => true, 'message' => 'Employee Leave Allocation update failed.'];
             }

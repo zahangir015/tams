@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
-/** @var app\modules\hrm\models\search\EmployeeLeaveAllocationSearch $model */
+/** @var app\modules\hrm\models\search\LeaveAllocationSearch $model */
 /** @var yii\widgets\ActiveForm $form */
 ?>
 

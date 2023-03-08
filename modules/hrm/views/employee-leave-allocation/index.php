@@ -3,7 +3,7 @@
 use app\components\GlobalConstant;
 use app\components\Utilities;
 use app\components\WidgetHelper;
-use app\modules\hrm\models\EmployeeLeaveAllocation;
+use app\modules\hrm\models\LeaveAllocation;
 use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -11,7 +11,7 @@ use kartik\grid\ActionColumn;
 use kartik\grid\GridView;
 
 /** @var yii\web\View $this */
-/** @var app\modules\hrm\models\search\EmployeeLeaveAllocationSearch $searchModel */
+/** @var app\modules\hrm\models\search\LeaveAllocationSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
 $this->title = Yii::t('app', 'Employee Leave Allocations');
@@ -53,7 +53,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'class' => ActionColumn::class,
-                'urlCreator' => function ($action, EmployeeLeaveAllocation $model, $key, $index, $column) {
+                'urlCreator' => function ($action, LeaveAllocation $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'uid' => $model->uid]);
                 },
                 'width' => '150px',

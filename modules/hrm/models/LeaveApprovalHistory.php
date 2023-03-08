@@ -3,6 +3,8 @@
 namespace app\modules\hrm\models;
 
 use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%leave_approval_history}}".
@@ -22,12 +24,12 @@ use Yii;
  * @property LeaveApplication $leaveApplication
  * @property Employee $requestedTo0
  */
-class LeaveApprovalHistory extends \yii\db\ActiveRecord
+class LeaveApprovalHistory extends ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%leave_approval_history}}';
     }
@@ -35,7 +37,7 @@ class LeaveApprovalHistory extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['leaveApplicationId', 'requestedTo', 'approvalLevel', 'createdBy', 'createdAt'], 'required'],
@@ -50,7 +52,7 @@ class LeaveApprovalHistory extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),
@@ -70,9 +72,9 @@ class LeaveApprovalHistory extends \yii\db\ActiveRecord
     /**
      * Gets query for [[LeaveApplication]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getLeaveApplication()
+    public function getLeaveApplication(): ActiveQuery
     {
         return $this->hasOne(LeaveApplication::class, ['id' => 'leaveApplicationId']);
     }
@@ -80,9 +82,9 @@ class LeaveApprovalHistory extends \yii\db\ActiveRecord
     /**
      * Gets query for [[RequestedTo0]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getRequestedTo0()
+    public function getRequestedTo(): ActiveQuery
     {
         return $this->hasOne(Employee::class, ['id' => 'requestedTo']);
     }
