@@ -11,21 +11,16 @@ use app\repository\ParentRepository;
 
 class AttendanceRepository extends ParentRepository
 {
-
-    public function storeAttendance(Attendance $model)
-    {
-    }
-
     public function findLeaveApprovalHistory($employeeId, $leaveTypeId, $from, $to): array
     {
         return LeaveApplication::find()
             ->joinWith(['leaveApprovalHistories' => function ($query) {
-                $query->where(['<>', 'approvalStatus', HrmConstant::APPROVAL_STATUS['Approved']])
-                    ->andWhere(['status' => GlobalConstant::ACTIVE_STATUS]);
+                return $query->where(['<>', 'approvalStatus', HrmConstant::APPROVAL_STATUS['Approved']])
+                    ->andWhere([LeaveApprovalHistory::tableName().'.status' => GlobalConstant::ACTIVE_STATUS]);
             }])
             ->where(['employeeId' => $employeeId])
             ->andWhere(['leaveTypeId' => $leaveTypeId])
-            ->andWhere(['YEAR(from)' => date('y', strtotime($from))])
+            //->andWhere(['YEAR(from)' => date('Y', strtotime($from))])
             ->asArray()->all();
     }
 }

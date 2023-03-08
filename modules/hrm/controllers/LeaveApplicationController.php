@@ -48,6 +48,22 @@ class LeaveApplicationController extends ParentController
     }
 
     /**
+     * Lists all LeaveApplication models.
+     *
+     * @return string
+     */
+    public function actionAppliedLeaves(): string
+    {
+        $searchModel = new LeaveApplicationSearch();
+        $dataProvider = $searchModel->search($this->request->queryParams);
+
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
      * Displays a single LeaveApplication model.
      * @param string $uid UID
      * @return string
@@ -55,7 +71,7 @@ class LeaveApplicationController extends ParentController
     public function actionView(string $uid): string
     {
         return $this->render('view', [
-            'model' => $this->attendanceService->findModel(['uid' => $uid], LeaveApplication::class, []),
+            'model' => $this->attendanceService->findModel(['uid' => $uid], LeaveApplication::class, ['leaveApprovalHistories', 'employee', 'leaveType']),
         ]);
     }
 
@@ -72,7 +88,7 @@ class LeaveApplicationController extends ParentController
             $requestData = Yii::$app->request->post();
 
             // Check Validity
-            $validityCheckResponse = $this->attendanceService->applicationValidityCheck($requestData['employeeId'], $requestData);
+            $validityCheckResponse = $this->attendanceService->applicationValidityCheck($requestData['LeaveApplication']);
             if (!$validityCheckResponse['error']) {
                 $leaveStoringResponse = $this->attendanceService->storeLeave($model, Yii::$app->request->post(), $validityCheckResponse['data']);
                 if ($leaveStoringResponse['error']) {
@@ -93,6 +109,35 @@ class LeaveApplicationController extends ParentController
         ]);
     }
 
+    public function actionApply(): Response|string
+    {
+        $model = new LeaveApplication();
+
+        if ($this->request->isPost) {
+            $requestData = Yii::$app->request->post();
+            $requestData['LeaveApplication']['employeeId'] = Yii::$app->user->id;
+            // Check Validity
+            $validityCheckResponse = $this->attendanceService->applicationValidityCheck($requestData['LeaveApplication']);
+            if (!$validityCheckResponse['error']) {
+                $leaveStoringResponse = $this->attendanceService->storeLeave($model, $requestData, $validityCheckResponse['data']);
+                if ($leaveStoringResponse['error']) {
+                    Yii::$app->session->setFlash('danger', $leaveStoringResponse['message']);
+                } else {
+                    return $this->redirect(['view', 'uid' => $model->uid]);
+                }
+            } else {
+                Yii::$app->session->setFlash('danger', $validityCheckResponse['message']);
+            }
+
+        } else {
+            $model->loadDefaultValues();
+        }
+
+        return $this->render('apply', [
+            'model' => $model,
+        ]);
+    }
+
     /**
      * Updates an existing LeaveApplication model.
      * If update is successful, the browser will be redirected to the 'view' page.
@@ -101,17 +146,26 @@ class LeaveApplicationController extends ParentController
      */
     public function actionUpdate(string $uid): Response|string
     {
-        $model = $this->attendanceService->findModel(['uid' => $uid], LeaveApplication::class, []);
+        $model = $this->attendanceService->findModel(['uid' => $uid], LeaveApplication::class, ['employee', 'leaveType', 'leaveApprovalHistory']);
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post())) {
-                $model = $this->attendanceRepository->store($model);
-                if ($model->hasErrors()) {
-                    Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
+            $requestData = Yii::$app->request->post();
+            if (!isset($requestData['LeaveApplication']['employeeId'])) {
+                $requestData['LeaveApplication']['employeeId'] = Yii::$app->user->id;
+            }
+            // Check Validity
+            $validityCheckResponse = $this->attendanceService->applicationValidityCheck($requestData['LeaveApplication']);
+            if (!$validityCheckResponse['error']) {
+                $leaveStoringResponse = $this->attendanceService->storeLeave($model, $requestData, $validityCheckResponse['data']);
+                if ($leaveStoringResponse['error']) {
+                    Yii::$app->session->setFlash('danger', $leaveStoringResponse['message']);
                 } else {
                     return $this->redirect(['view', 'uid' => $model->uid]);
                 }
+            } else {
+                Yii::$app->session->setFlash('danger', $validityCheckResponse['message']);
             }
+
         }
 
         return $this->render('update', [

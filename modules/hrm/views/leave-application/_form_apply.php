@@ -26,10 +26,7 @@ $this->registerJsFile(
             <?php $form = ActiveForm::begin(); ?>
             <div class="row">
                 <div class="col-md">
-                    <?= $form->field($model, 'employeeId')->widget(Select2::class, WidgetHelper::ajaxSelect2Widget('employeeId', '/hrm/employee/get-employees', true, 'employeeId', 'employeeId', ($model->isNewRecord) ? [] : [$model->employeeId => $model->employee->firstName . ' ' . $model->employee->lastName])) ?>
-                </div>
-                <div class="col-md">
-                    <?= $form->field($model, 'leaveTypeId')->widget(Select2::class, WidgetHelper::ajaxSelect2Widget('leaveTypeId', '/hrm/leave-type/get-types', true, 'leaveTypeId', 'leaveTypeId', ($model->isNewRecord) ? [] : [$model->leaveTypeId => $model->leaveType->firstName . ' ' . $model->leaveType->lastName])) ?>
+                    <?= $form->field($model, 'leaveTypeId')->widget(Select2::class, WidgetHelper::ajaxSelect2Widget('leaveTypeId', '/hrm/leave-type/get-types', true, 'leaveTypeId', 'leaveTypeId', ($model->isNewRecord) ? [] : [$model->leaveTypeId => $model->leaveType->name])) ?>
                 </div>
                 <div class="col-md">
                     <?= $form->field($model, 'numberOfDays')->dropDownList(HrmConstant::NUMBER_OF_DAYS, ['prompt' => '']) ?>

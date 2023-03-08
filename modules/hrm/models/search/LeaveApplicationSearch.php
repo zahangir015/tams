@@ -74,8 +74,7 @@ class LeaveApplicationSearch extends LeaveApplication
             'updatedAt' => $this->updatedAt,
         ]);
 
-        $query->andFilterWhere(['like', 'uid', $this->uid])
-            ->andFilterWhere(['like', 'description', $this->description])
+        $query->andFilterWhere(['like', 'description', $this->description])
             ->andFilterWhere(['like', 'remarks', $this->remarks]);
 
         return $dataProvider;

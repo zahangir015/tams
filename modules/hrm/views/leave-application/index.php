@@ -2,6 +2,7 @@
 
 use app\components\Utilities;
 use app\modules\hrm\models\LeaveApplication;
+use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use kartik\grid\ActionColumn;
@@ -21,8 +22,20 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'kartik\grid\SerialColumn'],
-            'employeeId',
-            'leaveTypeId',
+            [
+                'attribute' => 'employeeId',
+                'value' => function ($model) {
+                    return $model->employee->firstName.' - '.$model->employee->lastName;
+                },
+                'filter' => Select2::widget(Utilities::ajaxDropDown('LeaveApplicationSearch[employeeId]', '/hrm/employee/get-employees', false, 'employeeId', 'employeeId'))
+            ],
+            [
+                'attribute' => 'leaveTypeId',
+                'value' => function ($model) {
+                    return $model->leaveType->name;
+                },
+                'filter' => Select2::widget(Utilities::ajaxDropDown('LeaveApplicationSearch[leaveTypeId]', '/hrm/leave-type/get-types', false, 'leaveTypeId', 'leaveTypeId'))
+            ],
             'numberOfDays',
             'from',
             'to',
@@ -60,7 +73,7 @@ $this->params['breadcrumbs'][] = $this->title;
             '{export}',
             '{toggleData}'
         ],
-        'pjax' => true,
+        //'pjax' => true,
         'bordered' => true,
         'striped' => false,
         'condensed' => false,

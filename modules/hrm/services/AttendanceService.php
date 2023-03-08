@@ -12,6 +12,7 @@ use app\modules\hrm\models\LeaveApprovalHistory;
 use app\modules\hrm\models\LeaveApprovalPolicy;
 use app\modules\hrm\repositories\AttendanceRepository;
 use app\modules\sale\models\Customer;
+use Yii;
 use yii\base\Exception;
 use yii\db\ActiveRecord;
 
@@ -48,7 +49,7 @@ class AttendanceService
 
     public function storeLeave(LeaveApplication $leaveApplication, array $requestData, array $relatedData): array
     {
-        $dbTransaction = \Yii::$app->db->beginTransaction();
+        $dbTransaction = Yii::$app->db->beginTransaction();
         try {
             // Application loading
             if (!$leaveApplication->load($requestData)) {
@@ -64,7 +65,13 @@ class AttendanceService
             // Approval History store
             foreach ($relatedData['approvalPolicies'] as $approvalPolicy) {
                 $leaveApprovalHistory = new LeaveApprovalHistory();
-                $leaveApplication->load($approvalPolicy->getAttributes(['employeeId', 'requestedTo', 'approvalLevel']));
+                $leaveApprovalHistory->load(['LeaveApprovalHistory' => $approvalPolicy->getAttributes(['employeeId', 'requestedTo', 'approvalLevel'])]);
+                $leaveApprovalHistory->leaveApplicationId = $leaveApplication->id;
+                $leaveApprovalHistory = $this->attendanceRepository->store($leaveApprovalHistory);
+
+                if ($leaveApprovalHistory->hasErrors()) {
+                    throw new Exception('Leave Approval History creation failed - ' . Utilities::processErrorMessages($leaveApprovalHistory->getErrors()));
+                }
             }
 
             $dbTransaction->commit();
@@ -92,7 +99,8 @@ class AttendanceService
         }
 
         // Todo Leave allocation check
-        $leaveAllocation = $this->attendanceRepository->findOne(['year' => date('y', strtotime($requestData['from'])), 'employeeId' => $requestData['employeeId'], 'leaveTypeId' => $requestData['leaveTypeId'], 'status' => GlobalConstant::ACTIVE_STATUS], LeaveAllocation::class);
+        $leaveAllocation = $this->attendanceRepository->findOne(['year' => date('Y', strtotime($requestData['from'])), 'employeeId' => $requestData['employeeId'], 'leaveTypeId' => $requestData['leaveTypeId'], 'status' => GlobalConstant::ACTIVE_STATUS], LeaveAllocation::class);
+
         if (!$leaveAllocation) {
             return [
                 'error' => true,
@@ -102,12 +110,14 @@ class AttendanceService
 
         // Todo Leave type availability check
         $approvalHistory = $this->attendanceRepository->findLeaveApprovalHistory($requestData['employeeId'], $requestData['leaveTypeId'], $requestData['from'], $requestData['to']);
-        $pendingDays = array_sum(array_column($approvalHistory, 'numberOfDays'));
-        if (((float)$leaveAllocation->availedDays + (float)$pendingDays + (float)$requestData['numberOfDays']) > $leaveAllocation->remainingDays) {
-            return [
-                'error' => true,
-                'message' => 'Due to some pending application your application exceed the remaining days.'
-            ];
+        if (!empty($approvalHistory)) {
+            $pendingDays = array_sum(array_column($approvalHistory, 'numberOfDays'));
+            if (((float)$leaveAllocation->availedDays + (float)$pendingDays + (float)$requestData['numberOfDays']) > $leaveAllocation->remainingDays) {
+                return [
+                    'error' => true,
+                    'message' => 'Due to some pending application your application exceed the remaining days.'
+                ];
+            }
         }
 
         // Todo Leave Approval Policy check
