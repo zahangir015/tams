@@ -58,7 +58,8 @@ class Attendance extends ActiveRecord
     public function rules(): array
     {
         return [
-            [['employeeId', 'shiftId', 'rosterId', 'date', 'entry'], 'required'],
+            [['employeeId', 'shiftId', 'date'], 'required'],
+            [['employeeId', 'shiftId', 'date', 'entry'], 'required', 'on' => ['create']],
             [['employeeId', 'shiftId', 'leaveTypeId', 'leaveApplicationId', 'rosterId', 'isAbsent', 'isLate', 'isEarlyOut', 'status', 'createdBy', 'updatedBy', 'createdAt', 'updatedAt'], 'integer'],
             [['date', 'entry', 'exit', 'totalLateInTime', 'totalEarlyOutTime', 'totalWorkingHours', 'overTime'], 'safe'],
             [['uid'], 'string', 'max' => 36],
@@ -80,7 +81,7 @@ class Attendance extends ActiveRecord
         return [
             'id' => Yii::t('app', 'ID'),
             'uid' => Yii::t('app', 'Uid'),
-            'employeeId' => Yii::t('app', 'Employee ID'),
+            'employeeId' => Yii::t('app', 'Employee'),
             'shiftId' => Yii::t('app', 'Shift ID'),
             'leaveTypeId' => Yii::t('app', 'Leave Type ID'),
             'leaveApplicationId' => Yii::t('app', 'Leave Application ID'),
@@ -90,13 +91,13 @@ class Attendance extends ActiveRecord
             'exit' => Yii::t('app', 'Exit'),
             'isAbsent' => Yii::t('app', 'Is Absent'),
             'isLate' => Yii::t('app', 'Is Late'),
-            'isEarlyOut' => Yii::t('app', 'Is Early Out'),
-            'totalLateInTime' => Yii::t('app', 'Total Late In Time'),
-            'totalEarlyOutTime' => Yii::t('app', 'Total Early Out Time'),
-            'totalWorkingHours' => Yii::t('app', 'Total Working Hours'),
+            'isEarlyOut' => Yii::t('app', 'Is EarlyOut'),
+            'totalLateInTime' => Yii::t('app', 'LateIn'),
+            'totalEarlyOutTime' => Yii::t('app', 'EarlyOut'),
+            'totalWorkingHours' => Yii::t('app', 'WorkingHours'),
             'overTime' => Yii::t('app', 'Over Time'),
             'remarks' => Yii::t('app', 'Remarks'),
-            'employeeNote' => Yii::t('app', 'Employee Note'),
+            'employeeNote' => Yii::t('app', 'Notes'),
             'status' => Yii::t('app', 'Status'),
             'createdBy' => Yii::t('app', 'Created By'),
             'updatedBy' => Yii::t('app', 'Updated By'),

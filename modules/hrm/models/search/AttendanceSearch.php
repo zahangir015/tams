@@ -14,7 +14,7 @@ class AttendanceSearch extends Attendance
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['id', 'employeeId', 'shiftId', 'leaveTypeId', 'leaveApplicationId', 'rosterId', 'isAbsent', 'isLate', 'isEarlyOut', 'status', 'createdBy', 'updatedBy', 'createdAt', 'updatedAt'], 'integer'],
@@ -25,7 +25,7 @@ class AttendanceSearch extends Attendance
     /**
      * {@inheritdoc}
      */
-    public function scenarios()
+    public function scenarios(): array
     {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
@@ -38,7 +38,7 @@ class AttendanceSearch extends Attendance
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search(array $params): ActiveDataProvider
     {
         $query = Attendance::find();
 

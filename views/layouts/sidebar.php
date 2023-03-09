@@ -80,7 +80,6 @@ use yii\helpers\Url;
                     [
                         'label' => 'Weekend & Holidays',
                         'icon' => 'suitcase',
-                        'badge' => '<span class="right badge badge-info">2</span>',
                         'items' => [
                             ['label' => 'Weekend', 'icon' => 'calendar-day', 'url' => ['/hrm/weekend/index']],
                             ['label' => 'Public Holiday', 'icon' => 'calendar-times', 'url' => ['/hrm/public-holiday/index']],
@@ -100,7 +99,6 @@ use yii\helpers\Url;
                     [
                         'label' => 'Leave Settings',
                         'icon' => 'cogs',
-                        'badge' => '<span class="right badge badge-info">4</span>',
                         'items' => [
                             ['label' => 'Leave Type', 'icon' => 'calendar-plus', 'url' => ['/hrm/leave-type/index']],
                             ['label' => 'Yearly Allocation', 'icon' => 'calendar-check', 'url' => ['/hrm/yearly-leave-allocation/index']],
@@ -111,10 +109,10 @@ use yii\helpers\Url;
                     [
                         'label' => 'Leave Management',
                         'icon' => 'cogs',
-                        'badge' => '<span class="right badge badge-info">2</span>',
                         'items' => [
                             ['label' => 'Leave Applications', 'icon' => 'calendar-plus', 'url' => ['/hrm/leave-application/index']],
                             ['label' => 'Applied Leaves', 'icon' => 'calendar-plus', 'url' => ['/hrm/leave-application/applied-leaves']],
+                            ['label' => 'Approve Leave', 'icon' => 'calendar-plus', 'url' => ['/hrm/leave-application/applied-leaves']],
                             ['label' => 'Apply', 'icon' => 'calendar-check', 'url' => ['/hrm/leave-application/apply']],
                         ]
                     ],

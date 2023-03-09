@@ -1,5 +1,6 @@
 <?php
 
+use app\components\GlobalConstant;
 use app\components\Utilities;
 use app\modules\hrm\models\Attendance;
 use kartik\select2\Select2;
@@ -30,9 +31,33 @@ $this->params['breadcrumbs'][] = $this->title;
             'date',
             'entry',
             'exit',
-            'isAbsent',
-            'isLate',
-            'isEarlyOut',
+            [
+                'attribute' => 'isAbsent',
+                'value' => function ($model) {
+                    $labelClass = Utilities::statusLabelClass(!$model->isAbsent);
+                    $labelText = ($model->isAbsent) ? 'Absent' : 'Present';
+                    return '<span class="right badge ' . $labelClass . '">' . $labelText . '</span>';
+                },
+                'format' => 'html'
+            ],
+            [
+                'attribute' => 'isLate',
+                'value' => function ($model) {
+                    $labelClass = Utilities::statusLabelClass(!$model->isLate);
+                    $labelText = GlobalConstant::YES_NO[$model->isLate];
+                    return '<span class="right badge ' . $labelClass . '">' . $labelText . '</span>';
+                },
+                'format' => 'html'
+            ],
+            [
+                'attribute' => 'isEarlyOut',
+                'value' => function ($model) {
+                    $labelClass = Utilities::statusLabelClass(!$model->isEarlyOut);
+                    $labelText = GlobalConstant::YES_NO[$model->isEarlyOut];
+                    return '<span class="right badge ' . $labelClass . '">' . $labelText . '</span>';
+                },
+                'format' => 'html'
+            ],
             'totalLateInTime',
             'totalEarlyOutTime',
             'totalWorkingHours',

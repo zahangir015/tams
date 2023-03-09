@@ -4,14 +4,20 @@ namespace app\modules\hrm\services;
 
 use app\components\GlobalConstant;
 use app\components\Utilities;
+use app\modules\hrm\components\HrmConstant;
 use app\modules\hrm\models\Attendance;
 use app\modules\hrm\models\Employee;
+use app\modules\hrm\models\EmployeeShift;
 use app\modules\hrm\models\LeaveAllocation;
 use app\modules\hrm\models\LeaveApplication;
 use app\modules\hrm\models\LeaveApprovalHistory;
 use app\modules\hrm\models\LeaveApprovalPolicy;
+use app\modules\hrm\models\Roster;
 use app\modules\hrm\repositories\AttendanceRepository;
 use app\modules\sale\models\Customer;
+use DateInterval;
+use DatePeriod;
+use DateTime;
 use Yii;
 use yii\base\Exception;
 use yii\db\ActiveRecord;
@@ -74,6 +80,12 @@ class AttendanceService
                 }
             }
 
+            // Attendance update or entry
+            $attendanceProcessResponse = self::processAttendanceForLeaveApplication($leaveApplication);
+            if ($attendanceProcessResponse['error']) {
+                throw new Exception($attendanceProcessResponse['message']);
+            }
+
             $dbTransaction->commit();
             return [
                 'error' => false,
@@ -88,9 +100,38 @@ class AttendanceService
         }
     }
 
+    public function updateLeave(LeaveApplication $leaveApplication, array $requestData, array $relatedData): array
+    {
+        $dbTransaction = Yii::$app->db->beginTransaction();
+        try {
+            // Application loading
+            if (!$leaveApplication->load($requestData)) {
+                throw new Exception('Leave application loading failed - ' . Utilities::processErrorMessages($leaveApplication->getErrors()));
+            }
+
+            // Update application
+            $leaveApplication = $this->attendanceRepository->store($leaveApplication);
+            if ($leaveApplication->hasErrors()) {
+                throw new Exception('Leave application updating failed - ' . Utilities::processErrorMessages($leaveApplication->getErrors()));
+            }
+
+            $dbTransaction->commit();
+            return [
+                'error' => false,
+                'message' => 'Leave application updated successfully.'
+            ];
+        } catch (Exception $exception) {
+            $dbTransaction->rollBack();
+            return [
+                'error' => true,
+                'message' => $exception->getMessage()
+            ];
+        }
+    }
+
     public function applicationValidityCheck(array $requestData): array
     {
-        // Todo leave range check
+        // Leave range check
         if (date('Y', strtotime($requestData['from'])) !== date('Y', strtotime($requestData['to']))) {
             return [
                 'error' => true,
@@ -98,9 +139,14 @@ class AttendanceService
             ];
         }
 
-        // Todo Leave allocation check
-        $leaveAllocation = $this->attendanceRepository->findOne(['year' => date('Y', strtotime($requestData['from'])), 'employeeId' => $requestData['employeeId'], 'leaveTypeId' => $requestData['leaveTypeId'], 'status' => GlobalConstant::ACTIVE_STATUS], LeaveAllocation::class);
-
+        // Leave allocation check
+        $leaveAllocation = $this->attendanceRepository->findOne(
+            [
+                'year' => date('Y', strtotime($requestData['from'])),
+                'employeeId' => $requestData['employeeId'],
+                'leaveTypeId' => $requestData['leaveTypeId'],
+                'status' => GlobalConstant::ACTIVE_STATUS
+            ], LeaveAllocation::class);
         if (!$leaveAllocation) {
             return [
                 'error' => true,
@@ -120,7 +166,7 @@ class AttendanceService
             }
         }
 
-        // Todo Leave Approval Policy check
+        // Leave Approval Policy check
         $approvalPolicies = $this->attendanceRepository->findAll(['employeeId' => $requestData['employeeId']], LeaveApprovalPolicy::class);
         if (empty($approvalPolicies)) {
             return [
@@ -136,4 +182,90 @@ class AttendanceService
         ];
     }
 
+    private function processAttendanceForLeaveApplication($leaveApplication): array
+    {
+        $attendances = $this->attendanceRepository->findAttendances($leaveApplication->employeeId, $leaveApplication->from, $leaveApplication->to);
+        if (!empty($attendances)) {
+            foreach ($attendances as $attendance) {
+                $attendance->leaveTypeId = $leaveApplication->leaveTypeId;
+                $attendance->leaveApplicationId = $leaveApplication->id;
+                $attendance = $this->attendanceRepository->store($attendance);
+                if ($attendance->hasErrors()) {
+                    return [
+                        'error' => true,
+                        'message' => 'Attendance update for leave application failed - ' . Utilities::processErrorMessages($attendance->getErrors())
+                    ];
+                }
+            }
+
+            return [
+                'error' => false,
+                'message' => 'Attendance processed successfully.'
+            ];
+        } else {
+
+
+            // Shift Check
+            $shift = $this->attendanceRepository->findOne(['employeeId' => $leaveApplication->employeeId, 'status' => GlobalConstant::ACTIVE_STATUS], EmployeeShift::class);
+            if (!$shift) {
+                return [
+                    'error' => true,
+                    'message' => 'Employee shift setup in required.'
+                ];
+            }
+            $date1 = DateTime::createFromFormat('Y-m-d', $leaveApplication->from);
+            $date2 = DateTime::createFromFormat('Y-m-d', $leaveApplication->to);
+            $diff = $date1->diff($date2)->m;
+            if ($diff >= 1) {
+                $begin = new DateTime($leaveApplication->from);
+                $end = new DateTime($leaveApplication->to);
+                $interval = DateInterval::createFromDateString('1 day');
+                $period = new DatePeriod($begin, $interval, $end);
+
+                foreach ($period as $dt) {
+                    $date = $dt->format('Y-m-d');
+                    $roster = $this->attendanceRepository->findOne(['employeeId' => $leaveApplication->employeeId, 'rosterDate' => $date, 'status' => GlobalConstant::ACTIVE_STATUS], Roster::class);
+
+                    $attendance = new Attendance();
+                    $attendance->employeeId = $leaveApplication->employeeId;
+                    $attendance->date = $date;
+                    $attendance->leaveType = $leaveApplication->leaveType;
+                    $attendance->leaveApplicationId = $leaveApplication->id;
+                    $attendance->shiftId = ($roster) ? $roster->shiftId : $shift->id;
+                    $attendance->remarks = HrmConstant::NUMBER_OF_DAYS[$leaveApplication->numberOfDays].' Leave';
+                    $attendance = $this->attendanceRepository->store($attendance);
+                    if ($attendance->hasErrors()) {
+                        return [
+                            'error' => true,
+                            'message' => 'Attendance entry for leave application failed - ' . Utilities::processErrorMessages($attendance->getErrors())
+                        ];
+                    }
+                }
+            } else {
+                $date = $leaveApplication->from;
+                $roster = $this->attendanceRepository->findOne(['employeeId' => $leaveApplication->employeeId, 'rosterDate' => $date, 'status' => GlobalConstant::ACTIVE_STATUS], Roster::class);
+
+                $attendance = new Attendance();
+                $attendance->employeeId = $leaveApplication->employeeId;
+                $attendance->date = $date;
+                $attendance->leaveTypeId = $leaveApplication->leaveTypeId;
+                $attendance->leaveApplicationId = $leaveApplication->id;
+                $attendance->shiftId = ($roster) ? $roster->shiftId : $shift->id;
+                $attendance->remarks = HrmConstant::NUMBER_OF_DAYS[$leaveApplication->numberOfDays].' Leave';
+                $attendance = $this->attendanceRepository->store($attendance);
+                if ($attendance->hasErrors()) {
+                    return [
+                        'error' => true,
+                        'message' => 'Attendance entry for leave application failed - ' . Utilities::processErrorMessages($attendance->getErrors())
+                    ];
+                }
+            }
+
+            return [
+                'error' => false,
+                'message' => 'Attendance processed successfully.'
+            ];
+
+        }
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace app\modules\hrm\models\search;
 
+use app\components\GlobalConstant;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\hrm\models\LeaveApplication;
@@ -44,6 +45,7 @@ class LeaveApplicationSearch extends LeaveApplication
         $query = LeaveApplication::find();
 
         // add conditions that should always apply here
+        $query->where(['status' => GlobalConstant::ACTIVE_STATUS]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

@@ -4,6 +4,7 @@ namespace app\modules\hrm\controllers;
 
 use app\components\GlobalConstant;
 use app\components\Utilities;
+use app\modules\hrm\components\HrmConstant;
 use app\modules\hrm\models\LeaveApplication;
 use app\modules\hrm\models\LeaveType;
 use app\modules\hrm\models\search\LeaveApplicationSearch;
@@ -146,8 +147,7 @@ class LeaveApplicationController extends ParentController
      */
     public function actionUpdate(string $uid): Response|string
     {
-        $model = $this->attendanceService->findModel(['uid' => $uid], LeaveApplication::class, ['employee', 'leaveType', 'leaveApprovalHistory']);
-
+        $model = $this->attendanceService->findModel(['uid' => $uid], LeaveApplication::class, ['employee', 'leaveType', 'leaveApprovalHistories']);
         if ($this->request->isPost) {
             $requestData = Yii::$app->request->post();
             if (!isset($requestData['LeaveApplication']['employeeId'])) {
@@ -156,7 +156,7 @@ class LeaveApplicationController extends ParentController
             // Check Validity
             $validityCheckResponse = $this->attendanceService->applicationValidityCheck($requestData['LeaveApplication']);
             if (!$validityCheckResponse['error']) {
-                $leaveStoringResponse = $this->attendanceService->storeLeave($model, $requestData, $validityCheckResponse['data']);
+                $leaveStoringResponse = $this->attendanceService->updateLeave($model, $requestData, $validityCheckResponse['data']);
                 if ($leaveStoringResponse['error']) {
                     Yii::$app->session->setFlash('danger', $leaveStoringResponse['message']);
                 } else {
@@ -165,7 +165,11 @@ class LeaveApplicationController extends ParentController
             } else {
                 Yii::$app->session->setFlash('danger', $validityCheckResponse['message']);
             }
-
+        }
+        // Validation check before update
+        if (array_search(HrmConstant::APPROVAL_STATUS['Approved'], ArrayHelper::toArray($model->leaveApprovalHistories)) !== false) {
+            Yii::$app->session->setFlash('danger', 'This application is already approved. This application is updatable after cancellation.');
+            $this->redirect('index');
         }
 
         return $this->render('update', [
