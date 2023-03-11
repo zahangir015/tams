@@ -6,9 +6,11 @@ use app\components\GlobalConstant;
 use app\components\Utilities;
 use app\modules\hrm\components\HrmConstant;
 use app\modules\hrm\models\LeaveApplication;
+use app\modules\hrm\models\LeaveApprovalHistory;
 use app\modules\hrm\models\LeaveType;
 use app\modules\hrm\models\search\LeaveApplicationSearch;
 use app\controllers\ParentController;
+use app\modules\hrm\models\search\LeaveApprovalHistorySearch;
 use app\modules\hrm\repositories\AttendanceRepository;
 use app\modules\hrm\services\AttendanceService;
 use Yii;
@@ -59,6 +61,22 @@ class LeaveApplicationController extends ParentController
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
+     * Lists all LeaveApprovalHistory models.
+     *
+     * @return string
+     */
+    public function actionApprovalHistory(): string
+    {
+        $searchModel = new LeaveApprovalHistorySearch();
+        $dataProvider = $searchModel->search($this->request->queryParams);
+
+        return $this->render('approval_list', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
@@ -193,5 +211,54 @@ class LeaveApplicationController extends ParentController
         }
 
         return $this->redirect(['index']);
+    }
+
+    /**
+     * Deletes an existing LeaveApplication model.
+     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * @param string $uid UID
+     * @return Response
+     */
+    public function actionApprove(string $uid): Response
+    {
+        $model = $this->attendanceRepository->findOne(['uid' => $uid], LeaveApprovalHistory::class, ['requested']);
+
+        if ($model->requested->userId !== Yii::$app->user->id) {
+            Yii::$app->session->setFlash('danger', 'Invalid request. You are not allowed to perform this.');
+        } else {
+            $model->approvalStatus = HrmConstant::APPROVAL_STATUS['Approved'];
+            $model = $this->attendanceRepository->store($model);
+            if ($model->hasErrors()) {
+                Yii::$app->session->setFlash('danger', 'Approval failed - ' . Utilities::processErrorMessages($model->getErrors()));
+            } else {
+                Yii::$app->session->setFlash('success', 'Successfully Deleted.');
+            }
+        }
+
+        return $this->redirect(['approval-history']);
+    }
+
+    /**
+     * Cancel an existing LeaveApprovalHistory model.
+     * If cancel is successful, the browser will be redirected to the 'index' page.
+     * @param string $uid UID
+     * @return Response
+     */
+    public function actionCancel(string $uid): Response
+    {
+        $model = $this->attendanceRepository->findOne(['uid' => $uid], LeaveApprovalHistory::class, ['requested']);
+
+        if ($model->requested->userId !== Yii::$app->user->id) {
+            Yii::$app->session->setFlash('danger', 'Invalid request. You are not allowed to perform this.');
+        } else {
+            $model->approvalStatus = HrmConstant::APPROVAL_STATUS['Approved'];
+            $model = $this->attendanceRepository->store($model);
+            if ($model->hasErrors()) {
+                Yii::$app->session->setFlash('danger', 'Approval failed - ' . Utilities::processErrorMessages($model->getErrors()));
+            } else {
+                Yii::$app->session->setFlash('success', 'Successfully Deleted.');
+            }
+        }
+        return $this->redirect(['approval-history']);
     }
 }

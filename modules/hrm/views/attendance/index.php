@@ -32,6 +32,13 @@ $this->params['breadcrumbs'][] = $this->title;
             'entry',
             'exit',
             [
+                'attribute' => 'leaveTypeId',
+                'value' => function ($model) {
+                    return ($model->leaveType) ? $model->leaveType->name : null;
+                },
+                'filter' => Select2::widget(Utilities::ajaxDropDown('LeaveApprovalPolicySearch[employeeId]', '/hrm/employee/get-employees', false, 'employeeId', 'employeeId'))
+            ],
+            [
                 'attribute' => 'isAbsent',
                 'value' => function ($model) {
                     $labelClass = Utilities::statusLabelClass(!$model->isAbsent);
@@ -106,5 +113,4 @@ $this->params['breadcrumbs'][] = $this->title;
             'type' => GridView::TYPE_DARK
         ],
     ]); ?>
-
 </div>

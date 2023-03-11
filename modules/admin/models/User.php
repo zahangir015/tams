@@ -4,9 +4,11 @@ namespace app\modules\admin\models;
 
 use app\modules\admin\components\Configs;
 use app\modules\admin\components\UserStatus;
+use app\modules\hrm\models\Employee;
 use Yii;
 use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
 
@@ -193,5 +195,10 @@ class User extends ActiveRecord implements IdentityInterface
     public static function getDb()
     {
         return Configs::userDb();
+    }
+
+    public function getEmployee(): ActiveQuery
+    {
+        return $this->hasOne(Employee::class, ['userId' => 'id']);
     }
 }

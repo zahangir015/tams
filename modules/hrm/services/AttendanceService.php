@@ -189,6 +189,7 @@ class AttendanceService
             foreach ($attendances as $attendance) {
                 $attendance->leaveTypeId = $leaveApplication->leaveTypeId;
                 $attendance->leaveApplicationId = $leaveApplication->id;
+                $attendance->remarks = HrmConstant::NUMBER_OF_DAYS[$leaveApplication->numberOfDays] . ' '.$leaveApplication->leaveType->name.' Leave';
                 $attendance = $this->attendanceRepository->store($attendance);
                 if ($attendance->hasErrors()) {
                     return [
@@ -203,7 +204,6 @@ class AttendanceService
                 'message' => 'Attendance processed successfully.'
             ];
         } else {
-
 
             // Shift Check
             $shift = $this->attendanceRepository->findOne(['employeeId' => $leaveApplication->employeeId, 'status' => GlobalConstant::ACTIVE_STATUS], EmployeeShift::class);
@@ -232,7 +232,7 @@ class AttendanceService
                     $attendance->leaveType = $leaveApplication->leaveType;
                     $attendance->leaveApplicationId = $leaveApplication->id;
                     $attendance->shiftId = ($roster) ? $roster->shiftId : $shift->id;
-                    $attendance->remarks = HrmConstant::NUMBER_OF_DAYS[$leaveApplication->numberOfDays].' Leave';
+                    $attendance->remarks = HrmConstant::NUMBER_OF_DAYS[$leaveApplication->numberOfDays] . ' '.$leaveApplication->leaveType->name.' Leave';
                     $attendance = $this->attendanceRepository->store($attendance);
                     if ($attendance->hasErrors()) {
                         return [
@@ -251,7 +251,7 @@ class AttendanceService
                 $attendance->leaveTypeId = $leaveApplication->leaveTypeId;
                 $attendance->leaveApplicationId = $leaveApplication->id;
                 $attendance->shiftId = ($roster) ? $roster->shiftId : $shift->id;
-                $attendance->remarks = HrmConstant::NUMBER_OF_DAYS[$leaveApplication->numberOfDays].' Leave';
+                $attendance->remarks = HrmConstant::NUMBER_OF_DAYS[$leaveApplication->numberOfDays] . ' Leave';
                 $attendance = $this->attendanceRepository->store($attendance);
                 if ($attendance->hasErrors()) {
                     return [
@@ -267,5 +267,17 @@ class AttendanceService
             ];
 
         }
+    }
+
+    public function approve(array $queryArray, string $class, array $withArray = []): ActiveRecord
+    {
+        $model = self::findModel($queryArray, $class, $withArray);
+
+        if ($model->requested->userId !== Yii::$app->user->id) {
+            Yii::$app->session->setFlash('danger', 'Invalid request.');
+        }
+
+        $model->approvalStatus = HrmConstant::APPROVAL_STATUS['Approved'];
+        return $this->attendanceRepository->store($model);
     }
 }
