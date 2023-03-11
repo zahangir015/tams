@@ -67,7 +67,7 @@ class AttendanceController extends ParentController
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
-                $model = $this->attendanceService->storeAttendance($model);
+                $attendanceStoreResponse = $this->attendanceService->storeAttendance($model);
                 if ($model->hasErrors()) {
                     Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
                 } else {

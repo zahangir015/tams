@@ -189,7 +189,7 @@ class AttendanceService
             foreach ($attendances as $attendance) {
                 $attendance->leaveTypeId = $leaveApplication->leaveTypeId;
                 $attendance->leaveApplicationId = $leaveApplication->id;
-                $attendance->remarks = HrmConstant::NUMBER_OF_DAYS[$leaveApplication->numberOfDays] . ' '.$leaveApplication->leaveType->name.' Leave';
+                $attendance->remarks = HrmConstant::NUMBER_OF_DAYS[$leaveApplication->numberOfDays] . ' ' . $leaveApplication->leaveType->name . ' Leave';
                 $attendance = $this->attendanceRepository->store($attendance);
                 if ($attendance->hasErrors()) {
                     return [
@@ -232,7 +232,7 @@ class AttendanceService
                     $attendance->leaveType = $leaveApplication->leaveType;
                     $attendance->leaveApplicationId = $leaveApplication->id;
                     $attendance->shiftId = ($roster) ? $roster->shiftId : $shift->id;
-                    $attendance->remarks = HrmConstant::NUMBER_OF_DAYS[$leaveApplication->numberOfDays] . ' '.$leaveApplication->leaveType->name.' Leave';
+                    $attendance->remarks = HrmConstant::NUMBER_OF_DAYS[$leaveApplication->numberOfDays] . ' ' . $leaveApplication->leaveType->name . ' Leave';
                     $attendance = $this->attendanceRepository->store($attendance);
                     if ($attendance->hasErrors()) {
                         return [
@@ -279,5 +279,40 @@ class AttendanceService
 
         $model->approvalStatus = HrmConstant::APPROVAL_STATUS['Approved'];
         return $this->attendanceRepository->store($model);
+    }
+
+    public function storeAttendance(Attendance $model, array $requestData): array
+    {
+        $employeeShift = $this->attendanceRepository->findOne(['shiftId' => $model->shiftId, 'employeeId' => $model->employeeId], EmployeeShift::class, ['employee']);
+
+        if (!$employeeShift){
+            return [
+                'error' => true,
+                'message' => 'Employee shift not found.'
+            ];
+        }
+
+        $employeeInTime = new DateTime($requestData['date'] . $requestData['entry']);
+        $employeeOutTime = new DateTime($requestData['date'] . $requestData['exit']);
+        $totalWorkingHours = $employeeOutTime->diff($employeeInTime);
+
+        $late = self::calculateLate($employeeInTime, $employeeShift);
+        $model->lateInTime = $late['late_in_time'];
+        $model->lateIn = $late['late_in'];
+
+        $workingTimeForShift = self::calculateWorkingTime($totalWorkingHours, $employeeShift);
+        $model->overTime = $workingTimeForShift['working']['overtime'];
+        $model->earlyOutTime = $workingTimeForShift['working']['early_out_time'];
+        $model->earlyOut = $workingTimeForShift['working']['early_out'];
+
+        $model->employeeId = $requestData['employeeId'];
+        $model->date = $requestData['date'];
+        $model->shiftId = $employeeShift->shift->id;
+        $model->createdBy = \Yii::$app->user->id;
+        $model->createdAt = time();
+        $model->totalWorkingHours = str_pad($totalWorkingTime->h, 2, '0', STR_PAD_LEFT) . ':' .
+            str_pad($totalWorkingTime->i, 2, '0', STR_PAD_LEFT) . ':00';
+
+        return $model->save();
     }
 }

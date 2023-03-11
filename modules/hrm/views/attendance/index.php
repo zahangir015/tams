@@ -16,6 +16,11 @@ $this->title = Yii::t('app', 'Attendances');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="attendance-index">
+    <p>
+        <?= Html::a(Yii::t('app', 'Entry'), ['entry'], ['class' => 'btn btn-large btn-warning']) ?>
+        <?= Html::a(Yii::t('app', 'Exit'), ['exit'], ['class' => 'btn btn-large btn-success']) ?>
+    </p>
+
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
@@ -31,6 +36,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'date',
             'entry',
             'exit',
+            'totalWorkingHours',
             [
                 'attribute' => 'leaveTypeId',
                 'value' => function ($model) {
@@ -42,7 +48,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'isAbsent',
                 'value' => function ($model) {
                     $labelClass = Utilities::statusLabelClass(!$model->isAbsent);
-                    $labelText = ($model->isAbsent) ? 'Absent' : 'Present';
+                    $labelText = GlobalConstant::YES_NO[$model->isLate];
                     return '<span class="right badge ' . $labelClass . '">' . $labelText . '</span>';
                 },
                 'format' => 'html'
@@ -67,8 +73,6 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'totalLateInTime',
             'totalEarlyOutTime',
-            'totalWorkingHours',
-            'overTime',
             'remarks',
             'employeeNote',
             //'status',
