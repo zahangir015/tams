@@ -4,10 +4,12 @@ namespace app\modules\hrm\controllers;
 
 use app\components\GlobalConstant;
 use app\components\Utilities;
+use app\modules\employee\models\Employee;
 use app\modules\hrm\components\HrmConstant;
 use app\modules\hrm\models\LeaveApplication;
 use app\modules\hrm\models\LeaveApprovalHistory;
 use app\modules\hrm\models\LeaveType;
+use app\modules\hrm\models\search\AppliedLeaveApplicationSearch;
 use app\modules\hrm\models\search\LeaveApplicationSearch;
 use app\controllers\ParentController;
 use app\modules\hrm\models\search\LeaveApprovalHistorySearch;
@@ -57,7 +59,12 @@ class LeaveApplicationController extends ParentController
      */
     public function actionAppliedLeaves(): string
     {
-        $searchModel = new LeaveApplicationSearch();
+        $employee = $this->attendanceRepository->findOne(['userId' => Yii::$app->user->id], \app\modules\hrm\models\Employee::class);
+        if (!$employee) {
+            Yii::$app->session->setFlash('danger', 'Invalid Request! Your employee profile is not created yet.');
+        }
+
+        $searchModel = new AppliedLeaveApplicationSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [

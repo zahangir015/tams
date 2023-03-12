@@ -13,6 +13,7 @@ use app\modules\hrm\models\LeaveApplication;
 use app\modules\hrm\models\LeaveApprovalHistory;
 use app\modules\hrm\models\LeaveApprovalPolicy;
 use app\modules\hrm\models\Roster;
+use app\modules\hrm\models\Shift;
 use app\modules\hrm\repositories\AttendanceRepository;
 use app\modules\sale\models\Customer;
 use DateInterval;
@@ -284,8 +285,7 @@ class AttendanceService
     public function storeAttendance(Attendance $model, array $requestData): array
     {
         $employeeShift = $this->attendanceRepository->findOne(['shiftId' => $model->shiftId, 'employeeId' => $model->employeeId], EmployeeShift::class, ['employee']);
-
-        if (!$employeeShift){
+        if (!$employeeShift) {
             return [
                 'error' => true,
                 'message' => 'Employee shift not found.'
@@ -308,11 +308,94 @@ class AttendanceService
         $model->employeeId = $requestData['employeeId'];
         $model->date = $requestData['date'];
         $model->shiftId = $employeeShift->shift->id;
-        $model->createdBy = \Yii::$app->user->id;
+        $model->createdBy = Yii::$app->user->id;
         $model->createdAt = time();
         $model->totalWorkingHours = str_pad($totalWorkingTime->h, 2, '0', STR_PAD_LEFT) . ':' .
             str_pad($totalWorkingTime->i, 2, '0', STR_PAD_LEFT) . ':00';
 
         return $model->save();
+    }
+
+    public function attendanceEntry(Attendance $model): array
+    {
+        $employeeShift = null;
+        $employee = Yii::$app->user->identity->employee;
+        $roster = $this->attendanceRepository->findOne(['employeeId' => $employee->id, 'rosterDate' => date('Y-m-d')], Roster::class, [['employee', 'shift']]);
+        if (!$roster) {
+            $employeeShift = $this->attendanceRepository->findOne(['employeeId' => $employee->id], EmployeeShift::class, ['employee', 'shift']);
+            if (!$employeeShift) {
+                return [
+                    'error' => true,
+                    'message' => 'Employee shift not found. Please Setup employee shift.'
+                ];
+            }
+        }
+
+        $model->entry = date('H:i:00');
+        $model->employeeId = $employee->id;
+        $employeeInTime = new DateTime(date('Y-m-d').' '.$model->entry);
+        $lateCalculationResponse = self::calculateLate($employeeInTime, ($roster) ? $roster->shift : $employeeShift->shift);
+        $model->load(['Attendance' => $lateCalculationResponse]);
+        $model->date = date('Y-m-d');
+        $model->shiftId = ($roster) ? $roster->shift->id : $employeeShift->shift->id;
+        $model = $this->attendanceRepository->store($model);
+        if ($model->hasErrors()) {
+            return [
+                'error' => true,
+                'message' => 'Attendance entry failed - '.Utilities::processErrorMessages($model->getErrors())
+            ];
+        }
+
+        return [
+            'error' => false,
+            'message' => 'Attendance entry successfully done.'
+        ];
+    }
+
+    public function attendanceExit(Attendance $model)
+    {
+        $attendanceData = \app\modules\leaveAttendance\models\Attendance::findOne(['date' => date('Y-m-d'), 'employeeId' => Yii::$app->user->identity->employeeDetails->id]);
+        $employeeShift = \app\modules\leaveAttendance\components\Attendance::getShiftByEmployee(Yii::$app->user->identity->employeeDetails, date('Y-m-d'));
+        if ($attendanceData && !empty($attendanceData->entry)) {
+            $employeeOutTime = new DateTime(date('Y-m-d H:i:s'));
+            $existingEntry = date('Y-m-d H:i:s', strtotime($attendanceData->date . ' ' . $attendanceData->entry));
+            $employeeInTime = new DateTime($existingEntry);
+            $totalWorkingTime = $employeeOutTime->diff($employeeInTime);
+            $workingTimeForShift = \app\modules\leaveAttendance\components\Attendance::calculateWorkingTime($totalWorkingTime, $employeeShift);
+            $rows = [
+                'exit' => date('H:i:00'),
+                'overTime' => $workingTimeForShift['working']['overtime'],
+                'earlyOut' => $workingTimeForShift['working']['early_out'],
+                'earlyOutTime' => $workingTimeForShift['working']['early_out_time'],
+                'totalWorkingHours' => str_pad($totalWorkingTime->h, 2, '0', STR_PAD_LEFT) . ':' .
+                    str_pad($totalWorkingTime->i, 2, '0', STR_PAD_LEFT) . ':00',
+            ];
+
+            \app\modules\leaveAttendance\models\Attendance::updateAll($rows, ['date' => date('Y-m-d'), 'employeeId' => Yii::$app->user->identity->employeeDetails->id]);
+        }
+
+        Yii::$app->session->setFlash('success', 'Attendance exit Updated.');
+        return $this->redirect(['index']);
+    }
+
+    private static function calculateLate($employeeInTime, Shift $shift): array
+    {
+        $shiftInTime = new DateTime(date('Y-m-d') . $shift->shift->entryTime);
+        $shiftInTimeToCalculateLate = clone $shiftInTime;
+        $shiftInTimeToCalculateLate->add(new DateInterval('PT' . HrmConstant::FLEXIBLE_ENTRY_TIME_IN_MINUTE . 'M'));
+
+        if ($employeeInTime <= $shiftInTimeToCalculateLate) {
+            return [
+                'totalLateInTime' => null,
+                'isLate' => 0
+            ];
+        }
+
+        $inTimeDiff = $employeeInTime->diff($shiftInTime);
+        return [
+            'totalLateInTime' => str_pad($inTimeDiff->h, 2, '0', STR_PAD_LEFT) . ':' .
+                str_pad($inTimeDiff->i, 2, '0', STR_PAD_LEFT) . ':00',
+            'isLate' => 1
+        ];
     }
 }

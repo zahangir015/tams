@@ -8,6 +8,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use kartik\grid\ActionColumn;
 use kartik\grid\GridView;
+
 /** @var yii\web\View $this */
 /** @var app\modules\hrm\models\search\AttendanceSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
@@ -16,10 +17,34 @@ $this->title = Yii::t('app', 'Attendances');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="attendance-index">
-    <p>
-        <?= Html::a(Yii::t('app', 'Entry'), ['entry'], ['class' => 'btn btn-large btn-warning']) ?>
-        <?= Html::a(Yii::t('app', 'Exit'), ['exit'], ['class' => 'btn btn-large btn-success']) ?>
-    </p>
+    <?php
+    if (!Yii::$app->user->identity->employee) {
+        ?>
+        <div class="card">
+            <div class="card-header bg-gray-dark">
+                <h5>Attendance Entry</h5>
+            </div>
+            <div class="card-body">
+                <?= Html::a(Yii::t('app', 'Entry'), ['entry'], [
+                    'class' => 'btn btn-lg btn-warning',
+                    'data' => [
+                        'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
+                        'method' => 'post',
+                    ],
+                ]) ?>
+                <?= Html::a(Yii::t('app', 'Exit'), ['exit'], [
+                    'class' => 'btn btn-lg btn-success',
+                    'data' => [
+                        'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
+                        'method' => 'post',
+                    ],
+                ]) ?>
+            </div>
+        </div>
+        <?php
+    }
+    ?>
+
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -29,7 +54,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'employeeId',
                 'value' => function ($model) {
-                    return $model->employee->firstName.' '.$model->employee->lastName;
+                    return $model->employee->firstName . ' ' . $model->employee->lastName;
                 },
                 'filter' => Select2::widget(Utilities::ajaxDropDown('LeaveApprovalPolicySearch[employeeId]', '/hrm/employee/get-employees', false, 'employeeId', 'employeeId'))
             ],

@@ -68,8 +68,8 @@ class AttendanceController extends ParentController
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
                 $attendanceStoreResponse = $this->attendanceService->storeAttendance($model);
-                if ($model->hasErrors()) {
-                    Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
+                if ($attendanceStoreResponse['error']) {
+                    Yii::$app->session->setFlash('danger', $attendanceStoreResponse['message']);
                 } else {
                     return $this->redirect(['view', 'uid' => $model->uid]);
                 }
@@ -81,6 +81,52 @@ class AttendanceController extends ParentController
         return $this->render('create', [
             'model' => $model,
         ]);
+    }
+
+    /**
+     * Creates a new Attendance model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return string|Response
+     */
+    public function actionEntry(): Response|string
+    {
+        if ($this->request->isPost) {
+            $model = new Attendance();
+            $attendanceStoreResponse = $this->attendanceService->attendanceEntry($model);
+            if ($attendanceStoreResponse['error']) {
+                Yii::$app->session->setFlash('danger', $attendanceStoreResponse['message']);
+            } else {
+                Yii::$app->session->setFlash('success', 'Entry successfully done.');
+            }
+        } else {
+            Yii::$app->session->setFlash('danger', 'Invalid Request.');
+        }
+
+
+        return $this->redirect('index');
+    }
+
+    /**
+     * Creates a new Attendance model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return string|Response
+     */
+    public function actionExit(): Response|string
+    {
+        if ($this->request->isPost) {
+            $model = new Attendance();
+            $attendanceStoreResponse = $this->attendanceService->attendanceExit($model);
+            if ($attendanceStoreResponse['error']) {
+                Yii::$app->session->setFlash('danger', $attendanceStoreResponse['message']);
+            } else {
+                Yii::$app->session->setFlash('success', 'Entry successfully done.');
+            }
+        } else {
+            Yii::$app->session->setFlash('danger', 'Invalid Request.');
+        }
+
+
+        return $this->redirect('index');
     }
 
     /**
