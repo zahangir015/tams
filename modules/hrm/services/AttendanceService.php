@@ -319,7 +319,7 @@ class AttendanceService
     public function attendanceEntry(Attendance $model): array
     {
         $employeeShift = null;
-        $employee = Yii::$app->user->identity->employee;
+        $employee = Employee::findOne(['id' => 2]);
         $roster = $this->attendanceRepository->findOne(['employeeId' => $employee->id, 'rosterDate' => date('Y-m-d')], Roster::class, [['employee', 'shift']]);
         if (!$roster) {
             $employeeShift = $this->attendanceRepository->findOne(['employeeId' => $employee->id], EmployeeShift::class, ['employee', 'shift']);
@@ -338,6 +338,7 @@ class AttendanceService
         $model->load(['Attendance' => $lateCalculationResponse]);
         $model->date = date('Y-m-d');
         $model->shiftId = ($roster) ? $roster->shift->id : $employeeShift->shift->id;
+        $model->rosterId = ($roster) ? $roster->id : null;
         $model = $this->attendanceRepository->store($model);
         if ($model->hasErrors()) {
             return [
@@ -380,7 +381,7 @@ class AttendanceService
 
     private static function calculateLate($employeeInTime, Shift $shift): array
     {
-        $shiftInTime = new DateTime(date('Y-m-d') . $shift->shift->entryTime);
+        $shiftInTime = new DateTime(date('Y-m-d') . $shift->entryTime);
         $shiftInTimeToCalculateLate = clone $shiftInTime;
         $shiftInTimeToCalculateLate->add(new DateInterval('PT' . HrmConstant::FLEXIBLE_ENTRY_TIME_IN_MINUTE . 'M'));
 

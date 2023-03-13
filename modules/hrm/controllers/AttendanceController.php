@@ -6,6 +6,7 @@ use app\components\Utilities;
 use app\modules\hrm\models\Attendance;
 use app\modules\hrm\models\search\AttendanceSearch;
 use app\controllers\ParentController;
+use app\modules\hrm\models\search\IndividualAttendanceSearch;
 use app\modules\hrm\repositories\AttendanceRepository;
 use app\modules\hrm\services\AttendanceService;
 use Yii;
@@ -39,6 +40,26 @@ class AttendanceController extends ParentController
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
+     * Lists all Attendance models.
+     *
+     * @return string
+     */
+    public function actionAttendanceList(): string
+    {
+        if (!Yii::$app->user->identity->employee) {
+            Yii::$app->session->setFlash('warning', 'Employee Profile is required.');
+        }
+
+        $searchModel = new IndividualAttendanceSearch();
+        $dataProvider = $searchModel->search($this->request->queryParams);
+
+        return $this->render('attendance_list', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);

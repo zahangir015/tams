@@ -17,6 +17,35 @@ $this->title = Yii::t('app', 'Attendances');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="attendance-index">
+    <?php
+    if (!Yii::$app->user->identity->employee) {
+        ?>
+        <div class="card">
+            <div class="card-header bg-gray-dark">
+                <h5>Attendance Entry</h5>
+            </div>
+            <div class="card-body">
+
+                <?= Html::a(Yii::t('app', 'Entry'), ['entry'], [
+                    'class' => 'btn btn-lg btn-warning',
+                    'data' => [
+                        'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
+                        'method' => 'post',
+                    ],
+                ]) ?>
+                <?= Html::a(Yii::t('app', 'Exit'), ['exit'], [
+                    'class' => 'btn btn-lg btn-success',
+                    'data' => [
+                        'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
+                        'method' => 'post',
+                    ],
+                ]) ?>
+            </div>
+        </div>
+        <?php
+    }
+    ?>
+
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
