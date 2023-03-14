@@ -52,8 +52,13 @@ class AttendanceController extends ParentController
      */
     public function actionAttendanceList(): string
     {
-        if (!Yii::$app->user->identity->employee) {
+        $employee = Yii::$app->user->identity->employee;
+
+        if (!$employee) {
             Yii::$app->session->setFlash('warning', 'Employee Profile is required.');
+            $currentDaysAttendance = null;
+        } else {
+            $currentDaysAttendance = $this->attendanceService->findModel(['employeeId' => $employee->id, 'date' => date('Y-m-d')], Attendance::class);
         }
 
         $searchModel = new IndividualAttendanceSearch();
@@ -62,6 +67,8 @@ class AttendanceController extends ParentController
         return $this->render('attendance_list', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'employee' => $employee,
+            'currentDaysAttendance' => $currentDaysAttendance,
         ]);
     }
 

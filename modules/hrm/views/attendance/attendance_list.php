@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="attendance-index">
     <?php
-    if (!Yii::$app->user->identity->employee) {
+    if (!$employee) {
         ?>
         <div class="card">
             <div class="card-header bg-gray-dark">
@@ -26,13 +26,19 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
             <div class="card-body">
 
-                <?= Html::a(Yii::t('app', 'Entry'), ['entry'], [
+                <?php
+                if (){
+
+                }
+                echo Html::a(Yii::t('app', 'Entry'), ['entry'], [
                     'class' => 'btn btn-lg btn-warning',
                     'data' => [
                         'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
                         'method' => 'post',
                     ],
-                ]) ?>
+                ])
+                ?>
+
                 <?= Html::a(Yii::t('app', 'Exit'), ['exit'], [
                     'class' => 'btn btn-lg btn-success',
                     'data' => [

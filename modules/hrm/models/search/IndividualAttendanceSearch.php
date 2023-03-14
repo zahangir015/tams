@@ -49,7 +49,7 @@ class IndividualAttendanceSearch extends Attendance
         // add conditions that should always apply here
         $query->where(['status' => GlobalConstant::ACTIVE_STATUS]);
         $query->andWhere(['employeeId' => ($employee) ? $employee->id : null]);
-        
+
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
