@@ -119,13 +119,6 @@ use yii\helpers\Url;
                             ['label' => 'Attendance', 'icon' => 'calendar-plus', 'url' => ['/hrm/attendance/index']],
                         ]
                     ],
-                    [
-                        'label' => 'Payroll Management',
-                        'icon' => 'users',
-                        'items' => [
-                            ['label' => 'Payroll Type', 'icon' => 'calendar-plus', 'url' => ['/hrm/payroll-type/index']],
-                        ]
-                    ],
                     ['label' => 'SALES', 'header' => true],
                     ['label' => 'Providers', 'icon' => 'paper-plane', 'url' => ['/sale/provider/index']],
                     [
