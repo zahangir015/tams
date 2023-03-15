@@ -20,7 +20,7 @@ class BranchController extends ParentController
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $searchModel = new BranchSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);

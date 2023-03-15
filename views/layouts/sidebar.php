@@ -116,7 +116,15 @@ use yii\helpers\Url;
                         'label' => 'Attendance Management',
                         'icon' => 'users',
                         'items' => [
-                            ['label' => 'Attendance', 'icon' => 'calendar-plus', 'url' => ['/hrm/attendance/index']],
+                            ['label' => 'All Attendance', 'icon' => 'calendar-plus', 'url' => ['/hrm/attendance/index']],
+                            ['label' => 'Attendance', 'icon' => 'calendar-plus', 'url' => ['/hrm/attendance/individual-attendance']],
+                        ]
+                    ],
+                    [
+                        'label' => 'Payroll',
+                        'icon' => 'users',
+                        'items' => [
+                            ['label' => 'Payroll Types', 'icon' => 'calendar-plus', 'url' => ['/hrm/payroll-type/index']],
                         ]
                     ],
                     ['label' => 'SALES', 'header' => true],
