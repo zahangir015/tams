@@ -32,8 +32,9 @@ class PayslipService
         return $this->payslipRepository->store($model);
     }
 
-    public function storePayrollType(PayrollType $model)
+    public function storePayrollType(PayrollType $model, array $requestData): void
     {
+
 
     }
 }

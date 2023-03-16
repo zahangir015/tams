@@ -2,6 +2,7 @@
 
 namespace app\modules\hrm\controllers;
 
+use app\components\Utilities;
 use app\modules\hrm\models\PayrollType;
 use app\modules\hrm\models\search\PayrollTypeSearch;
 use app\controllers\ParentController;
@@ -66,12 +67,14 @@ class PayrollTypeController extends ParentController
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
-                $payrollTypeStoreResponse = $this->payslipService->storePayrollType($model);
-                if ($payrollTypeStoreResponse['error']) {
-                    Yii::$app->session->setFlash('danger', $payrollTypeStoreResponse['message']);
+                $model = $this->payslipRepository->store($model);
+                if ($model->hasErrors()) {
+                    Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
                 } else {
                     return $this->redirect(['view', 'uid' => $model->uid]);
                 }
+            } else {
+                Yii::$app->session->setFlash('danger', 'Model loading failed.');
             }
         } else {
             $model->loadDefaultValues();
@@ -85,16 +88,22 @@ class PayrollTypeController extends ParentController
     /**
      * Updates an existing PayrollType model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id ID
+     * @param string $uid UID
      * @return string|Response
-     * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionUpdate(string $uid): Response|string
     {
-        $model = $this->findModel($id);
+        $model = $this->payslipService->findModel(['uid' => $uid], PayrollType::class);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post())) {
+                $model = $this->payslipRepository->store($model);
+                if ($model->hasErrors()) {
+                    Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
+                } else {
+                    return $this->redirect(['view', 'uid' => $model->uid]);
+                }
+            }
         }
 
         return $this->render('update', [
