@@ -2,6 +2,7 @@
 
 namespace app\modules\hrm\models;
 
+use app\traits\BehaviorTrait;
 use Yii;
 use yii\db\ActiveRecord;
 
@@ -25,6 +26,8 @@ use yii\db\ActiveRecord;
  */
 class PayrollType extends ActiveRecord
 {
+    use BehaviorTrait;
+
     /**
      * {@inheritdoc}
      */
@@ -39,13 +42,14 @@ class PayrollType extends ActiveRecord
     public function rules(): array
     {
         return [
-            [['uid', 'name', 'amountType', 'calculatingMethod', 'order', 'createdBy', 'createdAt'], 'required'],
+            [['name', 'amountType', 'calculatingMethod', 'order'], 'required'],
             [['amountType', 'calculatingMethod', 'order', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['amount'], 'number'],
             [['category'], 'string'],
             [['uid'], 'string', 'max' => 36],
             [['name'], 'string', 'max' => 150],
             [['uid'], 'unique'],
+            [['name'], 'unique'],
             [['order'], 'unique'],
         ];
     }

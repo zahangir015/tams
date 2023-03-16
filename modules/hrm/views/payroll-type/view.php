@@ -1,5 +1,7 @@
 <?php
 
+use app\components\Utilities;
+use app\modules\hrm\components\HrmConstant;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -12,9 +14,6 @@ $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
 <div class="payroll-type-view">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
     <p>
         <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->id], [
@@ -26,23 +25,48 @@ $this->params['breadcrumbs'][] = $this->title;
         ]) ?>
     </p>
 
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'id',
-            'uid',
-            'name',
-            'amountType',
-            'calculatingMethod',
-            'amount',
-            'category',
-            'order',
-            'status',
-            'createdBy',
-            'createdAt',
-            'updatedBy',
-            'updatedAt',
-        ],
-    ]) ?>
-
+    <div class="card">
+        <div class="card-header bg-gray-dark">
+            <?= Html::encode($this->title) ?>
+        </div>
+        <?= DetailView::widget([
+            'model' => $model,
+            'attributes' => [
+                'name',
+                [
+                    'attribute' => 'amountType',
+                    'value' => function ($model) {
+                        return HrmConstant::AMOUNT_TYPE[$model->amountType];
+                    },
+                ],
+                [
+                    'attribute' => 'calculatingMethod',
+                    'value' => function ($model) {
+                        return HrmConstant::CALCULATING_METHOD[$model->calculatingMethod];
+                    },
+                ],
+                [
+                    'attribute' => 'category',
+                    'value' => function ($model) {
+                        return HrmConstant::PAYROLL_CATEGORY[$model->category];
+                    },
+                ],
+                'amount',
+                'order',
+                [
+                    'attribute' => 'status',
+                    'value' => function ($model) {
+                        $labelClass = Utilities::statusLabelClass($model->status);
+                        $labelText = ($model->status) ? 'Active' : 'Inactive';
+                        return '<span class="right badge ' . $labelClass . '">' . $labelText . '</span>';
+                    },
+                    'format' => 'html'
+                ],
+                'createdBy',
+                'createdAt',
+                'updatedBy',
+                'updatedAt',
+            ],
+        ]) ?>
+    </div>
 </div>

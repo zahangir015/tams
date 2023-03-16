@@ -12,4 +12,8 @@ final class HrmConstant
     const NUMBER_OF_DAYS = ['0.5' => 'Half Day', '1' => 'Full Day', '2' => 'Two Days', '3' => 'Three Days', '4' => 'Four Days', '5' => 'Five Days'];
     const APPROVAL_STATUS = ['Pending' => 'Pending', 'Manager Approved' => 'Manager Approved', 'Approved' => 'Approved', 'Cancelled' => 'Cancelled'];
     const FLEXIBLE_ENTRY_TIME_IN_MINUTE = 30;
+    const PAYROLL_CATEGORY = ['Salary' => 'Salary', 'Allowance' => 'Allowance'];
+
+    const AMOUNT_TYPE = ['Percentage', 'Amount'];
+    const CALCULATING_METHOD = ['Addition', 'Subtraction'];
 }

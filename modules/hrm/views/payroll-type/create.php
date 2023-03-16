@@ -10,11 +10,7 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Payroll Types'), 'ur
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="payroll-type-create">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
     <?= $this->render('_form', [
         'model' => $model,
     ]) ?>
-
 </div>
