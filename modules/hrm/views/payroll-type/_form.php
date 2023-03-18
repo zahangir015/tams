@@ -2,11 +2,11 @@
 
 use app\modules\hrm\components\HrmConstant;
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+use yii\bootstrap4\ActiveForm;
 
 /** @var yii\web\View $this */
 /** @var app\modules\hrm\models\PayrollType $model */
-/** @var yii\widgets\ActiveForm $form */
+/** @var yii\bootstrap4\ActiveForm $form */
 ?>
 
 <div class="payroll-type-form">

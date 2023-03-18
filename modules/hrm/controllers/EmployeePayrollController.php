@@ -3,12 +3,15 @@
 namespace app\modules\hrm\controllers;
 
 use app\components\GlobalConstant;
+use app\components\Utilities;
 use app\modules\hrm\models\EmployeePayroll;
+use app\modules\hrm\models\EmployeePayrollTypeDetail;
 use app\modules\hrm\models\PayrollType;
 use app\modules\hrm\models\search\EmployeePayrollSearch;
 use app\controllers\ParentController;
 use app\modules\hrm\repositories\PayslipRepository;
 use app\modules\hrm\services\PayslipService;
+use Yii;
 use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -65,16 +68,16 @@ class EmployeePayrollController extends ParentController
     public function actionCreate(): Response|string
     {
         $model = new EmployeePayroll();
-
-        $payrolls = $this->payslipService->getAll(['status' => GlobalConstant::ACTIVE_STATUS], PayrollType::class, [], true);
+        $employeePayrollTypeDetail = new EmployeePayrollTypeDetail();
+        $payrolls = $this->payslipService->getAll(['status' => GlobalConstant::ACTIVE_STATUS], PayrollType::class, [], true, ['id', 'name', 'category', 'amountType', 'calculatingMethod','amount']);
         if ($this->request->isPost) {
-            if ($model->load($this->request->post())) {
-                $model = $this->payslipService->storeEmployeePayroll($model);
-                if ($model->hasErrors()) {
-                    Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
-                } else {
-                    return $this->redirect(['view', 'uid' => $model->uid]);
-                }
+            $requestData = $this->request->post();
+            // Store expense data
+            $employeePayrollStoreResponse = $this->payslipService->storeJournal($requestData, $model);
+            if (!$employeePayrollStoreResponse['error']) {
+                return $this->redirect(['view', 'uid' => $employeePayrollStoreResponse['data']->uid]);
+            } else {
+                Yii::$app->session->setFlash('danger', $employeePayrollStoreResponse['message']);
             }
         } else {
             $model->loadDefaultValues();
@@ -82,7 +85,8 @@ class EmployeePayrollController extends ParentController
 
         return $this->render('create', [
             'model' => $model,
-            'payrollList' => ArrayHelper::map($payrolls, 'id', 'name'),
+            'employeePayrollTypeDetail' => $employeePayrollTypeDetail,
+            'payrollList' => $payrolls,
         ]);
     }
 

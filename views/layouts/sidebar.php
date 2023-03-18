@@ -2,7 +2,7 @@
 
 use hail812\adminlte\widgets\Menu;
 use yii\helpers\Url;
-
+use app\modules\admin\components\Helper;
 ?>
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
@@ -27,13 +27,12 @@ use yii\helpers\Url;
             <?= Menu::widget([
                 'items' => [
                     ['label' => 'GENERAL SETTINGS', 'header' => true],
-                    ['label' => 'Countries', 'icon' => 'globe', 'url' => ['/country']],
-                    ['label' => 'Cities', 'icon' => 'globe', 'url' => ['/city']],
-                    //['label' => 'Airline Repository',  'icon' => 'plane', 'url' => ['/airline-repository']],
-                    ['label' => 'Company', 'icon' => 'building', 'url' => ['/company']],
+                    ['label' => 'Countries', 'icon' => 'globe', 'url' => ['/country'], 'visible' => Helper::checkRoute('country')],
+                    ['label' => 'Cities', 'icon' => 'globe', 'url' => ['/city'], 'visible' => Helper::checkRoute('city')],
+                    ['label' => 'Company', 'icon' => 'building', 'url' => ['/company'], 'visible' => Helper::checkRoute('company')],
                     ['label' => 'USER MANAGEMENT', 'header' => true],
-                    ['label' => 'Users', 'icon' => 'users', 'url' => ['/admin/user/index']],
-                    ['label' => 'Create User', 'icon' => 'user-plus', 'url' => ['/admin/user/create']],
+                    ['label' => 'Users', 'icon' => 'users', 'url' => ['/admin/user/index'], 'visible' => Helper::checkRoute('admin/user/index')],
+                    ['label' => 'Create User', 'icon' => 'user-plus', 'url' => ['/admin/user/create'], 'visible' => Helper::checkRoute('admin/user/create')],
                     ['label' => 'AUTHORIZATION MANAGEMENT', 'header' => true],
                     ['label' => 'Roles', 'icon' => 'user-tie', 'url' => ['/admin/role']],
                     ['label' => 'Rules', 'icon' => 'truck', 'url' => ['/admin/rule']],
@@ -125,6 +124,7 @@ use yii\helpers\Url;
                         'icon' => 'users',
                         'items' => [
                             ['label' => 'Payroll Types', 'icon' => 'calendar-plus', 'url' => ['/hrm/payroll-type/index']],
+                            ['label' => 'Employee Payroll', 'icon' => 'calendar-plus', 'url' => ['/hrm/employee-payroll/index']],
                         ]
                     ],
                     ['label' => 'SALES', 'header' => true],
@@ -203,7 +203,7 @@ use yii\helpers\Url;
                         ]
                     ],
                     ['label' => 'ACCOUNTS', 'header' => true],
-                    ['label' => 'Bank Accounts', 'icon' => 'building', 'url' => ['/account/bank-account']],
+                    ['label' => 'Bank Accounts', 'icon' => 'building', 'url' => ['/account/bank-account'], 'visible' => Helper::checkRoute('account/bank-account/*')],
                     [
                         'label' => 'Invoice Management',
                         'icon' => 'file-invoice-dollar',

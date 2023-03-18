@@ -2,6 +2,7 @@
 
 namespace app\modules\hrm\services;
 
+use app\modules\hrm\models\EmployeePayroll;
 use app\modules\hrm\models\PayrollType;
 use app\modules\hrm\repositories\PayslipRepository;
 use yii\db\ActiveRecord;
@@ -15,9 +16,9 @@ class PayslipService
         $this->payslipRepository = new PayslipRepository();
     }
 
-    public function getAll(array $queryArray, string $model, array $withArray, bool $asArray)
+    public function getAll(array $queryArray, string $model, array $withArray, bool $asArray, array $selectArray = [])
     {
-        return $this->payslipRepository->findAll($queryArray, $model, $withArray, $asArray);
+        return $this->payslipRepository->findAll($queryArray, $model, $withArray, $asArray, $selectArray);
     }
 
     public function findModel(array $queryArray, string $model, array $withArray = []): ActiveRecord
@@ -32,7 +33,7 @@ class PayslipService
         return $this->payslipRepository->store($model);
     }
 
-    public function storeEmployeePayroll(\app\modules\hrm\models\EmployeePayroll $model, array $requestData): void
+    public function storeEmployeePayroll(EmployeePayroll $model, array $requestData): void
     {
 
     }

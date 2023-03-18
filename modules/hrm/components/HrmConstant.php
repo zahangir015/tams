@@ -16,4 +16,5 @@ final class HrmConstant
 
     const AMOUNT_TYPE = ['Percentage', 'Amount'];
     const CALCULATING_METHOD = ['Addition', 'Subtraction'];
+    const PAYMENT_MODE = ['Bank Transfer' => 'Bank Transfer', 'Cheque' => 'Cheque', 'Cash' => 'Cash',];
 }

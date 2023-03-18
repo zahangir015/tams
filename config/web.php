@@ -97,7 +97,8 @@ $config = [
     'as access' => [
         'class' => 'app\modules\admin\components\AccessControl',
         'allowActions' => [
-            'admin/user/login'
+            'admin/user/login',
+            'admin/user/logout',
 //            'site/*',
 //            'admin/*',
 //            'gii/*',
