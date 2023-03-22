@@ -56,7 +56,9 @@ class EmployeePayrollController extends ParentController
     public function actionView(string $uid): string
     {
         return $this->render('view', [
-            'model' => $this->payslipRepository->findOne(['uid' => $uid], EmployeePayroll::class, ['employee', 'employeePayrollTypeDetails']),
+            'model' => $this->payslipRepository->findOne(['uid' => $uid], EmployeePayroll::class, ['employee', 'employeePayrollTypeDetails' => function ($query) {
+                return $query->with(['payrollType']);
+            }]),
         ]);
     }
 
@@ -68,12 +70,11 @@ class EmployeePayrollController extends ParentController
     public function actionCreate(): Response|string
     {
         $model = new EmployeePayroll();
-        $employeePayrollTypeDetail = new EmployeePayrollTypeDetail();
-        $payrolls = $this->payslipService->getAll(['status' => GlobalConstant::ACTIVE_STATUS], PayrollType::class, [], true, ['id', 'name', 'category', 'amountType', 'calculatingMethod','amount']);
+        $payrolls = $this->payslipService->getAll(['status' => GlobalConstant::ACTIVE_STATUS], PayrollType::class, [], true, ['id', 'name', 'category', 'amountType', 'calculatingMethod', 'amount']);
         if ($this->request->isPost) {
             $requestData = $this->request->post();
-            // Store expense data
-            $employeePayrollStoreResponse = $this->payslipService->storeJournal($requestData, $model);
+            // Store payroll data
+            $employeePayrollStoreResponse = $this->payslipService->storeEmployeePayroll($model, $requestData);
             if (!$employeePayrollStoreResponse['error']) {
                 return $this->redirect(['view', 'uid' => $employeePayrollStoreResponse['data']->uid]);
             } else {
@@ -85,7 +86,7 @@ class EmployeePayrollController extends ParentController
 
         return $this->render('create', [
             'model' => $model,
-            'employeePayrollTypeDetail' => $employeePayrollTypeDetail,
+            'employeePayrollTypeDetail' => new EmployeePayrollTypeDetail(),
             'payrollList' => $payrolls,
         ]);
     }
@@ -93,20 +94,32 @@ class EmployeePayrollController extends ParentController
     /**
      * Updates an existing EmployeePayroll model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id ID
+     * @param string $uid UID
      * @return string|Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionUpdate(string $uid): Response|string
     {
-        $model = $this->findModel($id);
+        $model = $this->payslipRepository->findOne(['uid' => $uid], EmployeePayroll::class, ['employee', 'employeePayrollTypeDetails' => function ($query) {
+            return $query->with(['payrollType']);
+        }]);
+        $payrolls = $this->payslipService->getAll(['status' => GlobalConstant::ACTIVE_STATUS], PayrollType::class, [], true, ['id', 'name', 'category', 'amountType', 'calculatingMethod', 'amount']);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($this->request->isPost) {
+            $requestData = $this->request->post();
+            // Store payroll data
+            $employeePayrollStoreResponse = $this->payslipService->updateEmployeePayroll($model, $requestData);
+            if (!$employeePayrollStoreResponse['error']) {
+                return $this->redirect(['view', 'uid' => $employeePayrollStoreResponse['data']->uid]);
+            } else {
+                Yii::$app->session->setFlash('danger', $employeePayrollStoreResponse['message']);
+            }
         }
 
         return $this->render('update', [
             'model' => $model,
+            'employeePayrollTypeDetail' => new EmployeePayrollTypeDetail(),
+            'payrollList' => $payrolls,
         ]);
     }
 
