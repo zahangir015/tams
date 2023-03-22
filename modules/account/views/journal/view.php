@@ -1,5 +1,6 @@
 <?php
 
+use app\components\Utilities;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -12,9 +13,6 @@ $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
 <div class="journal-view">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
     <p>
         <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->id], [
@@ -26,22 +24,34 @@ $this->params['breadcrumbs'][] = $this->title;
         ]) ?>
     </p>
 
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'id',
-            'uid',
-            'journalNumber',
-            'postedDate',
-            'debit',
-            'credit',
-            'outOfBalance',
-            'status',
-            'createdAt',
-            'updatedAt',
-            'createdBy',
-            'updatedBy',
-        ],
-    ]) ?>
-
+    <div class="card">
+        <div class="card-header bg-gray-dark">
+            <?= Html::encode($this->title) ?>
+        </div>
+        <div class="card-body">
+            <?= DetailView::widget([
+                'model' => $model,
+                'attributes' => [
+                    'journalNumber',
+                    'postedDate',
+                    'debit',
+                    'credit',
+                    'outOfBalance',
+                    [
+                        'attribute' => 'status',
+                        'value' => function ($model) {
+                            $labelClass = Utilities::statusLabelClass($model->status);
+                            $labelText = ($model->status) ? 'Active' : 'Inactive';
+                            return '<span class="right badge ' . $labelClass . '">' . $labelText . '</span>';
+                        },
+                        'format' => 'html'
+                    ],
+                    'createdBy',
+                    'createdAt',
+                    'updatedBy',
+                    'updatedAt',
+                ],
+            ]) ?>
+        </div>
+    </div>
 </div>
