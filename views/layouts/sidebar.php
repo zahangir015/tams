@@ -125,6 +125,7 @@ use app\modules\admin\components\Helper;
                         'items' => [
                             ['label' => 'Payroll Types', 'icon' => 'calendar-plus', 'url' => ['/hrm/payroll-type/index']],
                             ['label' => 'Employee Payroll', 'icon' => 'calendar-plus', 'url' => ['/hrm/employee-payroll/index']],
+                            ['label' => 'Payslip', 'icon' => 'calendar-plus', 'url' => ['/hrm/payslip/index']],
                         ]
                     ],
                     ['label' => 'SALES', 'header' => true],

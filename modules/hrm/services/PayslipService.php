@@ -29,14 +29,12 @@ class PayslipService
     {
         return $this->payslipRepository->findOne($queryArray, $model, $withArray);
     }
-
     public function deleteModel(array $queryArray, string $class, array $withArray = []): ActiveRecord
     {
         $model = self::findModel($queryArray, $class, $withArray);
         $model->status = GlobalConstant::INACTIVE_STATUS;
         return $this->payslipRepository->store($model);
     }
-
     public function storeEmployeePayroll(EmployeePayroll $employeePayroll, array $requestData): array
     {
         if (!isset($requestData['EmployeePayroll'])) {
@@ -75,7 +73,6 @@ class PayslipService
             return ['error' => true, 'message' => $e->getMessage()];
         }
     }
-
     public function updateEmployeePayroll(?ActiveRecord $employeePayroll, mixed $requestData): array
     {
         if (!isset($requestData['EmployeePayroll'])) {

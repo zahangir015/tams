@@ -2,7 +2,10 @@
 
 namespace app\modules\hrm\models;
 
+use app\traits\BehaviorTrait;
 use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%payslip}}".
@@ -30,12 +33,14 @@ use Yii;
  * @property Employee $employee
  * @property PayslipTypeDetail[] $payslipTypeDetails
  */
-class Payslip extends \yii\db\ActiveRecord
+class Payslip extends ActiveRecord
 {
+    use BehaviorTrait;
+
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%payslip}}';
     }
@@ -43,10 +48,10 @@ class Payslip extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            [['uid', 'employeeId', 'month', 'year', 'gross', 'totalPaid', 'createdBy', 'createdAt'], 'required'],
+            [['employeeId', 'month', 'year', 'gross', 'totalPaid'], 'required'],
             [['employeeId', 'month', 'year', 'processStatus', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['gross', 'tax', 'lateFine', 'totalAdjustment', 'totalDeduction', 'totalPaid'], 'number'],
             [['paymentMode'], 'string'],
@@ -60,12 +65,12 @@ class Payslip extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),
             'uid' => Yii::t('app', 'Uid'),
-            'employeeId' => Yii::t('app', 'Employee ID'),
+            'employeeId' => Yii::t('app', 'Employee'),
             'month' => Yii::t('app', 'Month'),
             'year' => Yii::t('app', 'Year'),
             'gross' => Yii::t('app', 'Gross'),
@@ -88,9 +93,9 @@ class Payslip extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Employee]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getEmployee()
+    public function getEmployee(): ActiveQuery
     {
         return $this->hasOne(Employee::class, ['id' => 'employeeId']);
     }
@@ -98,9 +103,9 @@ class Payslip extends \yii\db\ActiveRecord
     /**
      * Gets query for [[PayslipTypeDetails]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getPayslipTypeDetails()
+    public function getPayslipTypeDetails(): ActiveQuery
     {
         return $this->hasMany(PayslipTypeDetail::class, ['payslipId' => 'id']);
     }
