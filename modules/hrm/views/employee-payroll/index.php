@@ -42,13 +42,8 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'class' => ActionColumn::class,
                 'urlCreator' => function ($action, EmployeePayroll $model, $key, $index, $column) {
-<<<<<<< HEAD
                     return Url::toRoute([$action, 'uid' => $model->uid]);
                 },
-=======
-                    return Url::toRoute([$action, 'id' => $model->id]);
-                 },
->>>>>>> b152a25296158dedb61227bd6ce4fa2c46564226
                 'width' => '150px',
                 'template' => '{view} {edit} {delete}',
                 'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
@@ -62,11 +57,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'title' => Yii::t('app', 'Add Employee Payroll'),
                         'class' => 'btn btn-success'
                     ]) . ' ' .
-<<<<<<< HEAD
                     Html::a('<i class="fas fa-redo"></i>', ['/hrm/employee-payroll/index'], [
-=======
-                    Html::a('<i class="fas fa-redo"></i>', ['/hrm/employee-leave-allocation/index'], [
->>>>>>> b152a25296158dedb61227bd6ce4fa2c46564226
                         'class' => 'btn btn-primary',
                         'title' => Yii::t('app', 'Reset Grid')
                     ]),
@@ -74,11 +65,7 @@ $this->params['breadcrumbs'][] = $this->title;
             '{export}',
             '{toggleData}'
         ],
-<<<<<<< HEAD
         'pjax' => true,
-=======
-        //'pjax' => true,
->>>>>>> b152a25296158dedb61227bd6ce4fa2c46564226
         'bordered' => true,
         'striped' => false,
         'condensed' => false,

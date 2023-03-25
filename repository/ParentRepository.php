@@ -60,4 +60,9 @@ class ParentRepository
     {
         return $model::updateAll($setArray, $queryArray);
     }
+
+    public function deleteAll($model, array $queryArray): int
+    {
+        return $model::deleteAll($queryArray);
+    }
 }

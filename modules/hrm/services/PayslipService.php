@@ -2,6 +2,7 @@
 
 namespace app\modules\hrm\services;
 
+use app\components\GlobalConstant;
 use app\components\Utilities;
 use app\modules\hrm\models\EmployeePayroll;
 use app\modules\hrm\models\EmployeePayrollTypeDetail;
@@ -55,7 +56,7 @@ class PayslipService
             // Employee Payroll Type Detail process
             $employeePayrollTpeDetails = $requestData['EmployeePayrollTypeDetail'];
             if (!isset($employeePayrollTpeDetails)) {
-                return ['error' => true, 'message' => 'Employee payroll type detail data is required.'];
+                throw new Exception('Employee payroll type detail data is required.');
             }
 
             foreach ($employeePayrollTpeDetails as $singleType) {
@@ -94,22 +95,26 @@ class PayslipService
             // Employee Payroll Type Detail process
             $employeePayrollTpeDetails = $requestData['EmployeePayrollTypeDetail'];
             if (!isset($employeePayrollTpeDetails)) {
-                return ['error' => true, 'message' => 'Employee payroll type detail data is required.'];
+                throw new Exception('Employee payroll type detail data is required.');
             }
 
-            // Todo delete previous payroll types
+            // Payroll type update
+            $payrollTypeResponse = $this->payslipRepository->deleteAll(EmployeePayrollTypeDetail::class, ['employeePayrollId' => $employeePayroll->id]);
+            if (!$payrollTypeResponse){
+                throw new Exception('Employee payroll type detail update failed.');
+            }
             foreach ($employeePayrollTpeDetails as $singleType) {
                 $employeePayrollTypeDetail = new EmployeePayrollTypeDetail();
                 $employeePayrollTypeDetail->load(['EmployeePayrollTypeDetail' => $singleType]);
                 $employeePayrollTypeDetail->employeePayrollId = $employeePayroll->id;
                 $employeePayrollTypeDetail = $this->payslipRepository->store($employeePayrollTypeDetail);
                 if ($employeePayrollTypeDetail->hasErrors()) {
-                    throw new Exception('Employee payroll type detail creation failed - ' . Utilities::processErrorMessages($employeePayrollTypeDetail->getErrors()));
+                    throw new Exception('Employee payroll type detail update failed - ' . Utilities::processErrorMessages($employeePayrollTypeDetail->getErrors()));
                 }
             }
 
             $dbTransaction->commit();
-            return ['error' => false, 'message' => 'Employee payroll is successfully created.', 'data' => $employeePayroll];
+            return ['error' => false, 'message' => 'Employee payroll is successfully updated.', 'data' => $employeePayroll];
         } catch (Exception $e) {
             $dbTransaction->rollBack();
             return ['error' => true, 'message' => $e->getMessage()];

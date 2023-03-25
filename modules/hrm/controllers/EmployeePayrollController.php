@@ -96,7 +96,6 @@ class EmployeePayrollController extends ParentController
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param string $uid UID
      * @return string|Response
-     * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionUpdate(string $uid): Response|string
     {
@@ -108,11 +107,11 @@ class EmployeePayrollController extends ParentController
         if ($this->request->isPost) {
             $requestData = $this->request->post();
             // Store payroll data
-            $employeePayrollStoreResponse = $this->payslipService->updateEmployeePayroll($model, $requestData);
-            if (!$employeePayrollStoreResponse['error']) {
-                return $this->redirect(['view', 'uid' => $employeePayrollStoreResponse['data']->uid]);
+            $employeePayrollUpdateResponse = $this->payslipService->updateEmployeePayroll($model, $requestData);
+            if (!$employeePayrollUpdateResponse['error']) {
+                return $this->redirect(['view', 'uid' => $employeePayrollUpdateResponse['data']->uid]);
             } else {
-                Yii::$app->session->setFlash('danger', $employeePayrollStoreResponse['message']);
+                Yii::$app->session->setFlash('danger', $employeePayrollUpdateResponse['message']);
             }
         }
 
@@ -126,30 +125,15 @@ class EmployeePayrollController extends ParentController
     /**
      * Deletes an existing EmployeePayroll model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id ID
+     * @param string $uid UID
      * @return Response
-     * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($id)
+    public function actionDelete(string $uid): Response
     {
-        $this->findModel($id)->delete();
-
+        $model = $this->payslipRepository->findOne(['uid' => $uid], EmployeePayroll::class);
+        $model->status = GlobalConstant::INACTIVE_STATUS;
+        $model->save();
+        Yii::$app->session->setFlash('success', 'Successfully Deleted');
         return $this->redirect(['index']);
-    }
-
-    /**
-     * Finds the EmployeePayroll model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id ID
-     * @return EmployeePayroll the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id)
-    {
-        if (($model = EmployeePayroll::findOne(['id' => $id])) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
 }
