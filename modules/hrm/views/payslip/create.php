@@ -10,9 +10,6 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Payslips'), 'url' =>
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="payslip-create">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
     <?= $this->render('_form', [
         'model' => $model,
     ]) ?>
