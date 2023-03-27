@@ -1,5 +1,7 @@
 <?php
 
+namespace app\modules\agent\migrations;
+
 use yii\db\Migration;
 
 /**
@@ -26,6 +28,8 @@ class m230326_044043_create_plan_table extends Migration
             'updatedBy' => $this->integer(11)->null(),
             'updatedAt' => $this->integer(11)->null(),
         ]);
+
+        $this->createIndex('idx-plan-name', 'plan', 'name');
     }
 
     /**
@@ -33,6 +37,7 @@ class m230326_044043_create_plan_table extends Migration
      */
     public function safeDown()
     {
+        $this->dropIndex('idx-plan-name', 'plan');
         $this->dropTable('{{%plan}}');
     }
 }

@@ -93,6 +93,9 @@ $config = [
         'hrm' => [
             'class' => 'app\modules\hrm\Module',
         ],
+        'agent' => [
+            'class' => 'app\modules\agent\Module',
+        ],
     ],
     'as access' => [
         'class' => 'app\modules\admin\components\AccessControl',
