@@ -17,8 +17,8 @@ $(function () {
             dataType: 'json',
             success: function (data) {
                 if (data) {
-                    $('#gross').val(data.commission);
-                    $('#tax').val(data.incentive);
+                    $('#payslip-gross').val(data.gross);
+                    $('#payslip-tax').val(data.tax);
                 }
             }
         });

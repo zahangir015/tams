@@ -136,4 +136,18 @@ class EmployeePayrollController extends ParentController
         Yii::$app->session->setFlash('success', 'Successfully Deleted');
         return $this->redirect(['index']);
     }
+
+    public function actionGetEmployeePayroll($employeeId): array
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $employeePayroll = $this->payslipRepository->findOne(['employeeId' => $employeeId], EmployeePayroll::class, ['employeePayrollTypeDetails' => function ($query) {
+            return $query->with(['payrollType']);
+        }], [], true);
+        $additionHtml = '';
+        $deductionHtml = '';
+
+        foreach ($employeePayroll['employeePayrollTypeDetails'] as $singleDetails) {
+
+        }
+    }
 }

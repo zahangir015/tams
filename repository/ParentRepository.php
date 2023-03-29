@@ -22,7 +22,7 @@ class ParentRepository
         return $object;
     }
 
-    public function findOne(array $queryArray, $model, array $withArray = [], array $selectArray = []): ActiveRecord|null
+    public function findOne(array $queryArray, $model, array $withArray = [], array $selectArray = [], $asArray = false): ActiveRecord|array|null
     {
         $query = $model::find();
 
@@ -34,7 +34,13 @@ class ParentRepository
             $query->with($withArray);
         }
 
-        return $query->where($queryArray)->one();
+        $query->where($queryArray);
+
+        if ($asArray) {
+            $query->asArray();
+        }
+
+        return $query->one();
     }
 
     public function findAll($queryArray, $model, array $withArray = [], $asArray = false, array $selectArray = [])
