@@ -1,13 +1,11 @@
 <?php
 
-namespace app\modules\agent\migrations;
-
 use yii\db\Migration;
 
 /**
  * Handles the creation of table `{{%plan}}`.
  */
-class m230326_044043_create_plan_table extends Migration
+class m230401_055616_create_plan_table extends Migration
 {
     /**
      * {@inheritdoc}

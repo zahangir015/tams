@@ -7,7 +7,4 @@ use app\repository\ParentRepository;
 class PayslipRepository extends ParentRepository
 {
 
-    public function __construct()
-    {
-    }
 }

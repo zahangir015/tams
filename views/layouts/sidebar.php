@@ -26,6 +26,28 @@ use app\modules\admin\components\Helper;
         <nav class="mt-2">
             <?= Menu::widget([
                 'items' => [
+                    [
+                        'label' => 'Agency Management',
+                        'icon' => 'sitemap',
+                        'items' => [
+                            [
+                                'label' => 'Plan Management',
+                                'iconStyle' => 'far',
+                                'items' => [
+                                    ['label' => 'Plan List', 'iconStyle' => 'far', 'icon' => 'dot-circle', 'url' => ['/agent/plan/index'], 'visible' => Helper::checkRoute('/agent/plan/index')],
+                                    ['label' => 'Plan Add', 'iconStyle' => 'far', 'icon' => 'dot-circle', 'url' => ['/agent/plan/create'], 'visible' => Helper::checkRoute('/agent/plan/create')],
+                                ]
+                            ],
+                            [
+                                'label' => 'Agency Management',
+                                'iconStyle' => 'far',
+                                'items' => [
+                                    ['label' => 'Agency List', 'iconStyle' => 'far', 'icon' => 'dot-circle', 'url' => ['/agent/agency/index'], 'visible' => Helper::checkRoute('/agent/agency/index')],
+                                    ['label' => 'Agency Add', 'iconStyle' => 'far', 'icon' => 'dot-circle', 'url' => ['/agent/agency/create'], 'visible' => Helper::checkRoute('/agent/agency/create')],
+                                ]
+                            ],
+                        ]
+                    ],
                     ['label' => 'GENERAL SETTINGS', 'header' => true],
                     ['label' => 'Countries', 'icon' => 'globe', 'url' => ['/country'], 'visible' => Helper::checkRoute('country')],
                     ['label' => 'Cities', 'icon' => 'globe', 'url' => ['/city'], 'visible' => Helper::checkRoute('city')],
