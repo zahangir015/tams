@@ -12,12 +12,11 @@ use app\modules\sale\models\visa\VisaRefund;
 use app\modules\sale\models\visa\VisaSupplier;
 use app\modules\sale\models\Supplier;
 use app\modules\sale\repositories\VisaRepository;
-use app\modules\sales\components\ServiceComponent;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\db\Exception;
 
-class VisaServices
+class VisaService
 {
     private VisaRepository $visaRepository;
     private InvoiceService $invoiceService;

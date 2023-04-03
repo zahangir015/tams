@@ -2,7 +2,12 @@
 
 namespace app\modules\agent\models;
 
+use app\models\City;
+use app\models\Country;
+use app\traits\BehaviorTrait;
 use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%agency}}".
@@ -32,12 +37,14 @@ use Yii;
  * @property Country $country
  * @property Plan $plan
  */
-class Agency extends \yii\db\ActiveRecord
+class Agency extends ActiveRecord
 {
+    use BehaviorTrait;
+
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%agency}}';
     }
@@ -45,10 +52,10 @@ class Agency extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            [['uid', 'planId', 'agentCode', 'company', 'address', 'timeZone', 'currency', 'createdBy', 'createdAt'], 'required'],
+            [['planId', 'agentCode', 'company', 'address', 'timeZone', 'currency'], 'required'],
             [['planId', 'countryId', 'cityId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['agentCode'], 'string', 'max' => 8],
@@ -66,17 +73,17 @@ class Agency extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),
             'uid' => Yii::t('app', 'Uid'),
-            'planId' => Yii::t('app', 'Plan ID'),
+            'planId' => Yii::t('app', 'Plan'),
             'agentCode' => Yii::t('app', 'Agent Code'),
             'company' => Yii::t('app', 'Company'),
             'address' => Yii::t('app', 'Address'),
-            'countryId' => Yii::t('app', 'Country ID'),
-            'cityId' => Yii::t('app', 'City ID'),
+            'countryId' => Yii::t('app', 'Country'),
+            'cityId' => Yii::t('app', 'City'),
             'phone' => Yii::t('app', 'Phone'),
             'email' => Yii::t('app', 'Email'),
             'timeZone' => Yii::t('app', 'Time Zone'),
@@ -95,9 +102,9 @@ class Agency extends \yii\db\ActiveRecord
     /**
      * Gets query for [[City]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getCity()
+    public function getCity(): ActiveQuery
     {
         return $this->hasOne(City::class, ['id' => 'cityId']);
     }
@@ -105,9 +112,9 @@ class Agency extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Country]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getCountry()
+    public function getCountry(): ActiveQuery
     {
         return $this->hasOne(Country::class, ['id' => 'countryId']);
     }
@@ -115,9 +122,9 @@ class Agency extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Plan]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getPlan()
+    public function getPlan(): ActiveQuery
     {
         return $this->hasOne(Plan::class, ['id' => 'planId']);
     }

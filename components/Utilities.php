@@ -538,6 +538,11 @@ class Utilities
         return 'VA' . date('ymdhis') . rand(9, 999);
     }
 
+    public static function agentCode(): string
+    {
+        return 'AGT' . rand(9, 999);
+    }
+
     public static function expenseIdentificationNumber(): string
     {
         return 'EXP' . date('ymdhis') . rand(9, 999);

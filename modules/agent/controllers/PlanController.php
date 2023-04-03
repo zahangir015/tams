@@ -123,4 +123,15 @@ class PlanController extends ParentController
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
+
+    public function actionGetPlans($query = null)
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $plans = Plan::query($query);
+        $data = [];
+        foreach ($plans as $plan) {
+            $data[] = ['id' => $plan->id, 'text' => $plan->name];
+        }
+        return ['results' => $data];
+    }
 }
