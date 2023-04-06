@@ -4,6 +4,7 @@ namespace app\models;
 
 use app\traits\BehaviorTrait;
 use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%company}}".
@@ -17,7 +18,7 @@ use Yii;
  * @property string $address
  * @property string $logo
  */
-class Company extends \yii\db\ActiveRecord
+class Company extends ActiveRecord
 {
     use BehaviorTrait;
 

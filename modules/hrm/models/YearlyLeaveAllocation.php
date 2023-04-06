@@ -13,6 +13,7 @@ use yii\db\ActiveRecord;
  * @property int $id
  * @property string $uid
  * @property int $leaveTypeId
+ * @property int $agencyId
  * @property int $year
  * @property int $numberOfDays
  * @property int $status

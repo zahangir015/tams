@@ -4,6 +4,7 @@ namespace app\modules\sale\models\holiday;
 
 use app\traits\BehaviorTrait;
 use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%holiday_category}}".
@@ -19,7 +20,7 @@ use Yii;
  *
  * @property Holiday[] $holidays
  */
-class HolidayCategory extends \yii\db\ActiveRecord
+class HolidayCategory extends ActiveRecord
 {
     use BehaviorTrait;
     /**

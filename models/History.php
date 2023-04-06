@@ -4,6 +4,7 @@ namespace app\models;
 
 use app\components\Utilities;
 use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%history}}".
@@ -16,7 +17,7 @@ use Yii;
  * @property string $snapshot
  * @property string|null $action
  */
-class History extends \yii\db\ActiveRecord
+class History extends ActiveRecord
 {
     /**
      * {@inheritdoc}
