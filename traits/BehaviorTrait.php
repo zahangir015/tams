@@ -37,6 +37,10 @@ trait BehaviorTrait
             if ($this->isNewRecord && $this->hasAttribute('uid')) {
                 $this->uid = Yii::$app->db->createCommand('select UUID()')->queryScalar();
             }
+
+            if ($this->isNewRecord && $this->hasAttribute('agencyId')) {
+                $this->agencyId = Yii::$app->user->identity->agecyId;
+            }
         }
         return parent::beforeValidate();
     }
@@ -51,6 +55,10 @@ trait BehaviorTrait
 
         if ($this->isNewRecord && $this->hasAttribute('updatedBy')) {
             $this->uid = Yii::$app->db->createCommand('select UUID()')->queryScalar();
+        }
+
+        if ($this->isNewRecord && $this->hasAttribute('agencyId')) {
+            $this->agencyId = Yii::$app->user->identity->agecyId;
         }
 
         if (!$this->isNewRecord) {
@@ -85,7 +93,10 @@ trait BehaviorTrait
                 $this->updatedBy = $this->updatedBy ? ucfirst($this->updater['username']) : null;
             }
             if ($this->hasAttribute('uid')) {
-                $this->uid = $this->uid ? $this->uid : null;
+                $this->uid = $this->uid ?: null;
+            }
+            if ($this->hasAttribute('uid')) {
+                $this->uid = $this->uid ?: null;
             }
         }
         parent::afterSave($insert, $changedAttributes);

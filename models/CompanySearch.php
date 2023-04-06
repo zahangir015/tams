@@ -2,9 +2,10 @@
 
 namespace app\models;
 
+use app\components\GlobalConstant;
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Company;
 
 /**
  * CompanySearch represents the model behind the search form of `app\models\Company`.
@@ -17,7 +18,7 @@ class CompanySearch extends Company
     public function rules(): array
     {
         return [
-            [['id'], 'integer'],
+            [['id', 'agencyId'], 'integer'],
             [['uid', 'name', 'shortName', 'phone', 'email', 'address', 'logo'], 'safe'],
         ];
     }
@@ -43,6 +44,8 @@ class CompanySearch extends Company
         $query = Company::find();
 
         // add conditions that should always apply here
+        $query->where([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

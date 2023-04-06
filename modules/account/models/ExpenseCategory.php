@@ -13,6 +13,7 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property string $uid
+ * @property int $agencyId
  * @property string $name
  * @property int $status
  * @property int $createdAt
@@ -42,7 +43,7 @@ class ExpenseCategory extends ActiveRecord
     {
         return [
             [['name'], 'required'],
-            [['status', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'], 'integer'],
+            [['status', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy', 'agencyId'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['name'], 'string', 'max' => 150],
             [['uid'], 'unique'],
@@ -91,7 +92,8 @@ class ExpenseCategory extends ActiveRecord
         return self::find()
             ->select(['id', 'name', 'status'])
             ->where(['like', 'name', $query])
-            ->andWhere(['status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere([self::tableName().'.status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId])
             ->all();
     }
 }

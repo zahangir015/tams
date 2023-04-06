@@ -11,6 +11,7 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property string $uid
+ * @property int $agencyId
  * @property string $name
  * @property string $cdnUrl
  * @property int $refId
@@ -39,7 +40,7 @@ class Attachment extends ActiveRecord
     {
         return [
             [['name', 'refId', 'refModel'], 'required'],
-            [['refId', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['refId', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['name'], 'string', 'max' => 120],
             [['cdnUrl', 'refModel'], 'string', 'max' => 255],
@@ -58,6 +59,7 @@ class Attachment extends ActiveRecord
             'name' => Yii::t('app', 'Name'),
             'cdnUrl' => Yii::t('app', 'Cdn Url'),
             'refId' => Yii::t('app', 'Ref ID'),
+            'agencyId' => Yii::t('app', 'Agency'),
             'refModel' => Yii::t('app', 'Ref Model'),
             'createdBy' => Yii::t('app', 'Created By'),
             'createdAt' => Yii::t('app', 'Created At'),

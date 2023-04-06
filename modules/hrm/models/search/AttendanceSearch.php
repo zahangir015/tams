@@ -2,6 +2,8 @@
 
 namespace app\modules\hrm\models\search;
 
+use app\components\GlobalConstant;
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\hrm\models\Attendance;
@@ -17,7 +19,7 @@ class AttendanceSearch extends Attendance
     public function rules(): array
     {
         return [
-            [['id', 'employeeId', 'shiftId', 'leaveTypeId', 'leaveApplicationId', 'rosterId', 'isAbsent', 'isLate', 'isEarlyOut', 'status', 'createdBy', 'updatedBy', 'createdAt', 'updatedAt'], 'integer'],
+            [['id', 'employeeId', 'shiftId', 'leaveTypeId', 'leaveApplicationId', 'rosterId', 'isAbsent', 'isLate', 'isEarlyOut', 'status', 'createdBy', 'updatedBy', 'createdAt', 'updatedAt', 'agencyId'], 'integer'],
             [['uid', 'date', 'entry', 'exit', 'totalLateInTime', 'totalEarlyOutTime', 'totalWorkingHours', 'overTime', 'remarks', 'employeeNote'], 'safe'],
         ];
     }
@@ -43,7 +45,8 @@ class AttendanceSearch extends Attendance
         $query = Attendance::find();
 
         // add conditions that should always apply here
-
+        $query->where([self::tableName().'.status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

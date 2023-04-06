@@ -4,6 +4,7 @@ namespace app\modules\hrm\models;
 
 use app\traits\BehaviorTrait;
 use Yii;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
 /**
@@ -11,6 +12,7 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property string $uid
+ * @property int $agencyId
  * @property int $employeeId
  * @property int $shiftId
  * @property int|null $leaveTypeId
@@ -60,7 +62,7 @@ class Attendance extends ActiveRecord
         return [
             [['employeeId', 'shiftId', 'date'], 'required'],
             [['employeeId', 'shiftId', 'date', 'entry'], 'required', 'on' => ['create']],
-            [['employeeId', 'shiftId', 'leaveTypeId', 'leaveApplicationId', 'rosterId', 'isAbsent', 'isLate', 'isEarlyOut', 'status', 'createdBy', 'updatedBy', 'createdAt', 'updatedAt'], 'integer'],
+            [['employeeId', 'shiftId', 'leaveTypeId', 'leaveApplicationId', 'rosterId', 'isAbsent', 'isLate', 'isEarlyOut', 'status', 'createdBy', 'updatedBy', 'createdAt', 'updatedAt', 'agencyId'], 'integer'],
             [['date', 'entry', 'exit', 'totalLateInTime', 'totalEarlyOutTime', 'totalWorkingHours', 'overTime'], 'safe'],
             [['uid'], 'string', 'max' => 36],
             [['remarks', 'employeeNote'], 'string', 'max' => 255],
@@ -82,9 +84,10 @@ class Attendance extends ActiveRecord
             'id' => Yii::t('app', 'ID'),
             'uid' => Yii::t('app', 'Uid'),
             'employeeId' => Yii::t('app', 'Employee'),
-            'shiftId' => Yii::t('app', 'Shift ID'),
-            'leaveTypeId' => Yii::t('app', 'Leave Type ID'),
-            'leaveApplicationId' => Yii::t('app', 'Leave Application ID'),
+            'agencyId' => Yii::t('app', 'Agency'),
+            'shiftId' => Yii::t('app', 'Shift'),
+            'leaveTypeId' => Yii::t('app', 'Leave Type'),
+            'leaveApplicationId' => Yii::t('app', 'Leave Application'),
             'rosterId' => Yii::t('app', 'Roster ID'),
             'date' => Yii::t('app', 'Date'),
             'entry' => Yii::t('app', 'Entry'),
@@ -109,9 +112,9 @@ class Attendance extends ActiveRecord
     /**
      * Gets query for [[Employee]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getEmployee()
+    public function getEmployee(): ActiveQuery
     {
         return $this->hasOne(Employee::class, ['id' => 'employeeId']);
     }
@@ -119,9 +122,9 @@ class Attendance extends ActiveRecord
     /**
      * Gets query for [[LeaveApplication]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getLeaveApplication()
+    public function getLeaveApplication(): ActiveQuery
     {
         return $this->hasOne(LeaveApplication::class, ['id' => 'leaveApplicationId']);
     }
@@ -129,9 +132,9 @@ class Attendance extends ActiveRecord
     /**
      * Gets query for [[LeaveType]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getLeaveType()
+    public function getLeaveType(): ActiveQuery
     {
         return $this->hasOne(LeaveType::class, ['id' => 'leaveTypeId']);
     }
@@ -139,9 +142,9 @@ class Attendance extends ActiveRecord
     /**
      * Gets query for [[Roster]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getRoster()
+    public function getRoster(): ActiveQuery
     {
         return $this->hasOne(Roster::class, ['id' => 'rosterId']);
     }
@@ -149,9 +152,9 @@ class Attendance extends ActiveRecord
     /**
      * Gets query for [[Shift]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getShift()
+    public function getShift(): ActiveQuery
     {
         return $this->hasOne(Shift::class, ['id' => 'shiftId']);
     }

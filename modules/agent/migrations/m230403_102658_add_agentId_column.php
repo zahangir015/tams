@@ -12,7 +12,6 @@ class m230403_102658_add_agentId_column extends Migration
      */
     public function safeUp()
     {
-        //var_dump(str_replace('`', '',\app\modules\sale\models\Airline::getTableSchema()->name));die();
         $this->addColumn(\app\modules\sale\models\Airline::tableName(), 'agencyId', $this->integer(11)->notNull());
         $this->addColumn(\app\models\Attachment::tableName(), 'agencyId', $this->integer(11)->notNull());
         $this->addColumn(\app\modules\hrm\models\Attendance::tableName(), 'agencyId', $this->integer(11)->notNull());

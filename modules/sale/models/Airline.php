@@ -14,6 +14,7 @@ use yii\db\ActiveRecord;
  * @property int $id
  * @property string $uid
  * @property int $supplierId
+ * @property int $agencyId
  * @property string $code
  * @property string $name
  * @property float|null $commission
@@ -32,6 +33,7 @@ use yii\db\ActiveRecord;
 class Airline extends ActiveRecord
 {
     use BehaviorTrait;
+
     /**
      * {@inheritdoc}
      */
@@ -46,8 +48,8 @@ class Airline extends ActiveRecord
     public function rules(): array
     {
         return [
-            [['supplierId', 'code', 'name', 'createdBy'], 'required'],
-            [['supplierId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['supplierId', 'code', 'name'], 'required'],
+            [['supplierId', 'agencyId','status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['commission', 'incentive', 'govTax', 'serviceCharge'], 'number'],
             [['uid'], 'string', 'max' => 36],
             [['code'], 'string', 'max' => 10],
@@ -67,6 +69,7 @@ class Airline extends ActiveRecord
             'id' => Yii::t('app', 'ID'),
             'uid' => Yii::t('app', 'Uid'),
             'supplierId' => Yii::t('app', 'Supplier'),
+            'agencyId' => Yii::t('app', 'Agency'),
             'code' => Yii::t('app', 'Code'),
             'name' => Yii::t('app', 'Name'),
             'commission' => Yii::t('app', 'Commission'),
@@ -107,7 +110,8 @@ class Airline extends ActiveRecord
             ->select(['id', 'name', 'code'])
             ->where(['like', 'name', $query])
             ->orWhere(['like', 'code', $query])
-            ->andWhere(['status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere([self::tableName().'.status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId])
             ->all();
     }
 }

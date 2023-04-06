@@ -2,15 +2,18 @@
 
 namespace app\modules\account\models;
 
+use app\components\GlobalConstant;
 use app\traits\BehaviorTrait;
 use Yii;
 use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%bank_account}}".
  *
  * @property int $id
  * @property string $uid
+ * @property int $agencyId
  * @property string $name
  * @property string $shortName
  * @property string $accountName
@@ -30,7 +33,7 @@ use yii\db\ActiveQuery;
  *
  * @property Transaction[] $transactions
  */
-class BankAccount extends \yii\db\ActiveRecord
+class BankAccount extends ActiveRecord
 {
     use BehaviorTrait;
     /**
@@ -50,7 +53,7 @@ class BankAccount extends \yii\db\ActiveRecord
             [['name', 'shortName', 'accountName', 'accountNumber', 'branch'], 'required'],
             [['paymentCharge'], 'number'],
             [['tag'], 'safe'],
-            [['status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['name', 'accountName'], 'string', 'max' => 150],
             [['shortName'], 'string', 'max' => 20],
@@ -107,7 +110,8 @@ class BankAccount extends \yii\db\ActiveRecord
             ->orWhere(['like', 'accountNumber', $query])
             ->orWhere(['like', 'swiftCode', $query])
             ->orWhere(['like', 'code', $query])
-            ->andWhere(['status' => 1])
+            ->andWhere([self::tableName().'.status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId])
             ->all();
     }
 }

@@ -11,6 +11,7 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property string $uid
+ * @property int $agencyId
  * @property string $name
  * @property string $shortName
  * @property string $phone
@@ -37,6 +38,7 @@ class Company extends ActiveRecord
     {
         return [
             [['name', 'shortName', 'phone', 'email', 'address', 'logo'], 'required'],
+            [['agencyId'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['name'], 'string', 'max' => 120],
             [['shortName'], 'string', 'max' => 10],

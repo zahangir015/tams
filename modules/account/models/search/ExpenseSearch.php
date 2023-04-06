@@ -7,6 +7,7 @@ use app\modules\account\models\Expense;
 use app\modules\account\models\ExpenseCategory;
 use app\modules\account\models\ExpenseSubCategory;
 use app\modules\sale\models\Supplier;
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
@@ -18,13 +19,14 @@ class ExpenseSearch extends Expense
     public $category;
     public $subCategory;
     public $supplier;
+
     /**
      * {@inheritdoc}
      */
     public function rules(): array
     {
         return [
-            [['id', 'categoryId', 'subCategoryId', 'supplierId', 'status', 'createdAt', 'updatedAt', 'createdBy', 'updatedBy'], 'integer'],
+            [['id', 'categoryId', 'subCategoryId', 'supplierId', 'status', 'createdAt', 'updatedAt', 'createdBy', 'updatedBy', 'agencyId'], 'integer'],
             [['uid', 'accruingMonth', 'timingOfExp', 'notes', 'identificationNumber', 'category', 'subCategory', 'supplier', 'totalCost', 'totalPaid', 'paymentStatus'], 'safe'],
         ];
     }
@@ -50,7 +52,9 @@ class ExpenseSearch extends Expense
         $query = Expense::find();
 
         // add conditions that should always apply here
-        $query->joinWith(['category', 'subCategory', 'supplier'])->where([self::tableName().'.status' => GlobalConstant::ACTIVE_STATUS]);
+        $query->joinWith(['category', 'subCategory', 'supplier'])
+            ->where([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -82,12 +86,12 @@ class ExpenseSearch extends Expense
 
         // grid filtering conditions
         $query->andFilterWhere([
-            self::tableName().'.identificationNumber' => $this->identificationNumber,
-            self::tableName().'.accruingMonth' => $this->accruingMonth,
-            self::tableName().'.totalCost' => $this->totalCost,
-            self::tableName().'.totalPaid' => $this->totalPaid,
-            self::tableName().'.paymentStatus' => $this->paymentStatus,
-            self::tableName().'.status' => $this->status,
+            self::tableName() . '.identificationNumber' => $this->identificationNumber,
+            self::tableName() . '.accruingMonth' => $this->accruingMonth,
+            self::tableName() . '.totalCost' => $this->totalCost,
+            self::tableName() . '.totalPaid' => $this->totalPaid,
+            self::tableName() . '.paymentStatus' => $this->paymentStatus,
+            self::tableName() . '.status' => $this->status,
             'createdAt' => $this->createdAt,
             'updatedAt' => $this->updatedAt,
             'createdBy' => $this->createdBy,
@@ -98,7 +102,7 @@ class ExpenseSearch extends Expense
             ->andFilterWhere(['like', ExpenseSubCategory::tableName() . '.name', $this->subCategory])
             ->andFilterWhere(['like', Supplier::tableName() . '.name', $this->supplier])
             ->orFilterWhere(['like', Supplier::tableName() . '.company', $this->supplier])
-            ->andFilterWhere(['like', self::tableName().'.timingOfExp', $this->timingOfExp])
+            ->andFilterWhere(['like', self::tableName() . '.timingOfExp', $this->timingOfExp])
             ->andFilterWhere(['like', 'notes', $this->notes]);
         return $dataProvider;
     }

@@ -2,6 +2,8 @@
 
 namespace app\modules\hrm\models\search;
 
+use app\components\GlobalConstant;
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\hrm\models\EmployeeShift;
@@ -17,7 +19,7 @@ class EmployeeShiftSearch extends EmployeeShift
     public function rules(): array
     {
         return [
-            [['id', 'departmentId', 'shiftId', 'employeeId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['id', 'departmentId', 'shiftId', 'employeeId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['uid'], 'safe'],
         ];
     }
@@ -43,6 +45,8 @@ class EmployeeShiftSearch extends EmployeeShift
         $query = EmployeeShift::find();
 
         // add conditions that should always apply here
+        $query->where([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

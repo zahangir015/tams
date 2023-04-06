@@ -13,6 +13,7 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property string $uid
+ * @property int $agencyId
  * @property int $categoryId
  * @property int $subCategoryId
  * @property int $supplierId
@@ -51,7 +52,7 @@ class Expense extends ActiveRecord
     {
         return [
             [['categoryId', 'subCategoryId', 'identificationNumber', 'accruingMonth', 'totalCost', 'timingOfExp'], 'required'],
-            [['categoryId', 'subCategoryId', 'supplierId', 'status', 'createdAt', 'updatedAt', 'createdBy', 'updatedBy'], 'integer'],
+            [['categoryId', 'subCategoryId', 'supplierId', 'status', 'createdAt', 'updatedAt', 'createdBy', 'updatedBy', 'agencyId'], 'integer'],
             [['accruingMonth'], 'safe'],
             [['totalCost', 'totalPaid'], 'number'],
             [['timingOfExp', 'notes', 'paymentStatus'], 'string'],

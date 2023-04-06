@@ -36,15 +36,6 @@ class ExpenseSubCategory extends ActiveRecord
         return 'expense_sub_category';
     }
 
-    public static function query(mixed $query): array
-    {
-        return self::find()
-            ->select(['id', 'name', 'status'])
-            ->where(['like', 'name', $query])
-            ->andWhere(['status' => GlobalConstant::ACTIVE_STATUS])
-            ->all();
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -96,5 +87,15 @@ class ExpenseSubCategory extends ActiveRecord
     public function getExpenses(): ActiveQuery
     {
         return $this->hasMany(Expense::class, ['subCategoryId' => 'id']);
+    }
+
+    public static function query(mixed $query): array
+    {
+        return self::find()
+            ->select(['id', 'name', 'status'])
+            ->where(['like', 'name', $query])
+            ->andWhere([self::tableName().'.status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId])
+            ->all();
     }
 }

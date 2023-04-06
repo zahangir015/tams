@@ -21,6 +21,7 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property string $uid
+ * @property int $agencyId
  * @property string $name
  * @property string $company
  * @property string $customerCode
@@ -54,9 +55,9 @@ class Customer extends ActiveRecord
     public function rules(): array
     {
         return [
-            [['name', 'company', 'customerCode', 'category', 'email', 'createdBy'], 'required'],
+            [['name', 'company', 'customerCode', 'category', 'email'], 'required'],
             [['category'], 'string'],
-            [['creditModality', 'starCategoryId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['creditModality', 'starCategoryId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['name', 'company', 'email', 'address'], 'string', 'max' => 255],
             [['customerCode'], 'string', 'max' => 32],

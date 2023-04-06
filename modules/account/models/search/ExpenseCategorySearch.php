@@ -2,6 +2,8 @@
 
 namespace app\modules\account\models\search;
 
+use app\components\GlobalConstant;
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\account\models\ExpenseCategory;
@@ -17,7 +19,7 @@ class ExpenseCategorySearch extends ExpenseCategory
     public function rules(): array
     {
         return [
-            [['id', 'status', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'], 'integer'],
+            [['id', 'status', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy', 'agencyId'], 'integer'],
             [['uid', 'name'], 'safe'],
         ];
     }
@@ -43,6 +45,8 @@ class ExpenseCategorySearch extends ExpenseCategory
         $query = ExpenseCategory::find();
 
         // add conditions that should always apply here
+        $query->where([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

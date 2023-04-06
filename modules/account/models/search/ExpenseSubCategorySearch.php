@@ -3,6 +3,7 @@
 namespace app\modules\account\models\search;
 
 use app\components\GlobalConstant;
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\account\models\ExpenseSubCategory;
@@ -18,7 +19,7 @@ class ExpenseSubCategorySearch extends ExpenseSubCategory
     public function rules(): array
     {
         return [
-            [['id', 'categoryId', 'status', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'], 'integer'],
+            [['id', 'categoryId', 'status', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy', 'agencyId'], 'integer'],
             [['uid', 'name'], 'safe'],
         ];
     }
@@ -45,7 +46,8 @@ class ExpenseSubCategorySearch extends ExpenseSubCategory
 
         // add conditions that should always apply here
         $query->joinWith(['category'])
-            ->where([self::tableName().'.status' => GlobalConstant::ACTIVE_STATUS]);
+            ->where([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

@@ -11,6 +11,7 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property string $uid
+ * @property int $agencyId
  * @property string $name
  * @property string $address
  * @property int $status
@@ -37,7 +38,7 @@ class Branch extends ActiveRecord
     {
         return [
             [['name', 'address'], 'required'],
-            [['status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['name'], 'string', 'max' => 120],
             [['address'], 'string', 'max' => 255],

@@ -12,6 +12,7 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property string $uid
+ * @property int $agencyId
  * @property int $departmentId
  * @property int $shiftId
  * @property int $status
@@ -42,7 +43,7 @@ class DepartmentShift extends ActiveRecord
     {
         return [
             [['departmentId', 'shiftId'], 'required'],
-            [['departmentId', 'shiftId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['departmentId', 'shiftId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['departmentId', 'shiftId'], 'unique'],
             [['uid'], 'unique'],

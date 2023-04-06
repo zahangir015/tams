@@ -2,8 +2,10 @@
 
 namespace app\modules\sale\models\holiday;
 
+use app\components\GlobalConstant;
 use app\modules\account\models\Invoice;
 use app\modules\sale\models\Customer;
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\sale\models\holiday\Holiday;
@@ -22,7 +24,7 @@ class HolidaySearch extends Holiday
     public function rules(): array
     {
         return [
-            [['id', 'motherId', 'holidayCategoryId', 'isOnlineBooked', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['id', 'motherId', 'holidayCategoryId', 'isOnlineBooked', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['invoice', 'customer', 'identificationNumber', 'customerCategory', 'type', 'issueDate', 'departureDate', 'refundRequestDate', 'paymentStatus', 'route'], 'safe'],
             [['quoteAmount', 'costOfSale', 'netProfit', 'receivedAmount'], 'number'],
         ];
@@ -49,7 +51,9 @@ class HolidaySearch extends Holiday
         $query = Holiday::find();
 
         // add conditions that should always apply here
-        $query->joinWith(['invoice', 'customer']);
+        $query->joinWith(['invoice', 'customer'])
+            ->where([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

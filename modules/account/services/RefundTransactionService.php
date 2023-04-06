@@ -9,6 +9,7 @@ use app\modules\account\models\RefundTransaction;
 use app\modules\account\models\RefundTransactionDetail;
 use app\modules\account\models\Transaction;
 use app\modules\account\repositories\RefundTransactionRepository;
+use app\modules\sale\models\Customer;
 use app\modules\sale\models\holiday\Holiday;
 use app\modules\sale\models\hotel\Hotel;
 use app\modules\sale\models\ticket\Ticket;
@@ -155,7 +156,7 @@ class RefundTransactionService
         //dd($requestData);
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
-            dd($requestData);
+            dd();
             $refundTransaction->load($requestData);
             $refundTransaction->identificationNumber = Utilities::refundTransactionNumber();
 
@@ -165,7 +166,7 @@ class RefundTransactionService
 
             $refundTransaction = $this->refundTransactionRepository->store($refundTransaction);
             if ($refundTransaction->hasErrors()) {
-                throw new Exception(Utilities::processErrorMessages($refundTransaction->getErrors()));
+               throw new Exception(Utilities::processErrorMessages($refundTransaction->getErrors()));
             }
 
             // process customer ledger
@@ -200,7 +201,6 @@ class RefundTransactionService
 
                 $serviceData[] = self::formDataForServiceUpdate($datum, $refundTransaction);
             }
-
 
             // process bank ledger
             /*$bankLedgerRequestData = [

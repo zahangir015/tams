@@ -19,7 +19,7 @@ class ChartOfAccountSearch extends ChartOfAccount
     public function rules(): array
     {
         return [
-            [['id', 'accountTypeId', 'accountGroupId', 'status', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'], 'integer'],
+            [['id', 'accountTypeId', 'accountGroupId', 'status', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy', 'agencyId'], 'integer'],
             [['uid', 'code', 'name', 'description', 'reportType'], 'safe'],
         ];
     }
@@ -46,7 +46,8 @@ class ChartOfAccountSearch extends ChartOfAccount
 
         // add conditions that should always apply here
         $query->joinWith(['accountType', 'accountGroup'])
-            ->where([self::tableName().'.status' => GlobalConstant::ACTIVE_STATUS]);
+            ->where([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

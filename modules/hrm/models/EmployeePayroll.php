@@ -12,6 +12,7 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property string $uid
+ * @property int $agencyId
  * @property int $employeeId
  * @property float $gross
  * @property float $tax
@@ -45,7 +46,7 @@ class EmployeePayroll extends ActiveRecord
     {
         return [
             [['employeeId', 'gross', 'tax'], 'required'],
-            [['employeeId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['employeeId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['gross', 'tax'], 'number'],
             [['paymentMode'], 'string'],
             [['uid'], 'string', 'max' => 36],

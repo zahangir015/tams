@@ -13,6 +13,7 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property string $uid
+ * @property int $agencyId
  * @property int|null $parentId
  * @property string $name
  * @property int $status
@@ -33,15 +34,6 @@ class Department extends ActiveRecord
         return '{{%department}}';
     }
 
-    public static function query(mixed $query)
-    {
-        return self::find()
-            ->select(['id', 'name', 'status'])
-            ->where(['like', 'name', $query])
-            ->andWhere(['status' => GlobalConstant::ACTIVE_STATUS])
-            ->all();
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -49,7 +41,7 @@ class Department extends ActiveRecord
     {
         return [
             [['name'], 'required'],
-            [['parentId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['parentId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['name'], 'string', 'max' => 120],
             [['uid'], 'unique'],
@@ -80,5 +72,14 @@ class Department extends ActiveRecord
         return $this->hasOne(self::class, ['parentId' => 'id']);
     }
 
+    public static function query(mixed $query)
+    {
+        return self::find()
+            ->select(['id', 'name', 'status'])
+            ->where(['like', 'name', $query])
+            ->andWhere([self::tableName().'.status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId])
+            ->all();
+    }
 
 }

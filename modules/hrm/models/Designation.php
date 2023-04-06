@@ -12,6 +12,7 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property string $uid
+ * @property int $agencyId
  * @property int|null $parentId
  * @property int $departmentId
  * @property string $name
@@ -39,7 +40,7 @@ class Designation extends ActiveRecord
     {
         return [
             [['departmentId', 'name'], 'required'],
-            [['parentId', 'departmentId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['parentId', 'departmentId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['name'], 'string', 'max' => 120],
             [['uid'], 'unique'],

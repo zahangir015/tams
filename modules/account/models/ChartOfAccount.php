@@ -13,6 +13,7 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property string $uid
+ * @property int $agencyId
  * @property int $accountTypeId
  * @property int $accountGroupId
  * @property string $code
@@ -47,7 +48,7 @@ class ChartOfAccount extends ActiveRecord
     {
         return [
             [['accountTypeId', 'accountGroupId', 'code', 'name'], 'required'],
-            [['accountTypeId', 'accountGroupId', 'status', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'], 'integer'],
+            [['accountTypeId', 'accountGroupId', 'status', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy', 'agencyId'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['code'], 'string', 'max' => 10],
             [['name', 'description'], 'string', 'max' => 150],
@@ -123,6 +124,7 @@ class ChartOfAccount extends ActiveRecord
             ->where(['like', 'name', $query])
             ->orWhere(['like', 'code', $query])
             ->andWhere(['status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId])
             ->all();
     }
 }

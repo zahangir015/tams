@@ -14,6 +14,7 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property string $uid
+ * @property int $agencyId
  * @property int|null $motherId
  * @property int|null $invoiceId
  * @property int $holidayCategoryId
@@ -60,7 +61,7 @@ class Holiday extends ActiveRecord
     {
         return [
             [['holidayCategoryId', 'identificationNumber', 'customerId', 'customerCategory', 'type', 'issueDate', 'quoteAmount', 'costOfSale', 'netProfit', 'route'], 'required'],
-            [['motherId', 'invoiceId', 'holidayCategoryId', 'customerId', 'isOnlineBooked', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['motherId', 'invoiceId', 'holidayCategoryId', 'customerId', 'isOnlineBooked', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['type', 'paymentStatus'], 'string'],
             [['issueDate', 'departureDate', 'refundRequestDate'], 'safe'],
             [['quoteAmount', 'costOfSale', 'netProfit', 'receivedAmount'], 'number'],

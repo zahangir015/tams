@@ -2,6 +2,8 @@
 
 namespace app\modules\sale\models\search;
 
+use app\components\GlobalConstant;
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\sale\models\Customer;
@@ -17,7 +19,7 @@ class CustomerSearch extends Customer
     public function rules(): array
     {
         return [
-            [['id', 'creditModality', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['id', 'creditModality', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['uid', 'name', 'company', 'customerCode', 'category', 'email', 'address', 'phone'], 'safe'],
         ];
     }
@@ -43,6 +45,8 @@ class CustomerSearch extends Customer
         $query = Customer::find();
 
         // add conditions that should always apply here
+        $query->where([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

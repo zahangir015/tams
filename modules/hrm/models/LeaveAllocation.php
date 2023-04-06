@@ -12,6 +12,7 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property string $uid
+ * @property int $agencyId
  * @property int $employeeId
  * @property int $leaveTypeId
  * @property int $year
@@ -46,7 +47,7 @@ class LeaveAllocation extends ActiveRecord
     {
         return [
             [['employeeId', 'leaveTypeId', 'year', 'totalDays'], 'required'],
-            [['employeeId', 'leaveTypeId', 'year', 'totalDays', 'availedDays', 'remainingDays', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['employeeId', 'leaveTypeId', 'year', 'totalDays', 'availedDays', 'remainingDays', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['uid'], 'unique'],
             [['uid'], 'unique'],

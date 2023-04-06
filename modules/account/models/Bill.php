@@ -4,6 +4,7 @@ namespace app\modules\account\models;
 
 use app\modules\sale\models\Supplier;
 use app\modules\sale\models\ticket\TicketSupplier;
+use app\traits\BehaviorTrait;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
@@ -13,6 +14,7 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property string $uid
+ * @property int $agencyId
  * @property int $supplierId
  * @property string $billNumber
  * @property string $date
@@ -32,6 +34,8 @@ use yii\db\ActiveRecord;
  */
 class Bill extends ActiveRecord
 {
+    use BehaviorTrait;
+
     /**
      * {@inheritdoc}
      */
@@ -47,7 +51,7 @@ class Bill extends ActiveRecord
     {
         return [
             [['uid', 'supplierId', 'billNumber', 'date', 'createdBy', 'createdAt'], 'required'],
-            [['supplierId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['supplierId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['date'], 'safe'],
             [['paidAmount', 'dueAmount', 'discountedAmount', 'refundAdjustmentAmount'], 'number'],
             [['remarks'], 'string'],

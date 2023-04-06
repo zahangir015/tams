@@ -11,6 +11,7 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property int $userId
+ * @property int $agencyId
  * @property string $tableName
  * @property int $tableId
  * @property string $tableData
@@ -34,7 +35,7 @@ class History extends ActiveRecord
     {
         return [
             [['userId', 'tableName', 'tableId', 'tableData', 'snapshot'], 'required'],
-            [['userId', 'tableId'], 'integer'],
+            [['userId', 'tableId', 'agencyId'], 'integer'],
             [['tableData', 'action'], 'string'],
             [['snapshot'], 'safe'],
             [['tableName'], 'string', 'max' => 150],
