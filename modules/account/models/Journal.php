@@ -12,6 +12,7 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property string $uid
+ * @property int $agencyId
  * @property string $journalNumber
  * @property string $postedDate
  * @property float|null $debit
@@ -43,10 +44,10 @@ class Journal extends ActiveRecord
     public function rules(): array
     {
         return [
-            [['uid', 'journalNumber', 'postedDate'], 'required'],
+            [['journalNumber', 'postedDate'], 'required'],
             [['postedDate'], 'safe'],
             [['debit', 'credit', 'outOfBalance'], 'number'],
-            [['status', 'createdAt', 'updatedAt', 'createdBy', 'updatedBy'], 'integer'],
+            [['status', 'createdAt', 'updatedAt', 'createdBy', 'updatedBy', 'agencyId'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['journalNumber'], 'string', 'max' => 255],
             [['uid'], 'unique'],

@@ -12,6 +12,7 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property string $uid
+ * @property int $agencyId
  * @property int $departmentId
  * @property int $employeeId
  * @property int $shiftId
@@ -46,7 +47,7 @@ class Roster extends ActiveRecord
     {
         return [
             [['departmentId', 'employeeId', 'shiftId', 'rosterDate', 'alternativeHoliday'], 'required'],
-            [['departmentId', 'employeeId', 'shiftId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['departmentId', 'employeeId', 'shiftId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['rosterDate', 'alternativeHoliday'], 'safe'],
             [['uid'], 'string', 'max' => 36],
             [['remarks'], 'string', 'max' => 255],

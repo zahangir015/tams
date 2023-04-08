@@ -12,6 +12,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="agency-create">
     <?= $this->render('_form', [
         'model' => $model,
+        'signup' => $signup,
     ]) ?>
 
 </div>

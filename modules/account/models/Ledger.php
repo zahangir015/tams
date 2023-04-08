@@ -11,6 +11,7 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property string $uid
+ * @property int $agencyId
  * @property string $title
  * @property string $date
  * @property string|null $reference
@@ -47,7 +48,7 @@ class Ledger extends ActiveRecord
         return [
             [['title', 'date', 'refId', 'refModel'], 'required'],
             [['date'], 'safe'],
-            [['refId', 'subRefId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['refId', 'subRefId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['debit', 'credit', 'balance'], 'number'],
             [['uid'], 'string', 'max' => 36],
             [['title', 'refModel', 'subRefModel'], 'string', 'max' => 150],

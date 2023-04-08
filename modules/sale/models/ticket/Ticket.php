@@ -18,6 +18,7 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property string $uid
+ * @property int $agencyId
  * @property int|null $motherTicketId
  * @property int $airlineId
  * @property int $providerId
@@ -92,7 +93,7 @@ class Ticket extends ActiveRecord
     {
         return [
             [['airlineId', 'customerId', 'customerCategory', 'paxName', 'eTicket', 'pnrCode', 'type', 'seatClass', 'issueDate'], 'required'],
-            [['motherTicketId', 'airlineId', 'providerId', 'invoiceId', 'customerId', 'bookedOnline', 'flightType', 'codeShare', 'numberOfSegment', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['motherTicketId', 'airlineId', 'providerId', 'invoiceId', 'customerId', 'bookedOnline', 'flightType', 'codeShare', 'numberOfSegment', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['eTicket', 'airlineId', 'type'], 'unique', 'targetAttribute' => ['eTicket', 'airlineId', 'type'], 'on' => 'create'],
             [['type', 'tripType', 'paymentStatus'], 'string'],
             [['issueDate', 'departureDate', 'refundRequestDate'], 'safe'],
@@ -237,7 +238,8 @@ class Ticket extends ActiveRecord
             ->select(['id', 'eTicket', 'pnrCode'])
             ->where(['like', 'eTicket', $query])
             ->orWhere(['like', 'pnrCode', $query])
-            ->andWhere(['status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId])
             ->all();
     }
 }

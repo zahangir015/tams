@@ -13,6 +13,7 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property string $uid
+ * @property int $agencyId
  * @property string $title
  * @property string $entryTime
  * @property string $exitTime
@@ -47,7 +48,7 @@ class Shift extends ActiveRecord
         return [
             [['title', 'entryTime', 'exitTime', 'totalHours'], 'required'],
             [['entryTime', 'exitTime', 'totalHours'], 'safe'],
-            [['status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['title'], 'string', 'max' => 150],
             [['uid'], 'unique'],
@@ -110,7 +111,8 @@ class Shift extends ActiveRecord
         return self::find()
             ->select(['id', 'title', 'status'])
             ->where(['like', 'title', $query])
-            ->andWhere(['status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId])
             ->all();
     }
 }

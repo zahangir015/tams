@@ -12,6 +12,7 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property string $uid
+ * @property int $agencyId
  * @property int $employeeId
  * @property int $leaveTypeId
  * @property float $numberOfDays
@@ -49,7 +50,7 @@ class LeaveApplication extends ActiveRecord
     {
         return [
             [['employeeId', 'leaveTypeId', 'numberOfDays', 'from', 'to'], 'required'],
-            [['employeeId', 'leaveTypeId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['employeeId', 'leaveTypeId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['numberOfDays'], 'number'],
             [['from', 'to', 'availableFrom'], 'safe'],
             [['description'], 'string'],

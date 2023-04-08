@@ -12,6 +12,7 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property string $uid
+ * @property int $agencyId
  * @property string $title
  * @property string $date
  * @property int $status
@@ -23,7 +24,7 @@ use yii\db\ActiveRecord;
 class PublicHoliday extends ActiveRecord
 {
     use BehaviorTrait;
-    
+
     /**
      * {@inheritdoc}
      */
@@ -39,7 +40,7 @@ class PublicHoliday extends ActiveRecord
     {
         return [
             [['title', 'date'], 'required'],
-            [['status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['title'], 'string', 'max' => 150],
             [['date'], 'string', 'max' => 255],
@@ -65,12 +66,14 @@ class PublicHoliday extends ActiveRecord
             'updatedAt' => Yii::t('app', 'Updated At'),
         ];
     }
+
     public static function query(mixed $query): array
     {
         return self::find()
             ->select(['id', 'title', 'status'])
             ->where(['like', 'title', $query])
-            ->andWhere(['status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId])
             ->all();
     }
 }

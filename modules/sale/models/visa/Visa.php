@@ -14,6 +14,7 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property string $uid
+ * @property int $agencyId
  * @property int|null $motherId
  * @property int|null $invoiceId
  * @property string $identificationNumber
@@ -59,7 +60,7 @@ class Visa extends ActiveRecord
     {
         return [
             [['identificationNumber', 'customerId', 'customerCategory', 'issueDate', 'totalQuantity', 'quoteAmount', 'costOfSale', 'netProfit'], 'required'],
-            [['motherId', 'invoiceId', 'customerId', 'totalQuantity', 'processStatus', 'isOnlineBooked', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['motherId', 'invoiceId', 'customerId', 'totalQuantity', 'processStatus', 'isOnlineBooked', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['type', 'paymentStatus'], 'string'],
             [['issueDate', 'refundRequestDate'], 'safe'],
             [['quoteAmount', 'costOfSale', 'netProfit', 'receivedAmount'], 'number'],

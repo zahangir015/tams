@@ -2,6 +2,8 @@
 
 namespace app\modules\hrm\models\search;
 
+use app\components\GlobalConstant;
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\hrm\models\Weekend;
@@ -17,7 +19,7 @@ class WeekendSearch extends Weekend
     public function rules(): array
     {
         return [
-            [['id', 'departmentId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['id', 'departmentId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['uid', 'day'], 'safe'],
         ];
     }
@@ -43,6 +45,8 @@ class WeekendSearch extends Weekend
         $query = Weekend::find();
 
         // add conditions that should always apply here
+        $query->where([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
+        ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

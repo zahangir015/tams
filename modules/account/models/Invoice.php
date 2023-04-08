@@ -14,6 +14,7 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property string $uid
+ * @property int $agencyId
  * @property int $customerId
  * @property string $invoiceNumber
  * @property string $date
@@ -52,7 +53,7 @@ class Invoice extends ActiveRecord
     {
         return [
             [['customerId'], 'required'],
-            [['customerId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['customerId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['date', 'expectedPaymentDate'], 'safe'],
             [['paidAmount', 'dueAmount', 'discountedAmount', 'refundAdjustmentAmount'], 'number'],
             [['remarks'], 'string'],

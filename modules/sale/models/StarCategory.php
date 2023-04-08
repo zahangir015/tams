@@ -12,6 +12,7 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property string $uid
+ * @property int $agencyId
  * @property string $name
  * @property int $level
  * @property int|null $pointRange
@@ -42,7 +43,7 @@ class StarCategory extends ActiveRecord
     {
         return [
             [['name', 'level'], 'required'],
-            [['level', 'pointRange', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['level', 'pointRange', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['name'], 'string', 'max' => 100],
             [['uid'], 'unique'],

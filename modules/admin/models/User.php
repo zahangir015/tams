@@ -4,6 +4,7 @@ namespace app\modules\admin\models;
 
 use app\modules\admin\components\Configs;
 use app\modules\admin\components\UserStatus;
+use app\modules\agent\models\Agency;
 use app\modules\hrm\models\Employee;
 use Yii;
 use yii\base\NotSupportedException;
@@ -16,6 +17,7 @@ use yii\web\IdentityInterface;
  * User model
  *
  * @property integer $id
+ * @property integer $agencyId
  * @property string $username
  * @property string $password_hash
  * @property string $password_reset_token
@@ -200,5 +202,10 @@ class User extends ActiveRecord implements IdentityInterface
     public function getEmployee(): ActiveQuery
     {
         return $this->hasOne(Employee::class, ['userId' => 'id']);
+    }
+
+    public function getAgency(): ActiveQuery
+    {
+        return $this->hasOne(Agency::class, ['id' => 'agencyId']);
     }
 }

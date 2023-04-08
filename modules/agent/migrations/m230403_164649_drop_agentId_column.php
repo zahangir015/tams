@@ -12,8 +12,6 @@ class m230403_164649_drop_agentId_column extends Migration
      */
     public function safeUp()
     {
-
-
         $this->dropForeignKey('fk-'.str_replace('`', '',\app\modules\sale\models\Airline::getTableSchema()->name).'-agencyId', \app\modules\sale\models\Airline::tableName());
         $this->dropForeignKey('fk-'.str_replace('`', '',\app\models\Attachment::getTableSchema()->name).'-agencyId', \app\models\Attachment::tableName());
         $this->dropForeignKey('fk-'.str_replace('`', '',\app\modules\hrm\models\Attendance::getTableSchema()->name).'-agencyId', \app\modules\hrm\models\Attendance::tableName());
@@ -56,7 +54,7 @@ class m230403_164649_drop_agentId_column extends Migration
         $this->dropForeignKey('fk-'.str_replace('`', '',\app\modules\admin\models\User::getTableSchema()->name).'-agencyId', \app\modules\admin\models\User::tableName());
         $this->dropForeignKey('fk-'.str_replace('`', '',\app\modules\sale\models\visa\Visa::getTableSchema()->name).'-agencyId', \app\modules\sale\models\visa\Visa::tableName());
         $this->dropForeignKey('fk-'.str_replace('`', '',\app\modules\hrm\models\Weekend::getTableSchema()->name).'-agencyId', \app\modules\hrm\models\Weekend::tableName());
-        $this->dropForeignKey('fk-'.str_replace('`', '',\app\modules\hrm\models\YearlyLeaveAllocation::getTableSchema()->name).'-agencyId', \app\modules\hrm\models\YearlyLeaveAllocation::tableName());*/
+        $this->dropForeignKey('fk-'.str_replace('`', '',\app\modules\hrm\models\YearlyLeaveAllocation::getTableSchema()->name).'-agencyId', \app\modules\hrm\models\YearlyLeaveAllocation::tableName());
 
 
         // index drop

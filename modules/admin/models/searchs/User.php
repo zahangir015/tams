@@ -2,6 +2,7 @@
 
 namespace app\modules\admin\models\searchs;
 
+use app\components\GlobalConstant;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
@@ -15,14 +16,15 @@ class User extends Model
     public $username;
     public $email;
     public $status;
-    
+    public $agencyId;
+
     /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
-            [['id', 'status',], 'integer'],
+            [['id', 'status', 'agencyId'], 'integer'],
             [['username', 'email'], 'safe'],
         ];
     }
@@ -46,7 +48,8 @@ class User extends Model
 
         $this->load($params);
         if (!$this->validate()) {
-            $query->where('1=0');
+            $query->where(['status' => GlobalConstant::ACTIVE_STATUS])
+                ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId]);
             return $dataProvider;
         }
 

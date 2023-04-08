@@ -2,6 +2,8 @@
 
 namespace app\modules\account\models\search;
 
+use app\components\GlobalConstant;
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\account\models\Ledger;
@@ -17,7 +19,7 @@ class LedgerSearch extends Ledger
     public function rules(): array
     {
         return [
-            [['id', 'refId', 'subRefId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['id', 'refId', 'subRefId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['uid', 'title', 'date', 'reference', 'refModel', 'subRefModel'], 'safe'],
             [['debit', 'credit', 'balance'], 'number'],
         ];
@@ -44,6 +46,8 @@ class LedgerSearch extends Ledger
         $query = Ledger::find();
 
         // add conditions that should always apply here
+        $query->where([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

@@ -2,6 +2,8 @@
 
 namespace app\modules\account\models\search;
 
+use app\components\GlobalConstant;
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\account\models\RefundTransaction;
@@ -17,7 +19,7 @@ class RefundTransactionSearch extends RefundTransaction
     public function rules(): array
     {
         return [
-            [['id', 'refId', 'isAdjusted', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['id', 'refId', 'isAdjusted', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['uid', 'refModel', 'paymentStatus', 'remarks', 'identificationNumber'], 'safe'],
             [['payableAmount', 'receivableAmount', 'totalAmount', 'adjustedAmount'], 'number'],
         ];
@@ -44,6 +46,8 @@ class RefundTransactionSearch extends RefundTransaction
         $query = RefundTransaction::find();
 
         // add conditions that should always apply here
+        $query->where([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

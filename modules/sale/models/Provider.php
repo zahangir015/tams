@@ -12,6 +12,7 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property string $uid
+ * @property int $agencyId
  * @property string $code
  * @property string $name
  * @property int $status
@@ -23,6 +24,7 @@ use yii\db\ActiveRecord;
 class Provider extends ActiveRecord
 {
     use BehaviorTrait;
+
     /**
      * {@inheritdoc}
      */
@@ -38,7 +40,7 @@ class Provider extends ActiveRecord
     {
         return [
             [['code', 'name', 'createdBy'], 'required'],
-            [['status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['code'], 'string', 'max' => 64],
             [['name'], 'string', 'max' => 150],
@@ -71,7 +73,8 @@ class Provider extends ActiveRecord
             ->select(['id', 'name', 'code'])
             ->where(['like', 'name', $query])
             ->orWhere(['like', 'code', $query])
-            ->andWhere(['status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId])
             ->all();
     }
 }
