@@ -1,6 +1,7 @@
 <?php
 
 use app\components\Utilities;
+use kartik\depdrop\DepDrop;
 use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
@@ -36,7 +37,7 @@ use yii\bootstrap4\ActiveForm;
                             <?= $form->field($model, "countryId")->widget(Select2::class, Utilities::ajaxDropDown('countryId', '/country/get-countries', true, 'countryId', 'country'))->label('Country') ?>
                         </div>
                         <div class="col-md">
-                            <?= $form->field($model, "cityId")->widget(\kartik\depdrop\DepDrop::class, Utilities::depDropConfigurationGenerate($model, )) ?>
+                            <?= $form->field($model, "cityId")->widget(DepDrop::class, Utilities::depDropConfigurationGenerate($model, 'cityId', 'countryId', '/city/get-by-county', ())) ?>
                         </div>
                         <div class="col-md">
                             <?= $form->field($model, 'phone')->textInput(['maxlength' => true]) ?>
