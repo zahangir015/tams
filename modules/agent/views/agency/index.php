@@ -1,7 +1,10 @@
 <?php
 
+use app\components\GlobalConstant;
 use app\components\Utilities;
 use app\modules\agent\models\Agency;
+use app\modules\agent\models\Plan;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use kartik\grid\ActionColumn;
@@ -20,7 +23,13 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'kartik\grid\SerialColumn'],
-            'planId',
+            [
+                'attribute' => 'planId',
+                'value' => function($model){
+                    return $model->plan->name;
+                },
+                'filter' => ArrayHelper::map(Plan::find()->select(['id', 'name'])->where(['status' => GlobalConstant::ACTIVE_STATUS])->all(), 'id', 'name')
+            ],
             'agentCode',
             'company',
             'address',

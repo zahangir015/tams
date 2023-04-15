@@ -5,6 +5,8 @@ namespace app\modules\hrm\controllers;
 use app\components\GlobalConstant;
 use app\components\Utilities;
 use app\modules\admin\models\form\Signup;
+use app\modules\admin\models\User;
+use app\modules\agent\models\Agency;
 use app\modules\hrm\models\Branch;
 use app\modules\hrm\models\Department;
 use app\modules\hrm\models\Employee;
@@ -14,6 +16,7 @@ use app\modules\hrm\models\search\EmployeeSearch;
 use app\modules\hrm\repositories\EmployeeRepository;
 use app\modules\hrm\services\EmployeeService;
 use app\modules\hrm\services\HrmConfigurationService;
+use Exception;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
@@ -71,9 +74,15 @@ class EmployeeController extends ParentController
      * Creates a new Employee model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|Response
+     * @throws Exception
      */
     public function actionCreate(): Response|string
     {
+        $agency = Agency::find()->with(['plan', 'users'])->where(['id' => Yii::$app->user->identity->agencyId])->asArray()->one();
+        if (COUNT($agency['users']) >= $agency['plan']['userLimit']) {
+            throw new Exception('You are out of your user limit.');
+        }
+
         $signupModel = new Signup();
         $model = new Employee();
         $designation = new EmployeeDesignation();
@@ -83,7 +92,7 @@ class EmployeeController extends ParentController
         if ($this->request->isPost) {
             $requestData = Yii::$app->request->post();
             // Store ticket data
-            $storeResponse = $this->employeeService->storeEmployee($requestData, $model, $designation, $signupModel);
+            $storeResponse = $this->employeeService->storeEmployee($requestData, $model, $designation, $signupModel, $agency);
             if ($storeResponse) {
                 return $this->redirect(['index']);
             }
@@ -155,6 +164,7 @@ class EmployeeController extends ParentController
     {
         return $this->employeeRepository->findOne(['uid' => $uid], Employee::class, $withArray);
     }
+
     public function actionGetEmployeeByDepartment()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -182,7 +192,7 @@ class EmployeeController extends ParentController
         $employees = $this->employeeRepository->employeeQuery($query);
         $data = [];
         foreach ($employees as $employee) {
-            $data[] = ['id' => $employee->id, 'text' => $employee->officialId.' |'.$employee->firstName.' '.$employee->lastName.' | '.$employee->officialEmail];
+            $data[] = ['id' => $employee->id, 'text' => $employee->officialId . ' |' . $employee->firstName . ' ' . $employee->lastName . ' | ' . $employee->officialEmail];
         }
         return ['results' => $data];
     }

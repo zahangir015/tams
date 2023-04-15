@@ -17,6 +17,7 @@ class User extends Model
     public $email;
     public $status;
     public $agencyId;
+    public $agency;
 
     /**
      * @inheritdoc
@@ -25,7 +26,7 @@ class User extends Model
     {
         return [
             [['id', 'status', 'agencyId'], 'integer'],
-            [['username', 'email'], 'safe'],
+            [['username', 'email', 'agency'], 'safe'],
         ];
     }
 
@@ -40,7 +41,7 @@ class User extends Model
     {
         /* @var $query \yii\db\ActiveQuery */
         $class = Yii::$app->getUser()->identityClass ? : 'app\modules\admin\models\User';
-        $query = $class::find();
+        $query = $class::find()->joinWith(['agency']);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

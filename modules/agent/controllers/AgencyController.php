@@ -5,6 +5,7 @@ namespace app\modules\agent\controllers;
 use app\components\GlobalConstant;
 use app\components\Utilities;
 use app\modules\admin\models\form\Signup;
+use app\modules\admin\models\User;
 use app\modules\agent\models\Agency;
 use app\modules\agent\models\search\AgencySearch;
 use app\controllers\ParentController;
@@ -89,6 +90,11 @@ class AgencyController extends ParentController
                     throw new Exception(Utilities::processErrorMessages($signup->getErrors()));
                 }
 
+                // the following three lines were added:
+                $auth = \Yii::$app->authManager;
+                $authorRole = $auth->getRole($model->plan->name);
+                $auth->assign($authorRole, $user->getId());
+
                 $dbTransaction->commit();
                 Yii::$app->session->setFlash('success', 'Agent Successfully added');
                 return $this->redirect(['view', 'uid' => $model->uid]);
@@ -122,6 +128,14 @@ class AgencyController extends ParentController
             $model->load($requestData);
             $model = $this->agencyRepository->store($model);
             if (!$model->hasErrors()) {
+                $users = User::find()->where(['agencyId' => $model->id])->all();
+                foreach ($users as $user){
+                    // the following three lines were added:
+                    $auth = \Yii::$app->authManager;
+                    $authorRole = $auth->getRole($model->plan->name);
+                    $auth->assign($authorRole, $user->getId());
+                }
+
                 return $this->redirect(['view', 'uid' => $model->uid]);
             } else {
                 Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));

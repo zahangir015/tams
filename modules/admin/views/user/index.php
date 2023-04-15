@@ -20,6 +20,12 @@ $this->params['breadcrumbs'][] = $this->title;
             'username',
             'email:email',
             [
+                'attribute' => 'agency',
+                'value' => function($model) {
+                    return $model->agency ? $model->agency->company : null;
+                }
+            ],
+            [
                 'attribute' => 'status',
                 'value' => function($model) {
                     return $model->status == 0 ? 'Inactive' : 'Active';

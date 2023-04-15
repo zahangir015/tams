@@ -43,6 +43,7 @@ class AgencySearch extends Agency
         $query = Agency::find();
 
         // add conditions that should always apply here
+        $query->joinWith(['plan']);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

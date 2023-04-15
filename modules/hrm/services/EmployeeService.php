@@ -5,6 +5,7 @@ namespace app\modules\hrm\services;
 
 use app\components\Utilities;
 use app\modules\admin\models\form\Signup;
+use app\modules\admin\models\User;
 use app\modules\hrm\models\Employee;
 use app\modules\hrm\models\EmployeeDesignation;
 use app\modules\hrm\repositories\EmployeeRepository;
@@ -21,7 +22,7 @@ class EmployeeService
         $this->employeeRepository = new EmployeeRepository();
     }
 
-    public function storeEmployee(array $requestData, Employee $employee, EmployeeDesignation $employeeDesignation, Signup $signupModel): bool
+    public function storeEmployee(array $requestData, Employee $employee, EmployeeDesignation $employeeDesignation, Signup $signupModel, $agency = null): bool
     {
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
@@ -33,6 +34,11 @@ class EmployeeService
                     if (is_null($user)) {
                         throw new Exception('User creation failed.');
                     }
+
+                    // the following three lines were added:
+                    $auth = \Yii::$app->authManager;
+                    $authorRole = $auth->getRole($agency['plan']['name']);
+                    $auth->assign($authorRole, $user->getId());
                 }
             }
             // Employee create
