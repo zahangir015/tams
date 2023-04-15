@@ -36,7 +36,7 @@ use yii\bootstrap4\ActiveForm;
                             <?= $form->field($model, "countryId")->widget(Select2::class, Utilities::ajaxDropDown('countryId', '/country/get-countries', true, 'countryId', 'country'))->label('Country') ?>
                         </div>
                         <div class="col-md">
-                            <?= $form->field($model, "cityId")->textInput(['maxlength' => true]) ?>
+                            <?= $form->field($model, "cityId")->widget(\kartik\depdrop\DepDrop::class, Utilities::depDropConfigurationGenerate($model, )) ?>
                         </div>
                         <div class="col-md">
                             <?= $form->field($model, 'phone')->textInput(['maxlength' => true]) ?>

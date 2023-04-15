@@ -3,6 +3,7 @@
 namespace app\components;
 
 use app\modules\configuration\models\Company;
+use kartik\depdrop\DepDrop;
 use kartik\export\ExportMenu;
 use kartik\grid\GridView;
 use kartik\select2\Select2;
@@ -791,13 +792,15 @@ class Utilities
         ];
     }
 
-    public static function depDropConfigurationGenerate($model, $id, $depandedId, $endPoint, $data = []): array
+    public static function depDropConfigurationGenerate($model, $id, $dependedId, $endPoint, $data = []): array
     {
         return [
-            'options' => ['id' => $id],
-            'data' => $data,
+            'type' => DepDrop::TYPE_SELECT2,
+            'options' => ['id' => $id, 'class' => 'form-control', 'placeholder' => 'Select ...'],
+            'data' => ($model->isNewRecord) ? [] : [$model->departmentId => $model->department->name],
+            'select2Options' => ['pluginOptions' => ['allowClear' => true], 'theme' => Select2::THEME_DEFAULT,],
             'pluginOptions' => [
-                'depends' => [$depandedId],
+                'depends' => [$dependedId],
                 'initialize' => !$model->isNewRecord,
                 'placeholder' => 'Select...',
                 'url' => Url::to([$endPoint]),
