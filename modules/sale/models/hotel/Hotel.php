@@ -15,6 +15,7 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property string $uid
+ * @property int $agencyId
  * @property int|null $motherId
  * @property int|null $invoiceId
  * @property string $identificationNumber
@@ -66,7 +67,7 @@ class Hotel extends ActiveRecord
     {
         return [
             [['identificationNumber', 'customerId', 'customerCategory', 'issueDate', 'checkInDate', 'checkOutDate', 'totalNights', 'route', 'quoteAmount', 'costOfSale', 'netProfit'], 'required'],
-            [['motherId', 'invoiceId', 'customerId', 'totalNights', 'isRefundable', 'isOnlineBooked', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['motherId', 'invoiceId', 'customerId', 'totalNights', 'isRefundable', 'isOnlineBooked', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['type', 'paymentStatus'], 'string'],
             [['issueDate', 'refundRequestDate', 'checkInDate', 'checkOutDate', 'freeCancellationDate'], 'safe'],
             [['quoteAmount', 'costOfSale', 'netProfit', 'receivedAmount'], 'number'],
