@@ -4,11 +4,14 @@ namespace app\modules\agent\controllers;
 
 use app\components\GlobalConstant;
 use app\components\Utilities;
+use app\modules\admin\models\form\Signup;
+use app\modules\admin\models\User;
 use app\modules\agent\models\Agency;
 use app\modules\agent\models\search\AgencySearch;
 use app\controllers\ParentController;
 use app\modules\agent\repositories\AgencyRepository;
 use app\modules\agent\services\AgencyService;
+use Exception;
 use Yii;
 use yii\web\Response;
 
@@ -63,24 +66,51 @@ class AgencyController extends ParentController
     public function actionCreate(): Response|string
     {
         $model = new Agency();
+        $signup = new Signup();
 
         if ($this->request->isPost) {
-            $requestData = Yii::$app->request->post();
-            // Store expense data
-            $model->load($requestData);
-            $model = $this->agencyRepository->store($model);
-            if (!$model->hasErrors()) {
-                return $this->redirect(['view', 'uid' => $model->uid]);
-            } else {
-                Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
-            }
+            $dbTransaction = Yii::$app->db->beginTransaction();
+            try {
+                $requestData = Yii::$app->request->post();
 
+                // Store expense data
+                $model->load($requestData);
+                //$model = $this->agencyRepository->store($model);
+                if (!$model->save()) {
+                    throw new Exception(Utilities::processErrorMessages($model->getErrors()));
+                }
+
+                if (!$signup->load(Yii::$app->getRequest()->post())) {
+                    throw new Exception('User detail loading failed.');
+                }
+
+                $signup->agencyId = $model->id;
+                $user = $signup->signup();
+                if (!$user) {
+                    throw new Exception(Utilities::processErrorMessages($signup->getErrors()));
+                }
+
+                // the following three lines were added:
+                $auth = \Yii::$app->authManager;
+                $authorRole = $auth->getRole($model->plan->name);
+                $auth->assign($authorRole, $user->getId());
+
+                $dbTransaction->commit();
+                Yii::$app->session->setFlash('success', 'Agent Successfully added');
+                return $this->redirect(['view', 'uid' => $model->uid]);
+
+            } catch (Exception $e) {
+                Yii::$app->session->setFlash($e->getMessage() . ' - ' . $e->getFile() . ' - ' . $e->getFile());
+                $dbTransaction->rollBack();
+            }
         } else {
             $model->loadDefaultValues();
         }
 
+
         return $this->render('create', [
             'model' => $model,
+            'signup' => $signup,
         ]);
     }
 
@@ -98,6 +128,14 @@ class AgencyController extends ParentController
             $model->load($requestData);
             $model = $this->agencyRepository->store($model);
             if (!$model->hasErrors()) {
+                $users = User::find()->where(['agencyId' => $model->id])->all();
+                foreach ($users as $user){
+                    // the following three lines were added:
+                    $auth = \Yii::$app->authManager;
+                    $authorRole = $auth->getRole($model->plan->name);
+                    $auth->assign($authorRole, $user->getId());
+                }
+
                 return $this->redirect(['view', 'uid' => $model->uid]);
             } else {
                 Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
