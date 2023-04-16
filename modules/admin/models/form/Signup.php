@@ -1,6 +1,7 @@
 <?php
 namespace app\modules\admin\models\form;
 
+use app\components\Utilities;
 use app\modules\admin\components\UserStatus;
 use app\modules\admin\models\User;
 use Yii;
@@ -16,6 +17,7 @@ class Signup extends Model
     public $email;
     public $password;
     public $retypePassword;
+    public $agencyId;
 
     /**
      * @inheritdoc
@@ -39,6 +41,8 @@ class Signup extends Model
 
             ['retypePassword', 'required'],
             ['retypePassword', 'compare', 'compareAttribute' => 'password'],
+
+            ['agencyId', 'integer']
         ];
     }
 
@@ -57,6 +61,7 @@ class Signup extends Model
             $user->status = ArrayHelper::getValue(Yii::$app->params, 'user.defaultStatus', UserStatus::ACTIVE);
             $user->setPassword($this->password);
             $user->generateAuthKey();
+            $user->agencyId = $this->agencyId ?: null;
             if ($user->save()) {
                 return $user;
             }

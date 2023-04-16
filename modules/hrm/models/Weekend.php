@@ -11,6 +11,7 @@ use yii\db\ActiveQuery;
  *
  * @property int $id
  * @property string $uid
+ * @property int $agencyId
  * @property int $departmentId
  * @property string $day
  * @property int $status
@@ -39,7 +40,7 @@ class Weekend extends \yii\db\ActiveRecord
     {
         return [
             [['departmentId', 'day'], 'required'],
-            [['departmentId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['departmentId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['day'], 'string', 'max' => 10],
             [['uid'], 'unique'],

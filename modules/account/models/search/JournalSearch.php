@@ -2,6 +2,8 @@
 
 namespace app\modules\account\models\search;
 
+use app\components\GlobalConstant;
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\account\models\Journal;
@@ -17,7 +19,7 @@ class JournalSearch extends Journal
     public function rules(): array
     {
         return [
-            [['id', 'status', 'createdAt', 'updatedAt', 'createdBy', 'updatedBy'], 'integer'],
+            [['id', 'status', 'createdAt', 'updatedAt', 'createdBy', 'updatedBy', 'agencyId'], 'integer'],
             [['uid', 'journalNumber', 'postedDate'], 'safe'],
             [['debit', 'credit', 'outOfBalance'], 'number'],
         ];
@@ -44,6 +46,8 @@ class JournalSearch extends Journal
         $query = Journal::find();
 
         // add conditions that should always apply here
+        $query->where([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

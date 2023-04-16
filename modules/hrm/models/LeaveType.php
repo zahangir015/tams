@@ -12,6 +12,7 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property string $uid
+ * @property int $agencyId
  * @property string $name
  * @property int $defaultDays
  * @property int $status
@@ -43,7 +44,7 @@ class LeaveType extends ActiveRecord
     {
         return [
             [['name', 'defaultDays'], 'required'],
-            [['defaultDays', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['defaultDays', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['name'], 'string', 'max' => 150],
             [['uid'], 'unique'],
@@ -74,7 +75,8 @@ class LeaveType extends ActiveRecord
         return self::find()
             ->select(['id', 'name', 'status'])
             ->where(['like', 'name', $query])
-            ->andWhere(['status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId])
             ->all();
     }
 }

@@ -2,11 +2,13 @@
 
 namespace app\modules\sale\models\ticket;
 
+use app\components\GlobalConstant;
 use app\modules\account\models\Invoice;
 use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\Airline;
 use app\modules\sale\models\Customer;
 use app\modules\sale\models\Provider;
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
@@ -26,7 +28,7 @@ class TicketSearch extends Ticket
     public function rules(): array
     {
         return [
-            [['id', 'motherTicketId', 'airlineId', 'providerId', 'invoiceId', 'customerId', 'bookedOnline', 'flightType', 'codeShare', 'numberOfSegment', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['id', 'motherTicketId', 'airlineId', 'providerId', 'invoiceId', 'customerId', 'bookedOnline', 'flightType', 'codeShare', 'numberOfSegment', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['uid', 'customerCategory', 'paxName', 'paxType', 'eTicket', 'pnrCode', 'type', 'tripType', 'seatClass', 'reference', 'issueDate', 'departureDate', 'refundRequestDate', 'route', 'paymentStatus', 'baggage', 'customer', 'airline', 'provider', 'invoice', 'refundPolicy'], 'safe'],
             [['baseFare', 'tax', 'otherTax', 'commission', 'commissionReceived', 'incentive', 'incentiveReceived', 'govTax', 'serviceCharge', 'ait', 'quoteAmount', 'receivedAmount', 'costOfSale', 'netProfit'], 'number'],
         ];
@@ -70,7 +72,9 @@ class TicketSearch extends Ticket
 
         // add conditions that should always apply here
         $query->joinWith(['airline', 'customer', 'provider', 'invoice'])
-            ->where(['<>', 'type', ServiceConstant::TYPE['Refund']]);
+            ->where(['<>', 'type', ServiceConstant::TYPE['Refund']])
+            ->andWhere([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

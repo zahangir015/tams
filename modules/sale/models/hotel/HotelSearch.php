@@ -2,8 +2,10 @@
 
 namespace app\modules\sale\models\hotel;
 
+use app\components\GlobalConstant;
 use app\modules\account\models\Invoice;
 use app\modules\sale\models\Customer;
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\sale\models\hotel\Hotel;
@@ -23,7 +25,7 @@ class HotelSearch extends Hotel
     public function rules(): array
     {
         return [
-            [['id', 'motherId', 'invoiceId', 'customerId', 'totalNights', 'isRefundable', 'isOnlineBooked', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['id', 'motherId', 'invoiceId', 'customerId', 'totalNights', 'isRefundable', 'isOnlineBooked', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['invoice', 'customer', 'identificationNumber', 'customerCategory', 'voucherNumber', 'reservationCode', 'type', 'issueDate', 'refundRequestDate', 'checkInDate', 'checkOutDate', 'freeCancellationDate', 'route', 'paymentStatus', 'reference', 'hotelSuppliers'], 'safe'],
             [['quoteAmount', 'costOfSale', 'netProfit', 'receivedAmount'], 'number'],
         ];
@@ -50,7 +52,9 @@ class HotelSearch extends Hotel
         $query = Hotel::find();
 
         // add conditions that should always apply here
-        $query->joinWith(['invoice', 'customer', 'hotelSuppliers']);
+        $query->joinWith(['invoice', 'customer', 'hotelSuppliers'])
+            ->where([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

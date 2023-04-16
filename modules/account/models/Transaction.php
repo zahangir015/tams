@@ -12,6 +12,7 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property string $uid
+ * @property int $agencyId
  * @property string $transactionNumber
  * @property int $refId
  * @property string $refModel
@@ -52,7 +53,7 @@ class Transaction extends ActiveRecord
     {
         return [
             [['transactionNumber', 'refId', 'refModel', 'subRefId', 'subRefModel', 'bankId', 'reference', 'paidAmount', 'paymentCharge', 'paymentDate', 'paymentMode'], 'required'],
-            [['refId', 'subRefId', 'bankId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['refId', 'subRefId', 'bankId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['paidAmount', 'paymentCharge'], 'number'],
             [['paymentDate'], 'safe'],
             [['paymentMode'], 'string'],

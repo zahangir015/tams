@@ -2,6 +2,8 @@
 
 namespace app\modules\hrm\models\search;
 
+use app\components\GlobalConstant;
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\hrm\models\Payslip;
@@ -17,7 +19,7 @@ class PayslipSearch extends Payslip
     public function rules(): array
     {
         return [
-            [['id', 'employeeId', 'month', 'year', 'processStatus', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['id', 'employeeId', 'month', 'year', 'processStatus', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['uid', 'paymentMode', 'remarks'], 'safe'],
             [['gross', 'tax', 'lateFine', 'totalAdjustment', 'totalDeduction', 'totalPaid'], 'number'],
         ];
@@ -44,6 +46,8 @@ class PayslipSearch extends Payslip
         $query = Payslip::find();
 
         // add conditions that should always apply here
+        $query->where([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

@@ -12,6 +12,7 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property string $uid
+ * @property int $agencyId
  * @property int $employeeId
  * @property int $month
  * @property int $year
@@ -52,7 +53,7 @@ class Payslip extends ActiveRecord
     {
         return [
             [['employeeId', 'month', 'year', 'gross', 'totalPaid'], 'required'],
-            [['employeeId', 'month', 'year', 'processStatus', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['employeeId', 'month', 'year', 'processStatus', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['gross', 'tax', 'lateFine', 'totalAdjustment', 'totalDeduction', 'totalPaid'], 'number'],
             [['paymentMode'], 'string'],
             [['uid'], 'string', 'max' => 36],

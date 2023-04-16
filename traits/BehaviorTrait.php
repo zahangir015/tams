@@ -39,7 +39,7 @@ trait BehaviorTrait
             }
 
             if ($this->isNewRecord && $this->hasAttribute('agencyId')) {
-                $this->agencyId = Yii::$app->user->identity->agecyId;
+                $this->agencyId = Yii::$app->user->identity->agencyId;
             }
         }
         return parent::beforeValidate();
@@ -58,12 +58,12 @@ trait BehaviorTrait
         }
 
         if ($this->isNewRecord && $this->hasAttribute('agencyId')) {
-            $this->agencyId = Yii::$app->user->identity->agecyId;
+            $this->agencyId = Yii::$app->user->identity->agencyId ? Yii::$app->user->identity->agencyId : 1;
         }
 
         if (!$this->isNewRecord) {
             $history = new History();
-            $history->snapshot($this->createSnapshot('update')); // [4]
+            $history->snapshot($this->createSnapshot('update'));
         }
 
         return parent::beforeSave($insert);
@@ -105,6 +105,7 @@ trait BehaviorTrait
     public function createSnapshot($action = 'update'): array
     {
         return [
+            'agencyId' => Yii::$app->user->identity->agencyId ?: 1,
             'userId' => Yii::$app->user->id ?: 0,
             'tableName' => $this->tableName(),
             'tableId' => is_numeric($this->getPrimaryKey()) ? $this->getPrimaryKey() : 0,

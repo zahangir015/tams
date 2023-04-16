@@ -118,4 +118,29 @@ class CityController extends ParentController
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
 
+    public function actionGetCityByCountry(): array
+    {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if ($parents != null) {
+                $countryId = $parents[0];
+                $out = self::getCityList($countryId);
+                return ['output' => $out, 'selected' => ''];
+            }
+        }
+        return ['output' => '', 'selected' => ''];
+    }
+
+    private static function getCityList($countryId): array
+    {
+        $referenceList = City::find()->where(['status' => GlobalConstant::ACTIVE_STATUS])->andWhere(['countryId' => $countryId])->all();
+        $data = [];
+        foreach ($referenceList as $reference) {
+            $data[] = ['id' => $reference->id, 'name' => $reference->name];
+        }
+
+        return $data;
+    }
+
 }

@@ -12,6 +12,7 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property string $uid
+ * @property int $agencyId
  * @property string $name
  * @property string $email
  * @property string $company
@@ -46,7 +47,7 @@ class Supplier extends ActiveRecord
     {
         return [
             [['name', 'email', 'company', 'type', 'createdBy'], 'required'],
-            [['type', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['type', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['refundCharge', 'reissueCharge'], 'number'],
             [['uid'], 'string', 'max' => 36],
             [['name'], 'string', 'max' => 30],
@@ -92,7 +93,8 @@ class Supplier extends ActiveRecord
             ->where(['like', 'name', $query])
             ->orWhere(['like', 'company', $query])
             ->orWhere(['like', 'email', $query])
-            ->andWhere(['status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId])
             ->all();
     }
 }

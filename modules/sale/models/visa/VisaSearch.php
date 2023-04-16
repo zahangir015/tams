@@ -2,9 +2,11 @@
 
 namespace app\modules\sale\models\visa;
 
+use app\components\GlobalConstant;
 use app\modules\account\models\Invoice;
 use app\modules\sale\models\Customer;
 use app\traits\BehaviorTrait;
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
@@ -24,7 +26,7 @@ class VisaSearch extends Visa
     public function rules(): array
     {
         return [
-            [['id', 'motherId', 'invoiceId', 'customerId', 'totalQuantity', 'processStatus', 'isOnlineBooked', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['id', 'motherId', 'invoiceId', 'customerId', 'totalQuantity', 'processStatus', 'isOnlineBooked', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['invoice', 'customer', 'identificationNumber', 'customerCategory', 'type', 'issueDate', 'refundRequestDate', 'paymentStatus', 'reference'], 'safe'],
             [['quoteAmount', 'costOfSale', 'netProfit', 'receivedAmount'], 'number'],
         ];
@@ -51,7 +53,9 @@ class VisaSearch extends Visa
         $query = Visa::find();
 
         // add conditions that should always apply here
-        $query->joinWith(['invoice', 'customer']);
+        $query->joinWith(['invoice', 'customer'])
+            ->where([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

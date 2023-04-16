@@ -2,9 +2,11 @@
 
 namespace app\modules\sale\models\search;
 
+use app\components\GlobalConstant;
+use app\modules\sale\models\Supplier;
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\sale\models\Supplier;
 
 /**
  * SupplierSearch represents the model behind the search form of `app\modules\sale\models\Supplier`.
@@ -17,7 +19,7 @@ class SupplierSearch extends Supplier
     public function rules(): array
     {
         return [
-            [['id', 'type', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['id', 'type', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['uid', 'name', 'email', 'company', 'address', 'phone', 'categories'], 'safe'],
             [['refundCharge', 'reissueCharge'], 'number'],
         ];
@@ -44,10 +46,12 @@ class SupplierSearch extends Supplier
         $query = Supplier::find();
 
         // add conditions that should always apply here
+        $query->where([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'sort'=> ['defaultOrder' => ['company' => SORT_ASC]],
+            'sort' => ['defaultOrder' => ['company' => SORT_ASC]],
         ]);
 
         $this->load($params);

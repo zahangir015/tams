@@ -2,6 +2,8 @@
 
 namespace app\modules\sale\models\search;
 
+use app\components\GlobalConstant;
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\sale\models\Provider;
@@ -17,7 +19,7 @@ class ProviderSearch extends Provider
     public function rules(): array
     {
         return [
-            [['id', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['id', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['uid', 'code', 'name'], 'safe'],
         ];
     }
@@ -43,6 +45,8 @@ class ProviderSearch extends Provider
         $query = Provider::find();
 
         // add conditions that should always apply here
+        $query->where([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

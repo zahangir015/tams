@@ -3,6 +3,7 @@
 namespace app\modules\hrm\models\search;
 
 use app\components\GlobalConstant;
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\hrm\models\LeaveType;
@@ -18,7 +19,7 @@ class LeaveTypeSearch extends LeaveType
     public function rules(): array
     {
         return [
-            [['id', 'defaultDays', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['id', 'defaultDays', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['uid', 'name'], 'safe'],
         ];
     }
@@ -44,7 +45,8 @@ class LeaveTypeSearch extends LeaveType
         $query = LeaveType::find();
 
         // add conditions that should always apply here
-        //$query->where(['status' => GlobalConstant::ACTIVE_STATUS]);
+        $query->where([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

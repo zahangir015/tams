@@ -12,6 +12,7 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property string $uid
+ * @property int $agencyId
  * @property int $approvalLevel
  * @property int $employeeId
  * @property int $requestedTo
@@ -42,7 +43,7 @@ class LeaveApprovalPolicy extends ActiveRecord
     {
         return [
             [['approvalLevel', 'employeeId', 'requestedTo'], 'required'],
-            [['approvalLevel', 'employeeId', 'requestedTo', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['approvalLevel', 'employeeId', 'requestedTo', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['uid'], 'unique'],
             [['employeeId', 'requestedTo'], 'unique', 'on' => 'create'],
