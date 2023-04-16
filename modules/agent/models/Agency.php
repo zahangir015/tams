@@ -4,7 +4,6 @@ namespace app\modules\agent\models;
 
 use app\models\City;
 use app\models\Country;
-use app\modules\admin\models\User;
 use app\traits\BehaviorTrait;
 use Yii;
 use yii\db\ActiveQuery;
@@ -128,15 +127,5 @@ class Agency extends ActiveRecord
     public function getPlan(): ActiveQuery
     {
         return $this->hasOne(Plan::class, ['id' => 'planId']);
-    }
-
-    /**
-     * Gets query for [[User]].
-     *
-     * @return ActiveQuery
-     */
-    public function getUsers(): ActiveQuery
-    {
-        return $this->hasMany(User::class, ['agencyId' => 'id']);
     }
 }
