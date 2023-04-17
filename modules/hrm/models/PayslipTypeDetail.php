@@ -3,6 +3,7 @@
 namespace app\modules\hrm\models;
 
 use Yii;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "{{%payslip_type_detail}}".
@@ -57,9 +58,9 @@ class PayslipTypeDetail extends \yii\db\ActiveRecord
     /**
      * Gets query for [[PayrollType]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getPayrollType()
+    public function getPayrollType(): ActiveQuery
     {
         return $this->hasOne(PayrollType::class, ['id' => 'payrollTypeId']);
     }
@@ -67,9 +68,9 @@ class PayslipTypeDetail extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Payslip]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getPayslip()
+    public function getPayslip(): ActiveQuery
     {
         return $this->hasOne(Payslip::class, ['id' => 'payslipId']);
     }

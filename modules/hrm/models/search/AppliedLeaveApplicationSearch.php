@@ -47,7 +47,8 @@ class AppliedLeaveApplicationSearch extends LeaveApplication
         $query = LeaveApplication::find();
 
         // add conditions that should always apply here
-        $query->where(['status' => GlobalConstant::ACTIVE_STATUS]);
+        $query->where([self::tableName().'.status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere([self::tableName().'.agencyId' => Yii::$app->user->identity->agencyId]);
 
         $employee = Employee::findOne(['userId' => Yii::$app->user->id]);
         $query->andWhere(['employeeId' => ($employee) ? $employee->id : null]);

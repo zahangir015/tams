@@ -111,7 +111,6 @@ class JournalController extends ParentController
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param string $uid UID
      * @return Response
-     * @throws NotFoundHttpException if the model cannot be found
      */
     /*public function actionDelete(string $uid)
     {
@@ -136,7 +135,7 @@ class JournalController extends ParentController
 
     private function getRefList($refModel): array
     {
-        $referenceList = $this->journalRepository->findAll(['status' => GlobalConstant::ACTIVE_STATUS], $refModel, [], false);
+        $referenceList = $this->journalRepository->findAll(['status' => GlobalConstant::ACTIVE_STATUS, 'agencyId' => Yii::$app->user->identity->agencyId], $refModel, [], false);
         $data = [];
         foreach ($referenceList as $reference) {
             $data[] = ['id' => $reference->id, 'name' => $reference->name];

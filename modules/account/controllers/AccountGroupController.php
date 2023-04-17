@@ -143,7 +143,7 @@ class AccountGroupController extends ParentController
             $parents = $_POST['depdrop_parents'];
             if ($parents != null) {
                 $typeId = $parents[0];
-                $out = AccountGroup::getGroupList(['accountTypeId' => $typeId, 'status' => GlobalConstant::ACTIVE_STATUS]);
+                $out = AccountGroup::getGroupList(['accountTypeId' => $typeId, 'status' => GlobalConstant::ACTIVE_STATUS, ]);
                 return ['output' => $out, 'selected' => ''];
             }
         }

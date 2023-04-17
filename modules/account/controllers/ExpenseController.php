@@ -178,7 +178,7 @@ class ExpenseController extends ParentController
             $parents = $_POST['depdrop_parents'];
             if ($parents != null) {
                 $categoryId = $parents[0];
-                $out = $this->expenseService->getSubCategoryList(['categoryId' => $categoryId, 'status' => GlobalConstant::ACTIVE_STATUS]);
+                $out = $this->expenseService->getSubCategoryList(['categoryId' => $categoryId, 'status' => GlobalConstant::ACTIVE_STATUS, 'agencyId' => Yii::$app->user->identity->agencyId]);
                 return ['output' => $out, 'selected' => ''];
             }
         }

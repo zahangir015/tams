@@ -92,7 +92,7 @@ class AccountGroup extends ActiveRecord
 
     public static function getGroupList(array $queryArray): array
     {
-        $groupList = self::find()->where($queryArray)->asArray()->all();
+        $groupList = self::find()->where($queryArray)->andWhere(['agencyId' => Yii::$app->user->identity->agencyId])->asArray()->all();
         $groupDataArray = [];
         foreach ($groupList as $value) {
             $groupDataArray[] = ['id' => $value['id'], 'name' => $value['name'].' | '.$value['code']];

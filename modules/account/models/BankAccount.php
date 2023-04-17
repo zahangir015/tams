@@ -110,8 +110,8 @@ class BankAccount extends ActiveRecord
             ->orWhere(['like', 'accountNumber', $query])
             ->orWhere(['like', 'swiftCode', $query])
             ->orWhere(['like', 'code', $query])
-            ->andWhere([self::tableName().'.status' => GlobalConstant::ACTIVE_STATUS])
-            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId])
+            ->andWhere([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere([self::tableName() . '.agencyId' => Yii::$app->user->identity->agencyId])
             ->all();
     }
 }
