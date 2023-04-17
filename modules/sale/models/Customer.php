@@ -99,7 +99,8 @@ class Customer extends ActiveRecord
             ->orWhere(['like', 'company', $query])
             ->orWhere(['like', 'customerCode', $query])
             ->orWhere(['like', 'email', $query])
-            ->andWhere(['status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere([self::tableName().'.status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere([self::tableName().'.agencyId' => Yii::$app->user->identity->agencyId])
             ->all();
     }
 
