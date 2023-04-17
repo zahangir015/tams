@@ -74,7 +74,7 @@ class TicketSearch extends Ticket
         $query->joinWith(['airline', 'customer', 'provider', 'invoice'])
             ->where(['<>', 'type', ServiceConstant::TYPE['Refund']])
             ->andWhere([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
-            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId]);
+            ->andWhere([self::tableName() . '.agencyId' => Yii::$app->user->identity->agencyId]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
