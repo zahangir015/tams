@@ -46,12 +46,8 @@ class CustomerSearch extends Customer
 
         // add conditions that should always apply here
         $query->where([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
-<<<<<<< HEAD
-            ->andWhere([self::tableName() . '.agencyId' => Yii::$app->user->identity->agencyId]);
-=======
             ->andWhere([self::tableName().'.agencyId' => Yii::$app->user->identity->agencyId]);
->>>>>>> 3cc7506 (Latest update)
-
+	
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'sort'=> ['defaultOrder' => ['company' => SORT_ASC]],
