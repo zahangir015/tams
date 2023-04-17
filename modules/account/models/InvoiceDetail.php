@@ -68,10 +68,4 @@ class  InvoiceDetail extends ActiveRecord
     {
         return $this->hasOne(Invoice::class, ['id' => 'invoiceId']);
     }
-
-
-    public function getIdentificationNumber($service): string
-    {
-        return !empty($service->identificationNumber) ? $service->identificationNumber : $service->eTicket;
-    }
 }

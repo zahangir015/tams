@@ -45,8 +45,8 @@ class BranchSearch extends Branch
         $query = Branch::find();
 
         // add conditions that should always apply here
-        $query->where([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
-            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId]);
+        $query->where([self::tableName().'.status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere([self::tableName().'.agencyId' => Yii::$app->user->identity->agencyId]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

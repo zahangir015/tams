@@ -123,8 +123,8 @@ class ChartOfAccount extends ActiveRecord
             ->select(['id', 'name', 'code'])
             ->where(['like', 'name', $query])
             ->orWhere(['like', 'code', $query])
-            ->andWhere(['status' => GlobalConstant::ACTIVE_STATUS])
-            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId])
+            ->andWhere([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere([self::tableName() . '.agencyId' => Yii::$app->user->identity->agencyId])
             ->all();
     }
 }

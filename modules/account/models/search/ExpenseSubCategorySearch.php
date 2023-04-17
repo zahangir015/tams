@@ -46,8 +46,8 @@ class ExpenseSubCategorySearch extends ExpenseSubCategory
 
         // add conditions that should always apply here
         $query->joinWith(['category'])
-            ->where([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
-            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId]);
+            ->where([self::tableName().'.status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere([self::tableName().'.agencyId' => Yii::$app->user->identity->agencyId]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
