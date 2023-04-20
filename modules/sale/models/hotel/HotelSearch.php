@@ -54,7 +54,7 @@ class HotelSearch extends Hotel
         // add conditions that should always apply here
         $query->joinWith(['invoice', 'customer', 'hotelSuppliers'])
             ->where([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
-            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId]);
+            ->andWhere([self::tableName() . '.agencyId' => Yii::$app->user->identity->agencyId]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

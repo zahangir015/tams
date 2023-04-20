@@ -95,7 +95,7 @@ class ExpenseSubCategory extends ActiveRecord
             ->select(['id', 'name', 'status'])
             ->where(['like', 'name', $query])
             ->andWhere([self::tableName().'.status' => GlobalConstant::ACTIVE_STATUS])
-            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId])
+            ->andWhere([self::tableName().'.agencyId' => Yii::$app->user->identity->agencyId])
             ->all();
     }
 }

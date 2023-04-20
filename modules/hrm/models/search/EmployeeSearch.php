@@ -2,6 +2,8 @@
 
 namespace app\modules\hrm\models\search;
 
+use app\components\GlobalConstant;
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\hrm\models\Employee;
@@ -43,6 +45,8 @@ class EmployeeSearch extends Employee
         $query = Employee::find();
 
         // add conditions that should always apply here
+        $query->where([self::tableName().'.status' => GlobalConstant::ACTIVE_STATUS])
+        ->andWhere([self::tableName().'.agencyId' => Yii::$app->user->identity->agencyId]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

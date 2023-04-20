@@ -74,7 +74,7 @@ class Provider extends ActiveRecord
             ->where(['like', 'name', $query])
             ->orWhere(['like', 'code', $query])
             ->andWhere([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
-            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId])
+            ->andWhere([self::tableName() . '.agencyId' => Yii::$app->user->identity->agencyId])
             ->all();
     }
 }
