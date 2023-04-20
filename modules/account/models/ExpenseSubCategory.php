@@ -46,7 +46,7 @@ class ExpenseSubCategory extends ActiveRecord
             [['categoryId', 'status', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['name'], 'string', 'max' => 150],
-            [['uid', 'agencyId'], 'unique'],
+            [['uid'], 'unique'],
             [['categoryId'], 'exist', 'skipOnError' => true, 'targetClass' => ExpenseCategory::class, 'targetAttribute' => ['categoryId' => 'id']],
         ];
     }

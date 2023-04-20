@@ -54,8 +54,8 @@ class Airline extends ActiveRecord
             [['uid'], 'string', 'max' => 36],
             [['code'], 'string', 'max' => 10],
             [['name'], 'string', 'max' => 150],
-            [['uid', 'agencyId'], 'unique'],
-            [['code', 'agencyId'], 'unique'],
+            [['uid'], 'unique'],
+            [['code', 'agencyId'], 'unique', 'targetAttribute' => ['code', 'agencyId']],
             [['supplierId'], 'exist', 'skipOnError' => true, 'targetClass' => Supplier::className(), 'targetAttribute' => ['supplierId' => 'id']],
         ];
     }
