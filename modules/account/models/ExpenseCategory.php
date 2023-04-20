@@ -46,7 +46,7 @@ class ExpenseCategory extends ActiveRecord
             [['status', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy', 'agencyId'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['name'], 'string', 'max' => 150],
-            [['uid'], 'unique'],
+            [['uid', 'agencyId'], 'unique'],
         ];
     }
 

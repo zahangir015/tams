@@ -62,7 +62,7 @@ class Customer extends ActiveRecord
             [['name', 'company', 'email', 'address'], 'string', 'max' => 255],
             [['customerCode'], 'string', 'max' => 32],
             [['phone'], 'string', 'max' => 50],
-            [['uid'], 'unique'],
+            [['uid', 'agencyId'], 'unique'],
         ];
     }
 

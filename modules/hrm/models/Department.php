@@ -44,8 +44,8 @@ class Department extends ActiveRecord
             [['parentId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['name'], 'string', 'max' => 120],
-            [['uid'], 'unique'],
-            [['name'], 'unique'],
+            [['uid', 'agencyId'], 'unique'],
+            [['name', 'agencyId'], 'unique'],
         ];
     }
 

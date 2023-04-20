@@ -46,8 +46,8 @@ class AccountGroup extends ActiveRecord
             [['uid'], 'string', 'max' => 36],
             [['name'], 'string', 'max' => 175],
             [['code'], 'string', 'max' => 10],
-            [['uid'], 'unique'],
-            [['code'], 'unique'],
+            [['uid', 'agencyId'], 'unique'],
+            [['code', 'agencyId'], 'unique'],
         ];
     }
 
