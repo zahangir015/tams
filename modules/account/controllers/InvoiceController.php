@@ -186,28 +186,32 @@ class InvoiceController extends ParentController
                 'tickets' => function ($query) use ($start_date, $end_date) {
                     $query
                         ->where(['<>', 'paymentStatus', ServiceConstant::PAYMENT_STATUS['Full Paid']])
-                        ->andWhere(['IS', 'invoiceId', NULL]);
+                        ->andWhere(['IS', 'invoiceId', NULL])
+                        ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId]);
                     if ($start_date && $end_date) {
                         $query->andWhere(['between', 'issueDate', $start_date, $end_date])->orderBy(['issueDate' => SORT_ASC]);
                     }
                 },
                 'visas' => function ($query) use ($start_date, $end_date) {
                     $query->where(['<>', 'paymentStatus', ServiceConstant::PAYMENT_STATUS['Full Paid']])
-                        ->andWhere(['IS', 'invoiceId', NULL]);
+                        ->andWhere(['IS', 'invoiceId', NULL])
+                        ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId]);
                     if ($start_date && $end_date) {
                         $query->andWhere(['between', 'issueDate', $start_date, $end_date])->orderBy(['issueDate' => SORT_ASC]);
                     }
                 },
                 'hotels' => function ($query) use ($start_date, $end_date) {
                     $query->where(['<>', 'paymentStatus', ServiceConstant::PAYMENT_STATUS['Full Paid']])
-                        ->andWhere(['IS', 'invoiceId', NULL]);
+                        ->andWhere(['IS', 'invoiceId', NULL])
+                        ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId]);
                     if ($start_date && $end_date) {
                         $query->andWhere(['between', 'issueDate', $start_date, $end_date])->orderBy(['issueDate' => SORT_ASC]);
                     }
                 },
                 'holidays' => function ($query) use ($start_date, $end_date) {
                     $query->where(['<>', 'paymentStatus', ServiceConstant::PAYMENT_STATUS['Full Paid']])
-                        ->andWhere(['IS', 'invoiceId', NULL]);
+                        ->andWhere(['IS', 'invoiceId', NULL])
+                        ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId]);
                     if ($start_date && $end_date) {
                         $query->andWhere(['between', 'issueDate', $start_date, $end_date])->orderBy(['issueDate' => SORT_ASC]);
                     }
@@ -265,7 +269,7 @@ class InvoiceController extends ParentController
                         'dueAmount' => ($pending->quoteAmount - $pending->receivedAmount),
                     ])) . '"></td>';
                 $html .= '<td>' . $pending->formName() . '</td>';
-                $html .= '<td><span class="badge bg-green">' . $pending->identificationNo ?? 'N/A' . '</span></td>';
+                $html .= '<td><span class="badge bg-green">' . $pending->identificationNumber ?? 'N/A' . '</span></td>';
                 $html .= '<td>' . $pending->issueDate . '</td>';
                 $html .= '<td>' . ($pending->quoteAmount - $pending->receivedAmount) . '<input type="text" class="amount form-control" id="amt' . $key . '" value="' . ($pending->quoteAmount - $pending->receivedAmount) . '" hidden></td>';
                 $html .= '</tr>';
@@ -283,7 +287,7 @@ class InvoiceController extends ParentController
                         'dueAmount' => ($pending->quoteAmount - $pending->receivedAmount),
                     ])) . '"></td>';
                 $html .= '<td>' . $pending->formName() . '</td>';
-                $html .= '<td><span class="badge bg-green">' . $pending->identificationNo ?? 'NA' . '</span></td>';
+                $html .= '<td><span class="badge bg-green">' . $pending->identificationNumber ?? 'NA' . '</span></td>';
                 $html .= '<td>' . $pending->issueDate . '</td>';
                 $html .= '<td>' . ($pending->quoteAmount - $pending->receivedAmount) . '<input type="text" class="amount form-control" id="amt' . $key . '" value="' . ($pending->quoteAmount - $pending->receivedAmount) . '" hidden></td>';
                 $html .= '</tr>';
