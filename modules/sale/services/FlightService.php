@@ -110,6 +110,8 @@ class FlightService
                 }
             }
 
+            dd($autoInvoiceCreateResponse);
+
             $dbTransaction->commit();
             Yii::$app->session->setFlash('success', 'Ticket added successfully');
             return true;
