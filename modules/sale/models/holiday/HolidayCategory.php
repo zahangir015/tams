@@ -4,6 +4,7 @@ namespace app\modules\sale\models\holiday;
 
 use app\traits\BehaviorTrait;
 use Yii;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
 /**
@@ -67,9 +68,9 @@ class HolidayCategory extends ActiveRecord
     /**
      * Gets query for [[Holidays]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getHolidays()
+    public function getHolidays(): ActiveQuery
     {
         return $this->hasMany(Holiday::className(), ['holidayCategoryId' => 'id']);
     }

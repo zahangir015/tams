@@ -344,10 +344,10 @@ class InvoiceService
         }
 
         // Service Payment timeline batch insert
-        $paymentTimelineProcessResponse = PaymentTimelineService::batchInsert($paymentTimelineBatchData);
+        /*$paymentTimelineProcessResponse = PaymentTimelineService::batchInsert($paymentTimelineBatchData);
         if ($paymentTimelineProcessResponse['error']) {
             return $paymentTimelineProcessResponse;
-        }
+        }*/
 
         return ['error' => false, 'message' => 'Service process done.'];
     }
