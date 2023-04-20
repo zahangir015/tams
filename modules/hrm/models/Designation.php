@@ -43,8 +43,8 @@ class Designation extends ActiveRecord
             [['parentId', 'departmentId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['name'], 'string', 'max' => 120],
-            [['uid', 'agencyId'], 'unique'],
-            [['name', 'agencyId'], 'unique'],
+            [['uid'], 'unique'],
+            [['name', 'agencyId'], 'unique', 'targetAttribute' => ['name', 'agencyId']],
         ];
     }
 

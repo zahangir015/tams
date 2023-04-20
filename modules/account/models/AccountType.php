@@ -44,7 +44,7 @@ class AccountType extends ActiveRecord
             [['status', 'createdAt', 'updatedAt', 'createdBy', 'updatedBy'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['name'], 'string', 'max' => 150],
-            [['uid', 'agencyId'], 'unique'],
+            [['uid'], 'unique'],
         ];
     }
 

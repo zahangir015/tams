@@ -60,7 +60,7 @@ class BankAccount extends ActiveRecord
             [['accountNumber'], 'string', 'max' => 60],
             [['branch', 'routingNumber', 'swiftCode', 'code'], 'string', 'max' => 50],
             [['logo'], 'string', 'max' => 255],
-            [['uid', 'agencyId'], 'unique'],
+            [['uid'], 'unique'],
         ];
     }
 

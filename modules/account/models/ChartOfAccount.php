@@ -53,8 +53,8 @@ class ChartOfAccount extends ActiveRecord
             [['code'], 'string', 'max' => 10],
             [['name', 'description'], 'string', 'max' => 150],
             [['reportType'], 'string', 'max' => 255],
-            [['uid', 'agencyId'], 'unique'],
-            [['code', 'agencyId'], 'unique'],
+            [['uid'], 'unique'],
+            [['code', 'agencyId'], 'unique', 'targetAttribute' => ['code', 'agencyId']],
             [['accountGroupId'], 'exist', 'skipOnError' => true, 'targetClass' => AccountGroup::class, 'targetAttribute' => ['accountGroupId' => 'id']],
             [['accountTypeId'], 'exist', 'skipOnError' => true, 'targetClass' => AccountType::class, 'targetAttribute' => ['accountTypeId' => 'id']],
         ];
