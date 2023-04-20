@@ -46,7 +46,7 @@ class StarCategory extends ActiveRecord
             [['level', 'pointRange', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['name'], 'string', 'max' => 100],
-            [['uid'], 'unique'],
+            [['uid', 'agencyId'], 'unique'],
         ];
     }
 

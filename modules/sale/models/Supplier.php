@@ -55,9 +55,9 @@ class Supplier extends ActiveRecord
             [['company'], 'string', 'max' => 150],
             [['categories'], 'safe'],
             [['address', 'phone'], 'string', 'max' => 255],
-            [['uid'], 'unique'],
-            [['name'], 'unique'],
-            [['email'], 'unique'],
+            [['uid', 'agencyId'], 'unique'],
+            [['name', 'agencyId'], 'unique'],
+            [['email', 'agencyId'], 'unique'],
         ];
     }
 
