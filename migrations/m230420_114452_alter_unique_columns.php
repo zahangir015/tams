@@ -14,18 +14,15 @@ class m230420_114452_alter_unique_columns extends Migration
     {
         $this->alterColumn(\app\modules\sale\models\Airline::tableName(), 'code', $this->string(10)->notNull());
         $this->alterColumn(\app\modules\sale\models\Provider::tableName(), 'code', $this->string(10)->notNull());
-        $this->alterColumn(\app\modules\sale\models\Supplier::tableName(), 'name', $this->string(10)->notNull());
-        $this->alterColumn(\app\modules\sale\models\Supplier::tableName(), 'email', $this->string(10)->notNull());
-        $this->alterColumn(\app\modules\hrm\models\Department::tableName(), 'name', $this->string(10)->notNull());
-        $this->alterColumn(\app\modules\hrm\models\Designation::tableName(), 'name', $this->string(10)->notNull());
-        $this->alterColumn(\app\modules\hrm\models\Branch::tableName(), 'name', $this->string(10)->notNull());
+        $this->alterColumn(\app\modules\sale\models\Supplier::tableName(), 'name', $this->string(30)->notNull());
+        $this->alterColumn(\app\modules\hrm\models\Department::tableName(), 'name', $this->string(120)->notNull());
+        $this->alterColumn(\app\modules\hrm\models\Designation::tableName(), 'name', $this->string(120)->notNull());
+        $this->alterColumn(\app\modules\hrm\models\Branch::tableName(), 'name', $this->string(120)->notNull());
         $this->alterColumn(\app\modules\account\models\AccountGroup::tableName(), 'code', $this->string(10)->notNull());
         $this->alterColumn(\app\modules\account\models\ChartOfAccount::tableName(), 'code', $this->string(10)->notNull());
-        $this->alterColumn(\app\modules\sale\models\Airline::tableName(), 'code', $this->string(10)->notNull());
     }
 
-    /**
-     * {@inheritdoc}
+    /**nb      * {@inheritdoc}
      */
     public function safeDown()
     {
