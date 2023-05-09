@@ -12,14 +12,24 @@ class m230420_114452_alter_unique_columns extends Migration
      */
     public function safeUp()
     {
+
         $this->alterColumn(\app\modules\sale\models\Airline::tableName(), 'code', $this->string(10)->notNull());
+        $this->dropIndex('code', \app\modules\sale\models\Airline::tableName());
         $this->alterColumn(\app\modules\sale\models\Provider::tableName(), 'code', $this->string(10)->notNull());
+        $this->dropIndex('code', \app\modules\sale\models\Provider::tableName());
         $this->alterColumn(\app\modules\sale\models\Supplier::tableName(), 'name', $this->string(30)->notNull());
+        $this->dropIndex('name', \app\modules\sale\models\Supplier::tableName());
+        $this->dropIndex('email', \app\modules\sale\models\Supplier::tableName());
         $this->alterColumn(\app\modules\hrm\models\Department::tableName(), 'name', $this->string(120)->notNull());
+        $this->dropIndex('name', \app\modules\hrm\models\Department::tableName());
         $this->alterColumn(\app\modules\hrm\models\Designation::tableName(), 'name', $this->string(120)->notNull());
+        $this->dropIndex('name', \app\modules\hrm\models\Designation::tableName());
         $this->alterColumn(\app\modules\hrm\models\Branch::tableName(), 'name', $this->string(120)->notNull());
+        $this->dropIndex('name', \app\modules\hrm\models\Branch::tableName());
         $this->alterColumn(\app\modules\account\models\AccountGroup::tableName(), 'code', $this->string(10)->notNull());
+        $this->dropIndex('code',\app\modules\account\models\AccountGroup::tableName());
         $this->alterColumn(\app\modules\account\models\ChartOfAccount::tableName(), 'code', $this->string(10)->notNull());
+        $this->dropIndex('code', \app\modules\account\models\ChartOfAccount::tableName());
     }
 
     /**nb      * {@inheritdoc}
