@@ -239,7 +239,7 @@ class Ticket extends ActiveRecord
             ->where(['like', 'eTicket', $query])
             ->orWhere(['like', 'pnrCode', $query])
             ->andWhere([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
-            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId])
+            ->andWhere([self::tableName() . '.agencyId' => Yii::$app->user->identity->agencyId])
             ->all();
     }
 }

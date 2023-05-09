@@ -45,7 +45,7 @@ class Provider extends ActiveRecord
             [['code'], 'string', 'max' => 64],
             [['name'], 'string', 'max' => 150],
             [['uid'], 'unique'],
-            [['code', 'agencyId'], 'unique'],
+            [['code', 'agencyId'], 'unique', 'targetAttribute' => ['code', 'agencyId']],
         ];
     }
 
