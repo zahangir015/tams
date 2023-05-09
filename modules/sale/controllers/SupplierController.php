@@ -63,7 +63,6 @@ class SupplierController extends ParentController
                         Yii::$app->session->setFlash('success', 'Supplier created successfully.');
                         return $this->redirect(['view', 'uid' => $model->uid]);
                     }
-                    dd();
                     Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
                 }
             } else {
