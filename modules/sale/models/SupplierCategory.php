@@ -40,8 +40,8 @@ class SupplierCategory extends ActiveRecord
             [['status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['name'], 'string', 'max' => 30],
-            [['uid', 'agencyId'], 'unique'],
-            [['name', 'agencyId'], 'unique'],
+            [['uid'], 'unique'],
+            [['name', 'agencyId'], 'unique', 'targetAttribute' => ['name', 'agencyId']],
         ];
     }
 

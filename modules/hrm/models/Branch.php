@@ -43,7 +43,7 @@ class Branch extends ActiveRecord
             [['name'], 'string', 'max' => 120],
             [['address'], 'string', 'max' => 255],
             [['uid'], 'unique'],
-            [['name', 'agencyId'], 'unique', ['name', 'agencyId']],
+            [['name', 'agencyId'], 'unique', 'targetAttribute' => ['name', 'agencyId']],
         ];
     }
 

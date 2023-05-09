@@ -24,7 +24,7 @@ class SupplierController extends ParentController
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $searchModel = new SupplierSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
@@ -41,7 +41,7 @@ class SupplierController extends ParentController
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView(string $uid)
+    public function actionView(string $uid): string
     {
         return $this->render('view', [
             'model' => $this->findModel($uid),
@@ -53,27 +53,28 @@ class SupplierController extends ParentController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|Response
      */
-    public function actionCreate()
+    public function actionCreate(): Response|string
     {
-        $model = new Supplier();
-
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post())) {
-                $model->categories = Json::encode($model->categories);
-                if ($model->save()) {
-                    Yii::$app->session->setFlash('success', 'Supplier created successfully.');
-                    return $this->redirect(['view', 'uid' => $model->uid]);
+            $model = new Supplier();
+            if ($this->request->isPost) {
+                if ($model->load($this->request->post())) {
+                    $model->categories = Json::encode($model->categories);
+                    if ($model->save()) {
+                        Yii::$app->session->setFlash('success', 'Supplier created successfully.');
+                        return $this->redirect(['view', 'uid' => $model->uid]);
+                    }
+                    dd();
+                    Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
                 }
-                Yii::$app->session->setFlash('Error', Utilities::processErrorMessages($model->getErrors()));
+            } else {
+                $model->loadDefaultValues();
             }
-        } else {
-            $model->loadDefaultValues();
-        }
 
-        return $this->render('create', [
-            'model' => $model,
-            'categories' => ArrayHelper::map(SupplierCategory::findAll(['status' => GlobalConstant::ACTIVE_STATUS]), 'name', 'name')
-        ]);
+            return $this->render('create', [
+                'model' => $model,
+                'categories' => ArrayHelper::map(SupplierCategory::findAll(['status' => GlobalConstant::ACTIVE_STATUS]), 'name', 'name')
+            ]);
+
     }
 
     /**
@@ -94,7 +95,7 @@ class SupplierController extends ParentController
                 return $this->redirect(['view', 'uid' => $model->uid]);
             }
 
-            Yii::$app->session->setFlash('Error', Utilities::processErrorMessages($model->getErrors()));
+            Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
         }
 
         return $this->render('update', [

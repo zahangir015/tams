@@ -91,7 +91,7 @@ class AirlineController extends ParentController
                     ($model->serviceCharge != $requestedData['Airline']['serviceCharge'])) {
                     $newAirlineHistoryStoreResponse = AirlineHistory::store($model);
                     if ($newAirlineHistoryStoreResponse['error']) {
-                        Yii::$app->session->setFlash('error', $newAirlineHistoryStoreResponse['message']);
+                        Yii::$app->session->setFlash('danger', $newAirlineHistoryStoreResponse['message']);
                         $dbTransaction->rollBack();
                         return $this->redirect(Yii::$app->request->referrer);
                     }
@@ -104,7 +104,7 @@ class AirlineController extends ParentController
 
                 $dbTransaction->rollBack();
             } catch (Exception $e) {
-                Yii::$app->session->setFlash('error', $e->getFile() . ' ' . $e->getLine() . '' . $e->getMessage());
+                Yii::$app->session->setFlash('danger', $e->getFile() . ' ' . $e->getLine() . '' . $e->getMessage());
                 $dbTransaction->rollBack();
             }
         }
