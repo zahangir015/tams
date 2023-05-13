@@ -172,7 +172,11 @@ class InvoiceController extends ParentController
         Yii::$app->response->format = Response::FORMAT_JSON;
         $customerId = $data['customerId'];
         if (empty($customerId)) {
-            return false;
+            return [
+                'html' => '',
+                'totalPayable' => 0,
+                'message' => 'Customer info is required'
+                ];
         }
 
         $start_date = $end_date = null;
