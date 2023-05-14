@@ -618,7 +618,7 @@ class InvoiceService
 
     public function getBankList(): array
     {
-        return ArrayHelper::map(BankAccount::findAll(['status' => GlobalConstant::ACTIVE_STATUS]), 'id', 'name');
+        return ArrayHelper::map(BankAccount::findAll(['status' => GlobalConstant::ACTIVE_STATUS, 'agencyId' => Yii::$app->user->identity->agencyId]), 'id', 'name');
     }
 
     public static function updateInvoice(Invoice $invoice, array $services, $updateService = null): array
