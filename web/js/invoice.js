@@ -22,13 +22,13 @@ $(function () {
             url: ajaxUrl, type: 'get', data: {
                 customerId: customerId, dateRange: dateRange
             }, dataType: 'json', success: function (data) {
-                console.log(data);
                 $("tbody#t-body").empty();
                 $("#totalPayable").empty();
                 $('tbody#t-body').append(data.html);
                 $('#totalPayable').text(data.totalPayable);
                 $('#grand-total').text(data.totalPayable);
-            }, error: function () {
+            }, error: function (e) {
+                alert(e.error())
             }
         });
     }

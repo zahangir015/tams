@@ -172,7 +172,11 @@ class InvoiceController extends ParentController
         Yii::$app->response->format = Response::FORMAT_JSON;
         $customerId = $data['customerId'];
         if (empty($customerId)) {
-            return false;
+            return [
+                'html' => '',
+                'totalPayable' => 0,
+                'message' => 'Customer info is required'
+                ];
         }
 
         $start_date = $end_date = null;
@@ -251,7 +255,7 @@ class InvoiceController extends ParentController
                         'dueAmount' => ($pending->quoteAmount - $pending->receivedAmount),
                     ])) . '"></td>';
                 $html .= '<td>' . $pending->formName() . '</td>';
-                $html .= '<td><span class="badge bg-green">' . $pending->voucherId . '</span></td>';
+                $html .= '<td><span class="badge bg-green">' . $pending->identificationNumber . '</span></td>';
                 $html .= '<td>' . $pending->issueDate . '</td>';
                 $html .= '<td>' . ($pending->quoteAmount - $pending->receivedAmount) . '<input type="text" class="amount form-control" id="amt' . $key . '" value="' . ($pending->quoteAmount - $pending->receivedAmount) . '" hidden></td>';
                 $html .= '</tr>';
