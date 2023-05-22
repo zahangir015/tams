@@ -22,9 +22,9 @@ class AttachmentFile
      * @throws Exception
      * @throws InvalidConfigException
      */
-    public static function uploads($model, $name, $path = NULL): bool|array
+    public static function uploads($model, $fieldName, $path = NULL): bool|array
     {
-        $files = UploadedFile::getInstances($model, $name);
+        $files = UploadedFile::getInstances($model, $fieldName);
         $referenceModel = get_class($model);
         $refId = !empty($uid) ? $uid : '';
         $row = [];

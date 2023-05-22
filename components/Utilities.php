@@ -262,12 +262,12 @@ class Utilities
 
     public static function transactionIdGenerate(): string
     {
-        return Company::findOne(1)->shortName . '_TR_' . self::date('Ymd_his') . rand(11, 99) . ((php_sapi_name() != "cli") ? Yii::$app->user->id : 1);
+        return Company::findOne(['agencyId' => Yii::$app->user->identity->agencyId])->shortName . '_TR_' . self::date('Ymd_his') . rand(11, 99) . ((php_sapi_name() != "cli") ? Yii::$app->user->id : 1);
     }
 
     public static function ExpenseNumberGenerate(): string
     {
-        return Company::findOne(1)->shortName . 'EXP' . self::date('Ymdhis') . rand(11, 99) . ((php_sapi_name() != "cli") ? Yii::$app->user->id : 1);
+        return Company::findOne(['agencyId' => Yii::$app->user->identity->agencyId])->shortName . 'EXP' . self::date('Ymdhis') . rand(11, 99) . ((php_sapi_name() != "cli") ? Yii::$app->user->id : 1);
     }
 
 
