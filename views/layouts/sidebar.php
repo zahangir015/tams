@@ -194,7 +194,6 @@ use app\modules\admin\components\Helper;
                                 'items' => [
                                     ['label' => 'Airline Add', 'icon' => 'paper-plane', 'url' => ['/sale/airline/create'], 'visible' => Helper::checkRoute('/sale/airline/create')],
                                     ['label' => 'Airline List', 'icon' => 'paper-plane', 'url' => ['/sale/airline/index'], 'visible' => Helper::checkRoute('/sale/airline/index')],
-                                    //['label' => 'Airline History', 'icon' => 'list', 'url' => ['/sale/airline-history/index'], 'visible' => Helper::checkRoute('/hrm/employee/index')],
                                 ]
                             ],
                             [
@@ -320,8 +319,7 @@ use app\modules\admin\components\Helper;
                     ['label' => 'Warning', 'iconClass' => 'nav-icon far fa-circle text-warning'],
                     ['label' => 'Informational', 'iconStyle' => 'far', 'iconClassAdded' => 'text-info'],
                 ],
-            ]);
-            ?>
+            ]);?>
         </nav>
     </div>
 </aside>
