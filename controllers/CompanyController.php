@@ -13,6 +13,7 @@ use yii\db\Exception;
 use yii\db\Expression;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Response;
 use yii\web\UploadedFile;
 
 /**
@@ -85,21 +86,16 @@ class CompanyController extends ParentController
     /**
      * Updates an existing Company model.
      * If update is successful, the browser will be redirected to the 'view' page.
-<<<<<<< HEAD
-     * @param int $id ID
-     * @return string|Response
-=======
      * @param string $uid UID
-     * @return string|\yii\web\Response
->>>>>>> 52f3e5b26d7a1e3f01deb2844ffcf559f1864a29
+     * @return string|Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionUpdate(string $uid): Response|string
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel($uid);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['view', 'uid' => $model->uid]);
         }
 
         return $this->render('update', [
@@ -109,22 +105,17 @@ class CompanyController extends ParentController
 
     /**
      * Deletes an existing Company model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-<<<<<<< HEAD
-     * @param int $id ID
-     * @return Response
-=======
+     * If deletion is successful, the browser will be redirected to the 'index' page.u
      * @param string $uid UID
-     * @return \yii\web\Response
->>>>>>> 52f3e5b26d7a1e3f01deb2844ffcf559f1864a29
+     * @return Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($id)
+    /*public function actionDelete(string $uid)
     {
-        $this->findModel($id)->delete();
+        $this->findModel($uid)->delete();
 
         return $this->redirect(['index']);
-    }
+    }*/
 
     /**
      * Finds the Company model based on its primary key value.
@@ -133,7 +124,7 @@ class CompanyController extends ParentController
      * @return Company the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($uid)
+    protected function findModel(string $uid): Company
     {
         if (($model = Company::findOne(['uid' => $uid])) !== null) {
             return $model;
