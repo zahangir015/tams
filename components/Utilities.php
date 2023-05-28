@@ -934,4 +934,9 @@ class Utilities
         ];
     }
 
+    private static function getMaxUploadSize()
+    {
+
+    }
+
 }
