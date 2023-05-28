@@ -61,11 +61,11 @@ class InvoiceController extends ParentController
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView(string $uid)
+    public function actionView(string $uid): string
     {
         return $this->render('view', [
             'model' => $this->invoiceRepository->findOne(['uid' => $uid], Invoice::class, ['details', 'customer', 'transactions']),
-            'company' => Company::findOne(['id' => 1]),
+            'company' => Company::findOne(['agencyId' => Yii::$app->user->identity->agencyId]),
         ]);
     }
 
@@ -153,7 +153,7 @@ class InvoiceController extends ParentController
             if (!$invoicePaymentResponse['error']) {
                 return $this->render('view', [
                     'model' => $model,
-                    'company' => Company::findOne(['id' => 1]),
+                    'company' => Company::findOne(['agencyId' => Yii::$app->user->identity->agencyId]),
                 ]);
             }
         }

@@ -151,12 +151,11 @@ class RefundTransactionService
         return ['html' => $html, 'totalPayable' => $totalPayable, 'totalReceivable' => $totalReceivable];
     }
 
-    public function storeRefundTransaction(array $requestData, RefundTransaction $refundTransaction, Transaction $transaction): bool
+    public function storeRefundTransaction(array $requestData, RefundTransaction $refundTransaction, Transaction $transaction)
     {
         //dd($requestData);
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
-            dd();
             $refundTransaction->load($requestData);
             $refundTransaction->identificationNumber = Utilities::refundTransactionNumber();
 

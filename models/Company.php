@@ -46,6 +46,7 @@ class Company extends ActiveRecord
             [['address', 'logo'], 'string', 'max' => 255],
             [['uid'], 'unique'],
             [['name'], 'unique'],
+            [['agencyId'], 'unique'],
             [['shortName'], 'unique'],
         ];
     }
