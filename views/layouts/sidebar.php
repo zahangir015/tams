@@ -49,7 +49,6 @@ use app\modules\admin\components\Helper;
                             ],
                         ]
                     ],
-
                     [
                         'label' => 'General Settings',
                         'icon' => 'cogs',

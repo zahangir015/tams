@@ -2,12 +2,15 @@
 
 namespace app\modules\account\models;
 
+use app\components\Constant;
+use app\components\GlobalConstant;
 use app\modules\sale\models\Customer;
 use app\modules\sale\models\ticket\Ticket;
 use app\traits\BehaviorTrait;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
+use function Matrix\identity;
 
 /**
  * This is the model class for table "{{%invoice}}".
@@ -127,6 +130,6 @@ class Invoice extends ActiveRecord
      */
     public function getTransactions(): ActiveQuery
     {
-        return $this->hasMany(Transaction::class, ['refId' => 'id'])->onCondition(['refModel' => Invoice::class]);
+        return $this->hasMany(Transaction::class, ['refId' => 'id'])->onCondition([Transaction::tableName() . '.refModel' => 'app\\modules\\account\\models\\Invoice', Transaction::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS, Transaction::tableName() . '.agencyId' => Yii::$app->user->identity->agencyId]);
     }
 }

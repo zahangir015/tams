@@ -16,7 +16,6 @@ use yii\web\JsExpression;
 
 class Utilities
 {
-
     public static function uniqueCode($limit)
     {
         return substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, $limit);
@@ -271,14 +270,20 @@ class Utilities
     }
 
 
-    public static function validateFile($file, $type = 'file'): bool
+    public static function validateFile($file, $type = 'file'): array
     {
         if (!$file || !file_exists($file->tempName)) {
-            return false;
+            return [
+                'error' => true,
+                'message' => 'This image already exists.'
+            ];
         }
         $maxSize = self::getMaxUploadSize();
         if ($file->size > $maxSize) {
-            return false;
+            return [
+                'error' => true,
+                'message' => 'Maximum image size is 2MB.'
+            ];
         }
 
         $uploadOptions = self::get('uploadOptions');
@@ -298,28 +303,40 @@ class Utilities
         }
     }
 
-    protected static function validateImageFile($file, $allowedTypes): bool
+    protected static function validateImageFile($file, $allowedTypes): array
     {
-        $isValid = true;
+        $isValid = [
+            'error' => false,
+            'message' => ''
+        ];
         $ext = $file->extension;
         $fileInfo = getimagesize($file->tempName);
         if (!isset($fileInfo[0]) || !is_numeric($fileInfo[0]) || $fileInfo[0] <= 0
             || !isset($fileInfo[0]) || !is_numeric($fileInfo[0]) || $fileInfo[0] <= 0
             || $fileInfo['mime'] !== $allowedTypes[$ext]) {
-            $isValid = false;
+            $isValid = [
+                'error' => true,
+                'message' => 'Invalid image type.'
+            ];
         }
         return $isValid;
     }
 
-    protected static function validateFileTypes($file, $allowedTypes): bool
+    protected static function validateFileTypes($file, $allowedTypes): array
     {
-        $isValid = true;
+        $isValid = [
+            'error' => false,
+            'message' => ''
+        ];;
         $ext = $file->extension;
 
         if ($file->error !== UPLOAD_ERR_OK
             || !isset($allowedTypes[$ext])
             || $file->type !== $allowedTypes[$ext]) {
-            $isValid = false;
+            $isValid = [
+                'error' => true,
+                'message' => 'Invalid file type.'
+            ];;
         }
 
         return $isValid;
@@ -932,6 +949,15 @@ class Utilities
                 //'maximumInputLength' => 10
             ],
         ];
+    }
+
+    /**
+     * @return mixed
+     */
+    public static function getMaxUploadSize(): mixed
+    {
+        $uploadOptions = self::get('uploadOptions');
+        return $uploadOptions['maxFileSize'];
     }
 
 }

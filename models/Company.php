@@ -37,7 +37,7 @@ class Company extends ActiveRecord
     public function rules(): array
     {
         return [
-            [['name', 'shortName', 'phone', 'email', 'address', 'logo'], 'required'],
+            [['name', 'shortName', 'phone', 'email', 'address'], 'required'],
             [['agencyId'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['name'], 'string', 'max' => 120],

@@ -16,6 +16,11 @@ class Uploader
      */
     public static function processFile($file, bool $cdnEnable, string $dir = 'uploads/tmp')
     {
+        $validationResponse = Utilities::validateFile($file, 'image');
+        if ($validationResponse['error']) {
+            return $validationResponse;
+        }
+
         $fileName = str_replace(' ', '_', $file->name);
         $fileDir = dirname($fileName);
         $dirPath = !empty($fileDir && $fileDir !== '.') ? ($dir . '/' . $fileDir) : $dir;
@@ -25,9 +30,9 @@ class Uploader
         self::checkDir($originUploadPath);
         $baseFileName = basename($fileName);
         if ($file->saveAs($originUploadPath . $baseFileName)) {
-            if ($cdnEnable){
+            if ($cdnEnable) {
                 return ['error' => false, 'cdnUrl' => self::uploadCDN($fileName, $uploadPath . $baseFileName), 'name' => $baseFileName['name'], 'message' => 'File uploaded'];
-            }else{
+            } else {
                 return ['error' => false, 'cdnUrl' => null, 'name' => $baseFileName, 'message' => 'File uploaded'];
             }
         } else {
