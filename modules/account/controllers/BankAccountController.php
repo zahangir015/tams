@@ -3,14 +3,17 @@
 namespace app\modules\account\controllers;
 
 use app\components\GlobalConstant;
+use app\components\Uploader;
 use app\components\Utilities;
 use app\modules\account\models\BankAccount;
 use app\modules\account\models\search\BankAccountSearch;
 use app\controllers\ParentController;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\helpers\Json;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
+use yii\web\UploadedFile;
 
 /**
  * BankAccountController implements the CRUD actions for BankAccount model.
@@ -39,7 +42,7 @@ class BankAccountController extends ParentController
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView(string $uid)
+    public function actionView(string $uid): string
     {
         return $this->render('view', [
             'model' => $this->findModel($uid),
@@ -50,18 +53,27 @@ class BankAccountController extends ParentController
      * Creates a new BankAccount model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|Response
+     * @throws InvalidConfigException
      */
-    public function actionCreate()
+    public function actionCreate(): Response|string
     {
         $model = new BankAccount();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
+                $file = UploadedFile::getInstance($model, 'logo');
+                $uploadResponse = Uploader::processFile($file, false, 'uploads/bank');
+                if (!$uploadResponse['error']) {
+                    Yii::$app->session->setFlash('danger', 'Bank Account logo upload failed - '.$uploadResponse['message']);
+                }
+
                 $model->tag = Json::encode($model->tag);
+                $model->logo = $uploadResponse['name'];
                 if ($model->save()) {
                     Yii::$app->session->setFlash('success', 'Bank Account created successfully.');
                     return $this->redirect(['view', 'uid' => $model->uid]);
                 }
+
                 Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
             }
         } else {
@@ -79,13 +91,34 @@ class BankAccountController extends ParentController
      * @param string $uid UID
      * @return string|Response
      * @throws NotFoundHttpException if the model cannot be found
+     * @throws InvalidConfigException
      */
     public function actionUpdate(string $uid)
     {
         $model = $this->findModel($uid);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            $oldLogo = $model->logo;
+            $model->tag = Json::encode($model->tag);
+            $logo = UploadedFile::getInstance($model, 'logo');
+
+            if ($logo) {
+                $uploadResponse = Uploader::processFile($logo, false, 'uploads/bank');
+                if (!$uploadResponse['error']) {
+                    $model->logo = $uploadResponse['name'];
+                    if (!empty($oldLogo) && file_exists(getcwd() . '/uploads/bank/' . $oldLogo)) {
+                        unlink(getcwd() . '/uploads/bank/' . $oldLogo);
+                    }
+                }
+            } else {
+                $model->logo = $oldLogo;
+            }
+
+            if (!$model->save()) {
+                Yii::$app->session->setFlash('danger', 'Bank update failed - ' . Utilities::processErrorMessages($model->getErrors()));
+            } else {
+                return $this->redirect(['view', 'uid' => $model->uid]);
+            }
         }
 
         return $this->render('update', [
