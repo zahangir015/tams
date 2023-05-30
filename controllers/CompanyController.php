@@ -55,7 +55,7 @@ class CompanyController extends ParentController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|Response
      */
-    public function actionCreate()
+    public function actionCreate(): Response|string
     {
         $model = new Company();
 
@@ -71,7 +71,7 @@ class CompanyController extends ParentController
                         Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
                     }
                 } else {
-                    Yii::$app->session->setFlash('danger', 'Image upload failed.');
+                    Yii::$app->session->setFlash('danger', 'Image upload failed - '. $uploadResponse['message']);
                 }
             }
         } else {
@@ -94,8 +94,27 @@ class CompanyController extends ParentController
     {
         $model = $this->findModel($uid);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'uid' => $model->uid]);
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            $oldLogo = $model->logo;
+            $logo = UploadedFile::getInstance($model, 'logo');
+
+            if ($logo) {
+                $uploadResponse = Uploader::processFile($logo, false, 'uploads/company');
+                if (!$uploadResponse['error']) {
+                    $model->logo = $uploadResponse['name'];
+                    if (!empty($oldLogo) && file_exists(getcwd() . '/uploads/company/' . $oldLogo)) {
+                        unlink(getcwd() . '/uploads/company/' . $oldLogo);
+                    }
+                }
+            } else {
+                $model->logo = $oldLogo;
+            }
+
+            if (!$model->save()) {
+                Yii::$app->session->setFlash('danger', 'Company profile update failed - ' . Utilities::processErrorMessages($model->getErrors()));
+            } else {
+                return $this->redirect(['view', 'uid' => $model->uid]);
+            }
         }
 
         return $this->render('update', [

@@ -197,7 +197,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             </div>
                         </div>
                         <div class="col-12">
-                            <p class="lead">Amount Due 2/22/2014</p>
+                            <p class="lead">Amount Due</p>
                             <div class="table-responsive">
                                 <table class="table">
                                     <tbody>

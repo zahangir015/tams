@@ -44,7 +44,7 @@ class InvoiceController extends ParentController
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $searchModel = new InvoiceSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
@@ -59,7 +59,6 @@ class InvoiceController extends ParentController
      * Displays a single Invoice model.
      * @param string $uid UID
      * @return string
-     * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionView(string $uid): string
     {

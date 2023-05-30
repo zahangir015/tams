@@ -13,7 +13,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="bank-account-view">
     <p>
-        <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a(Yii::t('app', 'Update'), ['update', 'uid' => $model->uid], ['class' => 'btn btn-primary']) ?>
     </p>
     <div class="card">
         <div class="card-header bg-gray-dark">
@@ -23,8 +23,6 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= DetailView::widget([
                 'model' => $model,
                 'attributes' => [
-                    //'id',
-                    //'uid',
                     'name',
                     'shortName',
                     'accountName',
@@ -34,7 +32,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     'swiftCode',
                     'code',
                     'paymentCharge',
-                    'logo',
+                    [
+                        'attribute' => 'logo',
+                        'format' => ['image'],
+                        'value' => function ($model) {
+                            return '/uploads/bank/'.$model->logo;
+                        }
+                    ],
                     'tag',
                     [
                         'attribute' => 'status',

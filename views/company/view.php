@@ -27,7 +27,13 @@ $this->params['breadcrumbs'][] = $this->title;
             'phone',
             'email:email',
             'address',
-            'logo',
+            [
+                'attribute' => 'logo',
+                'format' => ['image'],
+                'value' => function ($model) {
+                    return '/uploads/company/'.$model->logo;
+                }
+            ],
         ],
     ]) ?>
 

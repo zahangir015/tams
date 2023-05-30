@@ -2,6 +2,7 @@
 
 use app\components\GlobalConstant;
 use app\components\Utilities;
+use app\components\WidgetHelper;
 use app\models\Attachment;
 use kartik\date\DatePicker;
 use kartik\file\FileInput;
@@ -294,13 +295,13 @@ $this->registerJsFile(
                             <?= $form->field($transaction, 'paymentMode')->dropdownList(GlobalConstant::PAYMENT_MODE, ['prompt' => '']); ?>
                         </div>
                         <div class="col-md">
-                            <?= $form->field($transaction, 'paymentDate')->widget(DatePicker::class, Utilities::getDateWidget('date')); ?>
+                            <?= $form->field($transaction, 'paymentDate')->widget(DatePicker::class, WidgetHelper::getDatewidget('paymentDate', 'paymentDate', false, true)); ?>
                         </div>
                     </div>
-                    <div class="row">
+                    <!--<div class="row">
                         <div class="col-md">
                             <div id="files" style="background-color: #FFFFFF; padding: 10px;">
-                                <?= $form->field($model, 'invoiceFile[]')->widget(FileInput::classname(), [
+                                <?php /*= $form->field($model, 'invoiceFile[]')->widget(FileInput::classname(), [
                                     'options' => [
                                         'multiple' => true,
                                         'accept' => '*'
@@ -309,10 +310,10 @@ $this->registerJsFile(
                                         'maxFileCount' => 10,
                                     ]
                                 ])->label('Upload files');
-                                ?>
+                                */?>
                             </div>
                         </div>
-                    </div>
+                    </div>-->
                     <div class="row">
                         <div class="col-md">
                             <div class="form-group">
