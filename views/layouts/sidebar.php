@@ -256,7 +256,7 @@ use app\modules\admin\components\Helper;
                         'label' => 'Accounts Management',
                         'icon' => 'file-invoice-dollar',
                         'items' => [
-                            ['label' => 'Bank Accounts', 'icon' => 'building', 'url' => ['/account/bank-account'], 'visible' => Helper::checkRoute('/account/bank-account/*')],
+                            ['label' => 'Bank Accounts', 'icon' => 'building', 'url' => ['/account/bank-account'], 'visible' => Helper::checkRoute('/account/bank-account')],
                             [
                                 'label' => 'Invoice Management',
                                 'icon' => 'file-invoice-dollar',
