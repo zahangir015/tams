@@ -53,9 +53,9 @@ use app\modules\admin\components\Helper;
                         'label' => 'General Settings',
                         'icon' => 'cogs',
                         'items' => [
-                            ['label' => 'Countries', 'icon' => 'globe', 'url' => ['/country'], 'visible' => Helper::checkRoute('country')],
-                            ['label' => 'Cities', 'icon' => 'globe', 'url' => ['/city'], 'visible' => Helper::checkRoute('city')],
-                            ['label' => 'Company', 'icon' => 'building', 'url' => ['/company'], 'visible' => Helper::checkRoute('company')],
+                            ['label' => 'Countries', 'icon' => 'globe', 'url' => ['/country'], 'visible' => Helper::checkRoute('/country')],
+                            ['label' => 'Cities', 'icon' => 'globe', 'url' => ['/city'], 'visible' => Helper::checkRoute('/city')],
+                            ['label' => 'Company', 'icon' => 'building', 'url' => ['/company'], 'visible' => Helper::checkRoute('/company')],
                         ]
                     ],
                     [
@@ -256,7 +256,7 @@ use app\modules\admin\components\Helper;
                         'label' => 'Accounts Management',
                         'icon' => 'file-invoice-dollar',
                         'items' => [
-                            ['label' => 'Bank Accounts', 'icon' => 'building', 'url' => ['/account/bank-account'], 'visible' => Helper::checkRoute('account/bank-account/*')],
+                            ['label' => 'Bank Accounts', 'icon' => 'building', 'url' => ['/account/bank-account'], 'visible' => Helper::checkRoute('/account/bank-account/*')],
                             [
                                 'label' => 'Invoice Management',
                                 'icon' => 'file-invoice-dollar',
@@ -290,7 +290,7 @@ use app\modules\admin\components\Helper;
                             ],
                         ]
                     ],
-                    ['label' => 'Yii2 PROVIDED', 'header' => true],
+                    /*['label' => 'Yii2 PROVIDED', 'header' => true],
                     ['label' => 'Login', 'url' => ['site/login'], 'icon' => 'sign-in-alt', 'visible' => Yii::$app->user->isGuest],
                     ['label' => 'Gii', 'icon' => 'file-code', 'url' => ['/gii'], 'target' => '_blank'],
                     ['label' => 'Debug', 'icon' => 'bug', 'url' => ['/debug'], 'target' => '_blank'],
@@ -316,7 +316,7 @@ use app\modules\admin\components\Helper;
                     ['label' => 'LABELS', 'header' => true],
                     ['label' => 'Important', 'iconStyle' => 'far', 'iconClassAdded' => 'text-danger'],
                     ['label' => 'Warning', 'iconClass' => 'nav-icon far fa-circle text-warning'],
-                    ['label' => 'Informational', 'iconStyle' => 'far', 'iconClassAdded' => 'text-info'],
+                    ['label' => 'Informational', 'iconStyle' => 'far', 'iconClassAdded' => 'text-info'],*/
                 ],
             ]);?>
         </nav>
