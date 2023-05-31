@@ -88,7 +88,6 @@ use app\modules\admin\components\Helper;
                                     ['label' => 'Branch Add', 'icon' => 'plus', 'url' => ['/hrm/branch/create'], 'visible' => Helper::checkRoute('/hrm/branch/create')],
                                     ['label' => 'Branch List', 'icon' => 'list', 'url' => ['/hrm/branch/index'], 'visible' => Helper::checkRoute('/hrm/branch/index')],
                                 ],
-                                'visible' => Helper::checkRoute('/hrm/branch/*')
                             ],
                             [
                                 'label' => 'Department',
@@ -97,7 +96,6 @@ use app\modules\admin\components\Helper;
                                     ['label' => 'Department Add', 'icon' => 'plus', 'url' => ['/hrm/department/create'], 'visible' => Helper::checkRoute('/hrm/department/create')],
                                     ['label' => 'Department List', 'icon' => 'list', 'url' => ['/hrm/department/index'], 'visible' => Helper::checkRoute('/hrm/department/index')],
                                 ],
-                                'visible' => Helper::checkRoute('/hrm/department/*')
                             ],
                             [
                                 'label' => 'Designation',
