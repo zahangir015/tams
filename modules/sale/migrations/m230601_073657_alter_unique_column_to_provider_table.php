@@ -12,7 +12,7 @@ class m230601_073657_alter_unique_column_to_provider_table extends Migration
      */
     public function safeUp()
     {
-        $this->alterColumn(\app\modules\sale\models\Provider::tableName(), 'name', $this->string(10)->notNull());
+        $this->alterColumn(\app\modules\sale\models\Provider::tableName(), 'name', $this->string(100)->notNull());
         $this->dropIndex('name', \app\modules\sale\models\Provider::tableName());
     }
 
