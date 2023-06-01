@@ -175,7 +175,7 @@ use app\modules\admin\components\Helper;
                         'label' => 'Sales Management',
                         'icon' => 'truck',
                         'items' => [
-                            ['label' => 'Providers', 'icon' => 'paper-plane', 'url' => ['/sale/provider/index'], 'visible' => Helper::checkRoute('/hrm/provider/')],
+                            ['label' => 'Providers', 'icon' => 'paper-plane', 'url' => ['/sale/provider/index'], 'visible' => Helper::checkRoute('/sale/provider/')],
                             [
                                 'label' => 'Supplier Settings',
                                 'icon' => 'truck',
