@@ -233,10 +233,13 @@ use app\modules\admin\components\Helper;
                                 'label' => 'Hotel Management',
                                 'icon' => 'hotel',
                                 'items' => [
+                                    ['label' => 'Hotel Categories', 'icon' => 'list', 'url' => ['/sale/hotel-category/index'], 'visible' => Helper::checkRoute('/sale/hotel-category/')],
+                                    ['label' => 'Room Types', 'icon' => 'list', 'url' => ['/sale/room-type/index'], 'visible' => Helper::checkRoute('/sale/room-type/')],
                                     ['label' => 'Add Hotel', 'icon' => 'plus-circle', 'url' => ['/sale/hotel/create'], 'visible' => Helper::checkRoute('/sale/hotel/create')],
                                     ['label' => 'Hotel List', 'icon' => 'list', 'url' => ['/sale/hotel/index'], 'visible' => Helper::checkRoute('/sale/hotel/')],
                                     ['label' => 'Hotel Supplier List', 'icon' => 'list', 'url' => ['/sale/hotel/hotel-supplier-list'], 'visible' => Helper::checkRoute('/sale/hotel/hotel-supplier-list')],
                                     ['label' => 'Refund List', 'icon' => 'minus-circle', 'url' => ['/sale/hotel/refund-list'], 'visible' => Helper::checkRoute('/sale/hotel/refund-list')],
+                                    ['label' => 'Hotel Proposal', 'icon' => 'circle', 'url' => ['/sale/hotel-proposal/index'], 'visible' => Helper::checkRoute('/sale/hotel-proposal')],
                                 ]
                             ],
                             [
