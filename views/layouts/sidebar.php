@@ -215,7 +215,7 @@ use app\modules\admin\components\Helper;
                                     ['label' => 'Ticket Supplier List', 'icon' => 'list', 'url' => ['/sale/ticket/ticket-supplier-list'], 'visible' => Helper::checkRoute('/sale/ticket/ticket-supplier-list')],
                                     ['label' => 'Refund List', 'icon' => 'minus-circle', 'url' => ['/sale/ticket/refund-list'], 'visible' => Helper::checkRoute('/sale/ticket/refund-list')],
                                     ['label' => 'Void List', 'icon' => 'circle', 'url' => ['/sale/ticket/void-list'], 'visible' => Helper::checkRoute('/sale/ticket/void-list')],
-                                    ['label' => 'Flight Proposal', 'icon' => 'circle', 'url' => ['/sale/flight-proposal/index'], 'visible' => Helper::checkRoute('/sale/flight-proposal/')],
+                                    ['label' => 'Flight Proposal', 'icon' => 'circle', 'url' => ['/sale/flight-proposal/index'], 'visible' => Helper::checkRoute('/sale/flight-proposal')],
                                 ]
                             ],
                             [
