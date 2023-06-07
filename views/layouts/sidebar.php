@@ -3,6 +3,7 @@
 use hail812\adminlte\widgets\Menu;
 use yii\helpers\Url;
 use app\modules\admin\components\Helper;
+
 //dd((Helper::checkRoute('/country/') || Helper::checkRoute('/city/') || Helper::checkRoute('/company/')), false);
 ?>
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
@@ -16,14 +17,7 @@ use app\modules\admin\components\Helper;
     <!-- Sidebar -->
     <div class="sidebar">
         <!-- Sidebar user panel (optional) -->
-        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-            <div class="image">
-                <img src="<?= $assetDir ?>/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
-            </div>
-            <div class="info">
-                <a href="<?= Url::home() ?>" class="nav-link">Home</a>
-            </div>
-        </div>
+
         <nav class="mt-2">
             <?= Menu::widget([
                 'items' => [
@@ -47,6 +41,9 @@ use app\modules\admin\components\Helper;
                                     ['label' => 'Agency Add', 'iconStyle' => 'far', 'icon' => 'dot-circle', 'url' => ['/agent/agency/create'], 'visible' => Helper::checkRoute('/agent/agency/create')],
                                 ]
                             ],
+                        ],
+                        'options' => [
+                            'class' => 'bg-gradient-green mb-2 rounded',
                         ]
                     ],
                     [
@@ -57,6 +54,9 @@ use app\modules\admin\components\Helper;
                             ['label' => 'Cities', 'icon' => 'globe', 'url' => ['/city'], 'visible' => Helper::checkRoute('/city/')],
                             ['label' => 'Company', 'icon' => 'building', 'url' => ['/company'], 'visible' => Helper::checkRoute('/company/')],
                         ],
+                        'options' => [
+                            'class' => 'bg-gradient-green mb-2 rounded',
+                        ],
                         'visible' => Helper::checkRoute('/country/') || Helper::checkRoute('/city/') || Helper::checkRoute('/company/')
                     ],
                     [
@@ -65,7 +65,10 @@ use app\modules\admin\components\Helper;
                         'items' => [
                             ['label' => 'Users', 'icon' => 'users', 'url' => ['/admin/user/index'], 'visible' => Helper::checkRoute('admin/user/index')],
                             ['label' => 'Create User', 'icon' => 'user-plus', 'url' => ['/admin/user/create'], 'visible' => Helper::checkRoute('admin/user/create')],
-                        ]
+                        ],
+                        'options' => [
+                            'class' => 'bg-gradient-green mb-2 rounded',
+                        ],
                     ],
                     [
                         'label' => 'Authorization',
@@ -76,7 +79,10 @@ use app\modules\admin\components\Helper;
                             ['label' => 'Routes', 'icon' => 'list-alt', 'url' => ['/admin/route'], 'visible' => Helper::checkRoute('/admin/route')],
                             ['label' => 'Permission', 'icon' => 'key', 'url' => ['/admin/permission'], 'visible' => Helper::checkRoute('/admin/permission')],
                             ['label' => 'Assignment', 'icon' => 'check-double', 'url' => ['/admin/assignment'], 'visible' => Helper::checkRoute('/admin/assignment')],
-                        ]
+                        ],
+                        'options' => [
+                            'class' => 'bg-gradient-green mb-2 rounded',
+                        ],
                     ],
                     [
                         'label' => 'HRM',
@@ -169,7 +175,10 @@ use app\modules\admin\components\Helper;
                                     ['label' => 'Payslip', 'icon' => 'calendar-plus', 'url' => ['/hrm/payslip/index'], 'visible' => Helper::checkRoute('/hrm/payslip/')],
                                 ]
                             ],
-                        ]
+                        ],
+                        'options' => [
+                            'class' => 'bg-gradient-green mb-2 rounded',
+                        ],
                     ],
                     [
                         'label' => 'Sales Management',
@@ -252,7 +261,10 @@ use app\modules\admin\components\Helper;
                                     ['label' => 'Refund List', 'icon' => 'minus-circle', 'url' => ['/sale/visa/refund-list'], 'visible' => Helper::checkRoute('/sale/visa/refund-list')],
                                 ]
                             ],
-                        ]
+                        ],
+                        'options' => [
+                            'class' => 'bg-gradient-green mb-2 rounded',
+                        ],
                     ],
                     [
                         'label' => 'Accounts Management',
@@ -290,7 +302,10 @@ use app\modules\admin\components\Helper;
                                     ['label' => 'Expenses', 'icon' => 'list', 'url' => ['/account/expense/index'], 'visible' => Helper::checkRoute('/account/expense/')],
                                 ]
                             ],
-                        ]
+                        ],
+                        'options' => [
+                            'class' => 'bg-gradient-green mb-2 rounded',
+                        ],
                     ],
                     /*['label' => 'Yii2 PROVIDED', 'header' => true],
                     ['label' => 'Login', 'url' => ['site/login'], 'icon' => 'sign-in-alt', 'visible' => Yii::$app->user->isGuest],
@@ -320,7 +335,7 @@ use app\modules\admin\components\Helper;
                     ['label' => 'Warning', 'iconClass' => 'nav-icon far fa-circle text-warning'],
                     ['label' => 'Informational', 'iconStyle' => 'far', 'iconClassAdded' => 'text-info'],*/
                 ],
-            ]);?>
+            ]); ?>
         </nav>
     </div>
 </aside>
