@@ -1,8 +1,11 @@
 <?php
 
 namespace app\modules\sale\models;
-
+use app\modules\agent\models\Agency;
+use app\traits\BehaviorTrait;
 use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%flight_proposal}}".
@@ -38,12 +41,14 @@ use Yii;
  * @property Airline $airline
  * @property FlightProposalItinerary[] $flightProposalItineraries
  */
-class FlightProposal extends \yii\db\ActiveRecord
+class FlightProposal extends ActiveRecord
 {
+    use BehaviorTrait;
+
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%flight_proposal}}';
     }
@@ -51,7 +56,7 @@ class FlightProposal extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['uid', 'agencyId', 'airlineId', 'class', 'tripType', 'route', 'departure', 'arrival', 'numberOfAdult', 'createdBy', 'createdAt'], 'required'],
@@ -71,7 +76,7 @@ class FlightProposal extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),
@@ -106,9 +111,9 @@ class FlightProposal extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Agency]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getAgency()
+    public function getAgency(): ActiveQuery
     {
         return $this->hasOne(Agency::class, ['id' => 'agencyId']);
     }
@@ -116,9 +121,9 @@ class FlightProposal extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Airline]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getAirline()
+    public function getAirline(): ActiveQuery
     {
         return $this->hasOne(Airline::class, ['id' => 'airlineId']);
     }
@@ -126,9 +131,9 @@ class FlightProposal extends \yii\db\ActiveRecord
     /**
      * Gets query for [[FlightProposalItineraries]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getFlightProposalItineraries()
+    public function getFlightProposalItineraries(): ActiveQuery
     {
         return $this->hasMany(FlightProposalItinerary::class, ['flightProposalId' => 'id']);
     }

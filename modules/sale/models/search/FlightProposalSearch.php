@@ -14,7 +14,7 @@ class FlightProposalSearch extends FlightProposal
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['id', 'agencyId', 'airlineId', 'tripType', 'numberOfAdult', 'numberOfChild', 'numberOfInfant', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
@@ -26,7 +26,7 @@ class FlightProposalSearch extends FlightProposal
     /**
      * {@inheritdoc}
      */
-    public function scenarios()
+    public function scenarios(): array
     {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
@@ -39,7 +39,7 @@ class FlightProposalSearch extends FlightProposal
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search(array $params): ActiveDataProvider
     {
         $query = FlightProposal::find();
 

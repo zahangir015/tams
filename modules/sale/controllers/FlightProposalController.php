@@ -2,12 +2,15 @@
 
 namespace app\modules\sale\controllers;
 
+use app\components\GlobalConstant;
 use app\modules\sale\models\FlightProposal;
+use app\modules\sale\models\FlightProposalItinerary;
 use app\modules\sale\models\search\FlightProposalSearch;
 use app\controllers\ParentController;
+use app\modules\sale\services\ProposalService;
 use Yii;
+use yii\bootstrap4\ActiveForm;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use yii\web\Response;
 
 /**
@@ -15,6 +18,14 @@ use yii\web\Response;
  */
 class FlightProposalController extends ParentController
 {
+    public ProposalService $proposalService;
+
+    public function __construct($uid, $module, $config = [])
+    {
+        $this->proposalService = new ProposalService();
+        parent::__construct($uid, $module, $config);
+    }
+
     /**
      * Lists all FlightProposal models.
      *
@@ -32,30 +43,32 @@ class FlightProposalController extends ParentController
     }
 
     /**
-     * Displays a single FlightProposal model.
+     * Displays a single Hotel model.
      * @param string $uid UID
      * @return string
-     * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionView(string $uid): string
     {
+        $model = $this->proposalService->findFlightProposal($uid, ['flightProposalItineraries']);
         return $this->render('view', [
-            'model' => $this->findModel($uid),
+            'model' => $model,
         ]);
     }
 
     /**
-     * Creates a new FlightProposal model.
+     * Creates a new Hotel model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|Response
      */
     public function actionCreate(): Response|string
     {
         $model = new FlightProposal();
-
+        $itinerary = new FlightProposalItinerary();
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+            $requestData = Yii::$app->request->post();
+            $response = $this->proposalService->storeFlightProposal($requestData);
+            if ($response) {
+                return $this->redirect('index');
             }
         } else {
             $model->loadDefaultValues();
@@ -63,22 +76,28 @@ class FlightProposalController extends ParentController
 
         return $this->render('create', [
             'model' => $model,
+            'itinerary' => $itinerary,
         ]);
     }
 
     /**
-     * Updates an existing FlightProposal model.
+     * Updates an existing Hotel model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param string $uid UID
      * @return string|Response
-     * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionUpdate(string $uid): Response|string
     {
-        $model = $this->findModel($uid);
+        $model = $this->proposalService->findFlightProposal($uid, ['flightProposalItineraries']);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'uid' => $model->uid]);
+        if ($this->request->isPost) {
+            // Update Hotel
+            $updateResponse = $this->proposalService->updateFlightProposal(Yii::$app->request->post(), $model);
+            if ($updateResponse['error']) {
+                Yii::$app->session->setFlash('danger', $updateResponse['message']);
+            } else {
+                return $this->redirect(['view', 'uid' => $model->uid]);
+            }
         }
 
         return $this->render('update', [
@@ -87,7 +106,7 @@ class FlightProposalController extends ParentController
     }
 
     /**
-     * Deletes an existing FlightProposal model.
+     * Deletes an existing Hotel model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param string $uid UID
      * @return Response
@@ -95,24 +114,22 @@ class FlightProposalController extends ParentController
      */
     public function actionDelete(string $uid): Response
     {
-        $this->findModel($uid)->delete();
+        $model = $this->proposalService->findFlightProposal($uid);
+        $model->status = GlobalConstant::INACTIVE_STATUS;
+        $model->save();
 
         return $this->redirect(['index']);
     }
 
-    /**
-     * Finds the FlightProposal model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param string $uid UID
-     * @return FlightProposal the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel(string $uid): FlightProposal
+    public function actionAddItinerary($row): string
     {
-        if (($model = FlightProposal::findOne(['uid' => $uid])) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+        $model = new FlightProposal();
+        $hotelSupplier = new FlightProposalItinerary();
+        return $this->renderAjax('supplier', [
+            'row' => $row,
+            'model' => $model,
+            'hotelSupplier' => $hotelSupplier,
+            'form' => ActiveForm::begin(['class' => 'form'])
+        ]);
     }
 }
