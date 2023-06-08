@@ -10,11 +10,8 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Flight Proposals'), 
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="flight-proposal-create">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
     <?= $this->render('_form', [
         'model' => $model,
+        'itinerary' => $itinerary
     ]) ?>
-
 </div>

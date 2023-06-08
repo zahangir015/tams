@@ -4,29 +4,29 @@ namespace app\modules\sale\models\search;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\sale\models\FlightProposal;
+use app\modules\sale\models\HotelProposal;
 
 /**
- * FlightProposalSearch represents the model behind the search form of `app\modules\sale\models\FlightProposal`.
+ * HotelProposalSearch represents the model behind the search form of `app\modules\sale\models\HotelProposal`.
  */
-class FlightProposalSearch extends FlightProposal
+class HotelProposalSearch extends HotelProposal
 {
     /**
      * {@inheritdoc}
      */
-    public function rules(): array
+    public function rules()
     {
         return [
-            [['id', 'agencyId', 'airlineId', 'tripType', 'numberOfAdult', 'numberOfChild', 'numberOfInfant', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
-            [['uid', 'class', 'route', 'departure', 'arrival', 'baggagePerAdult', 'baggagePerChild', 'baggagePerInfant', 'notes'], 'safe'],
-            [['pricePerAdult', 'pricePerChild', 'pricePerInfant', 'totalPrice', 'discount'], 'number'],
+            [['id', 'agencyId', 'hotelCategoryId', 'countryId', 'cityId', 'numberOfAdult', 'numberOfChild', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['uid', 'hotelName', 'hotelAddress', 'amenities', 'notes'], 'safe'],
+            [['totalPrice', 'discount'], 'number'],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function scenarios(): array
+    public function scenarios()
     {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
@@ -39,9 +39,9 @@ class FlightProposalSearch extends FlightProposal
      *
      * @return ActiveDataProvider
      */
-    public function search(array $params): ActiveDataProvider
+    public function search($params)
     {
-        $query = FlightProposal::find();
+        $query = HotelProposal::find();
 
         // add conditions that should always apply here
 
@@ -61,16 +61,11 @@ class FlightProposalSearch extends FlightProposal
         $query->andFilterWhere([
             'id' => $this->id,
             'agencyId' => $this->agencyId,
-            'airlineId' => $this->airlineId,
-            'tripType' => $this->tripType,
-            'departure' => $this->departure,
-            'arrival' => $this->arrival,
+            'hotelCategoryId' => $this->hotelCategoryId,
+            'countryId' => $this->countryId,
+            'cityId' => $this->cityId,
             'numberOfAdult' => $this->numberOfAdult,
-            'pricePerAdult' => $this->pricePerAdult,
             'numberOfChild' => $this->numberOfChild,
-            'pricePerChild' => $this->pricePerChild,
-            'numberOfInfant' => $this->numberOfInfant,
-            'pricePerInfant' => $this->pricePerInfant,
             'totalPrice' => $this->totalPrice,
             'discount' => $this->discount,
             'status' => $this->status,
@@ -81,11 +76,9 @@ class FlightProposalSearch extends FlightProposal
         ]);
 
         $query->andFilterWhere(['like', 'uid', $this->uid])
-            ->andFilterWhere(['like', 'class', $this->class])
-            ->andFilterWhere(['like', 'route', $this->route])
-            ->andFilterWhere(['like', 'baggagePerAdult', $this->baggagePerAdult])
-            ->andFilterWhere(['like', 'baggagePerChild', $this->baggagePerChild])
-            ->andFilterWhere(['like', 'baggagePerInfant', $this->baggagePerInfant])
+            ->andFilterWhere(['like', 'hotelName', $this->hotelName])
+            ->andFilterWhere(['like', 'hotelAddress', $this->hotelAddress])
+            ->andFilterWhere(['like', 'amenities', $this->amenities])
             ->andFilterWhere(['like', 'notes', $this->notes]);
 
         return $dataProvider;

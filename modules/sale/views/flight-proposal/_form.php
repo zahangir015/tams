@@ -1,71 +1,110 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+use yii\bootstrap4\ActiveForm;
+use yii\web\JqueryAsset;
+use yii\web\View;
 
 /** @var yii\web\View $this */
 /** @var app\modules\sale\models\FlightProposal $model */
-/** @var yii\widgets\ActiveForm $form */
+/** @var yii\bootstrap4\ActiveForm $form */
+
+$this->registerJs(
+    "var itinerary = '" . Yii::$app->request->baseUrl . '/sale/flight-proposal/add-itinerary' . "';var room = '" . Yii::$app->request->baseUrl . '/sale/hotel-proposal/add-room' . "';",
+    View::POS_HEAD,
+    'url'
+);
+
+$this->registerJsFile(
+    '@web/js/proposal.js',
+    ['depends' => [JqueryAsset::class]]
+);
+
 ?>
 
 <div class="flight-proposal-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <div class="card">
+        <div class="card-header bg-dark">
+            <?= Html::encode($this->title) ?>
+        </div>
+        <div class="card-body">
+            <?php $form = ActiveForm::begin(); ?>
+            <div class="row">
+                <div class="col-md">
+                    <?= $form->field($model, 'airlineId')->textInput() ?>
+                </div>
+                <div class="col-md">
+                    <?= $form->field($model, 'class')->textInput(['maxlength' => true]) ?>
+                </div>
+                <div class="col-md">
+                    <?= $form->field($model, 'tripType')->textInput() ?>
+                </div>
+                <div class="col-md">
+                    <?= $form->field($model, 'route')->textInput(['maxlength' => true]) ?>
+                </div>
+                <div class="col-md">
+                    <?= $form->field($model, 'departure')->textInput() ?>
+                </div>
+                <div class="col-md">
+                    <?= $form->field($model, 'arrival')->textInput() ?>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md">
+                    <?= $form->field($model, 'numberOfAdult')->textInput() ?>
+                </div>
+                <div class="col-md">
+                    <?= $form->field($model, 'pricePerAdult')->textInput() ?>
+                </div>
+                <div class="col-md">
+                    <?= $form->field($model, 'baggagePerAdult')->textInput(['maxlength' => true]) ?>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md">
+                    <?= $form->field($model, 'numberOfChild')->textInput() ?>
+                </div>
+                <div class="col-md">
+                    <?= $form->field($model, 'pricePerChild')->textInput() ?>
+                </div>
+                <div class="col-md">
+                    <?= $form->field($model, 'baggagePerChild')->textInput(['maxlength' => true]) ?>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md">
+                    <?= $form->field($model, 'numberOfInfant')->textInput() ?>
+                </div>
+                <div class="col-md">
+                    <?= $form->field($model, 'pricePerInfant')->textInput() ?>
+                </div>
+                <div class="col-md">
+                    <?= $form->field($model, 'baggagePerInfant')->textInput(['maxlength' => true]) ?>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md">
+                    <?= $form->field($model, 'totalPrice')->textInput() ?>
+                </div>
+                <div class="col-md">
+                    <?= $form->field($model, 'discount')->textInput() ?>
+                </div>
+                <div class="col-md">
+                    <?= $form->field($model, 'notes')->textInput(['rows' => 6]) ?>
+                </div>
+            </div>
+            <div class="row">
+                <div class="itinerary">
+                    <?= $this->render('itinerary', ['row' => 0, 'model' => $model, 'itinerary' => $model->flightProposalItineraries ?? $hotelSupplier, 'form' => $form]); ?>
+                </div>
+            </div>
 
-    <?= $form->field($model, 'uid')->textInput(['maxlength' => true]) ?>
+            <div class="form-group">
+                <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
+            </div>
 
-    <?= $form->field($model, 'agencyId')->textInput() ?>
-
-    <?= $form->field($model, 'airlineId')->textInput() ?>
-
-    <?= $form->field($model, 'class')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'tripType')->textInput() ?>
-
-    <?= $form->field($model, 'route')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'departure')->textInput() ?>
-
-    <?= $form->field($model, 'arrival')->textInput() ?>
-
-    <?= $form->field($model, 'numberOfAdult')->textInput() ?>
-
-    <?= $form->field($model, 'pricePerAdult')->textInput() ?>
-
-    <?= $form->field($model, 'baggagePerAdult')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'numberOfChild')->textInput() ?>
-
-    <?= $form->field($model, 'pricePerChild')->textInput() ?>
-
-    <?= $form->field($model, 'baggagePerChild')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'numberOfInfant')->textInput() ?>
-
-    <?= $form->field($model, 'pricePerInfant')->textInput() ?>
-
-    <?= $form->field($model, 'baggagePerInfant')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'totalPrice')->textInput() ?>
-
-    <?= $form->field($model, 'discount')->textInput() ?>
-
-    <?= $form->field($model, 'notes')->textarea(['rows' => 6]) ?>
-
-    <?= $form->field($model, 'status')->textInput() ?>
-
-    <?= $form->field($model, 'createdBy')->textInput() ?>
-
-    <?= $form->field($model, 'createdAt')->textInput() ?>
-
-    <?= $form->field($model, 'updatedBy')->textInput() ?>
-
-    <?= $form->field($model, 'updatedAt')->textInput() ?>
-
-    <div class="form-group">
-        <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
+            <?php ActiveForm::end(); ?>
+        </div>
     </div>
-
-    <?php ActiveForm::end(); ?>
-
 </div>
