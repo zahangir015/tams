@@ -4,7 +4,16 @@
 /* @var $content string */
 
 use yii\helpers\Html;
-
+if ((Yii::$app->controller->action->id === 'login') || (Yii::$app->controller->action->id === 'request-password-reset')) {
+    /**
+     * Do not use this code in your template. Remove it.
+     * Instead, use the code  $this->layout = '//main-login'; in your controller.
+     */
+    echo $this->render(
+        'main-login',
+        ['content' => $content]
+    );
+} else {
 \hail812\adminlte3\assets\FontAwesomeAsset::register($this);
 \hail812\adminlte3\assets\AdminLteAsset::register($this);
 $this->registerCssFile('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback');
@@ -51,3 +60,4 @@ $this->registerJsFile($publishedRes[1].'/control_sidebar.js', ['depends' => '\ha
 </body>
 </html>
 <?php $this->endPage() ?>
+<?php } ?>

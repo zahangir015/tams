@@ -102,6 +102,7 @@ $config = [
         'allowActions' => [
             'admin/user/login',
             'admin/user/logout',
+            'admin/user/request-password-reset',
 //            'site/*',
 //            'admin/*',
 //            'gii/*',
