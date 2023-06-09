@@ -15,7 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <h3><?= Html::encode($this->title) ?></h3>
         <p>Please fill out your email. A link to reset password will be sent there.</p>
         <div class="row">
-            <div class="col-lg-5">
+            <div class="col-lg">
                 <?php $form = ActiveForm::begin(['id' => 'request-password-reset-form','options' => ['class' => 'form-group has-feedback'],]); ?>
                 <?= $form->field($model, 'email') ?>
                 <div class="form-group">

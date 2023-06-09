@@ -51,6 +51,16 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?= Html::submitButton('Sign In', ['class' => 'btn btn-primary btn-block', 'name' => 'login-button']) ?>
             </div>
         </div>
+        <div class="row">
+            <div class="col-12">
+                <?= Html::a('Sign Up', ['/admin/user/account'],['class' => 'btn btn-success btn-block mt-2', 'name' => 'sign-up']) ?>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <?= Html::a('Inquiry', ['/admin/user/inquiry'],['class' => 'btn btn-warning btn-block mt-2', 'name' => 'Inquiry']) ?>
+            </div>
+        </div>
 
         <?php ActiveForm::end(); ?>
 

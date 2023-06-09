@@ -10,6 +10,7 @@ use app\modules\admin\models\form\ResetPassword;
 use app\modules\admin\models\form\Signup;
 use app\modules\admin\models\searchs\User as UserSearch;
 use app\modules\admin\models\User;
+use app\modules\agent\models\Agency;
 use Yii;
 use yii\base\InvalidParamException;
 use yii\base\UserException;
@@ -158,11 +159,25 @@ class UserController extends Controller
         ]);
     }
 
+    public function actionAccount()
+    {
+        $model = new Agency();
+        if ($model->load(Yii::$app->getRequest()->post())) {
+            if ($user = $model->signup()) {
+                return $this->goHome();
+            }
+        }
+
+        return $this->render('account', [
+            'model' => $model,
+        ]);
+    }
+
     /**
      * Signup new user
      * @return string
      */
-    public function actionSignup()
+    /*public function actionSignup()
     {
         $model = new Signup();
         if ($model->load(Yii::$app->getRequest()->post())) {
@@ -174,7 +189,7 @@ class UserController extends Controller
         return $this->render('signup', [
                 'model' => $model,
         ]);
-    }
+    }*/
 
     /**
      * Request reset password

@@ -101,6 +101,7 @@ $config = [
         'class' => 'app\modules\admin\components\AccessControl',
         'allowActions' => [
             'admin/user/login',
+            'admin/user/account',
             'admin/user/logout',
             'admin/user/request-password-reset',
 //            'site/*',
