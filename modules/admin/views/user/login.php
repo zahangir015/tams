@@ -12,7 +12,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="card">
     <div class="card-body login-card-body">
-        <p class="login-box-msg">Sign in to start your session</p>
+        <p class="login-box-msg font-weight-bold text-green">Welcome To MY TRAMS</p>
 
         <?php $form = ActiveForm::begin(['id' => 'login-form']) ?>
 
@@ -21,21 +21,18 @@ $this->params['breadcrumbs'][] = $this->title;
             'inputTemplate' => '{input}<div class="input-group-append"><div class="input-group-text"><span class="fas fa-envelope"></span></div></div>',
             'template' => '{beginWrapper}{input}{error}{endWrapper}',
             'wrapperOptions' => ['class' => 'input-group mb-3']
-        ])
-            ->label(false)
-            ->textInput(['placeholder' => $model->getAttributeLabel('username')]) ?>
+        ])->label(false)->textInput(['placeholder' => $model->getAttributeLabel('username')]) ?>
 
         <?= $form->field($model, 'password', [
             'options' => ['class' => 'form-group has-feedback'],
             'inputTemplate' => '{input}<div class="input-group-append"><div class="input-group-text"><span class="fas fa-lock"></span></div></div>',
             'template' => '{beginWrapper}{input}{error}{endWrapper}',
             'wrapperOptions' => ['class' => 'input-group mb-3']
-        ])
-            ->label(false)
+        ])->label(false)
             ->passwordInput(['placeholder' => $model->getAttributeLabel('password')]) ?>
 
         <div class="row">
-            <div class="col-12">
+            <div class="col-6">
                 <?= $form->field($model, 'rememberMe')->checkbox([
                     'template' => '<div class="icheck-primary">{input}{label}</div>',
                     'labelOptions' => [
@@ -43,6 +40,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                     'uncheck' => null
                 ]) ?>
+            </div>
+            <div class="col-6">
+                <?= Html::a('<i class="fa fa-key mr-2"></i> Forgot Password', ['user/request-password-reset'], ['class' => 'text-dark']) ?>
             </div>
         </div>
 
@@ -55,7 +55,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php ActiveForm::end(); ?>
 
         <div class="social-auth-links text-center mb-3">
-            <?= Html::a('<i class="fa fa-key mr-2"></i> Forgot Password', ['user/request-password-reset'], ['class' => 'btn btn-block btn-danger']) ?>
+
         </div>
     </div>
     <!-- /.login-card-body -->

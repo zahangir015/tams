@@ -49,7 +49,6 @@ class ExpenseController extends ParentController
      * Displays a single Expense model.
      * @param string $uid UID
      * @return string
-     * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionView(string $uid): string
     {

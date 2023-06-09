@@ -61,7 +61,7 @@ $this->registerJsFile(
                         <?= $form->field($model, 'maritalStatus')->dropDownList(HrmConstant::MARITAL_STATUS) ?>
                     </div>
                     <div class="col-md">
-                        <?= $form->field($model, 'religion')->dropDownList(HrmConstant::RELIGION, ['prompt' => '']) ?>
+                        <?= $form->field($model, 'religion')->dropDownList(HrmConstant::RELIGION) ?>
                     </div>
                 </div>
                 <h5 class="mb-10 font-weight-bold text-dark">Contact Details</h5>
