@@ -15,7 +15,7 @@ use app\modules\admin\components\Helper;
     <div class="sidebar">
         <nav class="mt-2">
             <?= Menu::widget([
-                //'activeCssClass'=>'bg-gradient-green',
+                'activeCssClass'=>'bg-green-active',
                 'items' => [
                     [
                         'label' => 'Agency Management',
@@ -39,7 +39,7 @@ use app\modules\admin\components\Helper;
                             ],
                         ],
                         'options' => [
-                            'class' => 'nav-item has-treeview bg-gradient-green mb-2 rounded',
+                            'class' => 'nav-item has-treeview bg-green mb-2 rounded',
                         ],
                         'linkOptions' => ['class' => 'nav-link text-red'],
                     ],
