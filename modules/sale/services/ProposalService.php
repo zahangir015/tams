@@ -7,6 +7,7 @@ use app\components\Utilities;
 use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\Customer;
 use app\modules\sale\models\FlightProposal;
+use app\modules\sale\models\FlightProposalItinerary;
 use app\modules\sale\models\hotel\Hotel;
 use app\modules\sale\models\HotelCategory;
 use app\modules\sale\models\HotelProposal;
@@ -40,47 +41,24 @@ class ProposalService
     {
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
-            if (empty($requestData['Hotel']) || empty($requestData['HotelSupplier'])) {
-                throw new Exception('Hotel and supplier data can not be empty.');
+            // Flight Data process
+            $flightProposal = new FlightProposal();
+            if (!$flightProposal->load($requestData)){
+                throw new Exception('Flight proposal loading failed - ' . Utilities::processErrorMessages($flightProposal->getErrors()));
             }
-            // Hotel Data process
-            $customer = Customer::findOne(['id' => $requestData['Hotel']['customerId']]);
-            $hotel = new Hotel();
-            if (!$hotel->load($requestData)) {
-                throw new Exception('Hotel data loading failed - ' . Utilities::processErrorMessages($hotel->getErrors()));
-            }
-            $hotel->type = ServiceConstant::TYPE['New'];
-            $hotel->customerCategory = $customer->category;
-            $hotel = $this->hotelRepository->store($hotel);
-            if ($hotel->hasErrors()) {
-                throw new Exception('Hotel create failed - ' . Utilities::processErrorMessages($hotel->getErrors()));
+            $flightProposal = $this->proposalRepository->store($flightProposal);
+            if ($flightProposal->hasErrors()) {
+                throw new Exception('Flight proposal creation failed - ' . Utilities::processErrorMessages($flightProposal->getErrors()));
             }
 
-            // Hotel Supplier data process
-            foreach ($requestData['HotelSupplier'] as $singleSupplierArray) {
-                $hotelSupplier = new HotelSupplier();
-                $hotelSupplier->load(['HotelSupplier' => $singleSupplierArray]);
-                $hotelSupplier->hotelId = $hotel->id;
-                $hotelSupplier = $this->hotelRepository->store($hotelSupplier);
-                if ($hotelSupplier->hasErrors()) {
-                    throw new Exception('Hotel Supplier refund creation failed - ' . Utilities::processErrorMessages($hotelSupplier->getErrors()));
-                }
-            }
-
-            // Invoice process and create
-            if (isset($requestData['invoice'])) {
-                // Invoice details data process
-                $services[] = [
-                    'refId' => $hotel->id,
-                    'refModel' => Hotel::class,
-                    'dueAmount' => $hotel->quoteAmount,
-                    'paidAmount' => 0,
-                ];
-
-                // Auto Invoice process
-                $autoInvoiceCreateResponse = $this->invoiceService->autoInvoice($customer->id, $services);
-                if ($autoInvoiceCreateResponse['error']) {
-                    throw new Exception('Auto Invoice creation failed - ' . $autoInvoiceCreateResponse['message']);
+            // Flight proposal itinerary process
+            foreach ($requestData['FlightProposalItinerary'] as $itinerary) {
+                $flightProposalItinerary = new FlightProposalItinerary();
+                $flightProposalItinerary->load(['HotelSupplier' => $itinerary]);
+                $flightProposalItinerary->flightProposalId = $flightProposal->id;
+                $flightProposalItinerary = $this->proposalRepository->store($flightProposalItinerary);
+                if ($flightProposalItinerary->hasErrors()) {
+                    throw new Exception('Itinerary creation failed - ' . Utilities::processErrorMessages($flightProposalItinerary->getErrors()));
                 }
             }
 
@@ -99,15 +77,8 @@ class ProposalService
     {
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
-            // Hotel and supplier data can not be empty
-            if (empty($requestData['Hotel']) || empty($requestData['HotelSupplier'])) {
-                throw new Exception('Hotel and supplier data required.');
-            }
-
-            $oldQuoteAmount = $hotel->quoteAmount;
-
             // Update Hotel
-            if ($hotel->load($requestData)){
+            if ($hotel->load($requestData)) {
                 throw new Exception('Hotel data loading failed - ' . Utilities::processErrorMessages($hotel->getErrors()));
             }
             $hotel->netProfit = self::calculateNetProfit($hotel->quoteAmount, $hotel->costOfSale);

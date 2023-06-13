@@ -57,7 +57,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => 'html',
             ],
             [
-                'class' => ActionColumn::className(),
+                'class' => ActionColumn::class,
                 'urlCreator' => function ($action, Customer $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'uid' => $model->uid]);
                 },
@@ -74,7 +74,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'title' => Yii::t('app', 'Add Customer'),
                         'class' => 'btn btn-success'
                     ]) . ' ' .
-                    Html::a('<i class="fas fa-redo"></i>', ['/sale/supplier/index'], [
+                    Html::a('<i class="fas fa-redo"></i>', ['/sale/customer/index'], [
                         'class' => 'btn btn-primary',
                         'title' => Yii::t('app', 'Reset Grid')
                     ]),

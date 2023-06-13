@@ -82,7 +82,7 @@ class FlightProposal extends ActiveRecord
             'id' => Yii::t('app', 'ID'),
             'uid' => Yii::t('app', 'Uid'),
             'agencyId' => Yii::t('app', 'Agency ID'),
-            'airlineId' => Yii::t('app', 'Airline ID'),
+            'airlineId' => Yii::t('app', 'Airline'),
             'class' => Yii::t('app', 'Class'),
             'tripType' => Yii::t('app', 'Trip Type'),
             'route' => Yii::t('app', 'Route'),
