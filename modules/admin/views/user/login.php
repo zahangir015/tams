@@ -10,51 +10,56 @@ use yii\bootstrap4\ActiveForm;
 $this->title = Yii::t('rbac-admin', 'Login');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+<div class="card">
+    <div class="card-body login-card-body shadow rounded-3">
+        <?php $form = ActiveForm::begin(['id' => 'login-form']) ?>
 
-<?php $form = ActiveForm::begin(['id' => 'login-form']) ?>
+        <div class="d-flex flex-row align-items-center justify-content-center justify-content-lg-start">
+            <h4 class="font-weight-bold text-center text-success">Welcome to MY TRAMS</h4>
+        </div>
 
-<div class="d-flex flex-row align-items-center justify-content-center justify-content-lg-start">
-    <h5 class="lead text-center">Sign in with</h5>
-</div>
+        <?= $form->field($model, 'username', [
+            'options' => ['class' => 'form-group has-feedback'],
+            'inputTemplate' => '{input}<div class="input-group-append"><div class="input-group-text"><span class="fas fa-envelope"></span></div></div>',
+            'template' => '{beginWrapper}{input}{error}{endWrapper}',
+            'wrapperOptions' => ['class' => 'input-group mb-3']
+        ])->label(false)->textInput(['placeholder' => $model->getAttributeLabel('username')]) ?>
 
-<?= $form->field($model, 'username', [
-    'options' => ['class' => 'form-group has-feedback'],
-    'inputTemplate' => '{input}<div class="input-group-append"><div class="input-group-text"><span class="fas fa-envelope"></span></div></div>',
-    'template' => '{beginWrapper}{input}{error}{endWrapper}',
-    'wrapperOptions' => ['class' => 'input-group mb-3']
-])->label(false)->textInput(['placeholder' => $model->getAttributeLabel('username')]) ?>
+        <?= $form->field($model, 'password', [
+            'options' => ['class' => 'form-group has-feedback'],
+            'inputTemplate' => '{input}<div class="input-group-append"><div class="input-group-text"><span class="fas fa-lock"></span></div></div>',
+            'template' => '{beginWrapper}{input}{error}{endWrapper}',
+            'wrapperOptions' => ['class' => 'input-group mb-3']
+        ])->label(false)->passwordInput(['placeholder' => $model->getAttributeLabel('password')]) ?>
 
-<?= $form->field($model, 'password', [
-    'options' => ['class' => 'form-group has-feedback'],
-    'inputTemplate' => '{input}<div class="input-group-append"><div class="input-group-text"><span class="fas fa-lock"></span></div></div>',
-    'template' => '{beginWrapper}{input}{error}{endWrapper}',
-    'wrapperOptions' => ['class' => 'input-group mb-3']
-])->label(false)->passwordInput(['placeholder' => $model->getAttributeLabel('password')]) ?>
+        <div class="row">
+            <div class="col-6">
+                <?= $form->field($model, 'rememberMe')->checkbox([
+                    'template' => '<div class="icheck-success">{input}{label}</div>',
+                    'labelOptions' => [
+                        'class' => ''
+                    ],
+                    'uncheck' => null
+                ]) ?>
+            </div>
+            <div class="col-6">
+                <?= Html::a('<i class="fa fa-key mr-2"></i> Forgot Password', ['user/request-password-reset'], ['class' => 'text-dark']) ?>
+            </div>
+        </div>
 
-<div class="row">
-    <div class="col-6">
-        <?= $form->field($model, 'rememberMe')->checkbox([
-            'template' => '<div class="icheck-success">{input}{label}</div>',
-            'labelOptions' => [
-                'class' => ''
-            ],
-            'uncheck' => null
-        ]) ?>
+        <div class="row">
+            <div class="col-12">
+                <?= Html::submitButton('Sign In', ['class' => 'btn btn-success btn-block', 'name' => 'login-button']) ?>
+            </div>
+            <div class="col-12">
+                <p class="small fw-bold mt-2 pt-1 mb-0">Don't have an account? <a href="<?= \yii\helpers\Url::to('/admin/user/account') ?>" class="link-danger">Get Your Account Now!</a></p>
+            </div>
+        </div>
+
+
+        <?php ActiveForm::end(); ?>
     </div>
-    <div class="col-6">
-        <?= Html::a('<i class="fa fa-key mr-2"></i> Forgot Password', ['user/request-password-reset'], ['class' => 'text-dark']) ?>
-    </div>
 </div>
-
-<div class="row">
-    <div class="col-12">
-        <?= Html::submitButton('Sign In', ['class' => 'btn btn-success btn-block', 'name' => 'login-button']) ?>
-    </div>
-</div>
-
-
-<?php ActiveForm::end(); ?>
-
 <!-- Email input -->
 <!--<div class="form-outline mb-4">
     <input type="email" id="form3Example3" class="form-control form-control-lg"

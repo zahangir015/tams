@@ -4,13 +4,12 @@ use hail812\adminlte\widgets\Menu;
 use yii\helpers\Url;
 use app\modules\admin\components\Helper;
 
-//dd((Helper::checkRoute('/country/') || Helper::checkRoute('/city/') || Helper::checkRoute('/company/')), false);
 ?>
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
-    <a href="<?= Url::home() ?>" class="brand-link">
-        <img src="<?= $assetDir ?>/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
+    <a href="<?= Url::home() ?>" class="h-100 p-2 text-center">
+        <img src="<?= Url::to('/uploads/logo.svg') ?>" alt="MY TRAMS" class="brand-image elevation-3"
              style="opacity: .8">
-        <span class="brand-text font-weight-light">TRAMS</span>
+        <!--<span class="brand-text font-weight-light">TRAMS</span>-->
     </a>
     <div class="sidebar">
         <nav class="mt-2">

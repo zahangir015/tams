@@ -1,7 +1,10 @@
 <?php
 
 /* @var $this \yii\web\View */
+
 /* @var $content string */
+
+use yii\helpers\Url;
 
 \hail812\adminlte3\assets\AdminLteAsset::register($this);
 $this->registerCssFile('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700');
@@ -27,9 +30,11 @@ $this->registerCssFile('https://code.ionicframework.com/ionicons/2.0.1/css/ionic
                 height: 1px;
                 background: #eee;
             }
+
             .h-custom {
                 height: calc(100% - 73px);
             }
+
             @media (max-width: 450px) {
                 .h-custom {
                     height: 100%;
@@ -39,22 +44,31 @@ $this->registerCssFile('https://code.ionicframework.com/ionicons/2.0.1/css/ionic
     </head>
     <body>
     <?php $this->beginBody() ?>
-    <section class="vh-100">
+    <section class="vh-100" style="background-color: #D6EADF">
         <div class="container-fluid h-custom">
-            <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="row justify-content-center align-items-center h-100">
                 <div class="col-md-9 col-lg-6 col-xl-5">
-                    <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
-                         class="img-fluid" alt="Sample image">
+                    <div class="text-center">
+                        <img class="align-center" src="<?= Url::to('/uploads/logo.svg') ?>" class="img-fluid" alt="MyTrams">
+                        <h1 class="text-dark">Travel Agency Management System</h1>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam aspernatur autem eaque eveniet, fugiat incidunt ipsa labore necessitatibus neque, nobis odio, recusandae rerum saepe sed tempore unde vitae. Consectetur, cumque.</p>
+                        <img src="<?= Url::to('/uploads/login_banner.svg') ?>" class="img-fluid" alt="Travel Agency">
+                    </div>
                 </div>
                 <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
                     <?= $content ?>
                 </div>
             </div>
         </div>
+        <div class="d-flex flex-column flex-md-row text-center text-md-start justify-content-between py-4 px-4 px-xl-5">
+            <div class="text-green mb-3 mb-md-0">
+                Copyright © <?= date('Y') ?>. All rights reserved.
+            </div>
+        </div>
         <!--<div class="d-flex flex-column flex-md-row text-center text-md-start justify-content-between py-4 px-4 px-xl-5 bg-primary">
 
             <div class="text-white mb-3 mb-md-0">
-                Copyright © <?php /*= date('Y') */?>. All rights reserved.
+                Copyright © <?php /*= date('Y') */ ?>. All rights reserved.
             </div>
             <div>
                 <a href="#!" class="text-white me-4">
