@@ -40,7 +40,7 @@ use app\modules\admin\components\Helper;
                         'options' => [
                             'class' => 'nav-item has-treeview bg-green mb-2 rounded',
                         ],
-                        'linkOptions' => ['class' => 'nav-link text-red'],
+                        'linkOptions' => ['class' => 'nav-link text-white'],
                     ],
                     [
                         'label' => 'General Settings',
@@ -51,8 +51,9 @@ use app\modules\admin\components\Helper;
                             ['label' => 'Company', 'icon' => 'building', 'url' => ['/company'], 'visible' => Helper::checkRoute('/company/')],
                         ],
                         'options' => [
-                            'class' => 'nav-item has-treeview bg-gradient-green mb-2 rounded',
+                            'class' => 'nav-item has-treeview bg-green mb-2 rounded',
                         ],
+                        'linkOptions' => ['class' => 'nav-link text-white'],
                         'visible' => Helper::checkRoute('/country/') || Helper::checkRoute('/city/') || Helper::checkRoute('/company/')
                     ],
                     [
@@ -63,8 +64,9 @@ use app\modules\admin\components\Helper;
                             ['label' => 'Create User', 'icon' => 'user-plus', 'url' => ['/admin/user/create'], 'visible' => Helper::checkRoute('admin/user/create')],
                         ],
                         'options' => [
-                            'class' => 'nav-item has-treeview bg-gradient-green mb-2 rounded',
+                            'class' => 'nav-item has-treeview bg-green mb-2 rounded',
                         ],
+                        'linkOptions' => ['class' => 'nav-link text-white'],
                     ],
                     [
                         'label' => 'Authorization',
@@ -77,8 +79,9 @@ use app\modules\admin\components\Helper;
                             ['label' => 'Assignment', 'icon' => 'check-double', 'url' => ['/admin/assignment'], 'visible' => Helper::checkRoute('/admin/assignment')],
                         ],
                         'options' => [
-                            'class' => 'nav-item has-treeview bg-gradient-green mb-2 rounded',
+                            'class' => 'nav-item has-treeview bg-green mb-2 rounded',
                         ],
+                        'linkOptions' => ['class' => 'nav-link text-white'],
                     ],
                     [
                         'label' => 'HRM',
@@ -173,8 +176,9 @@ use app\modules\admin\components\Helper;
                             ],
                         ],
                         'options' => [
-                            'class' => 'nav-item has-treeview bg-gradient-green mb-2 rounded',
+                            'class' => 'nav-item has-treeview bg-green mb-2 rounded',
                         ],
+                        'linkOptions' => ['class' => 'nav-link text-white'],
                     ],
                     [
                         'label' => 'Sales Management',
@@ -259,8 +263,9 @@ use app\modules\admin\components\Helper;
                             ],
                         ],
                         'options' => [
-                            'class' => 'nav-item has-treeview bg-gradient-green mb-2 rounded',
+                            'class' => 'nav-item has-treeview bg-green mb-2 rounded',
                         ],
+                        'linkOptions' => ['class' => 'nav-link text-white'],
                     ],
                     [
                         'label' => 'Accounts Management',
@@ -300,8 +305,9 @@ use app\modules\admin\components\Helper;
                             ],
                         ],
                         'options' => [
-                            'class' => 'nav-item has-treeview bg-gradient-green mb-2 rounded',
+                            'class' => 'nav-item has-treeview bg-green mb-2 rounded',
                         ],
+                        'linkOptions' => ['class' => 'nav-link text-white'],
                     ],
                     /*['label' => 'Yii2 PROVIDED', 'header' => true],
                     ['label' => 'Login', 'url' => ['site/login'], 'icon' => 'sign-in-alt', 'visible' => Yii::$app->user->isGuest],
