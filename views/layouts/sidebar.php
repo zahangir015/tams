@@ -4,13 +4,12 @@ use hail812\adminlte\widgets\Menu;
 use yii\helpers\Url;
 use app\modules\admin\components\Helper;
 
-//dd((Helper::checkRoute('/country/') || Helper::checkRoute('/city/') || Helper::checkRoute('/company/')), false);
 ?>
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
-    <a href="<?= Url::home() ?>" class="brand-link">
-        <img src="<?= $assetDir ?>/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
+    <a href="<?= Url::home() ?>" class="h-100 p-2 text-center">
+        <img src="<?= Url::to('/uploads/logo.svg') ?>" alt="MY TRAMS" class="brand-image elevation-3"
              style="opacity: .8">
-        <span class="brand-text font-weight-light">TRAMS</span>
+        <!--<span class="brand-text font-weight-light">TRAMS</span>-->
     </a>
     <div class="sidebar">
         <nav class="mt-2">
@@ -41,7 +40,7 @@ use app\modules\admin\components\Helper;
                         'options' => [
                             'class' => 'nav-item has-treeview bg-green mb-2 rounded',
                         ],
-                        'linkOptions' => ['class' => 'nav-link text-red'],
+                        'linkOptions' => ['class' => 'nav-link text-white'],
                     ],
                     [
                         'label' => 'General Settings',
@@ -52,8 +51,9 @@ use app\modules\admin\components\Helper;
                             ['label' => 'Company', 'icon' => 'building', 'url' => ['/company'], 'visible' => Helper::checkRoute('/company/')],
                         ],
                         'options' => [
-                            'class' => 'nav-item has-treeview bg-gradient-green mb-2 rounded',
+                            'class' => 'nav-item has-treeview bg-green mb-2 rounded',
                         ],
+                        'linkOptions' => ['class' => 'nav-link text-white'],
                         'visible' => Helper::checkRoute('/country/') || Helper::checkRoute('/city/') || Helper::checkRoute('/company/')
                     ],
                     [
@@ -64,8 +64,9 @@ use app\modules\admin\components\Helper;
                             ['label' => 'Create User', 'icon' => 'user-plus', 'url' => ['/admin/user/create'], 'visible' => Helper::checkRoute('admin/user/create')],
                         ],
                         'options' => [
-                            'class' => 'nav-item has-treeview bg-gradient-green mb-2 rounded',
+                            'class' => 'nav-item has-treeview bg-green mb-2 rounded',
                         ],
+                        'linkOptions' => ['class' => 'nav-link text-white'],
                     ],
                     [
                         'label' => 'Authorization',
@@ -78,8 +79,9 @@ use app\modules\admin\components\Helper;
                             ['label' => 'Assignment', 'icon' => 'check-double', 'url' => ['/admin/assignment'], 'visible' => Helper::checkRoute('/admin/assignment')],
                         ],
                         'options' => [
-                            'class' => 'nav-item has-treeview bg-gradient-green mb-2 rounded',
+                            'class' => 'nav-item has-treeview bg-green mb-2 rounded',
                         ],
+                        'linkOptions' => ['class' => 'nav-link text-white'],
                     ],
                     [
                         'label' => 'HRM',
@@ -174,8 +176,9 @@ use app\modules\admin\components\Helper;
                             ],
                         ],
                         'options' => [
-                            'class' => 'nav-item has-treeview bg-gradient-green mb-2 rounded',
+                            'class' => 'nav-item has-treeview bg-green mb-2 rounded',
                         ],
+                        'linkOptions' => ['class' => 'nav-link text-white'],
                     ],
                     [
                         'label' => 'Sales Management',
@@ -260,8 +263,9 @@ use app\modules\admin\components\Helper;
                             ],
                         ],
                         'options' => [
-                            'class' => 'nav-item has-treeview bg-gradient-green mb-2 rounded',
+                            'class' => 'nav-item has-treeview bg-green mb-2 rounded',
                         ],
+                        'linkOptions' => ['class' => 'nav-link text-white'],
                     ],
                     [
                         'label' => 'Accounts Management',
@@ -301,8 +305,9 @@ use app\modules\admin\components\Helper;
                             ],
                         ],
                         'options' => [
-                            'class' => 'nav-item has-treeview bg-gradient-green mb-2 rounded',
+                            'class' => 'nav-item has-treeview bg-green mb-2 rounded',
                         ],
+                        'linkOptions' => ['class' => 'nav-link text-white'],
                     ],
                     /*['label' => 'Yii2 PROVIDED', 'header' => true],
                     ['label' => 'Login', 'url' => ['site/login'], 'icon' => 'sign-in-alt', 'visible' => Yii::$app->user->isGuest],

@@ -16,30 +16,36 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="card">
     <div class="card-body login-card-body shadow rounded-lg">
         <?php $form = ActiveForm::begin(); ?>
+        <div class="d-flex flex-row align-items-center justify-content-center justify-content-lg-start">
+            <h4 class="font-weight-bold text-center text-success">Get Your Account Now</h4>
+        </div>
         <div class="row">
-            <div class="col-12">
+            <div class="col-lg-6 col-md-6">
                 <?= $form->field($model, 'company')->textInput(['maxlength' => true]) ?>
             </div>
-            <div class="col-12">
+            <div class="col-lg-6 col-md-6">
                 <?= $form->field($model, 'address')->textInput(['maxlength' => true]) ?>
             </div>
-            <div class="col-12">
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-md-6">
                 <?= $form->field($model, "countryId")->widget(Select2::class, Utilities::ajaxDropDown('countryId', '/country/get-countries', true, 'countryId', 'country'))->label('Country') ?>
             </div>
-            <div class="col-12">
+            <div class="col-lg-6 col-md-6">
                 <?= $form->field($model, "cityId")->widget(DepDrop::class, Utilities::depDropConfigurationGenerate($model, 'cityId', 'countryId', '/city/get-city-by-country', ($model->city) ? [$model->cityId => $model->city->name] : [])) ?>
             </div>
-            <div class="col-12">
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-md-6">
                 <?= $form->field($model, 'phone')->textInput(['maxlength' => true]) ?>
             </div>
-            <div class="col-12">
+            <div class="col-lg-6 col-md-6">
                 <?= $form->field($model, 'email')->textInput(['maxlength' => true, 'type' => 'email']) ?>
             </div>
         </div>
-
         <div class="row">
             <div class="col-12">
-                <?= Html::submitButton('Register', ['class' => 'btn btn-success btn-block', 'name' => 'login-button']) ?>
+                <?= Html::submitButton('Send', ['class' => 'btn btn-success btn-block', 'name' => 'login-button']) ?>
             </div>
         </div>
 
