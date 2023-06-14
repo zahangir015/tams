@@ -11,8 +11,7 @@ $this->title = Yii::t('rbac-admin', 'Login');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="card">
-    <div class="card-body login-card-body">
-        <p class="login-box-msg font-weight-bold text-green">Welcome To MY TRAMS</p>
+    <div class="card-body login-card-body shadow rounded-lg">
 
         <?php $form = ActiveForm::begin(['id' => 'login-form']) ?>
 
@@ -28,13 +27,12 @@ $this->params['breadcrumbs'][] = $this->title;
             'inputTemplate' => '{input}<div class="input-group-append"><div class="input-group-text"><span class="fas fa-lock"></span></div></div>',
             'template' => '{beginWrapper}{input}{error}{endWrapper}',
             'wrapperOptions' => ['class' => 'input-group mb-3']
-        ])->label(false)
-            ->passwordInput(['placeholder' => $model->getAttributeLabel('password')]) ?>
+        ])->label(false)->passwordInput(['placeholder' => $model->getAttributeLabel('password')]) ?>
 
         <div class="row">
             <div class="col-6">
                 <?= $form->field($model, 'rememberMe')->checkbox([
-                    'template' => '<div class="icheck-primary">{input}{label}</div>',
+                    'template' => '<div class="icheck-success">{input}{label}</div>',
                     'labelOptions' => [
                         'class' => ''
                     ],
@@ -48,14 +46,23 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <div class="row">
             <div class="col-12">
-                <?= Html::submitButton('Sign In', ['class' => 'btn btn-primary btn-block', 'name' => 'login-button']) ?>
+                <?= Html::submitButton('Sign In', ['class' => 'btn btn-success btn-block', 'name' => 'login-button']) ?>
             </div>
         </div>
+
 
         <?php ActiveForm::end(); ?>
 
         <div class="social-auth-links text-center mb-3">
-
+            <p class="text-center">- OR -</p>
+            <div class="row  mt-2">
+                <div class="col-12 mb-2">
+                    <?= Html::a('Register a new membership', ['/admin/user/account'], ['class' => 'btn btn-success btn-block']) ?>
+                </div>
+                <div class="col-12">
+                    <?= Html::a('Inquire', ['/support/inquiry/'], ['class' => 'btn btn-success btn-block']) ?>
+                </div>
+            </div>
         </div>
     </div>
     <!-- /.login-card-body -->

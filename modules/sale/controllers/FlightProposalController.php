@@ -91,7 +91,7 @@ class FlightProposalController extends ParentController
         $model = $this->proposalService->findFlightProposal($uid, ['flightProposalItineraries']);
 
         if ($this->request->isPost) {
-            // Update Hotel
+            // Update Flight
             $updateResponse = $this->proposalService->updateFlightProposal(Yii::$app->request->post(), $model);
             if ($updateResponse['error']) {
                 Yii::$app->session->setFlash('danger', $updateResponse['message']);
@@ -124,11 +124,11 @@ class FlightProposalController extends ParentController
     public function actionAddItinerary($row): string
     {
         $model = new FlightProposal();
-        $hotelSupplier = new FlightProposalItinerary();
-        return $this->renderAjax('supplier', [
+        $itinerary = new FlightProposalItinerary();
+        return $this->renderAjax('itinerary', [
             'row' => $row,
             'model' => $model,
-            'hotelSupplier' => $hotelSupplier,
+            'itinerary' => $itinerary,
             'form' => ActiveForm::begin(['class' => 'form'])
         ]);
     }

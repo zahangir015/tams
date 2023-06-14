@@ -7,19 +7,15 @@ use app\modules\admin\components\Helper;
 //dd((Helper::checkRoute('/country/') || Helper::checkRoute('/city/') || Helper::checkRoute('/company/')), false);
 ?>
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
-    <!-- Brand Logo -->
     <a href="<?= Url::home() ?>" class="brand-link">
         <img src="<?= $assetDir ?>/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
              style="opacity: .8">
         <span class="brand-text font-weight-light">TRAMS</span>
     </a>
-
-    <!-- Sidebar -->
     <div class="sidebar">
-        <!-- Sidebar user panel (optional) -->
-
         <nav class="mt-2">
             <?= Menu::widget([
+                'activeCssClass'=>'bg-green-active',
                 'items' => [
                     [
                         'label' => 'Agency Management',
@@ -43,8 +39,9 @@ use app\modules\admin\components\Helper;
                             ],
                         ],
                         'options' => [
-                            'class' => 'bg-gradient-green mb-2 rounded',
-                        ]
+                            'class' => 'nav-item has-treeview bg-green mb-2 rounded',
+                        ],
+                        'linkOptions' => ['class' => 'nav-link text-red'],
                     ],
                     [
                         'label' => 'General Settings',
@@ -55,7 +52,7 @@ use app\modules\admin\components\Helper;
                             ['label' => 'Company', 'icon' => 'building', 'url' => ['/company'], 'visible' => Helper::checkRoute('/company/')],
                         ],
                         'options' => [
-                            'class' => 'bg-gradient-green mb-2 rounded',
+                            'class' => 'nav-item has-treeview bg-gradient-green mb-2 rounded',
                         ],
                         'visible' => Helper::checkRoute('/country/') || Helper::checkRoute('/city/') || Helper::checkRoute('/company/')
                     ],
@@ -67,7 +64,7 @@ use app\modules\admin\components\Helper;
                             ['label' => 'Create User', 'icon' => 'user-plus', 'url' => ['/admin/user/create'], 'visible' => Helper::checkRoute('admin/user/create')],
                         ],
                         'options' => [
-                            'class' => 'bg-gradient-green mb-2 rounded',
+                            'class' => 'nav-item has-treeview bg-gradient-green mb-2 rounded',
                         ],
                     ],
                     [
@@ -81,7 +78,7 @@ use app\modules\admin\components\Helper;
                             ['label' => 'Assignment', 'icon' => 'check-double', 'url' => ['/admin/assignment'], 'visible' => Helper::checkRoute('/admin/assignment')],
                         ],
                         'options' => [
-                            'class' => 'bg-gradient-green mb-2 rounded',
+                            'class' => 'nav-item has-treeview bg-gradient-green mb-2 rounded',
                         ],
                     ],
                     [
@@ -177,7 +174,7 @@ use app\modules\admin\components\Helper;
                             ],
                         ],
                         'options' => [
-                            'class' => 'bg-gradient-green mb-2 rounded',
+                            'class' => 'nav-item has-treeview bg-gradient-green mb-2 rounded',
                         ],
                     ],
                     [
@@ -263,7 +260,7 @@ use app\modules\admin\components\Helper;
                             ],
                         ],
                         'options' => [
-                            'class' => 'bg-gradient-green mb-2 rounded',
+                            'class' => 'nav-item has-treeview bg-gradient-green mb-2 rounded',
                         ],
                     ],
                     [
@@ -304,7 +301,7 @@ use app\modules\admin\components\Helper;
                             ],
                         ],
                         'options' => [
-                            'class' => 'bg-gradient-green mb-2 rounded',
+                            'class' => 'nav-item has-treeview bg-gradient-green mb-2 rounded',
                         ],
                     ],
                     /*['label' => 'Yii2 PROVIDED', 'header' => true],

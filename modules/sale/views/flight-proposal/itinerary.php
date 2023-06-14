@@ -12,7 +12,7 @@ use kartik\select2\Select2;
 
 ?>
 <div class="card card-custom card-border mb-5" id="card<?= $row ?>">
-    <div class="card-header bg-gray-light">
+    <div class="card-header bg-success">
         <div class="card-title">
             <span class="card-icon"><i class="flaticon2-paper-plane text-primary"></i></span>
             <h5 class="card-label" id="card-label-<?= $row ?>">Itinerary <?= ($row + 1) ?></h5>
@@ -33,7 +33,7 @@ use kartik\select2\Select2;
             ?>
         </div>
     </div>
-    <div class="card-body">
+    <div class="card-body bg-gray-400">
         <div class="row">
             <div class="col-md">
                 <?= $form->field($itinerary, "[$row]flightNumber")->textInput(['maxlength' => true]); ?>
@@ -42,13 +42,15 @@ use kartik\select2\Select2;
                 <?= $form->field($itinerary, "[$row]departureFrom")->textInput(['maxlength' => true]); ?>
             </div>
             <div class="col-md">
-                <?= $form->field($itinerary, "[$row]departure")->widget(DatePicker::class, WidgetHelper::getDateWidget('departure' . $row, 'departure' . $row, false, true)); ?>
-            </div>
-            <div class="col-md">
                 <?= $form->field($itinerary, "[$row]arrivalTo")->textInput(['maxlength' => true]); ?>
             </div>
+        </div>
+        <div class="row">
             <div class="col-md">
                 <?= $form->field($itinerary, "[$row]arrival")->widget(DatePicker::class, WidgetHelper::getDateWidget('arrival' . $row, 'arrival' . $row, false, true)); ?>
+            </div>
+            <div class="col-md">
+                <?= $form->field($itinerary, "[$row]departure")->widget(DatePicker::class, WidgetHelper::getDateWidget('departure' . $row, 'departure' . $row, false, true)); ?>
             </div>
         </div>
     </div>
