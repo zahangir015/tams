@@ -14,7 +14,7 @@ class HotelProposalSearch extends HotelProposal
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['id', 'agencyId', 'hotelCategoryId', 'countryId', 'cityId', 'numberOfAdult', 'numberOfChild', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
@@ -26,7 +26,7 @@ class HotelProposalSearch extends HotelProposal
     /**
      * {@inheritdoc}
      */
-    public function scenarios()
+    public function scenarios(): array
     {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
@@ -39,7 +39,7 @@ class HotelProposalSearch extends HotelProposal
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search(array $params): ActiveDataProvider
     {
         $query = HotelProposal::find();
 

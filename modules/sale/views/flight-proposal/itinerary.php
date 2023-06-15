@@ -5,6 +5,7 @@ use app\components\WidgetHelper;
 use app\modules\sale\components\ServiceConstant;
 use kartik\date\DatePicker;
 use kartik\daterange\DateRangePicker;
+use kartik\datetime\DateTimePicker;
 use kartik\select2\Select2;
 
 /* @var $this yii\web\View */
@@ -47,10 +48,10 @@ use kartik\select2\Select2;
         </div>
         <div class="row">
             <div class="col-md">
-                <?= $form->field($itinerary, "[$row]arrival")->widget(DatePicker::class, WidgetHelper::getDateWidget('arrival' . $row, 'arrival' . $row, false, true)); ?>
+                <?= $form->field($itinerary, "[$row]arrival")->widget(DateTimePicker::class, WidgetHelper::getDateTimeWidget('arrival' . $row, 'arrival' . $row, true, true)); ?>
             </div>
             <div class="col-md">
-                <?= $form->field($itinerary, "[$row]departure")->widget(DatePicker::class, WidgetHelper::getDateWidget('departure' . $row, 'departure' . $row, false, true)); ?>
+                <?= $form->field($itinerary, "[$row]departure")->widget(DateTimePicker::class, WidgetHelper::getDateTimeWidget('departure' . $row, 'departure' . $row, true, true)); ?>
             </div>
         </div>
     </div>

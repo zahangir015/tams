@@ -1,5 +1,10 @@
 <?php
 
+use app\components\GlobalConstant;
+use app\components\Utilities;
+use app\components\WidgetHelper;
+use app\modules\sale\components\ServiceConstant;
+use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
 use yii\web\JqueryAsset;
@@ -45,15 +50,15 @@ $this->registerJsFile(
                     <?php $form = ActiveForm::begin(); ?>
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($model, 'airlineId')->textInput() ?>
+                            <?= $form->field($model, 'airlineId')->widget(Select2::class, WidgetHelper::ajaxSelect2Widget('airlineId', '/sale/airline/get-airlines', true, 'airlineId', 'airline', ($model->isNewRecord) ? [] : [$model->airlineId => $model->airline->name . ' | ' . $model->airline->code]))->label('Airline') ?>
                         </div>
                         <div class="col-md">
-                            <?= $form->field($model, 'class')->textInput(['maxlength' => true]) ?>
+                            <?= $form->field($model, 'class')->dropdownList(ServiceConstant::SEAT_CLASS,['maxlength' => true]) ?>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($model, 'tripType')->textInput() ?>
+                            <?= $form->field($model, 'tripType')->dropdownList(GlobalConstant::TRIP_TYPE) ?>
                         </div>
                         <div class="col-md">
                             <?= $form->field($model, 'route')->textInput(['maxlength' => true]) ?>
@@ -61,26 +66,26 @@ $this->registerJsFile(
                     </div>
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($model, 'numberOfAdult')->textInput() ?>
+                            <?= $form->field($model, 'numberOfAdult')->textInput(['type' => 'number']) ?>
                         </div>
                         <div class="col-md">
-                            <?= $form->field($model, 'pricePerAdult')->textInput() ?>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md">
-                            <?= $form->field($model, 'numberOfChild')->textInput() ?>
-                        </div>
-                        <div class="col-md">
-                            <?= $form->field($model, 'pricePerChild')->textInput() ?>
+                            <?= $form->field($model, 'pricePerAdult')->textInput(['type' => 'number']) ?>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($model, 'numberOfInfant')->textInput() ?>
+                            <?= $form->field($model, 'numberOfChild')->textInput(['type' => 'number']) ?>
                         </div>
                         <div class="col-md">
-                            <?= $form->field($model, 'pricePerInfant')->textInput() ?>
+                            <?= $form->field($model, 'pricePerChild')->textInput(['type' => 'number']) ?>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md">
+                            <?= $form->field($model, 'numberOfInfant')->textInput(['type' => 'number']) ?>
+                        </div>
+                        <div class="col-md">
+                            <?= $form->field($model, 'pricePerInfant')->textInput(['type' => 'number']) ?>
                         </div>
                     </div>
                     <div class="row">
@@ -96,10 +101,10 @@ $this->registerJsFile(
                     </div>
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($model, 'totalPrice')->textInput() ?>
+                            <?= $form->field($model, 'totalPrice')->textInput(['type' => 'number']) ?>
                         </div>
                         <div class="col-md">
-                            <?= $form->field($model, 'discount')->textInput() ?>
+                            <?= $form->field($model, 'discount')->textInput(['type' => 'number']) ?>
                         </div>
                         <div class="col-md">
                             <?= $form->field($model, 'notes')->textInput(['rows' => 6]) ?>

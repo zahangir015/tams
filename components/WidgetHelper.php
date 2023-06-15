@@ -5,6 +5,7 @@ namespace app\components;
 use kartik\export\ExportMenu;
 use kartik\grid\GridView;
 use kartik\select2\Select2;
+use Yii;
 use yii\bootstrap4\Html;
 use yii\helpers\Json;
 use yii\helpers\Url;
@@ -145,6 +146,23 @@ class WidgetHelper
         ];
     }
 
+    public static function getDateTimeWidget($id, $class = null, $required = false, $disable = false): array
+    {
+        return [
+            'options' => [
+                'id' => $id,
+                'class' => $class ?? '',
+                'disabled' => $disable,
+                'required' => $required,
+            ],
+            'pluginOptions' => [
+                'autoclose' => true,
+                //'format' => 'yyyy-mm-dd hh:ii:ss'
+            ]
+        ];
+    }
+
+
     public static function getToolbar($create = false, $reset = true, $export = true, $toggleData = true, $filter = true): array
     {
         $create = $create ? html::a('<i class="fas fa-plus"></i>', ['create'], ['role' => 'modal-remote', 'title' => 'Create', 'class' => 'btn btn-primary rounded mr-2']) : '';
@@ -239,4 +257,23 @@ class WidgetHelper
             ],
         ];
     }
+
+    public static function kartikToolBar(): array
+    {
+        return [
+            [
+                'content' =>
+                    Html::a('<i class="fas fa-plus"></i>', ['create'], [
+                        'title' => Yii::t('app', 'Add Customer'),
+                        'class' => 'btn btn-success'
+                    ]) . ' ' .
+                    Html::a('<i class="fas fa-redo"></i>', ['index'], [
+                        'class' => 'btn btn-primary',
+                        'title' => Yii::t('app', 'Reset Grid')
+                    ]),
+            ],
+            '{export}',
+            '{toggleData}'
+        ];
+}
 }
