@@ -19,6 +19,7 @@ use yii\mail\BaseMailer;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 /**
  * User controller
@@ -81,8 +82,8 @@ class UserController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-                'searchModel' => $searchModel,
-                'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -94,7 +95,7 @@ class UserController extends Controller
     public function actionView($id)
     {
         return $this->render('view', [
-                'model' => $this->findModel($id),
+            'model' => $this->findModel($id),
         ]);
     }
 
@@ -126,7 +127,7 @@ class UserController extends Controller
             return $this->goBack();
         } else {
             return $this->render('login', [
-                    'model' => $model,
+                'model' => $model,
             ]);
         }
     }
@@ -159,12 +160,16 @@ class UserController extends Controller
         ]);
     }
 
-    public function actionAccount()
+    public function actionAccount(): Response|string
     {
         $model = new Agency();
         if ($model->load(Yii::$app->getRequest()->post())) {
-            if ($user = $model->signup()) {
-                return $this->goHome();
+
+            if (!$model->save()) {
+                dd($model->getErrors());
+                Yii::$app->session->setFlash('danger', 'Your request failed. Please contact with admin.');
+            } else {
+                Yii::$app->session->setFlash('success', 'Your request is placed successfully. With in two working days we will contact with you.');
             }
         }
 
@@ -209,7 +214,7 @@ class UserController extends Controller
         }
 
         return $this->render('requestPasswordResetToken', [
-                'model' => $model,
+            'model' => $model,
         ]);
     }
 
@@ -232,7 +237,7 @@ class UserController extends Controller
         }
 
         return $this->render('resetPassword', [
-                'model' => $model,
+            'model' => $model,
         ]);
     }
 
@@ -248,7 +253,7 @@ class UserController extends Controller
         }
 
         return $this->render('change-password', [
-                'model' => $model,
+            'model' => $model,
         ]);
     }
 

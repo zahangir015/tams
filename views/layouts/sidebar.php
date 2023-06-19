@@ -7,8 +7,7 @@ use app\modules\admin\components\Helper;
 ?>
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <a href="<?= Url::home() ?>" class="h-100 p-2 text-center">
-        <img src="<?= Url::to('/uploads/logo.svg') ?>" alt="MY TRAMS" class="brand-image elevation-3"
-             style="opacity: .8">
+        <img src="<?= Url::to('/uploads/logo.svg') ?>" alt="MY TRAMS" class="brand-image elevation-3" style="opacity: .8">
         <!--<span class="brand-text font-weight-light">TRAMS</span>-->
     </a>
     <div class="sidebar">
@@ -34,6 +33,25 @@ use app\modules\admin\components\Helper;
                                 'items' => [
                                     ['label' => 'Agency List', 'iconStyle' => 'far', 'icon' => 'dot-circle', 'url' => ['/agent/agency/index'], 'visible' => Helper::checkRoute('/agent/agency/index')],
                                     ['label' => 'Agency Add', 'iconStyle' => 'far', 'icon' => 'dot-circle', 'url' => ['/agent/agency/create'], 'visible' => Helper::checkRoute('/agent/agency/create')],
+                                    ['label' => 'Agency Request', 'iconStyle' => 'far', 'icon' => 'dot-circle', 'url' => ['/agent/agency-account-request/index'], 'visible' => Helper::checkRoute('/agent/agency-account-request/index')],
+                                ]
+                            ],
+                        ],
+                        'options' => [
+                            'class' => 'nav-item has-treeview bg-green mb-2 rounded',
+                        ],
+                        'linkOptions' => ['class' => 'nav-link text-white'],
+                    ],
+                    [
+                        'label' => 'Support Management',
+                        'icon' => 'handshake',
+                        'items' => [
+                            [
+                                'label' => 'Inquiry Management',
+                                'iconStyle' => 'far',
+                                'items' => [
+                                    ['label' => 'Inquiry List', 'iconStyle' => 'far', 'icon' => 'dot-circle', 'url' => ['/support/inquiry/index'], 'visible' => Helper::checkRoute('/support/inquiry/index')],
+                                    ['label' => 'Inquiry Add', 'iconStyle' => 'far', 'icon' => 'dot-circle', 'url' => ['/support/inquiry/create'], 'visible' => Helper::checkRoute('/support/inquiry/create')],
                                 ]
                             ],
                         ],
