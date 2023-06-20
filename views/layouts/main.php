@@ -4,7 +4,7 @@
 /* @var $content string */
 
 use yii\helpers\Html;
-if ((Yii::$app->controller->action->id === 'login') || (Yii::$app->controller->action->id === 'request-password-reset') || (Yii::$app->controller->action->id === 'account')) {
+if ((Yii::$app->controller->action->id === 'login') || (Yii::$app->controller->action->id === 'request-password-reset') || (Yii::$app->controller->action->id === 'account') || (Yii::$app->controller->action->id === 'inquiry')) {
     /**
      * Do not use this code in your template. Remove it.
      * Instead, use the code  $this->layout = '//main-login'; in your controller.

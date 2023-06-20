@@ -2,7 +2,11 @@
 
 namespace app\modules\agent\models;
 
+use app\models\City;
+use app\models\Country;
 use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%agency_account_request}}".
@@ -26,12 +30,12 @@ use Yii;
  * @property City $city
  * @property Country $country
  */
-class AgencyAccountRequest extends \yii\db\ActiveRecord
+class AgencyAccountRequest extends ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%agency_account_request}}';
     }
@@ -39,7 +43,7 @@ class AgencyAccountRequest extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['uid', 'name', 'designation', 'company', 'address', 'countryId', 'cityId', 'phone', 'email', 'createdBy', 'createdAt'], 'required'],
@@ -61,7 +65,7 @@ class AgencyAccountRequest extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),
@@ -85,9 +89,9 @@ class AgencyAccountRequest extends \yii\db\ActiveRecord
     /**
      * Gets query for [[City]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getCity()
+    public function getCity(): ActiveQuery
     {
         return $this->hasOne(City::class, ['id' => 'cityId']);
     }
@@ -95,9 +99,9 @@ class AgencyAccountRequest extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Country]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getCountry()
+    public function getCountry(): ActiveQuery
     {
         return $this->hasOne(Country::class, ['id' => 'countryId']);
     }

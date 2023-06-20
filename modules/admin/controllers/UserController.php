@@ -11,6 +11,8 @@ use app\modules\admin\models\form\Signup;
 use app\modules\admin\models\searchs\User as UserSearch;
 use app\modules\admin\models\User;
 use app\modules\agent\models\Agency;
+use app\modules\agent\models\AgencyAccountRequest;
+use app\modules\support\models\Inquiry;
 use Yii;
 use yii\base\InvalidParamException;
 use yii\base\UserException;
@@ -162,11 +164,9 @@ class UserController extends Controller
 
     public function actionAccount(): Response|string
     {
-        $model = new Agency();
+        $model = new AgencyAccountRequest();
         if ($model->load(Yii::$app->getRequest()->post())) {
-
             if (!$model->save()) {
-                dd($model->getErrors());
                 Yii::$app->session->setFlash('danger', 'Your request failed. Please contact with admin.');
             } else {
                 Yii::$app->session->setFlash('success', 'Your request is placed successfully. With in two working days we will contact with you.');
@@ -174,6 +174,23 @@ class UserController extends Controller
         }
 
         return $this->render('account', [
+            'model' => $model,
+        ]);
+    }
+
+    public function actionInquiry(): Response|string
+    {
+        $model = new Inquiry();
+        if ($model->load(Yii::$app->getRequest()->post())) {
+
+            if (!$model->save()) {
+                Yii::$app->session->setFlash('danger', 'Your request failed. Please contact with admin.');
+            } else {
+                Yii::$app->session->setFlash('success', 'Your request is placed successfully. With in two working days we will contact with you.');
+            }
+        }
+
+        return $this->render('inquiry', [
             'model' => $model,
         ]);
     }

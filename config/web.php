@@ -105,6 +105,7 @@ $config = [
         'allowActions' => [
             'admin/user/login',
             'admin/user/account',
+            'admin/user/inquiry',
             'admin/user/logout',
             'admin/user/request-password-reset',
             'country/get-countries',

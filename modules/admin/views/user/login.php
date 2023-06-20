@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -52,7 +53,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?= Html::submitButton('Sign In', ['class' => 'btn btn-success btn-block', 'name' => 'login-button']) ?>
             </div>
             <div class="col-12">
-                <p class="small fw-bold mt-2 pt-1 mb-0">Don't have an account? <a href="<?= \yii\helpers\Url::to('/admin/user/account') ?>" class="link-danger">Get Your Account Now!</a></p>
+                <p class="small fw-bold mt-2 pt-1 mb-0">Don't have an account? <a href="<?= Url::to('/admin/user/account') ?>" class="link-danger">Get Your Account Now!</a></p>
+                <p class="small fw-bold mt-2 pt-1 mb-0">Don't have any query? <a href="<?= Url::to('/admin/user/inquiry') ?>" class="link-danger">Query To Us.</a></p>
             </div>
         </div>
 
