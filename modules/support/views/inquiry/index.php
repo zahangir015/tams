@@ -3,13 +3,14 @@
 use app\components\Utilities;
 use app\components\WidgetHelper;
 use app\modules\support\models\Inquiry;
+use app\modules\support\SupportConstant;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use kartik\grid\ActionColumn;
 use kartik\grid\GridView;
 use yii\widgets\Pjax;
 /** @var yii\web\View $this */
-/** @var app\modules\support\models\InquirySerach $searchModel */
+/** @var app\modules\support\models\InquirySearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
 $this->title = Yii::t('app', 'Inquiries');
@@ -31,14 +32,32 @@ $this->params['breadcrumbs'][] = $this->title;
                 'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
                 'buttons' => Utilities::getBasicActionColumnArray()
             ],
-            'identificationNumber',
+            [
+                'attribute' => 'identificationNumber',
+                'value' => function($model){
+                    return $model->identificationNumber;
+                },
+                'label' => 'Identification #'
+            ],
             'name',
             'subject',
             'company',
             'phone',
             'email:email',
-            //'quire:ntext',
-            'status',
+            [
+                'attribute' => 'source',
+                'value' => function($model){
+                    return $model->source;
+                },
+                'filter' => SupportConstant::QUERY_SOURCE
+            ],
+            [
+                    'attribute' => 'status',
+                'value' => function($model){
+                    return SupportConstant::QUERY_STATUS[$model->status];
+                },
+                'filter' => SupportConstant::QUERY_STATUS
+            ],
             'createdBy',
             'createdAt',
             'updatedBy',

@@ -10,7 +10,7 @@ use yii\bootstrap4\ActiveForm;
 /* @var $form yii\bootstrap\ActiveForm */
 /* @var $model \mdm\admin\models\form\Login */
 
-$this->title = Yii::t('rbac-admin', 'Account Request');
+$this->title = Yii::t('rbac-admin', 'Inquiry');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="card">
@@ -38,7 +38,12 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
         <div class="row">
             <div class="col-lg-12 col-md-12">
-                <?= $form->field($model, 'quire')->textarea(['maxlength' => true]) ?>
+                <?= $form->field($model, 'subject')->textInput(['maxlength' => true]) ?>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 col-md-12">
+                <?= $form->field($model, 'quire')->textarea(['maxlength' => true])->label('Query') ?>
             </div>
         </div>
         <div class="row">

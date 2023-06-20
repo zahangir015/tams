@@ -2,6 +2,8 @@
 
 namespace app\modules\agent\models;
 
+use app\models\City;
+use app\models\Country;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\agent\models\AgencyAccountRequest;
@@ -11,6 +13,9 @@ use app\modules\agent\models\AgencyAccountRequest;
  */
 class AgencyAccountRequestSearch extends AgencyAccountRequest
 {
+    public $country;
+    public $city;
+
     /**
      * {@inheritdoc}
      */
@@ -18,7 +23,7 @@ class AgencyAccountRequestSearch extends AgencyAccountRequest
     {
         return [
             [['id', 'countryId', 'cityId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
-            [['uid', 'name', 'designation', 'company', 'address', 'phone', 'email'], 'safe'],
+            [['uid', 'name', 'designation', 'company', 'address', 'phone', 'email', 'country', 'city'], 'safe'],
         ];
     }
 
@@ -43,10 +48,21 @@ class AgencyAccountRequestSearch extends AgencyAccountRequest
         $query = AgencyAccountRequest::find();
 
         // add conditions that should always apply here
+        $query->joinWith(['country', 'city']);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => ['defaultOrder' => ['id' => SORT_DESC]]
         ]);
+
+        $dataProvider->sort->attributes['country'] = [
+            'asc' => [Country::tableName() . '.name' => SORT_ASC],
+            'desc' => [Country::tableName() . '.name' => SORT_DESC],
+        ];
+        $dataProvider->sort->attributes['city'] = [
+            'asc' => [City::tableName() . '.name' => SORT_ASC],
+            'desc' => [City::tableName() . '.name' => SORT_DESC],
+        ];
 
         $this->load($params);
 
@@ -68,7 +84,9 @@ class AgencyAccountRequestSearch extends AgencyAccountRequest
             'updatedAt' => $this->updatedAt,
         ]);
 
-        $query->andFilterWhere(['like', 'uid', $this->uid])
+        $query->andFilterWhere(['like', Country::tableName() . '.name', $this->country])
+            ->orFilterWhere(['like', Country::tableName() . '.code', $this->country])
+            ->andFilterWhere(['like', City::tableName() . '.name', $this->city])
             ->andFilterWhere(['like', 'name', $this->name])
             ->andFilterWhere(['like', 'designation', $this->designation])
             ->andFilterWhere(['like', 'company', $this->company])

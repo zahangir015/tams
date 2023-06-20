@@ -2,6 +2,7 @@
 
 namespace app\modules\admin\controllers;
 
+use app\components\Utilities;
 use app\modules\admin\components\UserStatus;
 use app\modules\admin\models\form\ChangePassword;
 use app\modules\admin\models\form\Login;
@@ -13,6 +14,7 @@ use app\modules\admin\models\User;
 use app\modules\agent\models\Agency;
 use app\modules\agent\models\AgencyAccountRequest;
 use app\modules\support\models\Inquiry;
+use app\modules\support\SupportConstant;
 use Yii;
 use yii\base\InvalidParamException;
 use yii\base\UserException;
@@ -182,11 +184,12 @@ class UserController extends Controller
     {
         $model = new Inquiry();
         if ($model->load(Yii::$app->getRequest()->post())) {
-
+            $model->identificationNumber = Utilities::inquiryIdentificationNumber();
+            $model->source = SupportConstant::QUERY_SOURCE['Website'];
             if (!$model->save()) {
                 Yii::$app->session->setFlash('danger', 'Your request failed. Please contact with admin.');
             } else {
-                Yii::$app->session->setFlash('success', 'Your request is placed successfully. With in two working days we will contact with you.');
+                Yii::$app->session->setFlash('success', 'Your query is placed successfully. With in two working days we will contact with you.');
             }
         }
 

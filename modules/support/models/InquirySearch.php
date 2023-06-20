@@ -61,6 +61,7 @@ class InquirySearch extends Inquiry
         $query->andFilterWhere([
             'id' => $this->id,
             'status' => $this->status,
+            'source' => $this->source,
             'identificationNumber' => $this->identificationNumber,
             'createdBy' => $this->createdBy,
             'createdAt' => $this->createdAt,
