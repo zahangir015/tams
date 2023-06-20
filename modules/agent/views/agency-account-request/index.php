@@ -1,11 +1,12 @@
 <?php
 
+use app\components\Utilities;
+use app\components\WidgetHelper;
 use app\modules\agent\models\AgencyAccountRequest;
 use yii\helpers\Html;
 use yii\helpers\Url;
-use yii\grid\ActionColumn;
-use yii\grid\GridView;
-use yii\widgets\Pjax;
+use kartik\grid\ActionColumn;
+use kartik\grid\GridView;
 /** @var yii\web\View $this */
 /** @var app\modules\agent\models\AgencyAccountRequestSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
@@ -14,46 +15,46 @@ $this->title = Yii::t('app', 'Agency Account Requests');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="agency-account-request-index">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <p>
-        <?= Html::a(Yii::t('app', 'Create Agency Account Request'), ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
-    <?php Pjax::begin(); ?>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
-            'uid',
+            ['class' => 'kartik\grid\SerialColumn'],
+            [
+                'class' => ActionColumn::class,
+                'urlCreator' => function ($action, AgencyAccountRequest $model, $key, $index, $column) {
+                    return Url::toRoute([$action, 'uid' => $model->uid]);
+                },
+                'width' => '150px',
+                'template' => '{view} {edit} {delete}',
+                'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
+                'buttons' => Utilities::getBasicActionColumnArray()
+            ],
             'name',
             'designation',
             'company',
-            //'address',
-            //'countryId',
-            //'cityId',
-            //'phone',
-            //'email:email',
-            //'status',
-            //'createdBy',
-            //'createdAt',
-            //'updatedBy',
-            //'updatedAt',
-            [
-                'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, AgencyAccountRequest $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'id' => $model->id]);
-                 }
-            ],
+            'address',
+            'countryId',
+            'cityId',
+            'phone',
+            'email:email',
+            'status',
+            'createdBy',
+            'createdAt',
+            'updatedBy',
+            'updatedAt',
+        ],
+        'toolbar' => WidgetHelper::kartikToolBar(),
+        'pjax' => true,
+        'bordered' => true,
+        'striped' => false,
+        'condensed' => false,
+        'responsive' => true,
+        'hover' => true,
+        'panel' => [
+            'heading' => '<i class="fas fa-list-alt"></i> ' . Html::encode($this->title),
+            'type' => GridView::TYPE_LIGHT
         ],
     ]); ?>
-
-    <?php Pjax::end(); ?>
 
 </div>
