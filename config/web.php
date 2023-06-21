@@ -96,14 +96,20 @@ $config = [
         'agent' => [
             'class' => 'app\modules\agent\Module',
         ],
+        'support' => [
+            'class' => 'app\modules\support\Module',
+        ],
     ],
     'as access' => [
         'class' => 'app\modules\admin\components\AccessControl',
         'allowActions' => [
             'admin/user/login',
             'admin/user/account',
+            'admin/user/inquiry',
             'admin/user/logout',
             'admin/user/request-password-reset',
+            'country/get-countries',
+            'city/get-city-by-country',
 //            'site/*',
 //            'admin/*',
 //            'gii/*',

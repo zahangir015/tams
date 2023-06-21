@@ -1,15 +1,15 @@
 <?php
 
-namespace app\modules\sale\models\search;
+namespace app\modules\support\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\sale\models\HotelProposal;
+use app\modules\support\models\Inquiry;
 
 /**
- * HotelProposalSearch represents the model behind the search form of `app\modules\sale\models\HotelProposal`.
+ * InquirySearch represents the model behind the search form of `app\modules\support\models\Inquiry`.
  */
-class HotelProposalSearch extends HotelProposal
+class InquirySearch extends Inquiry
 {
     /**
      * {@inheritdoc}
@@ -17,16 +17,15 @@ class HotelProposalSearch extends HotelProposal
     public function rules(): array
     {
         return [
-            [['id', 'agencyId', 'hotelCategoryId', 'countryId', 'cityId', 'numberOfAdult', 'numberOfChild', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
-            [['uid', 'hotelName', 'hotelAddress', 'amenities', 'notes'], 'safe'],
-            [['totalPrice', 'discount'], 'number'],
+            [['id', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['uid', 'name', 'subject', 'company', 'phone', 'email', 'quire', 'source', 'identificationNumber'], 'safe'],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function scenarios(): array
+    public function scenarios()
     {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
@@ -41,12 +40,13 @@ class HotelProposalSearch extends HotelProposal
      */
     public function search(array $params): ActiveDataProvider
     {
-        $query = HotelProposal::find();
+        $query = Inquiry::find();
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => ['defaultOrder' => ['id' => SORT_DESC]]
         ]);
 
         $this->load($params);
@@ -60,15 +60,9 @@ class HotelProposalSearch extends HotelProposal
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'agencyId' => $this->agencyId,
-            'hotelCategoryId' => $this->hotelCategoryId,
-            'countryId' => $this->countryId,
-            'cityId' => $this->cityId,
-            'numberOfAdult' => $this->numberOfAdult,
-            'numberOfChild' => $this->numberOfChild,
-            'totalPrice' => $this->totalPrice,
-            'discount' => $this->discount,
             'status' => $this->status,
+            'source' => $this->source,
+            'identificationNumber' => $this->identificationNumber,
             'createdBy' => $this->createdBy,
             'createdAt' => $this->createdAt,
             'updatedBy' => $this->updatedBy,
@@ -76,10 +70,12 @@ class HotelProposalSearch extends HotelProposal
         ]);
 
         $query->andFilterWhere(['like', 'uid', $this->uid])
-            ->andFilterWhere(['like', 'hotelName', $this->hotelName])
-            ->andFilterWhere(['like', 'hotelAddress', $this->hotelAddress])
-            ->andFilterWhere(['like', 'amenities', $this->amenities])
-            ->andFilterWhere(['like', 'notes', $this->notes]);
+            ->andFilterWhere(['like', 'name', $this->name])
+            ->andFilterWhere(['like', 'subject', $this->subject])
+            ->andFilterWhere(['like', 'company', $this->company])
+            ->andFilterWhere(['like', 'phone', $this->phone])
+            ->andFilterWhere(['like', 'email', $this->email])
+            ->andFilterWhere(['like', 'quire', $this->quire]);
 
         return $dataProvider;
     }

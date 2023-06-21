@@ -7,17 +7,19 @@ use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $form yii\bootstrap4\ActiveForm */
+/* @var $form yii\bootstrap\ActiveForm */
+/* @var $model \mdm\admin\models\form\Login */
 
-$this->title = Yii::t('rbac-admin', 'Account Request');
+$this->title = Yii::t('rbac-admin', 'Inquiry');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="card">
     <div class="card-body login-card-body shadow rounded-lg">
         <?php $form = ActiveForm::begin(); ?>
-        <div class="d-flex flex-row align-items-center justify-content-center justify-content-lg-start mt-5">
-            <h4 class="font-weight-bold text-center text-success">Get Your Account Now</h4>
+        <div class="d-flex flex-row align-items-center justify-content-center justify-content-lg-start mb-5">
+            <h4 class="font-weight-bold text-center text-success">Inquiry</h4>
         </div>
+
         <div class="row">
             <div class="col-lg-6 col-md-6">
                 <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
@@ -35,19 +37,15 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-6 col-md-6">
-                <?= $form->field($model, "countryId")->widget(Select2::class, Utilities::ajaxDropDown('countryId', '/country/get-countries', true, 'countryId', 'country'))->label('Country') ?>
-            </div>
-            <div class="col-lg-6 col-md-6">
-                <?= $form->field($model, "cityId")->widget(DepDrop::class, \app\components\WidgetHelper::depDropConfigurationGenerate($model, 'cityId', 'countryId', '/city/get-city-by-country', ($model->city) ? [$model->cityId => $model->city->name] : [])) ?>
+            <div class="col-lg-12 col-md-12">
+                <?= $form->field($model, 'subject')->textInput(['maxlength' => true]) ?>
             </div>
         </div>
         <div class="row">
             <div class="col-lg-12 col-md-12">
-                <?= $form->field($model, 'address')->textInput(['maxlength' => true]) ?>
+                <?= $form->field($model, 'quire')->textarea(['maxlength' => true])->label('Query') ?>
             </div>
         </div>
-
         <div class="row">
             <div class="col-12">
                 <?= Html::submitButton('Send', ['class' => 'btn btn-success btn-block', 'name' => 'login-button']) ?>
@@ -62,7 +60,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?= Html::a('Sign In', ['/admin/user/login'], ['class' => 'btn btn-success btn-block']) ?>
                 </div>
                 <div class="col-12">
-                    <?= Html::a('Inquire', ['/admin/user/inquiry'], ['class' => 'btn btn-success btn-block']) ?>
+                    <?= Html::a('Get an Account!', ['/admin/user/account'], ['class' => 'btn btn-success btn-block']) ?>
                 </div>
             </div>
         </div>

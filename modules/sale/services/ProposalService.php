@@ -46,6 +46,7 @@ class ProposalService
             if (!$flightProposal->load($requestData)){
                 throw new Exception('Flight proposal loading failed - ' . Utilities::processErrorMessages($flightProposal->getErrors()));
             }
+            $flightProposal->agencyId = Yii::$app->user->identity->agencyId;
             $flightProposal = $this->proposalRepository->store($flightProposal);
             if ($flightProposal->hasErrors()) {
                 throw new Exception('Flight proposal creation failed - ' . Utilities::processErrorMessages($flightProposal->getErrors()));

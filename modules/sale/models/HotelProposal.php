@@ -2,7 +2,12 @@
 
 namespace app\modules\sale\models;
 
+use app\models\City;
+use app\models\Country;
+use app\modules\agent\models\Agency;
 use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%hotel_proposal}}".
@@ -33,12 +38,12 @@ use Yii;
  * @property HotelCategory $hotelCategory
  * @property RoomDetail[] $roomDetails
  */
-class HotelProposal extends \yii\db\ActiveRecord
+class HotelProposal extends ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%hotel_proposal}}';
     }
@@ -46,7 +51,7 @@ class HotelProposal extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['uid', 'agencyId', 'hotelCategoryId', 'hotelName', 'hotelAddress', 'countryId', 'cityId', 'numberOfAdult', 'createdBy', 'createdAt'], 'required'],
@@ -66,17 +71,17 @@ class HotelProposal extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),
             'uid' => Yii::t('app', 'Uid'),
             'agencyId' => Yii::t('app', 'Agency ID'),
-            'hotelCategoryId' => Yii::t('app', 'Hotel Category ID'),
-            'hotelName' => Yii::t('app', 'Hotel Name'),
-            'hotelAddress' => Yii::t('app', 'Hotel Address'),
-            'countryId' => Yii::t('app', 'Country ID'),
-            'cityId' => Yii::t('app', 'City ID'),
+            'hotelCategoryId' => Yii::t('app', 'Category'),
+            'hotelName' => Yii::t('app', 'Name'),
+            'hotelAddress' => Yii::t('app', 'Address'),
+            'countryId' => Yii::t('app', 'Country'),
+            'cityId' => Yii::t('app', 'City'),
             'numberOfAdult' => Yii::t('app', 'Number Of Adult'),
             'numberOfChild' => Yii::t('app', 'Number Of Child'),
             'amenities' => Yii::t('app', 'Amenities'),
@@ -94,9 +99,9 @@ class HotelProposal extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Agency]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getAgency()
+    public function getAgency(): ActiveQuery
     {
         return $this->hasOne(Agency::class, ['id' => 'agencyId']);
     }
@@ -104,9 +109,9 @@ class HotelProposal extends \yii\db\ActiveRecord
     /**
      * Gets query for [[City]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getCity()
+    public function getCity(): ActiveQuery
     {
         return $this->hasOne(City::class, ['id' => 'cityId']);
     }
@@ -114,9 +119,9 @@ class HotelProposal extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Country]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getCountry()
+    public function getCountry(): ActiveQuery
     {
         return $this->hasOne(Country::class, ['id' => 'countryId']);
     }
@@ -124,9 +129,9 @@ class HotelProposal extends \yii\db\ActiveRecord
     /**
      * Gets query for [[HotelCategory]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getHotelCategory()
+    public function getHotelCategory(): ActiveQuery
     {
         return $this->hasOne(HotelCategory::class, ['id' => 'hotelCategoryId']);
     }
@@ -134,9 +139,9 @@ class HotelProposal extends \yii\db\ActiveRecord
     /**
      * Gets query for [[RoomDetails]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getRoomDetails()
+    public function getRoomDetails(): ActiveQuery
     {
         return $this->hasMany(RoomDetail::class, ['hotelProposalId' => 'id']);
     }

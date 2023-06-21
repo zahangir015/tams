@@ -2,6 +2,7 @@
 
 namespace app\modules\admin\controllers;
 
+use app\components\Utilities;
 use app\modules\admin\components\UserStatus;
 use app\modules\admin\models\form\ChangePassword;
 use app\modules\admin\models\form\Login;
@@ -11,6 +12,9 @@ use app\modules\admin\models\form\Signup;
 use app\modules\admin\models\searchs\User as UserSearch;
 use app\modules\admin\models\User;
 use app\modules\agent\models\Agency;
+use app\modules\agent\models\AgencyAccountRequest;
+use app\modules\support\models\Inquiry;
+use app\modules\support\SupportConstant;
 use Yii;
 use yii\base\InvalidParamException;
 use yii\base\UserException;
@@ -19,6 +23,7 @@ use yii\mail\BaseMailer;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 /**
  * User controller
@@ -81,8 +86,8 @@ class UserController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-                'searchModel' => $searchModel,
-                'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -94,7 +99,7 @@ class UserController extends Controller
     public function actionView($id)
     {
         return $this->render('view', [
-                'model' => $this->findModel($id),
+            'model' => $this->findModel($id),
         ]);
     }
 
@@ -126,7 +131,7 @@ class UserController extends Controller
             return $this->goBack();
         } else {
             return $this->render('login', [
-                    'model' => $model,
+                'model' => $model,
             ]);
         }
     }
@@ -159,16 +164,36 @@ class UserController extends Controller
         ]);
     }
 
-    public function actionAccount()
+    public function actionAccount(): Response|string
     {
-        $model = new Agency();
+        $model = new AgencyAccountRequest();
         if ($model->load(Yii::$app->getRequest()->post())) {
-            if ($user = $model->signup()) {
-                return $this->goHome();
+            if (!$model->save()) {
+                Yii::$app->session->setFlash('danger', 'Your request failed. Please contact with admin.');
+            } else {
+                Yii::$app->session->setFlash('success', 'Your request is placed successfully. With in two working days we will contact with you.');
             }
         }
 
         return $this->render('account', [
+            'model' => $model,
+        ]);
+    }
+
+    public function actionInquiry(): Response|string
+    {
+        $model = new Inquiry();
+        if ($model->load(Yii::$app->getRequest()->post())) {
+            $model->identificationNumber = Utilities::inquiryIdentificationNumber();
+            $model->source = SupportConstant::QUERY_SOURCE['Website'];
+            if (!$model->save()) {
+                Yii::$app->session->setFlash('danger', 'Your request failed. Please contact with admin.');
+            } else {
+                Yii::$app->session->setFlash('success', 'Your query is placed successfully. With in two working days we will contact with you.');
+            }
+        }
+
+        return $this->render('inquiry', [
             'model' => $model,
         ]);
     }
@@ -209,7 +234,7 @@ class UserController extends Controller
         }
 
         return $this->render('requestPasswordResetToken', [
-                'model' => $model,
+            'model' => $model,
         ]);
     }
 
@@ -232,7 +257,7 @@ class UserController extends Controller
         }
 
         return $this->render('resetPassword', [
-                'model' => $model,
+            'model' => $model,
         ]);
     }
 
@@ -248,7 +273,7 @@ class UserController extends Controller
         }
 
         return $this->render('change-password', [
-                'model' => $model,
+            'model' => $model,
         ]);
     }
 

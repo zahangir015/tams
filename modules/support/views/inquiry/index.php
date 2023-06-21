@@ -1,24 +1,22 @@
 <?php
 
-use app\components\GlobalConstant;
 use app\components\Utilities;
 use app\components\WidgetHelper;
-use app\modules\agent\models\Agency;
-use app\modules\agent\models\Plan;
-use yii\helpers\ArrayHelper;
+use app\modules\support\models\Inquiry;
+use app\modules\support\SupportConstant;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use kartik\grid\ActionColumn;
 use kartik\grid\GridView;
-
+use yii\widgets\Pjax;
 /** @var yii\web\View $this */
-/** @var app\modules\agent\models\search\AgencySearch $searchModel */
+/** @var app\modules\support\models\InquirySearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = Yii::t('app', 'Agencies');
+$this->title = Yii::t('app', 'Inquiries');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="agency-index">
+<div class="inquiry-index">
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
@@ -26,7 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'kartik\grid\SerialColumn'],
             [
                 'class' => ActionColumn::class,
-                'urlCreator' => function ($action, Agency $model, $key, $index, $column) {
+                'urlCreator' => function ($action, Inquiry $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'uid' => $model->uid]);
                 },
                 'width' => '150px',
@@ -35,40 +33,35 @@ $this->params['breadcrumbs'][] = $this->title;
                 'buttons' => Utilities::getBasicActionColumnArray()
             ],
             [
-                'attribute' => 'planId',
+                'attribute' => 'identificationNumber',
                 'value' => function($model){
-                    return $model->plan->name;
+                    return $model->identificationNumber;
                 },
-                'filter' => ArrayHelper::map(Plan::find()->select(['id', 'name'])->where(['status' => GlobalConstant::ACTIVE_STATUS])->all(), 'id', 'name')
+                'label' => 'Identification #'
             ],
-            'agentCode',
+            'name',
+            'subject',
             'company',
-            [
-                'attribute' => 'country',
-                'value' => function($model){
-                    return $model->country->name;
-                },
-            ],
-            [
-                'attribute' => 'city',
-                'value' => function($model){
-                    return $model->city->name;
-                },
-            ],
-            'address',
             'phone',
             'email:email',
-            'timeZone',
-            'currency',
-            'title',
-            'firstName',
-            'lastName',
-            //'status',
-            //'createdBy',
-            //'createdAt',
-            //'updatedBy',
-            //'updatedAt',
-
+            [
+                'attribute' => 'source',
+                'value' => function($model){
+                    return $model->source;
+                },
+                'filter' => SupportConstant::QUERY_SOURCE
+            ],
+            [
+                    'attribute' => 'status',
+                'value' => function($model){
+                    return SupportConstant::QUERY_STATUS[$model->status];
+                },
+                'filter' => SupportConstant::QUERY_STATUS
+            ],
+            'createdBy',
+            'createdAt',
+            'updatedBy',
+            'updatedAt',
         ],
         'toolbar' => WidgetHelper::kartikToolBar(),
         'pjax' => true,
@@ -79,7 +72,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'hover' => true,
         'panel' => [
             'heading' => '<i class="fas fa-list-alt"></i> ' . Html::encode($this->title),
-            'type' => GridView::TYPE_DARK
+            'type' => GridView::TYPE_LIGHT
         ],
     ]); ?>
 
