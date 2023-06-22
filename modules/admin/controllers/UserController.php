@@ -126,6 +126,12 @@ class UserController extends Controller
         $this->layout = '../../../../views/layouts/main-login';
         $model = new Login();
         if ($model->load(Yii::$app->getRequest()->post()) && $model->login()) {
+            if (Yii::$app->session->has('numberOfAttempt')) {
+                $attempt = Yii::$app->session->get('numberOfAttempt');
+                Yii::$app->session->set('numberOfAttempt', $attempt + 1);
+            } else {
+                Yii::$app->session->set('numberOfAttempt', 0);
+            }
             return $this->goBack();
         } else {
             return $this->render('login', [

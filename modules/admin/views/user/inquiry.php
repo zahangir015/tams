@@ -19,7 +19,6 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="d-flex flex-row align-items-center justify-content-center justify-content-lg-start mb-5">
             <h4 class="font-weight-bold text-center text-success">Inquiry</h4>
         </div>
-
         <div class="row">
             <div class="col-lg-6 col-md-6">
                 <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
