@@ -4,6 +4,7 @@
 
 /* @var $content string */
 
+use hail812\adminlte\widgets\Alert;
 use yii\helpers\Url;
 
 \hail812\adminlte3\assets\AdminLteAsset::register($this);
@@ -17,7 +18,7 @@ $this->registerCssFile('https://code.ionicframework.com/ionicons/2.0.1/css/ionic
     <head>
         <meta charset="<?= Yii::$app->charset ?>">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>MYTRAMS | Log in</title>
+        <title>MYTRAMS | <?= $this->title ?></title>
         <!-- Tell the browser to be responsive to screen width -->
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <?php $this->registerCsrfMetaTags() ?>
@@ -49,13 +50,35 @@ $this->registerCssFile('https://code.ionicframework.com/ionicons/2.0.1/css/ionic
             <div class="row justify-content-center align-items-center h-100">
                 <div class="col-md-9 col-lg-6 col-xl-5">
                     <div class="text-center">
-                        <img class="align-center" src="<?= Url::to('/uploads/logo.svg') ?>" class="img-fluid" alt="MyTrams">
+                        <img class="align-center" src="<?= Url::to('/uploads/logo.svg') ?>" class="img-fluid"
+                             alt="MyTrams">
                         <h1 class="text-dark">Travel Agency Management System</h1>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam aspernatur autem eaque eveniet, fugiat incidunt ipsa labore necessitatibus neque, nobis odio, recusandae rerum saepe sed tempore unde vitae. Consectetur, cumque.</p>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam aspernatur autem eaque
+                            eveniet, fugiat incidunt ipsa labore necessitatibus neque, nobis odio, recusandae rerum
+                            saepe sed tempore unde vitae. Consectetur, cumque.</p>
                         <img src="<?= Url::to('/uploads/login_banner.svg') ?>" class="img-fluid" alt="Travel Agency">
                     </div>
                 </div>
                 <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+                    <?php
+                    $flashMessages = Yii::$app->session->getAllFlashes();
+                    if ($flashMessages) {
+                        foreach ($flashMessages as $key => $message) {
+                            if ($key == 'error') {
+                                echo Alert::widget([
+                                    'type' => 'danger',
+                                    'body' => "<p>$message</p>",
+                                ]);
+                            } else {
+                                echo Alert::widget([
+                                    'type' => $key,
+                                    'body' => "<p>$message</p>",
+                                ]);
+                            }
+
+                        }
+                    }
+                    ?>
                     <?= $content ?>
                 </div>
             </div>
@@ -65,35 +88,7 @@ $this->registerCssFile('https://code.ionicframework.com/ionicons/2.0.1/css/ionic
                 Copyright © <?= date('Y') ?>. All rights reserved.
             </div>
         </div>
-        <!--<div class="d-flex flex-column flex-md-row text-center text-md-start justify-content-between py-4 px-4 px-xl-5 bg-primary">
-
-            <div class="text-white mb-3 mb-md-0">
-                Copyright © <?php /*= date('Y') */ ?>. All rights reserved.
-            </div>
-            <div>
-                <a href="#!" class="text-white me-4">
-                    <i class="fab fa-facebook-f"></i>
-                </a>
-                <a href="#!" class="text-white me-4">
-                    <i class="fab fa-twitter"></i>
-                </a>
-                <a href="#!" class="text-white me-4">
-                    <i class="fab fa-google"></i>
-                </a>
-                <a href="#!" class="text-white">
-                    <i class="fab fa-linkedin-in"></i>
-                </a>
-            </div>
-        </div>-->
     </section>
-    <!--<div class="login-box rounded-lg shadow">
-    <div class="login-logo">
-        <a href="<?php /*=Yii::$app->homeUrl*/ ?>"><b>MYTRAMS</b></a>
-    </div>-->
-    <!-- /.login-logo -->
-    <?php /*= $content */ ?><!--
-</div>-->
-    <!-- /.login-box -->
 
     <?php $this->endBody() ?>
     </body>

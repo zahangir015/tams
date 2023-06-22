@@ -27,7 +27,7 @@ trait BehaviorTrait
 
     public function beforeValidate(): bool
     {
-        if (isset(Yii::$app->controller->action) && (Yii::$app->controller->action->id != "index") && !Yii::$app->user->isGuest) {
+        if (isset(Yii::$app->controller->action) && (Yii::$app->controller->action->id != "index")) {
             if ($this->isNewRecord && $this->hasAttribute('createdBy')) {
                 $this->createdBy = Yii::$app->user->id ?? 1;
             } elseif(!$this->isNewRecord && $this->hasAttribute('updatedBy')) {

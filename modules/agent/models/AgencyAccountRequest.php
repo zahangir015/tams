@@ -4,6 +4,7 @@ namespace app\modules\agent\models;
 
 use app\models\City;
 use app\models\Country;
+use app\traits\BehaviorTrait;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
@@ -32,6 +33,7 @@ use yii\db\ActiveRecord;
  */
 class AgencyAccountRequest extends ActiveRecord
 {
+    use BehaviorTrait;
     /**
      * {@inheritdoc}
      */
@@ -46,7 +48,7 @@ class AgencyAccountRequest extends ActiveRecord
     public function rules(): array
     {
         return [
-            [['uid', 'name', 'designation', 'company', 'address', 'countryId', 'cityId', 'phone', 'email', 'createdBy', 'createdAt'], 'required'],
+            [['uid', 'name', 'company', 'address', 'countryId', 'cityId', 'phone', 'email'], 'required'],
             [['countryId', 'cityId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['name'], 'string', 'max' => 30],
@@ -74,8 +76,8 @@ class AgencyAccountRequest extends ActiveRecord
             'designation' => Yii::t('app', 'Designation'),
             'company' => Yii::t('app', 'Company'),
             'address' => Yii::t('app', 'Address'),
-            'countryId' => Yii::t('app', 'Country ID'),
-            'cityId' => Yii::t('app', 'City ID'),
+            'countryId' => Yii::t('app', 'Country'),
+            'cityId' => Yii::t('app', 'City'),
             'phone' => Yii::t('app', 'Phone'),
             'email' => Yii::t('app', 'Email'),
             'status' => Yii::t('app', 'Status'),

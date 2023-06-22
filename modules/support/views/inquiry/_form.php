@@ -1,5 +1,6 @@
 <?php
 
+use app\modules\support\SupportConstant;
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
 
@@ -35,10 +36,10 @@ use yii\bootstrap4\ActiveForm;
             </div>
             <div class="row">
                 <div class="col-md">
-                    <?= $form->field($model, 'source')->textInput(['maxlength' => true]) ?>
+                    <?= $form->field($model, 'source')->dropDownList(SupportConstant::QUERY_SOURCE) ?>
                 </div>
                 <div class="col-md">
-                    <?= $form->field($model, 'status')->dropDownList([]) ?>
+                    <?= $form->field($model, 'status')->dropDownList(SupportConstant::QUERY_STATUS) ?>
                 </div>
             </div>
             <div class="row">

@@ -7,8 +7,7 @@ use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $form yii\bootstrap\ActiveForm */
-/* @var $model \mdm\admin\models\form\Login */
+/* @var $form yii\bootstrap4\ActiveForm */
 
 $this->title = Yii::t('rbac-admin', 'Account Request');
 $this->params['breadcrumbs'][] = $this->title;
@@ -16,23 +15,15 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="card">
     <div class="card-body login-card-body shadow rounded-lg">
         <?php $form = ActiveForm::begin(); ?>
-        <div class="d-flex flex-row align-items-center justify-content-center justify-content-lg-start">
+        <div class="d-flex flex-row align-items-center justify-content-center justify-content-lg-start mt-5">
             <h4 class="font-weight-bold text-center text-success">Get Your Account Now</h4>
         </div>
         <div class="row">
             <div class="col-lg-6 col-md-6">
+                <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+            </div>
+            <div class="col-lg-6 col-md-6">
                 <?= $form->field($model, 'company')->textInput(['maxlength' => true]) ?>
-            </div>
-            <div class="col-lg-6 col-md-6">
-                <?= $form->field($model, 'address')->textInput(['maxlength' => true]) ?>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-6 col-md-6">
-                <?= $form->field($model, "countryId")->widget(Select2::class, Utilities::ajaxDropDown('countryId', '/country/get-countries', true, 'countryId', 'country'))->label('Country') ?>
-            </div>
-            <div class="col-lg-6 col-md-6">
-                <?= $form->field($model, "cityId")->widget(DepDrop::class, Utilities::depDropConfigurationGenerate($model, 'cityId', 'countryId', '/city/get-city-by-country', ($model->city) ? [$model->cityId => $model->city->name] : [])) ?>
             </div>
         </div>
         <div class="row">
@@ -43,6 +34,20 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?= $form->field($model, 'email')->textInput(['maxlength' => true, 'type' => 'email']) ?>
             </div>
         </div>
+        <div class="row">
+            <div class="col-lg-6 col-md-6">
+                <?= $form->field($model, "countryId")->widget(Select2::class, Utilities::ajaxDropDown('countryId', '/country/get-countries', true, 'countryId', 'country'))->label('Country') ?>
+            </div>
+            <div class="col-lg-6 col-md-6">
+                <?= $form->field($model, "cityId")->widget(DepDrop::class, \app\components\WidgetHelper::depDropConfigurationGenerate($model, 'cityId', 'countryId', '/city/get-city-by-country', ($model->city) ? [$model->cityId => $model->city->name] : [])) ?>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 col-md-12">
+                <?= $form->field($model, 'address')->textInput(['maxlength' => true]) ?>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-12">
                 <?= Html::submitButton('Send', ['class' => 'btn btn-success btn-block', 'name' => 'login-button']) ?>

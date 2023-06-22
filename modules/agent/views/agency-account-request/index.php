@@ -34,8 +34,18 @@ $this->params['breadcrumbs'][] = $this->title;
             'designation',
             'company',
             'address',
-            'countryId',
-            'cityId',
+            [
+                'attribute' => 'country',
+                'value' => function($model){
+                    return $model->country->name;
+                },
+            ],
+            [
+                'attribute' => 'city',
+                'value' => function($model){
+                    return $model->city->name;
+                },
+            ],
             'phone',
             'email:email',
             'status',

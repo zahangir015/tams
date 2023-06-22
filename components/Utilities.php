@@ -566,6 +566,11 @@ class Utilities
         return 'EXP' . date('ymdhis') . rand(9, 999);
     }
 
+    public static function inquiryIdentificationNumber(): string
+    {
+        return 'INQ' . date('ymdhis') . rand(9, 999);
+    }
+
     public static function getJournalNumber(): string
     {
         return 'JRE' . date('ymdhis') . rand(9, 999);

@@ -2,6 +2,7 @@
 
 use app\components\GlobalConstant;
 use app\components\Utilities;
+use app\components\WidgetHelper;
 use app\modules\agent\models\Agency;
 use app\modules\agent\models\Plan;
 use yii\helpers\ArrayHelper;
@@ -24,6 +25,16 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'kartik\grid\SerialColumn'],
             [
+                'class' => ActionColumn::class,
+                'urlCreator' => function ($action, Agency $model, $key, $index, $column) {
+                    return Url::toRoute([$action, 'uid' => $model->uid]);
+                },
+                'width' => '150px',
+                'template' => '{view} {edit} {delete}',
+                'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
+                'buttons' => Utilities::getBasicActionColumnArray()
+            ],
+            [
                 'attribute' => 'planId',
                 'value' => function($model){
                     return $model->plan->name;
@@ -32,9 +43,19 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'agentCode',
             'company',
+            [
+                'attribute' => 'country',
+                'value' => function($model){
+                    return $model->country->name;
+                },
+            ],
+            [
+                'attribute' => 'city',
+                'value' => function($model){
+                    return $model->city->name;
+                },
+            ],
             'address',
-            'countryId',
-            'cityId',
             'phone',
             'email:email',
             'timeZone',
@@ -47,32 +68,9 @@ $this->params['breadcrumbs'][] = $this->title;
             //'createdAt',
             //'updatedBy',
             //'updatedAt',
-            [
-                'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, Agency $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'uid' => $model->uid]);
-                },
-                'width' => '150px',
-                'template' => '{view} {edit} {delete}',
-                'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
-                'buttons' => Utilities::getBasicActionColumnArray()
-            ],
+
         ],
-        'toolbar' => [
-            [
-                'content' =>
-                    Html::a('<i class="fas fa-plus"></i>', ['/agent/agency/create'], [
-                        'title' => Yii::t('app', 'Add Airline'),
-                        'class' => 'btn btn-success'
-                    ]) . ' ' .
-                    Html::a('<i class="fas fa-redo"></i>', ['/agent/agency/index'], [
-                        'class' => 'btn btn-primary',
-                        'title' => Yii::t('app', 'Reset Grid')
-                    ]),
-            ],
-            '{export}',
-            '{toggleData}'
-        ],
+        'toolbar' => WidgetHelper::kartikToolBar(),
         'pjax' => true,
         'bordered' => true,
         'striped' => false,
