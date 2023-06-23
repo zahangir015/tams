@@ -32,13 +32,13 @@ class Login extends Model
             // password is validated by validatePassword()
             ['password', 'validatePassword'],
 
-            [['reCaptcha'], ReCaptchaValidator2::className(),
+            /*[['reCaptcha'], ReCaptchaValidator2::className(),
                 'secret' => getenv('RECAPTCHASECRET'),
                 'uncheckedMessage' => 'Please confirm that you are not a bot.',
                 'when' => function ($model) {
                     return Yii::$app->session->get('numberOfAttempt') >= 2;
                 }
-            ],
+            ],*/
         ];
     }
 
