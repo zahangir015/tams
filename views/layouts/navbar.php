@@ -15,6 +15,8 @@ use yii\helpers\Url;
             <a href="<?= Url::home() ?>" class="nav-link">Home</a>
         </li>
     </ul>
+
+
     <ul class="navbar-nav ml-auto">
         <li class="nav-item dropdown">
             <a class="nav-link" data-toggle="dropdown" href="#">
@@ -43,19 +45,29 @@ use yii\helpers\Url;
             </div>
         </li>
         <li class="nav-item">
-            <?= Html::a('<i class="fas fa-sign-out-alt"></i>', ['/admin/user/logout'], ['data-method' => 'post', 'class' => 'nav-link']) ?>
-        </li>
-        <li class="nav-item">
             <a class="nav-link" data-widget="fullscreen" href="#" role="button">
                 <i class="fas fa-expand-arrows-alt"></i>
             </a>
         </li>
-        <li class="nav-item">
-            <div class="user-panel d-flex">
-                <div class="image">
-                    <img src="<?= $assetDir ?>/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+        <li class="nav-item dropdown">
+            <a class="nav-link" data-toggle="dropdown" href="#">
+                <div class="user-panel d-flex mb-5">
+                    <div class="image">
+                        <img src="<?= $assetDir ?>/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+                    </div>
                 </div>
+            </a>
+            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                <span class="dropdown-item dropdown-header"><?= Yii::$app->user->identity->employee ? (Yii::$app->user->identity->employee->firstName.' '.Yii::$app->user->identity->employee->lastName) : Yii::$app->user->identity->username ?></span>
+                <div class="dropdown-divider"></div>
+                <a href="/admin/user/change-password" class="dropdown-item">
+                    <i class="fas fa-asterisk mr-2"></i> Change Password
+                </a>
+                <div class="dropdown-divider"></div>
+                <?= Html::a('<i class="fas fa-sign-out-alt"></i> Logout', ['/admin/user/logout'], ['data-method' => 'post', 'class' => 'dropdown-item']) ?>
+
             </div>
+
         </li>
     </ul>
 </nav>

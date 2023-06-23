@@ -68,7 +68,7 @@ class DepartmentController extends ParentController
     public function actionCreate(): Response|string
     {
         $model = new Department();
-        $departments = $this->hrmConfigurationService->getAll(['status' => GlobalConstant::ACTIVE_STATUS], Department::class, [], true);
+        //$departments = $this->hrmConfigurationService->getAll(['status' => GlobalConstant::ACTIVE_STATUS, 'agencyId' => Yii::$app->user->identity->agencyId], Department::class, [], true);
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
@@ -85,7 +85,7 @@ class DepartmentController extends ParentController
 
         return $this->render('create', [
             'model' => $model,
-            'departments' => ArrayHelper::map($departments, 'id', 'name')
+            //'departments' => ArrayHelper::map($departments, 'id', 'name')
         ]);
     }
 
@@ -112,7 +112,7 @@ class DepartmentController extends ParentController
 
         return $this->render('update', [
             'model' => $model,
-            'departments' => $this->hrmConfigurationRepository->findAll(['uid' => $uid], Department::class)
+            //'departments' => $this->hrmConfigurationRepository->findAll(['uid' => $uid], Department::class)
         ]);
     }
 

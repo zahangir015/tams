@@ -2,6 +2,7 @@
 
 namespace app\modules\admin\models\form;
 
+use himiklab\yii2\recaptcha\ReCaptchaValidator2;
 use Yii;
 use yii\base\Model;
 use app\modules\admin\models\User;
@@ -14,6 +15,7 @@ class Login extends Model
     public $username;
     public $password;
     public $rememberMe = true;
+    public $reCaptcha;
     
     private $_user = false;
 
@@ -29,6 +31,14 @@ class Login extends Model
             ['rememberMe', 'boolean'],
             // password is validated by validatePassword()
             ['password', 'validatePassword'],
+
+            /*[['reCaptcha'], ReCaptchaValidator2::className(),
+                'secret' => getenv('RECAPTCHASECRET'),
+                'uncheckedMessage' => 'Please confirm that you are not a bot.',
+                'when' => function ($model) {
+                    return Yii::$app->session->get('numberOfAttempt') >= 2;
+                }
+            ],*/
         ];
     }
 

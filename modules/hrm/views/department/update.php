@@ -15,6 +15,6 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 <div class="department-update">
     <?= $this->render('_form', [
         'model' => $model,
-        'departments' => $departments,
+        //'departments' => $departments,
     ]) ?>
 </div>

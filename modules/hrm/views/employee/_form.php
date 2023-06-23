@@ -70,7 +70,6 @@ $this->registerJsFile(
                     <div class="col-md"><?= $form->field($model, 'permanentAddress')->textInput(['maxlength' => true]) ?></div>
                     <div class="col-md"> <?= $form->field($model, 'presentAddress')->textInput(['maxlength' => true]) ?></div>
                     <div class="col-md"> <?= $form->field($model, 'personalEmail')->textInput(['maxlength' => true]) ?></div>
-                    <div class="col-md"><?= $form->field($model, 'personalEmail')->textInput(['maxlength' => true]) ?></div>
                     <div class="col-md"><?= $form->field($model, 'personalPhone')->textInput(['maxlength' => true]) ?></div>
                 </div>
                 <div class="row">
@@ -115,7 +114,7 @@ $this->registerJsFile(
                         ]); ?>
                     </div>
                     <div class="col-md">
-                        <?= $form->field($model, 'reportTo')->widget(DepDrop::classname(), [
+                        <?= $form->field($model, 'reportTo')->widget(DepDrop::class, [
                             'data' => empty($model->reported) ? [] : [$model->reported->id => $model->reported->firstName . ' ' . $model->reported->lastName],
                             'options' => ['placeholder' => 'Select Reported To...'],
                             'type' => DepDrop::TYPE_SELECT2,

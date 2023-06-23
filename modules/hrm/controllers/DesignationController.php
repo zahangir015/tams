@@ -53,7 +53,7 @@ class DesignationController extends ParentController
     public function actionView(string $uid): string
     {
         return $this->render('view', [
-            'model' => $this->hrmConfigurationService->findModel(['status' => GlobalConstant::ACTIVE_STATUS], Designation::class, ['department']),
+            'model' => $this->hrmConfigurationService->findModel(['uid' => $uid], Designation::class, ['department']),
         ]);
     }
 

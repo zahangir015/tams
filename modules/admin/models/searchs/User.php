@@ -6,6 +6,7 @@ use app\components\GlobalConstant;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use yii\db\ActiveQuery;
 
 /**
  * User represents the model behind the search form about `app\modules\admin\models\User`.
@@ -39,9 +40,12 @@ class User extends Model
      */
     public function search($params)
     {
-        /* @var $query \yii\db\ActiveQuery */
+        /* @var $query ActiveQuery */
         $class = Yii::$app->getUser()->identityClass ? : 'app\modules\admin\models\User';
         $query = $class::find()->joinWith(['agency']);
+
+        $query->where([\app\modules\admin\models\User::tableName().'.status' => GlobalConstant::ACTIVE_USER_STATUS])
+            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -49,8 +53,7 @@ class User extends Model
 
         $this->load($params);
         if (!$this->validate()) {
-            $query->where(['status' => GlobalConstant::ACTIVE_STATUS])
-                ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId]);
+
             return $dataProvider;
         }
 

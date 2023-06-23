@@ -3,6 +3,7 @@ namespace app\components;
 
 final class GlobalConstant
 {
+    const ACTIVE_USER_STATUS = 10;
     const ACTIVE_STATUS = 1;
     const INACTIVE_STATUS = 0;
     const REFUND_REQUESTED_STATUS = 2;
