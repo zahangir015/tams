@@ -4,22 +4,32 @@ use app\models\Company;
 use hail812\adminlte\widgets\Menu;
 use yii\helpers\Url;
 use app\modules\admin\components\Helper;
+
 $company = Company::find()->select(['name', 'logo'])->where(['agencyId' => Yii::$app->user->identity->agencyId])->one();
 ?>
 <aside class="main-sidebar sidebar-dark-success elevation-4">
     <a href="<?= Url::home() ?>" class="h-100 p-2 text-center">
-        <img src="<?= Url::to('/uploads/logo.svg') ?>" alt="MY TRAMS" class="brand-image elevation-3" style="opacity: .8">
+        <img src="<?= Url::to('/uploads/logo.svg') ?>" alt="MY TRAMS" class="brand-image elevation-3"
+             style="opacity: .8">
         <!--<span class="brand-text font-weight-light">TRAMS</span>-->
     </a>
     <div class="sidebar">
-        <div class="mt-3 pb-3 mb-3 d-flex">
-            <div class="image text-center">
-                <img src="<?= Url::to('/uploads/company/'.$company->logo) ?>" class="elevation-2" alt="User Image" width="235">
+        <?php
+        if ($company->logo) {
+            ?>
+            <div class="mt-3 pb-3 mb-3 d-flex">
+                <div class="image text-center">
+                    <img src="<?= Url::to('/uploads/company/' . $company->logo) ?>" class="elevation-2"
+                         alt="<?= $company->name ?>" width="235">
+                </div>
             </div>
-        </div>
+            <?php
+        }
+        ?>
+
         <nav class="mt-2">
             <?= Menu::widget([
-                'activeCssClass'=>'bg-green-active',
+                'activeCssClass' => 'bg-green-active',
                 'items' => [
                     [
                         'label' => 'Agency Management',
