@@ -29,7 +29,8 @@
         "frostealth/yii2-aws-s3": "2.1.1",
         "kartik-v/yii2-widget-fileinput": "v1.1.1",
         "kartik-v/yii2-widget-depdrop": "dev-master",
-        "kartik-v/yii2-widget-datetimepicker": "v1.5.1"
+        "kartik-v/yii2-widget-datetimepicker": "v1.5.1",
+        "himiklab/yii2-recaptcha-widget": "v2.1.1"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

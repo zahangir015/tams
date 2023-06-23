@@ -72,6 +72,11 @@ $config = [
             'defaultBucket' => 'travlion-attachment',
             'defaultAcl' => 'public-read',
         ],
+        'reCaptcha' => [
+            'class' => 'himiklab\yii2\recaptcha\ReCaptchaConfig',
+            'siteKey' => getenv('RECAPTCHASITEKEY'),
+            'secret' => getenv('RECAPTCHASECRET'),
+        ],
     ],
     'modules' => [
         'admin' => [
