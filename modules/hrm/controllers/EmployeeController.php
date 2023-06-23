@@ -86,8 +86,8 @@ class EmployeeController extends ParentController
         $signupModel = new Signup();
         $model = new Employee();
         $designation = new EmployeeDesignation();
-        $branches = $this->hrmConfigurationService->getAll(['status' => GlobalConstant::ACTIVE_STATUS], Branch::class, [], true);
-        $departments = $this->hrmConfigurationService->getAll(['status' => GlobalConstant::ACTIVE_STATUS], Department::class, [], true);
+        $branches = $this->hrmConfigurationService->getAll(['status' => GlobalConstant::ACTIVE_STATUS, 'agencyId' => Yii::$app->user->identity->agencyId], Branch::class, [], true);
+        $departments = $this->hrmConfigurationService->getAll(['status' => GlobalConstant::ACTIVE_STATUS, 'agencyId' => Yii::$app->user->identity->agencyId], Department::class, [], true);
 
         if ($this->request->isPost) {
             $requestData = Yii::$app->request->post();
@@ -122,8 +122,8 @@ class EmployeeController extends ParentController
     {
         $model = $this->employeeRepository->findOne(['uid' => $uid], Employee::class, ['employeeDesignation']);
         $designation = $model->employeeDesignation;
-        $branches = $this->hrmConfigurationService->getAll(['status' => GlobalConstant::ACTIVE_STATUS], Branch::class, [], true);
-        $departments = $this->hrmConfigurationService->getAll(['status' => GlobalConstant::ACTIVE_STATUS], Department::class, [], true);
+        $branches = $this->hrmConfigurationService->getAll(['status' => GlobalConstant::ACTIVE_STATUS, 'agencyId' => Yii::$app->user->identity->agencyId], Branch::class, [], true);
+        $departments = $this->hrmConfigurationService->getAll(['status' => GlobalConstant::ACTIVE_STATUS, 'agencyId' => Yii::$app->user->identity->agencyId], Department::class, [], true);
         // Update Employee Data
         if ($this->request->isPost) {
             // Update Employee

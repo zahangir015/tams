@@ -1,6 +1,7 @@
 <?php
 
 use app\components\Utilities;
+use app\components\WidgetHelper;
 use kartik\depdrop\DepDrop;
 use kartik\select2\Select2;
 use yii\helpers\Html;
@@ -32,10 +33,10 @@ use yii\bootstrap4\ActiveForm;
                     </div>
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($model, "countryId")->widget(Select2::class, Utilities::ajaxDropDown('countryId', '/country/get-countries', true, 'countryId', 'country'))->label('Country') ?>
+                            <?= $form->field($model, "countryId")->widget(Select2::class, WidgetHelper::ajaxSelect2Widget('countryId', '/country/get-countries', true, 'countryId', 'country'))->label('Country') ?>
                         </div>
                         <div class="col-md">
-                            <?= $form->field($model, "cityId")->widget(DepDrop::class, Utilities::depDropConfigurationGenerate($model, 'cityId', 'countryId', '/city/get-city-by-country', ($model->city) ? [$model->cityId => $model->city->name] : [])) ?>
+                            <?= $form->field($model, "cityId")->widget(DepDrop::class, WidgetHelper::depDropConfigurationGenerate($model, 'cityId', 'countryId', '/city/get-city-by-country', ($model->city) ? [$model->cityId => $model->city->name] : [])) ?>
                         </div>
                         <div class="col-md">
                             <?= $form->field($model, 'phone')->textInput(['maxlength' => true]) ?>
@@ -65,33 +66,40 @@ use yii\bootstrap4\ActiveForm;
                     </div>
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($model, "planId")->widget(Select2::class, Utilities::ajaxDropDown('planId', '/agent/plan/get-plans', true, 'planId', 'planId'))->label('Plan') ?>
+                            <?= $form->field($model, "planId")->widget(Select2::class, WidgetHelper::ajaxSelect2Widget('planId', '/agent/plan/get-plans', true, 'planId', 'planId', ($model->plan) ? [$model->planId => $model->plan->name] : []))->label('Plan') ?>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-header bg-gray-dark">
-                    User Account Details
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-12"><?= $form->field($signup, 'username') ?></div>
-                        <div class="col-12"><?= $form->field($signup, 'email') ?></div>
-                        <div class="col-12"><?= $form->field($signup, 'password')->passwordInput() ?></div>
-                        <div class="col-12"><?= $form->field($signup, 'retypePassword')->passwordInput() ?></div>
+        <?php
+        if ($model->isNewRecord) {
+            ?>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header bg-gray-dark">
+                        User Account Details
                     </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12"><?= $form->field($signup, 'username') ?></div>
+                            <div class="col-12"><?= $form->field($signup, 'email') ?></div>
+                            <div class="col-12"><?= $form->field($signup, 'password')->passwordInput() ?></div>
+                            <div class="col-12"><?= $form->field($signup, 'retypePassword')->passwordInput() ?></div>
+                        </div>
 
-                    <div class="form-group">
-                        <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
+                        <div class="form-group">
+                            <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
+                        </div>
+
+                        <?php ActiveForm::end(); ?>
                     </div>
-
-                    <?php ActiveForm::end(); ?>
                 </div>
             </div>
-        </div>
+            <?php
+        }
+        ?>
+
     </div>
 
 
