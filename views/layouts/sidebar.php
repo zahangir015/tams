@@ -15,7 +15,7 @@ $company = Company::find()->select(['name', 'logo'])->where(['agencyId' => Yii::
     </a>
     <div class="sidebar">
         <?php
-        if ($company->logo) {
+        if ($company && $company->logo) {
             ?>
             <div class="mt-3 pb-3 mb-3 d-flex">
                 <div class="image text-center">
