@@ -69,3 +69,14 @@ $(document).on('change', ".type", function (e) {
         $('#motherTicketId' + suffix).prop("disabled", true)
     }
 });
+
+$(document).on("change", ".quoteCalculation", function (e) {
+    var suffix = this.id.match(/\d+/);
+    var baseFare = parseFloat($('#baseFare' + suffix).val());
+    var tax = parseFloat($('#tax' + suffix).val());
+    var otherTax = parseFloat($('#otherTax' + suffix).val());
+    var discount = parseFloat($('#discount' + suffix).val());
+    var convenienceFee = parseFloat($('#convenienceFee' + suffix).val());
+    var quoteAmount = (baseFare + tax + otherTax + convenienceFee - discount);
+    $('#quoteAmount' + suffix).val(quoteAmount);
+});

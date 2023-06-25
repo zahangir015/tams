@@ -97,19 +97,19 @@ use yii\bootstrap4\Html;
         </div>
         <div class="row">
             <div class="col-md">
-                <?= $form->field($model, "[$row]baseFare")->textInput(['type' => 'number']) ?>
+                <?= $form->field($model, "[$row]baseFare")->textInput(['id' => 'baseFare' . $row, 'type' => 'number', 'class' => 'quoteCalculation baseFare']) ?>
             </div>
             <div class="col-md">
-                <?= $form->field($model, "[$row]tax")->textInput(['type' => 'number']) ?>
+                <?= $form->field($model, "[$row]tax")->textInput(['id' => 'tax' . $row, 'type' => 'number', 'class' => 'quoteCalculation tax']) ?>
             </div>
             <div class="col-md">
-                <?= $form->field($model, "[$row]otherTax")->textInput(['type' => 'number']) ?>
+                <?= $form->field($model, "[$row]otherTax")->textInput(['id' => 'otherTax' . $row, 'type' => 'number', 'class' => 'quoteCalculation otherTax']) ?>
             </div>
             <div class="col-md">
-                <?= $form->field($model, "[$row]quoteAmount")->textInput(['type' => 'number', 'step' => 'any']) ?>
+                <?= $form->field($model, "[$row]discount")->textInput(['id' => 'discount' . $row, 'type' => 'number', 'step' => 'any', 'class' => 'quoteCalculation discount']) ?>
             </div>
             <div class="col-md">
-                <?= $form->field($model, "[$row]discount")->textInput(['type' => 'number', 'step' => 'any']) ?>
+                <?= $form->field($model, "[$row]quoteAmount")->textInput(['id' => 'quoteAmount' . $row, 'type' => 'number', 'step' => 'any', 'readOnly' => true]) ?>
             </div>
             <div class="col-md">
                 <?= $form->field($model, "[$row]baggage")->textInput(['maxlength' => true]) ?>
