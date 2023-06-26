@@ -61,14 +61,17 @@ class BankAccountController extends ParentController
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
+
                 $file = UploadedFile::getInstance($model, 'logo');
-                $uploadResponse = Uploader::processFile($file, false, 'uploads/bank');
-                if (!$uploadResponse['error']) {
-                    Yii::$app->session->setFlash('danger', 'Bank Account logo upload failed - '.$uploadResponse['message']);
+                if (!empty($file)) {
+                    $uploadResponse = Uploader::processFile($file, false, 'uploads/bank');
+                    if (!$uploadResponse['error']) {
+                        Yii::$app->session->setFlash('danger', 'Bank Account logo upload failed - ' . $uploadResponse['message']);
+                    }
+                    $model->logo = $uploadResponse['name'];
                 }
 
                 $model->tag = Json::encode($model->tag);
-                $model->logo = $uploadResponse['name'];
                 if ($model->save()) {
                     Yii::$app->session->setFlash('success', 'Bank Account created successfully.');
                     return $this->redirect(['view', 'uid' => $model->uid]);

@@ -38,7 +38,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'provider',
                 'value' => function ($model) {
-                    return $model->provider->name;
+                    return $model->provider ? $model->provider->name : null;
                 },
                 'label' => 'Provider',
             ],
@@ -65,7 +65,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'paxName',
             [
                 'attribute' => 'paxType',
-                'value' => function($model){
+                'value' => function ($model) {
                     return ServiceConstant::PAX_TYPE[$model->paxType];
                 },
                 'filter' => ServiceConstant::PAX_TYPE
@@ -113,28 +113,28 @@ $this->params['breadcrumbs'][] = $this->title;
             'pnrCode',
             [
                 'attribute' => 'type',
-                'value' => function($model){
+                'value' => function ($model) {
                     return ServiceConstant::ALL_TICKET_TYPE[$model->type];
                 },
                 'filter' => ServiceConstant::ALL_TICKET_TYPE
             ],
             [
                 'attribute' => 'tripType',
-                'value' => function($model){
+                'value' => function ($model) {
                     return ServiceConstant::TRIP_TYPE[$model->tripType];
                 },
                 'filter' => ServiceConstant::TRIP_TYPE
             ],
             [
                 'attribute' => 'bookedOnline',
-                'value' => function($model){
+                'value' => function ($model) {
                     return ServiceConstant::BOOKING_TYPE[$model->bookedOnline];
                 },
                 'filter' => ServiceConstant::BOOKING_TYPE
             ],
             [
                 'attribute' => 'flightType',
-                'value' => function($model){
+                'value' => function ($model) {
                     return ServiceConstant::FLIGHT_TYPE[$model->flightType];
                 },
                 'filter' => ServiceConstant::FLIGHT_TYPE
@@ -273,7 +273,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         return \yii\bootstrap4\Html::a('<i class="fa fa-info-circle"></i>', ['view', 'uid' => $model->uid], [
                             'title' => Yii::t('app', 'View'),
                             'data-pjax' => '0',
-                            'class' => 'btn btn-primary btn-xs'
+                            'class' => 'btn btn-success btn-xs'
                         ]);
                     },
                     'edit' => function ($url, $model, $key) {
@@ -290,7 +290,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
                                 'method' => 'post',
                             ],
-                            'class' => 'btn btn-primary btn-xs'
+                            'class' => 'btn btn-danger btn-xs'
                         ]);
                     },
                 ]

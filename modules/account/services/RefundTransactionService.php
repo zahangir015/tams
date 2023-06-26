@@ -151,9 +151,9 @@ class RefundTransactionService
         return ['html' => $html, 'totalPayable' => $totalPayable, 'totalReceivable' => $totalReceivable];
     }
 
-    public function storeRefundTransaction(array $requestData, RefundTransaction $refundTransaction, Transaction $transaction)
+    public function storeRefundTransaction(array $requestData, RefundTransaction $refundTransaction, Transaction $transaction): array
     {
-        //dd($requestData);
+        dd($requestData);
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
             $refundTransaction->load($requestData);
