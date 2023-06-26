@@ -205,7 +205,7 @@ class TicketController extends ParentController
             // Store refund ticket data
             $storeResponse = $this->flightService->addRefundTicket($motherTicket, Yii::$app->request->post());
             if ($storeResponse) {
-                return $this->redirect(['index']);
+                return $this->redirect(['refund-list']);
             }
         } else {
             $motherTicket->loadDefaultValues();

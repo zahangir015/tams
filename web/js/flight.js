@@ -55,7 +55,7 @@ $(document).on('change', ".airline", function (e) {
                 $('#commission' + suffix).val(data.commission);
                 $('#incentive' + suffix).val(data.incentive);
                 $('#govtTax' + suffix).val(data.govtTax);
-                $('#serviceCharge' + suffix).val(data.serviceCharge);
+                //$('#serviceCharge' + suffix).val(data.serviceCharge);
             }
         }
     });
@@ -68,4 +68,15 @@ $(document).on('change', ".type", function (e) {
     } else {
         $('#motherTicketId' + suffix).prop("disabled", true)
     }
+});
+
+$(document).on("change", ".quoteCalculate", function (e) {
+    var suffix = this.id.match(/\d+/);
+    var baseFare = parseFloat($('#baseFare' + suffix).val());
+    var tax = parseFloat($('#tax' + suffix).val());
+    var otherTax = parseFloat($('#otherTax' + suffix).val());
+    var discount = parseFloat($('#discount' + suffix).val());
+    var serviceCharge = parseFloat($('#serviceCharge' + suffix).val());
+    var quoteAmount = (baseFare + tax + otherTax + serviceCharge - discount);
+    $('#quoteAmount' + suffix).val(quoteAmount);
 });

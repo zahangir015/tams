@@ -41,9 +41,9 @@ use yii\bootstrap4\Html;
             <div class="col-md">
                 <?= $form->field($model, "[$row]govTax")->textInput(['id' => 'govTax' . $row, 'readOnly' => true]) ?>
             </div>
-            <div class="col-md">
-                <?= $form->field($model, "[$row]serviceCharge")->textInput(['id' => 'serviceCharge' . $row, 'readOnly' => true]) ?>
-            </div>
+            <!--<div class="col-md">
+                <?php /*= $form->field($model, "[$row]serviceCharge")->textInput(['id' => 'serviceCharge' . $row, 'readOnly' => true]) */?>
+            </div>-->
         </div>
         <div class="row">
             <div class="col-md">
@@ -97,22 +97,22 @@ use yii\bootstrap4\Html;
         </div>
         <div class="row">
             <div class="col-md">
-                <?= $form->field($model, "[$row]baseFare")->textInput(['type' => 'number']) ?>
+                <?= $form->field($model, "[$row]baseFare")->textInput(['id' => 'baseFare' . $row, 'type' => 'number', 'class' => 'form-control quoteCalculate baseFare']) ?>
             </div>
             <div class="col-md">
-                <?= $form->field($model, "[$row]tax")->textInput(['type' => 'number']) ?>
+                <?= $form->field($model, "[$row]tax")->textInput(['id' => 'tax' . $row, 'type' => 'number', 'class' => 'form-control quoteCalculate tax']) ?>
             </div>
             <div class="col-md">
-                <?= $form->field($model, "[$row]otherTax")->textInput(['type' => 'number']) ?>
+                <?= $form->field($model, "[$row]otherTax")->textInput(['id' => 'otherTax' . $row, 'type' => 'number', 'class' => 'form-control quoteCalculate otherTax']) ?>
             </div>
             <div class="col-md">
-                <?= $form->field($model, "[$row]quoteAmount")->textInput(['type' => 'number', 'step' => 'any']) ?>
+                <?= $form->field($model, "[$row]serviceCharge")->textInput(['maxlength' => true, 'id' => 'serviceCharge' . $row, 'type' => 'number', 'step' => 'any', 'class' => 'form-control quoteCalculate serviceCharge']) ?>
             </div>
             <div class="col-md">
-                <?= $form->field($model, "[$row]discount")->textInput(['type' => 'number', 'step' => 'any']) ?>
+                <?= $form->field($model, "[$row]discount")->textInput(['id' => 'discount' . $row, 'type' => 'number', 'step' => 'any', 'class' => 'form-control quoteCalculate discount']) ?>
             </div>
             <div class="col-md">
-                <?= $form->field($model, "[$row]baggage")->textInput(['maxlength' => true]) ?>
+                <?= $form->field($model, "[$row]quoteAmount")->textInput(['id' => 'quoteAmount' . $row, 'type' => 'number', 'step' => 'any', 'readOnly' => true]) ?>
             </div>
         </div>
         <div class="row">
@@ -124,6 +124,9 @@ use yii\bootstrap4\Html;
             </div>
             <div class="col-md">
                 <?= $form->field($model, "[$row]bookedOnline")->dropDownList(GlobalConstant::BOOKING_TYPE, ['value' => 0]) ?>
+            </div>
+            <div class="col-md">
+                <?= $form->field($model, "[$row]baggage")->textInput(['maxlength' => true]) ?>
             </div>
             <div class="col-md">
                 <?= $form->field($model, "[$row]codeShare")->dropDownList(GlobalConstant::YES_NO, ['value' => 0]) ?>
