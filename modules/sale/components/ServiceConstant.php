@@ -44,7 +44,7 @@ final class ServiceConstant
     const PAX_TYPE = ['A' => 'Adult', 'C' => 'Child', 'I' => 'Infant'];
     const PAX_TYPE_INT = ['Adult', 'Child', 'Infant'];
     const BD_AIRPORTS = ['DAC', 'CGP', 'CXB', 'ZYL', 'RJH', 'BZL', 'JSR', 'SPD', 'IRD'];
-    const TRIP_TYPE = ['One Way' => 'One Way', 'Return' => 'Return'];
+    const TRIP_TYPE = ['One Way' => 'One Way', 'Return' => 'Return', 'Multi City' => 'Multi City', 'Others' => 'Others'];
     const BOOKING_TYPE = ['Offline', 'Online'];
     const FLIGHT_TYPE = ['Domestic', 'International', 'SOTO'];
     const PAYMENT_STATUS = ['Due' => 'Due', 'Partially Paid' => 'Partially Paid', 'Full Paid' => 'Full Paid'];
