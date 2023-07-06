@@ -17,6 +17,7 @@ use app\modules\sale\models\ticket\TicketSupplierSearch;
 use app\modules\sale\services\FlightService;
 use Yii;
 use yii\bootstrap4\ActiveForm;
+use yii\db\ActiveRecord;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\web\UploadedFile;
@@ -313,6 +314,15 @@ class TicketController extends ParentController
         return $this->flightService->ajaxCostCalculation($baseFare, $tax, $airlineId);
     }
 
+    public function actionGetParentTicketDetails(int $motherTicketId): array|ActiveRecord|null
+    {
+        return Ticket::find()
+            ->select(['id', 'paxName', 'paxType', 'route', 'flightType', 'tripType'])
+            ->where(['id' => $motherTicketId])
+            ->andWhere([Ticket::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere([Ticket::tableName() . '.agencyId' => Yii::$app->user->identity->agencyId])
+            ->one();
+    }
     /*public function getData()
     {
         return [

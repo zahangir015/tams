@@ -69,18 +69,18 @@ use yii\bootstrap4\Html;
                 <?= $form->field($model, "[$row]eTicket")->textInput(['maxlength' => true]) ?>
             </div>
             <div class="col-md">
-                <?= $form->field($model, "[$row]paxName")->textInput(['maxlength' => true]) ?>
+                <?= $form->field($model, "[$row]paxName")->textInput(['id' => 'paxName' . $row, 'maxlength' => true]) ?>
             </div>
             <div class="col-md">
-                <?= $form->field($model, "[$row]paxType")->dropDownList(GlobalConstant::PAX_TYPE, ['prompt' => '']) ?>
+                <?= $form->field($model, "[$row]paxType")->dropDownList(GlobalConstant::PAX_TYPE, ['id' => 'paxType' . $row]) ?>
             </div>
             <div class="col-md">
-                <?= $form->field($model, "[$row]route")->textInput(['maxlength' => true]) ?>
+                <?= $form->field($model, "[$row]route")->textInput(['maxlength' => true, 'id' => 'route' . $row, ]) ?>
             </div>
         </div>
         <div class="row">
             <div class="col-md">
-                <?= $form->field($model, "[$row]flightType")->dropDownList(ServiceConstant::FLIGHT_TYPE) ?>
+                <?= $form->field($model, "[$row]flightType")->dropDownList(ServiceConstant::FLIGHT_TYPE, ['id' => 'flightType' . $row]) ?>
             </div>
             <div class="col-md">
                 <?= $form->field($model, "[$row]issueDate")->widget(DatePicker::class, WidgetHelper::getDatewidget('issueDate' . $row, 'issueDate', false, true))->label('Issue'); ?>
@@ -120,7 +120,7 @@ use yii\bootstrap4\Html;
                 <?= $form->field($model, "[$row]seatClass")->dropDownList(ServiceConstant::SEAT_CLASS) ?>
             </div>
             <div class="col-md">
-                <?= $form->field($model, "[$row]tripType")->dropDownList(GlobalConstant::TRIP_TYPE) ?>
+                <?= $form->field($model, "[$row]tripType")->dropDownList(GlobalConstant::TRIP_TYPE, ['id' => 'tripType' . $row]) ?>
             </div>
             <div class="col-md">
                 <?= $form->field($model, "[$row]bookedOnline")->dropDownList(GlobalConstant::BOOKING_TYPE, ['value' => 0]) ?>
@@ -136,6 +136,6 @@ use yii\bootstrap4\Html;
             </div>
             <?= $form->field($model, "[$row]customerId")->hiddenInput(['id' => 'customerId' . $row, 'class' => 'customerId'])->label(false) ?>
         </div>
-        <?= (!$model->isNewRecord) ? Html::submitButton('<i class="fas fa-save"></i>Update', ['class' => 'btn btn-light-primary font-weight-bold float-right']) : '' ?>
+        <?= (!$model->isNewRecord) ? Html::submitButton('<i class="fas fa-save"></i> Update', ['class' => 'btn btn-primary font-weight-bold float-right']) : '' ?>
     </div>
 </div>

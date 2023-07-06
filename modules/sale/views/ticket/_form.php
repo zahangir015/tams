@@ -15,7 +15,8 @@ use yii\web\View;
 /* @var $form yii\bootstrap4\ActiveForm */
 
 $this->registerJs(
-    "var ticket = '" . Yii::$app->request->baseUrl . '/sale/ticket/add-ticket' . "';var _csrf='" . Yii::$app->request->getCsrfToken() . "'; var airlineUrl='" . Yii::$app->request->baseUrl . '/sale/airline/get-airline-details' . "';",
+    "var ticket = '" . Yii::$app->request->baseUrl . '/sale/ticket/add-ticket' . "';var _csrf='" . Yii::$app->request->getCsrfToken() . "'; 
+        var airlineUrl='" . Yii::$app->request->baseUrl . '/sale/airline/get-airline-details' . "'; var parentTicketUrl='" . Yii::$app->request->baseUrl . '/sale/ticket/get-parent-ticket-details' . "';",
     View::POS_HEAD,
     'url'
 );
