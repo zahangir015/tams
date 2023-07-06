@@ -523,7 +523,7 @@ class FlightService
         $ticket->ait = $ait;
         $ticket->tripType = self::tripTypeIdentifier($ticket->route);
         $ticket->costOfSale = self::calculateCostOfSale($ticket->tax, $ticket->serviceCharge, $ait, $ticket->baseFare, $commissionReceived, $incentiveReceived);
-        $ticket->flightType = self::flightTypeIdentifier($ticket->route);
+        //$ticket->flightType = self::flightTypeIdentifier($ticket->route);
         $ticket->netProfit = self::calculateNetProfit($ticket->quoteAmount, $ticket->tax, $ticket->baseFare, $ticket->serviceCharge, $ait, $commissionReceived, $incentiveReceived);
         $ticket->customerCategory = Customer::findOne(['id' => $ticket->customerId])->category;
         if ($ticket->isNewRecord) {

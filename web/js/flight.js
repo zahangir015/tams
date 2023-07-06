@@ -52,10 +52,31 @@ $(document).on('change', ".airline", function (e) {
         dataType: 'json',
         success: function (data) {
             if (data) {
+                console.log(data.govTax);
                 $('#commission' + suffix).val(data.commission);
                 $('#incentive' + suffix).val(data.incentive);
-                $('#govtTax' + suffix).val(data.govtTax);
+                $('#govTax' + suffix).val(data.govTax);
                 //$('#serviceCharge' + suffix).val(data.serviceCharge);
+            }
+        }
+    });
+});
+
+$(document).on('change', ".motherTicket", function (e) {
+    var suffix = this.id.match(/\d+/);
+    $.ajax({
+        url: parentTicketUrl,
+        type: 'get',
+        data: {motherTicketId: $(this).val()},
+        dataType: 'json',
+        success: function (data) {
+            console.log(data);
+            if (data) {
+                $('#paxName' + suffix).val(data.paxName);
+                $('#paxType' + suffix).val(data.paxType);
+                $('#route' + suffix).val(data.route);
+                $('#flightType' + suffix).val(data.flightType);
+                $('#tripType' + suffix).val(data.tripType);
             }
         }
     });
