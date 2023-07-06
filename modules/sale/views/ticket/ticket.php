@@ -55,7 +55,7 @@ use yii\bootstrap4\Html;
                 <?= $form->field($model, "[$row]providerId")->widget(Select2::class, Utilities::ajaxDropDown('providerId', '/sale/provider/get-providers', false, 'providerId' . $row, 'providerId' . $row, (!$model->isNewRecord && $model->provider) ? [$model->provider->id => $model->provider->name] : []))->label('Select GDS'); ?>
             </div>
             <div class="col-md">
-                <?= $form->field($model, "[$row]type")->dropDownList(GlobalConstant::TICKET_TYPE_FOR_CREATE, ['disabled' => !$model->isNewRecord ? 'disabled' : false, 'class' => 'form-control type']) ?>
+                <?= $form->field($model, "[$row]type")->dropDownList(ServiceConstant::TICKET_TYPE_FOR_CREATE, ['disabled' => !$model->isNewRecord ? 'disabled' : false, 'class' => 'form-control type']) ?>
             </div>
             <div class="col-md">
                 <?= $form->field($model, "[$row]motherTicketId")->widget(Select2::classname(), Utilities::ajaxDropDown('motherTicketId', 'get-mother-ticket', true, 'motherTicketId' . $row, 'motherTicket', (!$model->isNewRecord && $model->motherTicket) ? [$model->motherTicket => $model->motherTicket->eTicket . ' | ' . $model->motherTicket->pnrCode] : [], true))->label('Parent') ?>
@@ -120,7 +120,7 @@ use yii\bootstrap4\Html;
                 <?= $form->field($model, "[$row]seatClass")->dropDownList(ServiceConstant::SEAT_CLASS) ?>
             </div>
             <div class="col-md">
-                <?= $form->field($model, "[$row]tripType")->dropDownList(GlobalConstant::TRIP_TYPE, ['id' => 'tripType' . $row]) ?>
+                <?= $form->field($model, "[$row]tripType")->dropDownList(ServiceConstant::TRIP_TYPE, ['id' => 'tripType' . $row]) ?>
             </div>
             <div class="col-md">
                 <?= $form->field($model, "[$row]bookedOnline")->dropDownList(GlobalConstant::BOOKING_TYPE, ['value' => 0]) ?>
