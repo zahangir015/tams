@@ -1,13 +1,14 @@
 <?php
 
+use app\models\Company;
 use yii\helpers\Html;
 use yii\helpers\Url;
-
+$company = Company::find()->select(['name', 'logo'])->where(['agencyId' => Yii::$app->user->identity->agencyId])->one();
 ?>
 <!-- Navbar -->
 <nav class="main-header navbar navbar-expand navbar-dark bg-gradient-green font-weight-bold">
     <!-- Left navbar links -->
-    <ul class="navbar-nav">
+    <ul class="navbar-nav mr-auto">
         <li class="nav-item">
             <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
         </li>
@@ -16,8 +17,20 @@ use yii\helpers\Url;
         </li>
     </ul>
 
-
+    <div class="h-30 d-flex align-items-center justify-content-center">
+        <?php
+        if ($company && $company->logo) {
+            ?>
+            <div class="image float-left">
+                <img src="<?= Url::to('/uploads/company/' . $company->logo) ?>" class="elevation-2"
+                     alt="<?= $company->name ?>" width="235">
+            </div>
+            <?php
+        }
+        ?>
+    </div>
     <ul class="navbar-nav ml-auto">
+
         <li class="nav-item dropdown">
             <a class="nav-link" data-toggle="dropdown" href="#">
                 <i class="far fa-bell"></i>
