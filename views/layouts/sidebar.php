@@ -1,11 +1,10 @@
 <?php
 
-use app\models\Company;
 use hail812\adminlte\widgets\Menu;
 use yii\helpers\Url;
 use app\modules\admin\components\Helper;
 
-$company = Company::find()->select(['name', 'logo'])->where(['agencyId' => Yii::$app->user->identity->agencyId])->one();
+
 ?>
 <aside class="main-sidebar sidebar-dark-success elevation-4">
     <a href="<?= Url::home() ?>" class="h-100 p-2 text-center">
@@ -14,19 +13,6 @@ $company = Company::find()->select(['name', 'logo'])->where(['agencyId' => Yii::
         <!--<span class="brand-text font-weight-light">TRAMS</span>-->
     </a>
     <div class="sidebar">
-        <?php
-        if ($company && $company->logo) {
-            ?>
-            <div class="mt-3 pb-3 mb-3 d-flex">
-                <div class="image text-center">
-                    <img src="<?= Url::to('/uploads/company/' . $company->logo) ?>" class="elevation-2"
-                         alt="<?= $company->name ?>" width="235">
-                </div>
-            </div>
-            <?php
-        }
-        ?>
-
         <nav class="mt-2">
             <?= Menu::widget([
                 'activeCssClass' => 'bg-green-active',
@@ -84,6 +70,35 @@ $company = Company::find()->select(['name', 'logo'])->where(['agencyId' => Yii::
                             ['label' => 'Cities', 'icon' => 'globe', 'url' => ['/city'], 'visible' => Helper::checkRoute('/city/')],
                             ['label' => 'Company', 'icon' => 'building', 'url' => ['/company'], 'visible' => Helper::checkRoute('/company/')],
                             ['label' => 'Company Profile', 'icon' => 'building', 'url' => ['/company/view'], 'visible' => Helper::checkRoute('/company/view')],
+                            ['label' => 'Providers', 'icon' => 'paper-plane', 'url' => ['/sale/provider/index'], 'visible' => Helper::checkRoute('/sale/provider/')],
+                            [
+                                'label' => 'Supplier Settings',
+                                'icon' => 'truck',
+                                'items' => [
+                                    ['label' => 'Supplier Category Add', 'icon' => 'plus', 'url' => ['/sale/supplier-category/create'], 'visible' => Helper::checkRoute('/sale/supplier-category/create')],
+                                    ['label' => 'Category List', 'icon' => 'list-alt', 'url' => ['/sale/supplier-category/index'], 'visible' => Helper::checkRoute('/sale/supplier-category/')],
+                                    ['label' => 'Supplier Add', 'icon' => 'plus', 'url' => ['/sale/supplier/create'], 'visible' => Helper::checkRoute('/sale/supplier/create')],
+                                    ['label' => 'Supplier List', 'icon' => 'truck', 'url' => ['/sale/supplier/index'], 'visible' => Helper::checkRoute('/sale/supplier/')],
+                                ]
+                            ],
+                            [
+                                'label' => 'Airline Settings',
+                                'icon' => 'paper-plane',
+                                'items' => [
+                                    ['label' => 'Airline Add', 'icon' => 'paper-plane', 'url' => ['/sale/airline/create'], 'visible' => Helper::checkRoute('/sale/airline/create')],
+                                    ['label' => 'Airline List', 'icon' => 'paper-plane', 'url' => ['/sale/airline/index'], 'visible' => Helper::checkRoute('/sale/airline/')],
+                                ]
+                            ],
+                            [
+                                'label' => 'Customer Settings',
+                                'icon' => 'users',
+                                'items' => [
+                                    ['label' => 'Star Category Add', 'icon' => 'star', 'url' => ['/sale/star-category/create'], 'visible' => Helper::checkRoute('/sale/star-category/create')],
+                                    ['label' => 'Star Categories', 'icon' => 'list-alt', 'url' => ['/sale/star-category/index'], 'visible' => Helper::checkRoute('/sale/star-category/')],
+                                    ['label' => 'Customer Add', 'icon' => 'user-plus', 'url' => ['/sale/customer/create'], 'visible' => Helper::checkRoute('/sale/customer/create')],
+                                    ['label' => 'Customer List', 'icon' => 'list', 'url' => ['/sale/customer/index'], 'visible' => Helper::checkRoute('/sale/customer/')],
+                                ]
+                            ],
                         ],
                         'options' => [
                             'class' => 'nav-item has-treeview bg-green mb-2 rounded',
@@ -219,35 +234,7 @@ $company = Company::find()->select(['name', 'logo'])->where(['agencyId' => Yii::
                         'label' => 'Sales Management',
                         'icon' => 'truck',
                         'items' => [
-                            ['label' => 'Providers', 'icon' => 'paper-plane', 'url' => ['/sale/provider/index'], 'visible' => Helper::checkRoute('/sale/provider/')],
-                            [
-                                'label' => 'Supplier Settings',
-                                'icon' => 'truck',
-                                'items' => [
-                                    ['label' => 'Supplier Category Add', 'icon' => 'plus', 'url' => ['/sale/supplier-category/create'], 'visible' => Helper::checkRoute('/sale/supplier-category/create')],
-                                    ['label' => 'Category List', 'icon' => 'list-alt', 'url' => ['/sale/supplier-category/index'], 'visible' => Helper::checkRoute('/sale/supplier-category/')],
-                                    ['label' => 'Supplier Add', 'icon' => 'plus', 'url' => ['/sale/supplier/create'], 'visible' => Helper::checkRoute('/sale/supplier/create')],
-                                    ['label' => 'Supplier List', 'icon' => 'truck', 'url' => ['/sale/supplier/index'], 'visible' => Helper::checkRoute('/sale/supplier/')],
-                                ]
-                            ],
-                            [
-                                'label' => 'Airline Settings',
-                                'icon' => 'paper-plane',
-                                'items' => [
-                                    ['label' => 'Airline Add', 'icon' => 'paper-plane', 'url' => ['/sale/airline/create'], 'visible' => Helper::checkRoute('/sale/airline/create')],
-                                    ['label' => 'Airline List', 'icon' => 'paper-plane', 'url' => ['/sale/airline/index'], 'visible' => Helper::checkRoute('/sale/airline/')],
-                                ]
-                            ],
-                            [
-                                'label' => 'Customer Settings',
-                                'icon' => 'users',
-                                'items' => [
-                                    ['label' => 'Star Category Add', 'icon' => 'star', 'url' => ['/sale/star-category/create'], 'visible' => Helper::checkRoute('/sale/star-category/create')],
-                                    ['label' => 'Star Categories', 'icon' => 'list-alt', 'url' => ['/sale/star-category/index'], 'visible' => Helper::checkRoute('/sale/star-category/')],
-                                    ['label' => 'Customer Add', 'icon' => 'user-plus', 'url' => ['/sale/customer/create'], 'visible' => Helper::checkRoute('/sale/customer/create')],
-                                    ['label' => 'Customer List', 'icon' => 'list', 'url' => ['/sale/customer/index'], 'visible' => Helper::checkRoute('/sale/customer/')],
-                                ]
-                            ],
+
 
                             [
                                 'label' => 'Flight Management',
