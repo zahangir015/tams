@@ -8,8 +8,13 @@ use hail812\adminlte\widgets\SmallBox;
 
 $this->title = 'Dashboard';
 $this->params['breadcrumbs'] = [['label' => $this->title]];
+
 ?>
 <div class="container-fluid">
+    <div class="chart">
+        <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+    </div>
+
     <div class="row">
         <div class="col-lg-3 col-md-6 col-sm-6 col-12">
             <?= SmallBox::widget([
