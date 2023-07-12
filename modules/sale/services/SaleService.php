@@ -86,4 +86,16 @@ class SaleService
 
         return ['error' => false, 'message' => 'Invoice and ledger updated successfully'];
     }
+
+    public static function dashboardReport(){
+        //TODO Current day sale for all services
+        //TODO Total Receivable and Payable
+        //TODO profit/loss
+        //TODO Attendance Details
+        //TODO Leave Details
+        //TODO Total Sale Source
+        //TODO Top Sales
+        //TODO Top Suppliers
+
+    }
 }
