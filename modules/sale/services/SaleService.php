@@ -2,14 +2,21 @@
 
 namespace app\modules\sale\services;
 
+use app\components\GlobalConstant;
 use app\components\Utilities;
 use app\modules\account\models\Invoice;
 use app\modules\account\models\ServicePaymentTimeline;
 use app\modules\account\services\InvoiceService;
 use app\modules\account\services\LedgerService;
-use app\modules\account\services\PaymentTimelineService;
+use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\Customer;
+use app\modules\sale\models\holiday\Holiday;
+use app\modules\sale\models\hotel\Hotel;
+use app\modules\sale\models\ticket\Ticket;
+use app\modules\sale\models\visa\Visa;
+use Yii;
 use yii\db\ActiveRecord;
+use yii\db\Expression;
 
 class SaleService
 {
@@ -30,7 +37,7 @@ class SaleService
             }
             $serviceObject->setAttributes($serviceArray['data']);
             if (!$serviceObject->save()) {
-                return ['error' => true, 'message' => "Service update failed reference service object: {$serviceArray['refModel']} - ".Utilities::processErrorMessages($serviceObject->errors)];
+                return ['error' => true, 'message' => "Service update failed reference service object: {$serviceArray['refModel']} - " . Utilities::processErrorMessages($serviceObject->errors)];
             }
         }
 
@@ -87,8 +94,72 @@ class SaleService
         return ['error' => false, 'message' => 'Invoice and ledger updated successfully'];
     }
 
-    public static function dashboardReport(){
-        //TODO Current day sale for all services
+    public static function dashboardReport()
+    {
+        //TODO Current days sale for all services
+        $ticketSalesData = Ticket::find()
+            ->select([
+                new Expression('COUNT(id) as Total'),
+                new Expression('SUM(quoteAmount) as quoteAmount'),
+                new Expression('SUM(receivedAmount) as receivedAmount'),
+                new Expression('SUM(costOfSale) as costOfSale'),
+                new Expression('SUM(netProfit) as netProfit'),
+            ])
+            ->where(['<=', 'refundRequestDate', date("Y-m-d")])
+            ->orWhere(['IS', 'refundRequestDate', NULL])
+            ->andWhere(['issueDate' => date("Y-m-d")])
+            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId])
+            ->orderBy('total DESC')
+            ->asArray()
+            ->one();
+
+        $holidaySalesData = Holiday::find()
+            ->select([
+                new Expression('COUNT(id) as Total'),
+                new Expression('SUM(quoteAmount) as quoteAmount'),
+                new Expression('SUM(receivedAmount) as receivedAmount'),
+                new Expression('SUM(costOfSale) as costOfSale'),
+                new Expression('SUM(netProfit) as netProfit'),
+            ])
+            ->where(['<=', 'refundRequestDate', date("Y-m-d")])
+            ->orWhere(['IS', 'refundRequestDate', NULL])
+            ->andWhere(['issueDate' => date("Y-m-d")])
+            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId])
+            ->orderBy('total DESC')
+            ->asArray()
+            ->one();
+
+        $hotelSalesData = Hotel::find()
+            ->select([
+                new Expression('COUNT(id) as Total'),
+                new Expression('SUM(quoteAmount) as quoteAmount'),
+                new Expression('SUM(receivedAmount) as receivedAmount'),
+                new Expression('SUM(costOfSale) as costOfSale'),
+                new Expression('SUM(netProfit) as netProfit'),
+            ])
+            ->where(['<=', 'refundRequestDate', date("Y-m-d")])
+            ->orWhere(['IS', 'refundRequestDate', NULL])
+            ->andWhere(['issueDate' => date("Y-m-d")])
+            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId])
+            ->orderBy('total DESC')
+            ->asArray()
+            ->one();
+
+        $visaSalesData = Visa::find()
+            ->select([
+                new Expression('COUNT(id) as Total'),
+                new Expression('SUM(quoteAmount) as quoteAmount'),
+                new Expression('SUM(receivedAmount) as receivedAmount'),
+                new Expression('SUM(costOfSale) as costOfSale'),
+                new Expression('SUM(netProfit) as netProfit'),
+            ])
+            ->where(['<=', 'refundRequestDate', date("Y-m-d")])
+            ->orWhere(['IS', 'refundRequestDate', NULL])
+            ->andWhere(['issueDate' => date("Y-m-d")])
+            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId])
+            ->orderBy('total DESC')
+            ->asArray()
+            ->one();
         //TODO Total Receivable and Payable
         //TODO profit/loss
         //TODO Attendance Details
