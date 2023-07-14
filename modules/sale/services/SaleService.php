@@ -94,77 +94,90 @@ class SaleService
         return ['error' => false, 'message' => 'Invoice and ledger updated successfully'];
     }
 
-    public static function dashboardReport()
+    public static function dashboardReport(): array
     {
         //TODO Current days sale for all services
         $ticketSalesData = Ticket::find()
+            ->joinWith(['ticketSupplier'])
             ->select([
-                new Expression('COUNT(id) as Total'),
-                new Expression('SUM(quoteAmount) as quoteAmount'),
-                new Expression('SUM(receivedAmount) as receivedAmount'),
-                new Expression('SUM(costOfSale) as costOfSale'),
-                new Expression('SUM(netProfit) as netProfit'),
+                new Expression('COUNT(ticket.id) as total'),
+                new Expression('SUM(ticket.quoteAmount) as quoteAmount'),
+                new Expression('SUM(ticket.receivedAmount) as receivedAmount'),
+                new Expression('SUM(ticket_supplier.paidAmount) as paidAmount'),
+                new Expression('SUM(ticket.costOfSale) as costOfSale'),
+                new Expression('SUM(ticket.netProfit) as netProfit'),
             ])
-            ->where(['<=', 'refundRequestDate', date("Y-m-d")])
-            ->orWhere(['IS', 'refundRequestDate', NULL])
-            ->andWhere(['issueDate' => date("Y-m-d")])
-            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId])
+            ->where(['<=', 'ticket.refundRequestDate', date("Y-m-d")])
+            ->orWhere(['IS', 'ticket.refundRequestDate', NULL])
+            ->andWhere(['ticket.issueDate' => date("Y-m-d")])
+            ->andWhere(['ticket.agencyId' => Yii::$app->user->identity->agencyId])
             ->orderBy('total DESC')
             ->asArray()
             ->one();
 
         $holidaySalesData = Holiday::find()
+            ->joinWith(['holidaySuppliers'])
             ->select([
-                new Expression('COUNT(id) as Total'),
-                new Expression('SUM(quoteAmount) as quoteAmount'),
-                new Expression('SUM(receivedAmount) as receivedAmount'),
-                new Expression('SUM(costOfSale) as costOfSale'),
-                new Expression('SUM(netProfit) as netProfit'),
+                new Expression('COUNT(holiday.id) as total'),
+                new Expression('SUM(holiday.quoteAmount) as quoteAmount'),
+                new Expression('SUM(holiday.receivedAmount) as receivedAmount'),
+                new Expression('SUM(holiday.costOfSale) as costOfSale'),
+                new Expression('SUM(holiday_supplier.paidAmount) as paidAmount'),
+                new Expression('SUM(holiday.netProfit) as netProfit'),
             ])
-            ->where(['<=', 'refundRequestDate', date("Y-m-d")])
-            ->orWhere(['IS', 'refundRequestDate', NULL])
-            ->andWhere(['issueDate' => date("Y-m-d")])
-            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId])
+            ->where(['<=', 'holiday.refundRequestDate', date("Y-m-d")])
+            ->orWhere(['IS', 'holiday.refundRequestDate', NULL])
+            ->andWhere(['holiday.issueDate' => date("Y-m-d")])
+            ->andWhere(['holiday.agencyId' => Yii::$app->user->identity->agencyId])
             ->orderBy('total DESC')
             ->asArray()
             ->one();
 
         $hotelSalesData = Hotel::find()
+            ->joinWith(['hotelSuppliers'])
             ->select([
-                new Expression('COUNT(id) as Total'),
-                new Expression('SUM(quoteAmount) as quoteAmount'),
-                new Expression('SUM(receivedAmount) as receivedAmount'),
-                new Expression('SUM(costOfSale) as costOfSale'),
-                new Expression('SUM(netProfit) as netProfit'),
+                new Expression('COUNT(hotel.id) as total'),
+                new Expression('SUM(hotel.quoteAmount) as quoteAmount'),
+                new Expression('SUM(hotel.receivedAmount) as receivedAmount'),
+                new Expression('SUM(hotel.costOfSale) as costOfSale'),
+                new Expression('SUM(hotel_supplier.paidAmount) as paidAmount'),
+                new Expression('SUM(hotel.netProfit) as netProfit'),
             ])
-            ->where(['<=', 'refundRequestDate', date("Y-m-d")])
-            ->orWhere(['IS', 'refundRequestDate', NULL])
-            ->andWhere(['issueDate' => date("Y-m-d")])
-            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId])
+            ->where(['<=', 'hotel.refundRequestDate', date("Y-m-d")])
+            ->orWhere(['IS', 'hotel.refundRequestDate', NULL])
+            ->andWhere(['hotel.issueDate' => date("Y-m-d")])
+            ->andWhere(['hotel.agencyId' => Yii::$app->user->identity->agencyId])
             ->orderBy('total DESC')
             ->asArray()
             ->one();
 
         $visaSalesData = Visa::find()
+            ->joinWith(['visaSuppliers'])
             ->select([
-                new Expression('COUNT(id) as Total'),
-                new Expression('SUM(quoteAmount) as quoteAmount'),
-                new Expression('SUM(receivedAmount) as receivedAmount'),
-                new Expression('SUM(costOfSale) as costOfSale'),
-                new Expression('SUM(netProfit) as netProfit'),
+                new Expression('COUNT(visa.id) as total'),
+                new Expression('SUM(visa.quoteAmount) as quoteAmount'),
+                new Expression('SUM(visa.receivedAmount) as receivedAmount'),
+                new Expression('SUM(visa.costOfSale) as costOfSale'),
+                new Expression('SUM(visa_supplier.paidAmount) as paidAmount'),
+                new Expression('SUM(visa.netProfit) as netProfit'),
             ])
-            ->where(['<=', 'refundRequestDate', date("Y-m-d")])
-            ->orWhere(['IS', 'refundRequestDate', NULL])
-            ->andWhere(['issueDate' => date("Y-m-d")])
-            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId])
+            ->where(['<=', 'visa.refundRequestDate', date("Y-m-d")])
+            ->orWhere(['IS', 'visa.refundRequestDate', NULL])
+            ->andWhere(['visa.issueDate' => date("Y-m-d")])
+            ->andWhere(['visa.agencyId' => Yii::$app->user->identity->agencyId])
             ->orderBy('total DESC')
             ->asArray()
             ->one();
-        //TODO Total Receivable and Payable
+        return [
+            $ticketSalesData,
+            $holidaySalesData,
+            $hotelSalesData,
+            $visaSalesData,
+        ];
+        //TODO total Receivable and Payable
         //TODO profit/loss
-        //TODO Attendance Details
-        //TODO Leave Details
-        //TODO Total Sale Source
+
+        //TODO total Sale Source
         //TODO Top Sales
         //TODO Top Suppliers
 

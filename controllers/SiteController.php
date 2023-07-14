@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\modules\sale\services\SaleService;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -61,7 +62,7 @@ class SiteController extends Controller
      */
     public function actionIndex(): string
     {
-
+        dd(SaleService::dashboardReport());
         return $this->render('index');
     }
 

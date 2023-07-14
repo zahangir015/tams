@@ -22,6 +22,7 @@ use DateTime;
 use Yii;
 use yii\base\Exception;
 use yii\db\ActiveRecord;
+use yii\db\Expression;
 
 class AttendanceService
 {
@@ -398,5 +399,39 @@ class AttendanceService
                 str_pad($inTimeDiff->i, 2, '0', STR_PAD_LEFT) . ':00',
             'isLate' => 1
         ];
+    }
+
+    public static function dashboardReport(): array
+    {
+        $employee = Employee::find()
+            ->where(['userId' => Yii::$app->user->id])
+            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId])
+            ->one();
+        //TODO Attendance Details
+        $attendanceData = Attendance::find()
+            ->select(
+                [
+                    new Expression('')
+                ]
+            )
+            ->where([Attendance::tableName().'.status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere([Attendance::tableName().'.employeeId' => $employee->id])
+            ->asArray()
+            ->one();
+        //TODO Leave Details
+        $leaveAllocationData = LeaveAllocation::find()
+            ->select(
+                [
+                    'employeeId',
+                    'leaveTypeId',
+                    'year',
+                    'totalDays',
+                    'availedDays',
+                    'remainingDays'
+                ]
+            )
+            ->where([LeaveAllocation::tableName().'.status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere([LeaveAllocation::tableName().'.employeeId' => $employee->id])
+            ->asArray()->all();
     }
 }
