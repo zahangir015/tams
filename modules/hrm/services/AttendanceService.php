@@ -411,11 +411,14 @@ class AttendanceService
         $attendanceData = Attendance::find()
             ->select(
                 [
-                    new Expression('')
+                    new Expression('SUM(isAbsent) as totalAbsent'),
+                    new Expression('SUM(isLate) as totalLate'),
+                    new Expression('SUM(isEarlyOut) as totalEarlyOut'),
                 ]
             )
             ->where([Attendance::tableName().'.status' => GlobalConstant::ACTIVE_STATUS])
             ->andWhere([Attendance::tableName().'.employeeId' => $employee->id])
+            ->andWhere(['between', 'date', date('Y-m-01'), date('Y-m-t')])
             ->asArray()
             ->one();
         //TODO Leave Details
@@ -433,5 +436,10 @@ class AttendanceService
             ->where([LeaveAllocation::tableName().'.status' => GlobalConstant::ACTIVE_STATUS])
             ->andWhere([LeaveAllocation::tableName().'.employeeId' => $employee->id])
             ->asArray()->all();
+        
+        return [
+            $attendanceData,
+            $leaveAllocationData
+        ];
     }
 }
