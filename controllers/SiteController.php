@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\modules\hrm\services\AttendanceService;
 use app\modules\sale\services\SaleService;
 use Yii;
 use yii\filters\AccessControl;
@@ -62,16 +63,18 @@ class SiteController extends Controller
      */
     public function actionIndex(): string
     {
-        dd(SaleService::dashboardReport());
-        return $this->render('index');
+        return $this->render('index', [
+            'saleData' => SaleService::dashboardReport(),
+            'leaveAttendanceData' => AttendanceService::dashboardReport(),
+        ]);
     }
 
-    /**
+    /*/**
      * Login action.
      *
      * @return Response|string
      */
-    public function actionLogin()
+    /*public function actionLogin()
     {
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
@@ -86,26 +89,26 @@ class SiteController extends Controller
         return $this->render('login', [
             'model' => $model,
         ]);
-    }
+    }*/
 
     /**
      * Logout action.
      *
      * @return Response
      */
-    public function actionLogout()
+    /*public function actionLogout()
     {
         Yii::$app->user->logout();
 
         return $this->goHome();
-    }
+    }*/
 
     /**
      * Displays contact page.
      *
      * @return Response|string
      */
-    public function actionContact()
+    /*public function actionContact()
     {
         $model = new ContactForm();
         if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
@@ -116,15 +119,15 @@ class SiteController extends Controller
         return $this->render('contact', [
             'model' => $model,
         ]);
-    }
+    }*/
 
     /**
      * Displays about page.
      *
      * @return string
      */
-    public function actionAbout()
+    /*public function actionAbout()
     {
         return $this->render('about');
-    }
+    }*/
 }

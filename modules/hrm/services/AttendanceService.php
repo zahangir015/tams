@@ -334,7 +334,7 @@ class AttendanceService
 
         $model->entry = date('H:i:00');
         $model->employeeId = $employee->id;
-        $employeeInTime = new DateTime(date('Y-m-d').' '.$model->entry);
+        $employeeInTime = new DateTime(date('Y-m-d') . ' ' . $model->entry);
         $lateCalculationResponse = self::calculateLate($employeeInTime, ($roster) ? $roster->shift : $employeeShift->shift);
         $model->load(['Attendance' => $lateCalculationResponse]);
         $model->date = date('Y-m-d');
@@ -344,7 +344,7 @@ class AttendanceService
         if ($model->hasErrors()) {
             return [
                 'error' => true,
-                'message' => 'Attendance entry failed - '.Utilities::processErrorMessages($model->getErrors())
+                'message' => 'Attendance entry failed - ' . Utilities::processErrorMessages($model->getErrors())
             ];
         }
 
@@ -407,39 +407,55 @@ class AttendanceService
             ->where(['userId' => Yii::$app->user->id])
             ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId])
             ->one();
-        //TODO Attendance Details
-        $attendanceData = Attendance::find()
-            ->select(
-                [
-                    new Expression('SUM(isAbsent) as totalAbsent'),
-                    new Expression('SUM(isLate) as totalLate'),
-                    new Expression('SUM(isEarlyOut) as totalEarlyOut'),
-                ]
-            )
-            ->where([Attendance::tableName().'.status' => GlobalConstant::ACTIVE_STATUS])
-            ->andWhere([Attendance::tableName().'.employeeId' => $employee->id])
-            ->andWhere(['between', 'date', date('Y-m-01'), date('Y-m-t')])
-            ->asArray()
-            ->one();
-        //TODO Leave Details
-        $leaveAllocationData = LeaveAllocation::find()
-            ->select(
-                [
-                    'employeeId',
-                    'leaveTypeId',
-                    'year',
-                    'totalDays',
-                    'availedDays',
-                    'remainingDays'
-                ]
-            )
-            ->where([LeaveAllocation::tableName().'.status' => GlobalConstant::ACTIVE_STATUS])
-            ->andWhere([LeaveAllocation::tableName().'.employeeId' => $employee->id])
-            ->asArray()->all();
-        
+        //TODO Current day entry
+        if ($employee) {
+            $currentDayAttendanceData = Attendance::find()
+                ->select(
+                    [
+                        'entry',
+                    ]
+                )
+                ->where([Attendance::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
+                ->andWhere([Attendance::tableName() . '.employeeId' => $employee->id])
+                ->andWhere(['date' => date('Y-m-d')])
+                ->asArray()
+                ->one();
+            //TODO Attendance Details
+            $attendanceData = Attendance::find()
+                ->select(
+                    [
+                        new Expression('SUM(isAbsent) as totalAbsent'),
+                        new Expression('SUM(isLate) as totalLate'),
+                        new Expression('SUM(isEarlyOut) as totalEarlyOut'),
+                    ]
+                )
+                ->where([Attendance::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
+                ->andWhere([Attendance::tableName() . '.employeeId' => $employee->id])
+                ->andWhere(['between', 'date', date('Y-m-01'), date('Y-m-t')])
+                ->asArray()
+                ->one();
+            //TODO Leave Details
+            $leaveAllocationData = LeaveAllocation::find()
+                ->select(
+                    [
+                        'employeeId',
+                        'leaveTypeId',
+                        'year',
+                        'totalDays',
+                        'availedDays',
+                        'remainingDays'
+                    ]
+                )
+                ->where([LeaveAllocation::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
+                ->andWhere([LeaveAllocation::tableName() . '.employeeId' => $employee->id])
+                ->asArray()->all();
+        }
+
+
         return [
-            $attendanceData,
-            $leaveAllocationData
+            'currentDayAttendanceData' => isset($currentDayAttendanceData) ? $currentDayAttendanceData : [],
+            'attendanceData' => isset($attendanceData) ? $attendanceData : [],
+            'leaveAllocationData' => isset($leaveAllocationData) ? $leaveAllocationData : [],
         ];
     }
 }

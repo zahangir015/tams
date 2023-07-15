@@ -169,10 +169,10 @@ class SaleService
             ->asArray()
             ->one();
         return [
-            $ticketSalesData,
-            $holidaySalesData,
-            $hotelSalesData,
-            $visaSalesData,
+            'ticketSalesData' => $ticketSalesData,
+            'holidaySalesData' => $holidaySalesData,
+            'hotelSalesData' => $hotelSalesData,
+            'visaSalesData' => $visaSalesData,
         ];
         //TODO total Receivable and Payable
         //TODO profit/loss
