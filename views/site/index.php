@@ -18,43 +18,53 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
     <div class="row">
         <div class="col-md">
             <div class="card card-widget widget-user shadow">
-                <div class="card-header">
-                    <h5 class="font-weight-bold text-center">Today's Sale</h5>
-                </div>
+                <h5 class="font-weight-bold text-center mt-3">Today's Sale</h5>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-lg-6 col-md-6 col-sm-12 col-12">
-                            <?= SmallBox::widget([
-                                'title' => '150',
-                                'text' => 'Flight Ticket Sale',
-                                'icon' => 'fas fa-plane',
-                                'theme' => 'gradient-yellow'
-                            ]) ?>
+                            <div class="small-box bg-info">
+                                <div class="inner">
+                                    <h3>150</h3>
+                                    <p>New Orders</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-lg-6 col-md-6 col-sm-12 col-12">
-                            <?= SmallBox::widget([
-                                'title' => '44',
-                                'text' => 'Holiday Sale',
-                                'icon' => 'fas fa-suitcase',
-                                'theme' => 'gradient-orange',
-                            ]) ?>
+                            <div class="small-box bg-info">
+                                <div class="inner">
+                                    <h3>150</h3>
+                                    <p>New Orders</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-lg-6 col-md-6 col-sm-12 col-12">
-                            <?= SmallBox::widget([
-                                'title' => '44',
-                                'text' => 'Visa Sale',
-                                'icon' => 'fas fa-passport',
-                                'theme' => 'gradient-success',
-                            ]) ?>
+                            <div class="small-box bg-info">
+                                <div class="inner">
+                                    <h3>150</h3>
+                                    <p>New Orders</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="col-lg-6 col-md-6 col-sm-12 col-12">
-                            <?= SmallBox::widget([
-                                'title' => '44',
-                                'text' => 'Hotel Sale',
-                                'icon' => 'fas fa-hotel',
-                                'theme' => 'gradient-primary',
-                            ]) ?>
+                            <div class="small-box bg-info">
+                                <div class="inner">
+                                    <h3>150</h3>
+                                    <p>New Orders</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -62,29 +72,47 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
         </div>
         <div class="col-md">
             <div class="card card-widget widget-user shadow">
-                <div class="card-header">
-                    <h5 class="font-weight-bold text-center">Today's Sale</h5>
-                </div>
+                <h5 class="font-weight-bold text-center mt-3">Payable/Receivable</h5>
                 <div class="card-body">
                     <div class="col-12">
-                        <?= SmallBox::widget([
-                            'title' => '150',
-                            'text' => 'Flight Ticket Sale',
-                            'icon' => 'fas fa-plane',
-                            'theme' => 'gradient-yellow'
-                        ]) ?>
+                        <div class="small-box bg-info">
+                            <div class="inner">
+                                <h3>150</h3>
+                                <p>Total Receivable</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fas fa-shopping-cart"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="small-box bg-info">
+                            <div class="inner">
+                                <h3>150</h3>
+                                <p>Total Payable</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fas fa-shopping-cart"></i>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-md">
-            <div class="col-12">
-                <?= SmallBox::widget([
-                    'title' => '150',
-                    'text' => 'Flight Ticket Sale',
-                    'icon' => 'fas fa-plane',
-                    'theme' => 'gradient-yellow'
-                ]) ?>
+            <div class="card card-widget widget-user shadow">
+                <h5 class="font-weight-bold text-center mt-3">Profit/Loos</h5>
+                <div class="card-body">
+                    <div class="col-12">
+                        <p><b>Today's</b>  </p>
+                    </div>
+                    <div class="col-12">
+                        <p><b>Last Week</b></p>
+                    </div>
+                    <div class="col-12">
+                        <p><b>Last Month</b></p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

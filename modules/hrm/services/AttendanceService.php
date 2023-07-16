@@ -405,7 +405,7 @@ class AttendanceService
     {
         $employee = Employee::find()
             ->where(['userId' => Yii::$app->user->id])
-            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId])
+            //->andWhere(['agencyId' => Yii::$app->user->identity->agencyId])
             ->one();
         //TODO Current day entry
         if ($employee) {
