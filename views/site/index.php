@@ -17,53 +17,116 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
 
     <div class="row">
         <div class="col-md">
-            <div class="card card-widget widget-user shadow bg-gray-light">
+            <div class="card card-widget widget-user shadow">
                 <h5 class="font-weight-bold text-center mt-3">Today's Sale</h5>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-lg-6 col-md-6 col-sm-12 col-12">
-                            <div class="small-box bg-light-green">
+                            <div class="small-box border border-primary text-primary">
                                 <div class="inner">
-                                    <h3>150</h3> Flights
-                                    <p>New Orders</p>
+                                    <h3><?= $ticketSalesData['total'] ?></h3> Flight
+                                    <p><?= number_format($ticketSalesData['quoteAmount']) ?></p>
                                 </div>
                                 <div class="icon">
-                                    <i class="fas fa-shopping-cart"></i>
+                                    <i class="fas fa-plane-departure"></i>
                                 </div>
                             </div>
                         </div>
                         <div class="col-lg-6 col-md-6 col-sm-12 col-12">
-                            <div class="small-box bg-light-blue">
+                            <div class="small-box border border-success text-success">
                                 <div class="inner">
-                                    <h3>150</h3> Hotels
-                                    <p>New Orders</p>
+                                    <h3><?= $hotelSalesData['total'] ?></h3> Hotel
+                                    <p><?= number_format($hotelSalesData['quoteAmount']) ?></p>
                                 </div>
                                 <div class="icon">
-                                    <i class="fas fa-shopping-cart"></i>
+                                    <i class="fas fa-hotel"></i>
                                 </div>
                             </div>
                         </div>
                         <div class="col-lg-6 col-md-6 col-sm-12 col-12">
-                            <div class="small-box bg-light-yellow">
+                            <div class="small-box border border-warning text-warning">
                                 <div class="inner">
-                                    <h3>150</h3>
-                                    <p>New Orders</p>
+                                    <h3><?= $holidaySalesData['total'] ?></h3> Holiday
+                                    <p><?= number_format($holidaySalesData['quoteAmount']) ?></p>
                                 </div>
                                 <div class="icon">
-                                    <i class="fas fa-shopping-cart"></i>
+                                    <i class="fas fa-suitcase-rolling"></i>
                                 </div>
                             </div>
                         </div>
 
                         <div class="col-lg-6 col-md-6 col-sm-12 col-12">
-                            <div class="small-box bg-light-red">
+                            <div class="small-box border border-danger text-danger">
                                 <div class="inner">
-                                    <h3>150</h3>
-                                    <p>New Orders</p>
+                                    <h3><?= $holidaySalesData['total'] ?></h3> Visa
+                                    <p><?= number_format($holidaySalesData['quoteAmount']) ?></p>
                                 </div>
                                 <div class="icon">
-                                    <i class="fas fa-shopping-cart"></i>
+                                    <i class="fas fa-passport"></i>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="card card-widget widget-user shadow">
+                <h5 class="font-weight-bold text-center mt-3">Top Sales</h5>
+                <div class="card-body">
+                    <div class="col-12">
+                        <div class="info-box bg-gradient-primary">
+                            <span class="info-box-icon"><i class="fas fa-plane-departure"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-number">41,410</span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 70%"></div>
+                                </div>
+                                <!--<span class="progress-description">
+                                    70% Increase in 30 Days
+                                </span>-->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="info-box bg-gradient-success">
+                            <span class="info-box-icon"><i class="fas fa-hotel"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-number">41,410</span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 70%"></div>
+                                </div>
+                                <!--<span class="progress-description">
+                                    70% Increase in 30 Days
+                                </span>-->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="info-box bg-gradient-warning">
+                            <span class="info-box-icon"><i class="fas fa-suitcase-rolling"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-number">41,410</span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 70%"></div>
+                                </div>
+                                <!--<span class="progress-description">
+                                    70% Increase in 30 Days
+                                </span>-->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="info-box bg-gradient-danger">
+                            <span class="info-box-icon"><i class="fas fa-passport"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-number">41,410</span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 70%"></div>
+                                </div>
+                                <!--<span class="progress-description">
+                                    70% Increase in 30 Days
+                                </span>-->
                             </div>
                         </div>
                     </div>
@@ -75,43 +138,40 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                 <h5 class="font-weight-bold text-center mt-3">Payable/Receivable</h5>
                 <div class="card-body">
                     <div class="col-12">
-                        <div class="small-box bg-light-green">
+                        <div class="small-box bg-success">
                             <div class="inner">
                                 <h3>150</h3>
                                 <p>Total Receivable</p>
                             </div>
                             <div class="icon">
-                                <i class="fas fa-shopping-cart"></i>
+                                <i class="fas fa-arrow-alt-circle-up"></i>
                             </div>
                         </div>
                     </div>
                     <div class="col-12">
-                        <div class="small-box bg-light-red">
+                        <div class="small-box bg-danger">
                             <div class="inner">
                                 <h3>150</h3>
                                 <p>Total Payable</p>
                             </div>
                             <div class="icon">
-                                <i class="fas fa-shopping-cart"></i>
+                                <i class="fa fa-arrow-circle-down"></i>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md">
-
-        </div>
     </div>
 
 
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-5">
             <div class="card card-widget widget-user shadow bg-light-blue">
                 <h5 class="font-weight-bold text-center mt-3">Profit/Loos</h5>
                 <div class="card-body">
                     <div class="col-12">
-                        <p><b>Today's</b>  </p>
+                        <p><b>Today's</b></p>
                     </div>
                     <div class="col-12">
                         <p><b>Last Week</b></p>
@@ -122,42 +182,159 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                 </div>
             </div>
         </div>
-        <div class="col-md-8">
+        <div class="col-md-7">
             <div class="card card-widget widget-user shadow">
-                <div class="widget-user-header bg-light-green">
-                    <h5 class="widget-user-desc">Founder &amp; CEO</h5>
-                </div>
-                <div class="card-footer">
+                <h5 class="font-weight-bold text-center mt-3">Profit/Loos</h5>
+                <div class="card-footer pt-30">
                     <div class="row">
-                        <div class="col-sm-4 border-right">
-                            <div class="description-block">
-                                <h5 class="description-header">3,200</h5>
-                                <span class="description-text">SALES</span>
+                        <div class="col-sm-3 col-6">
+                            <div class="description-block border-right">
+                                <span class="description-percentage text-success"><i
+                                            class="fas fa-caret-up"></i> 17%</span>
+                                <h5 class="description-header">$35,210.43</h5>
+                                <span class="description-text">TOTAL REVENUE</span>
                             </div>
-
                         </div>
 
-                        <div class="col-sm-4 border-right">
-                            <div class="description-block">
-                                <h5 class="description-header">13,000</h5>
-                                <span class="description-text">FOLLOWERS</span>
+                        <div class="col-sm-3 col-6">
+                            <div class="description-block border-right">
+                                <span class="description-percentage text-warning"><i
+                                            class="fas fa-caret-left"></i> 0%</span>
+                                <h5 class="description-header">$10,390.90</h5>
+                                <span class="description-text">TOTAL COST</span>
                             </div>
-
                         </div>
 
-                        <div class="col-sm-4">
-                            <div class="description-block">
-                                <h5 class="description-header">35</h5>
-                                <span class="description-text">PRODUCTS</span>
+                        <div class="col-sm-3 col-6">
+                            <div class="description-block border-right">
+                                <span class="description-percentage text-success"><i
+                                            class="fas fa-caret-up"></i> 20%</span>
+                                <h5 class="description-header">$24,813.53</h5>
+                                <span class="description-text">TOTAL PROFIT</span>
                             </div>
-
                         </div>
 
+                        <div class="col-sm-3 col-6">
+                            <div class="description-block">
+                                <span class="description-percentage text-danger"><i
+                                            class="fas fa-caret-down"></i> 18%</span>
+                                <h5 class="description-header">1200</h5>
+                                <span class="description-text">GOAL COMPLETIONS</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-5">
+            <div class="card card-widget widget-user shadow">
+                <h5 class="font-weight-bold text-center mt-3">Attendance Report</h5>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                            <div class="small-box bg-success">
+                                <div class="inner">
+                                    <h3>150</h3>
+                                    <p>Total Receivable</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                            <div class="small-box bg-danger">
+                                <div class="inner">
+                                    <h3>150</h3>
+                                    <p>Total Payable</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                            <div class="small-box bg-success">
+                                <div class="inner">
+                                    <h3>150</h3>
+                                    <p>Total Receivable</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                            <div class="small-box bg-danger">
+                                <div class="inner">
+                                    <h3>150</h3>
+                                    <p>Total Payable</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                 </div>
             </div>
         </div>
+        <div class="col-md-7">
+            <div class="card card-widget widget-user shadow">
+                <h5 class="font-weight-bold text-center mt-3">Leave Report</h5>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                            <div class="small-box bg-primary">
+                                <div class="inner">
+                                    <h3>150</h3>
+                                    <p>Total Receivable</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                            <div class="small-box bg-success">
+                                <div class="inner">
+                                    <h3>150</h3>
+                                    <p>Total Payable</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                            <div class="small-box bg-warning">
+                                <div class="inner">
+                                    <h3>150</h3>
+                                    <p>Total Receivable</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                            <div class="small-box bg-danger">
+                                <div class="inner">
+                                    <h3>150</h3>
+                                    <p>Total Payable</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
+                </div>
+            </div>
+        </div>
     </div>
 </div>

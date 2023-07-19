@@ -64,7 +64,7 @@ class SiteController extends Controller
     public function actionIndex(): string
     {
         return $this->render('index', [
-            //'saleData' => SaleService::dashboardReport(),
+            'saleData' => SaleService::dashboardReport(),
             'leaveAttendanceData' => AttendanceService::dashboardReport(),
         ]);
     }
