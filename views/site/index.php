@@ -8,7 +8,7 @@ use hail812\adminlte\widgets\SmallBox;
 
 $this->title = 'Dashboard';
 $this->params['breadcrumbs'] = [['label' => $this->title]];
-
+//dd($saleData);
 ?>
 <div class="container-fluid">
     <!--<div class="chart">
@@ -24,8 +24,8 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                         <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                             <div class="small-box border border-primary text-primary">
                                 <div class="inner">
-                                    <h3><?= $ticketSalesData['total'] ?></h3> Flight
-                                    <p><?= number_format($ticketSalesData['quoteAmount']) ?></p>
+                                    <h3><?= $saleData['ticketSalesData']['total'] ?></h3> Flight
+                                    <p>BDT <?= $saleData['ticketSalesData']['quoteAmount'] ?: 0 ?></p>
                                 </div>
                                 <div class="icon">
                                     <i class="fas fa-plane-departure"></i>
@@ -35,8 +35,8 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                         <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                             <div class="small-box border border-success text-success">
                                 <div class="inner">
-                                    <h3><?= $hotelSalesData['total'] ?></h3> Hotel
-                                    <p><?= number_format($hotelSalesData['quoteAmount']) ?></p>
+                                    <h3><?= $saleData['hotelSalesData']['total'] ?></h3> Hotel
+                                    <p>BDT <?= $saleData['hotelSalesData']['quoteAmount'] ?: 0 ?></p>
                                 </div>
                                 <div class="icon">
                                     <i class="fas fa-hotel"></i>
@@ -46,8 +46,8 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                         <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                             <div class="small-box border border-warning text-warning">
                                 <div class="inner">
-                                    <h3><?= $holidaySalesData['total'] ?></h3> Holiday
-                                    <p><?= number_format($holidaySalesData['quoteAmount']) ?></p>
+                                    <h3><?= $saleData['holidaySalesData']['total'] ?></h3> Holiday
+                                    <p>BDT <?= $saleData['holidaySalesData']['quoteAmount'] ?: 0 ?></p>
                                 </div>
                                 <div class="icon">
                                     <i class="fas fa-suitcase-rolling"></i>
@@ -58,8 +58,8 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                         <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                             <div class="small-box border border-danger text-danger">
                                 <div class="inner">
-                                    <h3><?= $holidaySalesData['total'] ?></h3> Visa
-                                    <p><?= number_format($holidaySalesData['quoteAmount']) ?></p>
+                                    <h3><?= $saleData['visaSalesData']['total'] ?></h3> Visa
+                                    <p>BDT <?= $saleData['visaSalesData']['quoteAmount'] ?: 0 ?></p>
                                 </div>
                                 <div class="icon">
                                     <i class="fas fa-passport"></i>
@@ -78,7 +78,7 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                         <div class="info-box bg-gradient-primary">
                             <span class="info-box-icon"><i class="fas fa-plane-departure"></i></span>
                             <div class="info-box-content">
-                                <span class="info-box-number">41,410</span>
+                                <span class="info-box-number"><?= ($saleData['ticketSalesData']['quoteAmount'] * 100)/array_sum(array_column($saleData, 'quoteAmount')) ?></span>
                                 <div class="progress">
                                     <div class="progress-bar" style="width: 70%"></div>
                                 </div>
@@ -120,7 +120,7 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                         <div class="info-box bg-gradient-danger">
                             <span class="info-box-icon"><i class="fas fa-passport"></i></span>
                             <div class="info-box-content">
-                                <span class="info-box-number">41,410</span>
+                                <span class="info-box-number"><?= $saleData['ticketSalesData']['quoteAmount'] * array_sum($saleData) ?></span>
                                 <div class="progress">
                                     <div class="progress-bar" style="width: 70%"></div>
                                 </div>

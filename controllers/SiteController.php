@@ -65,6 +65,7 @@ class SiteController extends Controller
     {
         return $this->render('index', [
             'saleData' => SaleService::dashboardReport(),
+            'salePercentage' =>
             'leaveAttendanceData' => AttendanceService::dashboardReport(),
         ]);
     }
