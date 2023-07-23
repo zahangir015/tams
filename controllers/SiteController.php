@@ -63,10 +63,25 @@ class SiteController extends Controller
      */
     public function actionIndex(): string
     {
+        $saleData = SaleService::dashboardReport();
+        $leaveAttendanceData = AttendanceService::dashboardReport();//dd($leaveAttendanceData);
+        $totalQuote = array_sum(array_column($saleData, 'quoteAmount'));
+        $totalReceived = array_sum(array_column($saleData, 'receivedAmount'));
+        $totalPaid = array_sum(array_column($saleData, 'paidAmount'));
+        $totalCost = array_sum(array_column($saleData, 'costOfSale'));
         return $this->render('index', [
-            'saleData' => SaleService::dashboardReport(),
-            'salePercentage' =>
-            'leaveAttendanceData' => AttendanceService::dashboardReport(),
+            'saleData' => $saleData,
+            'totalQuote' => $totalQuote,
+            'totalReceived' => $totalReceived,
+            'totalPaid' => $totalPaid,
+            'totalCost' => $totalCost,
+            'ticketPercentage' => ($totalQuote) ? ($saleData['ticketSalesData']['quoteAmount'] * 100) / $totalQuote : 0,
+            'hotelPercentage' => ($totalQuote) ? ($saleData['hotelSalesData']['quoteAmount'] * 100) / $totalQuote : 0,
+            'holidayPercentage' => ($totalQuote) ? ($saleData['holidaySalesData']['quoteAmount'] * 100) / $totalQuote : 0,
+            'visaPercentage' => ($totalQuote) ? ($saleData['visaSalesData']['quoteAmount'] * 100) / $totalQuote : 0,
+            'receivable' => ($totalQuote - $totalReceived),
+            'payable' => ($totalCost - $totalPaid),
+            'leaveAttendanceData' => $leaveAttendanceData,
         ]);
     }
 }

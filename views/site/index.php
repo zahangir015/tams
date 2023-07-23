@@ -8,7 +8,6 @@ use hail812\adminlte\widgets\SmallBox;
 
 $this->title = 'Dashboard';
 $this->params['breadcrumbs'] = [['label' => $this->title]];
-//dd($saleData);
 ?>
 <div class="container-fluid">
     <!--<div class="chart">
@@ -70,69 +69,7 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                 </div>
             </div>
         </div>
-        <div class="col-md">
-            <div class="card card-widget widget-user shadow">
-                <h5 class="font-weight-bold text-center mt-3">Top Sales</h5>
-                <div class="card-body">
-                    <div class="col-12">
-                        <div class="info-box bg-gradient-primary">
-                            <span class="info-box-icon"><i class="fas fa-plane-departure"></i></span>
-                            <div class="info-box-content">
-                                <span class="info-box-number"><?= ($saleData['ticketSalesData']['quoteAmount'] * 100)/array_sum(array_column($saleData, 'quoteAmount')) ?></span>
-                                <div class="progress">
-                                    <div class="progress-bar" style="width: 70%"></div>
-                                </div>
-                                <!--<span class="progress-description">
-                                    70% Increase in 30 Days
-                                </span>-->
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="info-box bg-gradient-success">
-                            <span class="info-box-icon"><i class="fas fa-hotel"></i></span>
-                            <div class="info-box-content">
-                                <span class="info-box-number">41,410</span>
-                                <div class="progress">
-                                    <div class="progress-bar" style="width: 70%"></div>
-                                </div>
-                                <!--<span class="progress-description">
-                                    70% Increase in 30 Days
-                                </span>-->
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="info-box bg-gradient-warning">
-                            <span class="info-box-icon"><i class="fas fa-suitcase-rolling"></i></span>
-                            <div class="info-box-content">
-                                <span class="info-box-number">41,410</span>
-                                <div class="progress">
-                                    <div class="progress-bar" style="width: 70%"></div>
-                                </div>
-                                <!--<span class="progress-description">
-                                    70% Increase in 30 Days
-                                </span>-->
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="info-box bg-gradient-danger">
-                            <span class="info-box-icon"><i class="fas fa-passport"></i></span>
-                            <div class="info-box-content">
-                                <span class="info-box-number"><?= $saleData['ticketSalesData']['quoteAmount'] * array_sum($saleData) ?></span>
-                                <div class="progress">
-                                    <div class="progress-bar" style="width: 70%"></div>
-                                </div>
-                                <!--<span class="progress-description">
-                                    70% Increase in 30 Days
-                                </span>-->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+
         <div class="col-md">
             <div class="card card-widget widget-user shadow">
                 <h5 class="font-weight-bold text-center mt-3">Payable/Receivable</h5>
@@ -140,8 +77,8 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                     <div class="col-12">
                         <div class="small-box bg-success">
                             <div class="inner">
-                                <h3>150</h3>
                                 <p>Total Receivable</p>
+                                <h3><?= $receivable ?></h3>
                             </div>
                             <div class="icon">
                                 <i class="fas fa-arrow-alt-circle-up"></i>
@@ -151,8 +88,8 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                     <div class="col-12">
                         <div class="small-box bg-danger">
                             <div class="inner">
-                                <h3>150</h3>
                                 <p>Total Payable</p>
+                                <h3><?= $payable ?></h3>
                             </div>
                             <div class="icon">
                                 <i class="fa fa-arrow-circle-down"></i>
@@ -163,7 +100,197 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
             </div>
         </div>
     </div>
-
+    <div class="row">
+        <div class="col-md">
+            <div class="card card-widget widget-user shadow">
+                <h5 class="font-weight-bold text-center mt-3">Top Sales</h5>
+                <div class="card-body">
+                    <div class="col-12">
+                        <div class="info-box bg-gradient-primary">
+                            <span class="info-box-icon"><i class="fas fa-plane-departure"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-number"><?= $saleData['ticketSalesData']['quoteAmount'] ?></span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: <?= $ticketPercentage ?>%"></div>
+                                </div>
+                                <span class="progress-description">
+                                    <?= $ticketPercentage ?>% in Today's sale
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="info-box bg-gradient-success">
+                            <span class="info-box-icon"><i class="fas fa-hotel"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-number"><?= $saleData['hotelSalesData']['quoteAmount'] ?></span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: <?= $hotelPercentage ?>%"></div>
+                                </div>
+                                <span class="progress-description">
+                                    <?= $hotelPercentage ?>% in Today's sale
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="info-box bg-gradient-warning">
+                            <span class="info-box-icon"><i class="fas fa-suitcase-rolling"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-number"><?= $saleData['holidaySalesData']['quoteAmount'] ?></span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: <?= $holidayPercentage ?>%"></div>
+                                </div>
+                                <span class="progress-description">
+                                    <?= $holidayPercentage ?>% in Today's sale
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="info-box bg-gradient-danger">
+                            <span class="info-box-icon"><i class="fas fa-passport"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-number"><?= $saleData['visaSalesData']['quoteAmount'] ?></span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: <?= $visaPercentage ?>%"></div>
+                                </div>
+                                <span class="progress-description">
+                                    <?= $visaPercentage ?>% in Today's sale
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="card card-widget widget-user shadow">
+                <h5 class="font-weight-bold text-center mt-3">Top Suppliers</h5>
+                <div class="card-body">
+                    <div class="col-12">
+                        <div class="info-box bg-gradient-primary">
+                            <span class="info-box-icon"><i class="fas fa-plane-departure"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-number"><?= $saleData['ticketSalesData']['quoteAmount'] ?></span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: <?= $ticketPercentage ?>%"></div>
+                                </div>
+                                <span class="progress-description">
+                                    <?= $ticketPercentage ?>% in Today's sale
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="info-box bg-gradient-success">
+                            <span class="info-box-icon"><i class="fas fa-hotel"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-number"><?= $saleData['hotelSalesData']['quoteAmount'] ?></span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: <?= $hotelPercentage ?>%"></div>
+                                </div>
+                                <span class="progress-description">
+                                    <?= $hotelPercentage ?>% in Today's sale
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="info-box bg-gradient-warning">
+                            <span class="info-box-icon"><i class="fas fa-suitcase-rolling"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-number"><?= $saleData['holidaySalesData']['quoteAmount'] ?></span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: <?= $holidayPercentage ?>%"></div>
+                                </div>
+                                <span class="progress-description">
+                                    <?= $holidayPercentage ?>% in Today's sale
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="info-box bg-gradient-danger">
+                            <span class="info-box-icon"><i class="fas fa-passport"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-number"><?= $saleData['visaSalesData']['quoteAmount'] ?></span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: <?= $visaPercentage ?>%"></div>
+                                </div>
+                                <span class="progress-description">
+                                    <?= $visaPercentage ?>% in Today's sale
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="card card-widget widget-user shadow">
+                <h5 class="font-weight-bold text-center mt-3">Top Sale Source</h5>
+                <div class="card-body">
+                    <div class="col-12">
+                        <div class="info-box bg-gradient-primary">
+                            <span class="info-box-icon"><i class="fas fa-plane-departure"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-number"><?= $saleData['ticketSalesData']['quoteAmount'] ?></span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: <?= $ticketPercentage ?>%"></div>
+                                </div>
+                                <span class="progress-description">
+                                    <?= $ticketPercentage ?>% in Today's sale
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="info-box bg-gradient-success">
+                            <span class="info-box-icon"><i class="fas fa-hotel"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-number"><?= $saleData['hotelSalesData']['quoteAmount'] ?></span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: <?= $hotelPercentage ?>%"></div>
+                                </div>
+                                <span class="progress-description">
+                                    <?= $hotelPercentage ?>% in Today's sale
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="info-box bg-gradient-warning">
+                            <span class="info-box-icon"><i class="fas fa-suitcase-rolling"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-number"><?= $saleData['holidaySalesData']['quoteAmount'] ?></span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: <?= $holidayPercentage ?>%"></div>
+                                </div>
+                                <span class="progress-description">
+                                    <?= $holidayPercentage ?>% in Today's sale
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="info-box bg-gradient-danger">
+                            <span class="info-box-icon"><i class="fas fa-passport"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-number"><?= $saleData['visaSalesData']['quoteAmount'] ?></span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: <?= $visaPercentage ?>%"></div>
+                                </div>
+                                <span class="progress-description">
+                                    <?= $visaPercentage ?>% in Today's sale
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="row">
         <div class="col-md-5">
