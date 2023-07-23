@@ -413,6 +413,7 @@ class AttendanceService
                 ->select(
                     [
                         'entry',
+                        'exit',
                     ]
                 )
                 ->where([Attendance::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
@@ -421,7 +422,7 @@ class AttendanceService
                 ->asArray()
                 ->one();
             //TODO Attendance Details
-            $attendanceData = Attendance::find()
+            $currentMonthAttendanceData = Attendance::find()
                 ->select(
                     [
                         new Expression('SUM(isAbsent) as totalAbsent'),
@@ -436,6 +437,7 @@ class AttendanceService
                 ->one();
             //TODO Leave Details
             $leaveAllocationData = LeaveAllocation::find()
+                ->with(['leaveType'])
                 ->select(
                     [
                         'employeeId',
@@ -448,13 +450,14 @@ class AttendanceService
                 )
                 ->where([LeaveAllocation::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
                 ->andWhere([LeaveAllocation::tableName() . '.employeeId' => $employee->id])
+                ->andWhere([LeaveAllocation::tableName() . '.year' => date('Y')])
                 ->asArray()->all();
         }
 
 
         return [
             'currentDayAttendanceData' => isset($currentDayAttendanceData) ? $currentDayAttendanceData : [],
-            'attendanceData' => isset($attendanceData) ? $attendanceData : [],
+            'currentMonthAttendanceData' => isset($currentMonthAttendanceData) ? $currentMonthAttendanceData : [],
             'leaveAllocationData' => isset($leaveAllocationData) ? $leaveAllocationData : [],
         ];
     }

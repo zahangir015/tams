@@ -97,7 +97,7 @@ class SaleService
     public static function dashboardReport(): array
     {
         // Last week date range
-        $previous_week = strtotime("-1 week +1 day");
+        /*$previous_week = strtotime("-1 week +1 day");
         $start_week = strtotime("last saturday midnight",$previous_week);
         $end_week = strtotime("next friday",$start_week);
         $start_week = date("Y-m-d",$start_week);
@@ -181,7 +181,7 @@ class SaleService
         $firstDayOfLastMonth = date('Y-m-d',strtotime('first day of last month'));
         $lastDayOfLastMonth = date('Y-m-d',strtotime('last day of last month'));
         echo $firstDayOfLastMonth.' '.$lastDayOfLastMonth ;
-        die();
+        die();*/
         //TODO Current days sale for all services
         $ticketSalesData = Ticket::find()
             ->joinWith(['ticketSupplier'])

@@ -363,44 +363,44 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                         <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                             <div class="small-box bg-success">
                                 <div class="inner">
-                                    <h3>150</h3>
-                                    <p>Total Receivable</p>
+                                    <p>Entry Time</p>
+                                    <h3><?= $leaveAttendanceData['currentDayAttendanceData']['entry'] ?? 0 ?></h3>
                                 </div>
                                 <div class="icon">
-                                    <i class="fas fa-shopping-cart"></i>
+                                    <i class="fas fa-sign-in-alt"></i>
                                 </div>
                             </div>
                         </div>
                         <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                             <div class="small-box bg-danger">
                                 <div class="inner">
-                                    <h3>150</h3>
-                                    <p>Total Payable</p>
+                                    <p>Exit Time</p>
+                                    <h3><?=  $leaveAttendanceData['currentDayAttendanceData']['exit'] ?? 0 ?></h3>
                                 </div>
                                 <div class="icon">
-                                    <i class="fas fa-shopping-cart"></i>
+                                    <i class="fas fa-sign-out-alt"></i>
                                 </div>
                             </div>
                         </div>
                         <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                             <div class="small-box bg-success">
                                 <div class="inner">
-                                    <h3>150</h3>
-                                    <p>Total Receivable</p>
+                                    <p>Total LateIn</p>
+                                    <h3><?=  $leaveAttendanceData['currentMonthAttendanceData']['totalLate'] ?? 0 ?></h3>
                                 </div>
                                 <div class="icon">
-                                    <i class="fas fa-shopping-cart"></i>
+                                    <i class="fas fa-fingerprint"></i>
                                 </div>
                             </div>
                         </div>
                         <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                             <div class="small-box bg-danger">
                                 <div class="inner">
-                                    <h3>150</h3>
-                                    <p>Total Payable</p>
+                                    <p>Total Short Work</p>
+                                    <h3><?=  $leaveAttendanceData['currentMonthAttendanceData']['totalEarlyOut'] ?? 0 ?></h3>
                                 </div>
                                 <div class="icon">
-                                    <i class="fas fa-shopping-cart"></i>
+                                    <i class="fas fa-minus-circle"></i>
                                 </div>
                             </div>
                         </div>
@@ -414,18 +414,25 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                 <h5 class="font-weight-bold text-center mt-3">Leave Report</h5>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-lg-6 col-md-6 col-sm-12 col-12">
-                            <div class="small-box bg-primary">
-                                <div class="inner">
-                                    <h3>150</h3>
-                                    <p>Total Receivable</p>
-                                </div>
-                                <div class="icon">
-                                    <i class="fas fa-shopping-cart"></i>
+                        <?php
+                        foreach ($leaveAttendanceData['leaveAllocationData'] as $singleData) {
+                            ?>
+                            <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                                <div class="small-box bg-primary">
+                                    <div class="inner">
+                                        <p>Casual Leave</p>
+                                        <h3>150</h3>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="fas fa-shopping-cart"></i>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                            <?php
+                        }
+                        ?>
+
+                        <!--<div class="col-lg-6 col-md-6 col-sm-12 col-12">
                             <div class="small-box bg-success">
                                 <div class="inner">
                                     <h3>150</h3>
@@ -457,7 +464,7 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                                     <i class="fas fa-shopping-cart"></i>
                                 </div>
                             </div>
-                        </div>
+                        </div>-->
                     </div>
 
                 </div>
