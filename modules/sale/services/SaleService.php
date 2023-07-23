@@ -96,6 +96,92 @@ class SaleService
 
     public static function dashboardReport(): array
     {
+        // Last week date range
+        $previous_week = strtotime("-1 week +1 day");
+        $start_week = strtotime("last saturday midnight",$previous_week);
+        $end_week = strtotime("next friday",$start_week);
+        $start_week = date("Y-m-d",$start_week);
+        $end_week = date("Y-m-d",$end_week);
+
+        $lastWeekTicketSalesData = Ticket::find()
+            ->joinWith(['ticketSupplier'])
+            ->select([
+                new Expression('COUNT(ticket.id) as total'),
+                new Expression('SUM(ticket.quoteAmount) as quoteAmount'),
+                new Expression('SUM(ticket.receivedAmount) as receivedAmount'),
+                new Expression('SUM(ticket_supplier.paidAmount) as paidAmount'),
+                new Expression('SUM(ticket.costOfSale) as costOfSale'),
+                new Expression('SUM(ticket.netProfit) as netProfit'),
+            ])
+            ->where(['<=', 'ticket.refundRequestDate', $end_week])
+            ->orWhere(['IS', 'ticket.refundRequestDate', NULL])
+            ->andWhere(['between', 'ticket.issueDate', $start_week, $end_week])
+            ->andWhere(['ticket.agencyId' => Yii::$app->user->identity->agencyId])
+            ->orderBy('total DESC')
+            ->asArray()
+            ->one();
+
+        $holidaySalesData = Holiday::find()
+            ->joinWith(['holidaySuppliers'])
+            ->select([
+                new Expression('COUNT(holiday.id) as total'),
+                new Expression('SUM(holiday.quoteAmount) as quoteAmount'),
+                new Expression('SUM(holiday.receivedAmount) as receivedAmount'),
+                new Expression('SUM(holiday.costOfSale) as costOfSale'),
+                new Expression('SUM(holiday_supplier.paidAmount) as paidAmount'),
+                new Expression('SUM(holiday.netProfit) as netProfit'),
+            ])
+            ->where(['<=', 'holiday.refundRequestDate', $end_week])
+            ->orWhere(['IS', 'holiday.refundRequestDate', NULL])
+            ->andWhere(['between', 'holiday.issueDate', $start_week, $end_week])
+            ->andWhere(['holiday.agencyId' => Yii::$app->user->identity->agencyId])
+            ->orderBy('total DESC')
+            ->asArray()
+            ->one();
+
+        $hotelSalesData = Hotel::find()
+            ->joinWith(['hotelSuppliers'])
+            ->select([
+                new Expression('COUNT(hotel.id) as total'),
+                new Expression('SUM(hotel.quoteAmount) as quoteAmount'),
+                new Expression('SUM(hotel.receivedAmount) as receivedAmount'),
+                new Expression('SUM(hotel.costOfSale) as costOfSale'),
+                new Expression('SUM(hotel_supplier.paidAmount) as paidAmount'),
+                new Expression('SUM(hotel.netProfit) as netProfit'),
+            ])
+            ->where(['<=', 'hotel.refundRequestDate', $end_week])
+            ->orWhere(['IS', 'hotel.refundRequestDate', NULL])
+            ->andWhere(['between', 'hotel.issueDate', $start_week, $end_week])
+            ->andWhere(['hotel.agencyId' => Yii::$app->user->identity->agencyId])
+            ->orderBy('total DESC')
+            ->asArray()
+            ->one();
+
+        $visaSalesData = Visa::find()
+            ->joinWith(['visaSuppliers'])
+            ->select([
+                new Expression('COUNT(visa.id) as total'),
+                new Expression('SUM(visa.quoteAmount) as quoteAmount'),
+                new Expression('SUM(visa.receivedAmount) as receivedAmount'),
+                new Expression('SUM(visa.costOfSale) as costOfSale'),
+                new Expression('SUM(visa_supplier.paidAmount) as paidAmount'),
+                new Expression('SUM(visa.netProfit) as netProfit'),
+            ])
+            ->where(['<=', 'visa.refundRequestDate', $end_week])
+            ->orWhere(['IS', 'visa.refundRequestDate', NULL])
+            ->andWhere(['between', 'visa.issueDate', $start_week, $end_week])
+            ->andWhere(['visa.agencyId' => Yii::$app->user->identity->agencyId])
+            ->orderBy('total DESC')
+            ->asArray()
+            ->one();
+
+        echo $start_week.' '.$end_week ;
+
+        //Last Month date range
+        $firstDayOfLastMonth = date('Y-m-d',strtotime('first day of last month'));
+        $lastDayOfLastMonth = date('Y-m-d',strtotime('last day of last month'));
+        echo $firstDayOfLastMonth.' '.$lastDayOfLastMonth ;
+        die();
         //TODO Current days sale for all services
         $ticketSalesData = Ticket::find()
             ->joinWith(['ticketSupplier'])
@@ -168,6 +254,7 @@ class SaleService
             ->orderBy('total DESC')
             ->asArray()
             ->one();
+
         return [
             'ticketSalesData' => $ticketSalesData,
             'holidaySalesData' => $holidaySalesData,

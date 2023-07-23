@@ -69,12 +69,15 @@ class SiteController extends Controller
         $totalReceived = array_sum(array_column($saleData, 'receivedAmount'));
         $totalPaid = array_sum(array_column($saleData, 'paidAmount'));
         $totalCost = array_sum(array_column($saleData, 'costOfSale'));
+        $totalNerProfit = array_sum(array_column($saleData, 'netProfit'));
+
         return $this->render('index', [
             'saleData' => $saleData,
             'totalQuote' => $totalQuote,
             'totalReceived' => $totalReceived,
             'totalPaid' => $totalPaid,
             'totalCost' => $totalCost,
+            'currentDayTotalNetProfit' => $totalNerProfit,
             'ticketPercentage' => ($totalQuote) ? ($saleData['ticketSalesData']['quoteAmount'] * 100) / $totalQuote : 0,
             'hotelPercentage' => ($totalQuote) ? ($saleData['hotelSalesData']['quoteAmount'] * 100) / $totalQuote : 0,
             'holidayPercentage' => ($totalQuote) ? ($saleData['holidaySalesData']['quoteAmount'] * 100) / $totalQuote : 0,
