@@ -10,6 +10,7 @@ use app\modules\sale\models\hotel\HotelSupplier;
 use app\modules\sale\models\ticket\Ticket;
 use app\modules\sale\models\ticket\TicketSupplier;
 use app\modules\sale\models\visa\Visa;
+use app\modules\sale\models\visa\VisaSupplier;
 use Yii;
 use yii\db\Expression;
 use yii\helpers\ArrayHelper;
@@ -501,6 +502,7 @@ class ReportController extends ParentController
             $customerWiseData = Hotel::find()
                 ->joinWith(['hotelSupplier', 'customer'])
                 ->select([
+                    new Expression('customer.name as name'),
                     new Expression('COUNT(hotel.id) as total'),
                     new Expression('SUM(hotel.totalNights) as totalNights'),
                     new Expression('SUM(hotel.costOfSale) as costOfSale'),
@@ -585,7 +587,7 @@ class ReportController extends ParentController
 
         // Customer category and booking type wise report with date range
         if ($reportTypes && in_array('CUSTOMER_CATEGORY_BOOKING_TYPE', $reportTypes)) {
-            $bookingTypeWiseDataList = Visa::find()
+            $customerCategoryBookingTypeWiseDataList = Visa::find()
                 ->joinWith(['hotelSupplier'])
                 ->select([
                     new Expression('SUM(visa.totalQuantity) as total'),
@@ -604,107 +606,97 @@ class ReportController extends ParentController
                 ->all();
         }
 
-        // Route wise report with date range
-        $routeWiseDataList = Visa::find()
-            ->joinWith(['hotelSupplier'])
-            ->select([
-                new Expression('SUM(visa.totalQuantity) as total'),
-                new Expression('SUM(visa.costOfSale) as costOfSale'),
-                new Expression('SUM(visa.quoteAmount) as quoteAmount'),
-                new Expression('SUM(visa.receivedAmount) as receivedAmount'),
-                new Expression('SUM(visa_supplier.paidAmount) as paidAmount'),
-                'visa.customerCategory', 'visa.isOnlineBooked'
-            ])
-            ->where(['<=', 'visa.refundRequestDate', $end_date])
-            ->orWhere(['IS', 'visa.refundRequestDate', NULL])
-            ->andWhere(['between', 'visa.issueDate', $start_date, $end_date])
-            ->groupBy(['countryId', 'type'])
-            ->orderBy('total DESC')
-            ->asArray()
-            ->all();
+        // Customer category wise report with date range
+        if ($reportTypes && in_array('BOOKING_TYPE', $reportTypes)) {
+            $bookingTypeWiseData = Visa::find()
+                ->joinWith(['visaSupplier'])
+                ->select([
+                    new Expression('SUM(visa.totalQuantity) as total'),
+                    new Expression('SUM(visa.costOfSale) as costOfSale'),
+                    new Expression('SUM(visa.quoteAmount) as quoteAmount'),
+                    new Expression('SUM(visa.receivedAmount) as receivedAmount'),
+                    new Expression('SUM(visa_supplier.paidAmount) as paidAmount'),
+                    'visa.isOnlineBooked'
+                ])
+                ->where(['<=', 'visa.refundRequestDate', $end_date])
+                ->orWhere(['IS', 'visa.refundRequestDate', NULL])
+                ->andWhere(['between', 'visa.issueDate', $start_date, $end_date])
+                ->groupBy(['visa.isOnlineBooked'])
+                ->orderBy('total DESC')
+                ->asArray()
+                ->all();
+        }
 
-        $routeWiseRefundDataList = visa::find()
-            ->select([
-                new Expression('SUM(totalQty) as total'),
-                new Expression('SUM(costOfSale) as costOfSale'),
-                new Expression('SUM(quoteAmount) as quoteAmount'),
-                new Expression('SUM(receivedAmount) as receivedAmount'),
-                new Expression('SUM(quoteAmount-receivedAmount) as sum'),
-                'countryId'
-            ])
-            ->with(['country'])
-            ->where(['between', 'refundRequestDate', $start_date, $end_date])
-            ->andWhere(['type' => Constant::TICKET_TYPE['Refund']])
-            ->groupBy(['countryId'])
-            ->orderBy('total DESC')
-            ->asArray()->all();
+        // supplier wise report with date range
+        if ($reportTypes && in_array('SUPPLIER', $reportTypes)) {
+            $supplierWiseData = HotelSupplier::find()
+                ->leftJoin('hotel', 'hotel.`id` = hotel_supplier.`hotelId`')
+                ->leftJoin('supplier', 'supplier.`id` = hotel_supplier.`supplierId`')
+                ->select([
+                    new Expression('supplier.name as name'),
+                    new Expression('supplier.company as company'),
+                    new Expression('SUM(hotel.quoteAmount) as quoteAmount'),
+                    new Expression('SUM(hotel_supplier.costOfSale) as costOfSale'),
+                    new Expression('SUM(hotel_supplier.paidAmount) as paidAmount'),
+                    'hotel_supplier.supplierId',
+                ])
+                ->where(['between', 'hotel_supplier.issueDate', $start_date, $end_date])
+                ->groupBy(['hotel_supplier.supplierId'])
+                ->orderBy('paidAmount DESC')
+                ->asArray()
+                ->all();
+        }
 
-        foreach ($routeWiseDataList as $item) {
-            $routeWiseData[$item['country']['name']][] = $item;
-            $key = array_search($item['country']['name'], array_column($routeWiseRefundDataList ?? [], 'route'));
-            if ($key !== false) {
-                $routeWiseRefundData[$item['country']['name']] = $routeWiseRefundDataList[$key];
-            } else {
-                $routeWiseRefundData[$item['country']['name']] = [];
-            }
+        // Country wise report with date range
+        if ($reportTypes && in_array('COUNTRY', $reportTypes)) {
+            $countryWiseData = VisaSupplier::find()
+                ->leftJoin('visa', 'visa.`id` = visa_supplier.`visaId`')
+                ->leftJoin('country', 'country.`id` = visa_supplier.`countryId`')
+                ->select([
+                    new Expression('country.name as name'),
+                    new Expression('country.code as code'),
+                    new Expression('SUM(visa.quoteAmount) as quoteAmount'),
+                    new Expression('SUM(visa.receivedAmount) as receivedAmount'),
+                    new Expression('SUM(visa_supplier.costOfSale) as costOfSale'),
+                    new Expression('SUM(visa_supplier.paidAmount) as paidAmount'),
+                    'visa_supplier.countryId',
+                ])
+                ->where(['between', 'visa_supplier.issueDate', $start_date, $end_date])
+                ->groupBy(['visa_supplier.countryId'])
+                ->orderBy('quoteAmount DESC')
+                ->asArray()
+                ->all();
         }
 
         // Customer wise report with date range
-        $customerWiseDataList = Visa::find()
-            ->select([
-                new Expression('SUM(totalQty) as total'),
-                new Expression('SUM(costOfSale) as costOfSale'),
-                new Expression('SUM(quoteAmount) as quoteAmount'),
-                new Expression('SUM(receivedAmount) as receivedAmount'),
-                new Expression('SUM(quoteAmount-receivedAmount) as sum'),
-                'customerId', 'type'
-            ])
-            ->with(['customer'])
-            ->where(['<=', 'refundRequestDate', $end_date])
-            ->orWhere(['IS', 'refundRequestDate', NULL])
-            ->andWhere(['between', 'issueDate', $start_date, $end_date])
-            ->andWhere(['<>', 'type', Constant::TICKET_TYPE['Refund']])
-            ->groupBy(['customerId', 'type'])
-            ->orderBy('total DESC')
-            ->asArray()
-            ->all();
-
-        $customerWiseRefundDataList = Visa::find()
-            ->select([
-                new Expression('SUM(totalQty) as total'),
-                new Expression('SUM(costOfSale) as costOfSale'),
-                new Expression('SUM(quoteAmount) as quoteAmount'),
-                new Expression('SUM(receivedAmount) as receivedAmount'),
-                new Expression('SUM(quoteAmount-receivedAmount) as sum'),
-                'customerId'
-            ])
-            ->with(['customer'])
-            ->where(['between', 'refundRequestDate', $start_date, $end_date])
-            ->andWhere(['type' => Constant::TICKET_TYPE['Refund']])
-            ->groupBy(['customerId'])
-            ->orderBy('total DESC')
-            ->asArray()->all();
-
-        foreach ($customerWiseDataList as $item) {
-            $customerWiseData[$item['customer']['company']][] = $item;
-            $key = array_search($item['customer']['company'], array_column($customerWiseRefundDataList ?? [], 'route'));
-            if ($key !== false) {
-                $customerWiseRefundData[$item['customer']['company']] = $customerWiseRefundDataList[$key];
-            } else {
-                $customerWiseRefundData[$item['customer']['company']] = [];
-            }
+        if ($reportTypes && in_array('CUSTOMER', $reportTypes)) {
+            $customerWiseDataList = Visa::find()
+                ->joinWith(['visaSupplier', 'customer'])
+                ->select([
+                    new Expression('customer.name as name'),
+                    new Expression('SUM(visa.totalQuantity) as total'),
+                    new Expression('SUM(visa.costOfSale) as costOfSale'),
+                    new Expression('SUM(visa.quoteAmount) as quoteAmount'),
+                    new Expression('SUM(visa.receivedAmount) as receivedAmount'),
+                    new Expression('SUM(visa_supplier.paidAmount) as paidAmount'),
+                    'visa.customerId'
+                ])
+                ->where(['<=', 'visa.refundRequestDate', $end_date])
+                ->orWhere(['IS', 'visa.refundRequestDate', NULL])
+                ->andWhere(['between', 'visa.issueDate', $start_date, $end_date])
+                ->groupBy(['visa.customerId'])
+                ->orderBy('total DESC')
+                ->asArray()
+                ->all();
         }
 
         return $this->render('visa-sales-report', [
             'date' => $date,
             'customerCategoryWiseData' => $customerCategoryWiseData ?? [],
-            'customerCategoryWiseRefundData' => $customerCategoryWiseRefundData ?? [],
             'bookingTypeWiseData' => $bookingTypeWiseData ?? [],
-            'bookingTypeWiseRefundData' => $bookingTypeWiseRefundData ?? [],
-            'routeWiseData' => $routeWiseData ?? [],
-            'routeWiseRefundData' => $routeWiseRefundData ?? [],
+            'customerCategoryBookingTypeWiseData' => $customerCategoryBookingTypeWiseDataList ?? [],
             'customerWiseData' => $customerWiseData ?? [],
-            'customerWiseRefundData' => $customerWiseRefundData ?? [],
+            'countryWiseData' => $countryWiseData ?? [],
         ]);
     }
 
