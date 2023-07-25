@@ -27,15 +27,14 @@ class ReportController extends ParentController
 
         if ($reportTypes && in_array('CUSTOMER_CATEGORY', $reportTypes)) {
             $customerCategoryWiseData = Ticket::find()
-                ->joinWith(['ticketSupplier'])
                 ->select([
                     new Expression('COUNT(ticket.id) as total'),
+                    new Expression('SUM(ticket.numberOfSegment) as numberOfSegment'),
                     new Expression('SUM(ticket.baseFare) as baseFare'),
                     new Expression('SUM(ticket.tax) as tax'),
                     new Expression('SUM(ticket.otherTax) as otherTax'),
                     new Expression('SUM(ticket.quoteAmount) as quoteAmount'),
                     new Expression('SUM(ticket.receivedAmount) as receivedAmount'),
-                    new Expression('SUM(ticket_supplier.paidAmount) as paidAmount'),
                     new Expression('SUM(ticket.costOfSale) as costOfSale'),
                     new Expression('SUM(ticket.netProfit) as netProfit'),
                     'ticket.customerCategory',
@@ -50,15 +49,14 @@ class ReportController extends ParentController
 
         if ($reportTypes && in_array('BOOKING_TYPE', $reportTypes)) {
             $bookingTypeWiseData = Ticket::find()
-                ->joinWith(['ticketSupplier'])
                 ->select([
                     new Expression('COUNT(ticket.id) as total'),
+                    new Expression('SUM(ticket.numberOfSegment) as numberOfSegment'),
                     new Expression('SUM(ticket.baseFare) as baseFare'),
                     new Expression('SUM(ticket.tax) as tax'),
                     new Expression('SUM(ticket.otherTax) as otherTax'),
                     new Expression('SUM(ticket.quoteAmount) as quoteAmount'),
                     new Expression('SUM(ticket.receivedAmount) as receivedAmount'),
-                    new Expression('SUM(ticket_supplier.paidAmount) as paidAmount'),
                     new Expression('SUM(ticket.costOfSale) as costOfSale'),
                     new Expression('SUM(ticket.netProfit) as netProfit'),
                     'ticket.bookedOnline'
@@ -73,15 +71,14 @@ class ReportController extends ParentController
 
         if ($reportTypes && in_array('FLIGHT_TYPE', $reportTypes)) {
             $flightTypeWiseData = Ticket::find()
-                ->joinWith(['ticketSupplier'])
                 ->select([
                     new Expression('COUNT(ticket.id) as total'),
+                    new Expression('SUM(ticket.numberOfSegment) as numberOfSegment'),
                     new Expression('SUM(ticket.baseFare) as baseFare'),
                     new Expression('SUM(ticket.tax) as tax'),
                     new Expression('SUM(ticket.otherTax) as otherTax'),
                     new Expression('SUM(ticket.quoteAmount) as quoteAmount'),
                     new Expression('SUM(ticket.receivedAmount) as receivedAmount'),
-                    new Expression('SUM(ticket_supplier.paidAmount) as paidAmount'),
                     new Expression('SUM(ticket.costOfSale) as costOfSale'),
                     new Expression('SUM(ticket.netProfit) as netProfit'),
                     'ticket.flightType'
@@ -96,15 +93,15 @@ class ReportController extends ParentController
 
         if ($reportTypes && in_array('PROVIDER', $reportTypes)) {
             $providerWiseData = Ticket::find()
-                ->joinWith(['ticketSupplier', 'provider'])
+                ->joinWith(['provider'])
                 ->select([
                     new Expression('COUNT(ticket.id) as total'),
+                    new Expression('SUM(ticket.numberOfSegment) as numberOfSegment'),
                     new Expression('SUM(ticket.baseFare) as baseFare'),
                     new Expression('SUM(ticket.tax) as tax'),
                     new Expression('SUM(ticket.otherTax) as otherTax'),
                     new Expression('SUM(ticket.quoteAmount) as quoteAmount'),
                     new Expression('SUM(ticket.receivedAmount) as receivedAmount'),
-                    new Expression('SUM(ticket_supplier.paidAmount) as paidAmount'),
                     new Expression('SUM(ticket.costOfSale) as costOfSale'),
                     new Expression('SUM(ticket.netProfit) as netProfit'),
                     'ticket.providerId'
@@ -119,15 +116,15 @@ class ReportController extends ParentController
 
         if ($reportTypes && in_array('AIRLINES', $reportTypes)) {
             $airlineWiseData = Ticket::find()
-                ->joinWith(['ticketSupplier', 'airline'])
+                ->joinWith(['airline'])
                 ->select([
                     new Expression('COUNT(ticket.id) as total'),
+                    new Expression('SUM(ticket.numberOfSegment) as numberOfSegment'),
                     new Expression('SUM(ticket.baseFare) as baseFare'),
                     new Expression('SUM(ticket.tax) as tax'),
                     new Expression('SUM(ticket.otherTax) as otherTax'),
                     new Expression('SUM(ticket.quoteAmount) as quoteAmount'),
                     new Expression('SUM(ticket.receivedAmount) as receivedAmount'),
-                    new Expression('SUM(ticket_supplier.paidAmount) as paidAmount'),
                     new Expression('SUM(ticket.costOfSale) as costOfSale'),
                     new Expression('SUM(ticket.netProfit) as netProfit'),
                     'ticket.airlineId'
@@ -142,15 +139,14 @@ class ReportController extends ParentController
 
         if ($reportTypes && in_array('ROUTING', $reportTypes)) {
             $routingWiseData = Ticket::find()
-                ->joinWith(['ticketSupplier', 'airline'])
                 ->select([
                     new Expression('COUNT(ticket.id) as total'),
+                    new Expression('SUM(ticket.numberOfSegment) as numberOfSegment'),
                     new Expression('SUM(ticket.baseFare) as baseFare'),
                     new Expression('SUM(ticket.tax) as tax'),
                     new Expression('SUM(ticket.otherTax) as otherTax'),
                     new Expression('SUM(ticket.quoteAmount) as quoteAmount'),
                     new Expression('SUM(ticket.receivedAmount) as receivedAmount'),
-                    new Expression('SUM(ticket_supplier.paidAmount) as paidAmount'),
                     new Expression('SUM(ticket.costOfSale) as costOfSale'),
                     new Expression('SUM(ticket.netProfit) as netProfit'),
                     'ticket.route'
@@ -172,10 +168,11 @@ class ReportController extends ParentController
                     new Expression('supplier.company as company'),
                     new Expression('sum(ticket.numberOfSegment) as numberOfSegment'),
                     new Expression('SUM(ticket.quoteAmount) as quoteAmount'),
+                    new Expression('SUM(ticket.numberOfSegment) as numberOfSegment'),
                     new Expression('SUM(ticket.baseFare) as baseFare'),
                     new Expression('SUM(ticket.tax) as tax'),
                     new Expression('SUM(ticket.otherTax) as otherTax'),
-                    new Expression('SUM(ticket_supplier.costOfSale) as costOfSale'),
+                    new Expression('SUM(ticket.costOfSale) as costOfSale'),
                     new Expression('SUM(ticket_supplier.paidAmount) as paidAmount'),
                     'ticket_supplier.supplierId'
                 ])
@@ -187,15 +184,15 @@ class ReportController extends ParentController
 
         if ($reportTypes && in_array('CUSTOMER', $reportTypes)) {
             $customerWiseData = Ticket::find()
-                ->joinWith(['ticketSupplier', 'customer'])
+                ->joinWith(['customer'])
                 ->select([
                     new Expression('COUNT(ticket.id) as total'),
+                    new Expression('SUM(ticket.numberOfSegment) as numberOfSegment'),
                     new Expression('SUM(ticket.baseFare) as baseFare'),
                     new Expression('SUM(ticket.tax) as tax'),
                     new Expression('SUM(ticket.otherTax) as otherTax'),
                     new Expression('SUM(ticket.quoteAmount) as quoteAmount'),
                     new Expression('SUM(ticket.receivedAmount) as receivedAmount'),
-                    new Expression('SUM(ticket_supplier.paidAmount) as paidAmount'),
                     new Expression('SUM(ticket.costOfSale) as costOfSale'),
                     new Expression('SUM(ticket.netProfit) as netProfit'),
                     'ticket.customerId'
@@ -212,15 +209,14 @@ class ReportController extends ParentController
         // Customer category and booking type wise report with date range
         if ($reportTypes && in_array('CUSTOMER_CATEGORY_BOOKING_TYPE', $reportTypes)) {
             $customerCategoryBookingTypeWiseData = Ticket::find()
-                ->joinWith(['ticketSupplier', 'customer'])
                 ->select([
                     new Expression('COUNT(ticket.id) as total'),
+                    new Expression('SUM(ticket.numberOfSegment) as numberOfSegment'),
                     new Expression('SUM(ticket.baseFare) as baseFare'),
                     new Expression('SUM(ticket.tax) as tax'),
                     new Expression('SUM(ticket.otherTax) as otherTax'),
                     new Expression('SUM(ticket.quoteAmount) as quoteAmount'),
                     new Expression('SUM(ticket.receivedAmount) as receivedAmount'),
-                    new Expression('SUM(ticket_supplier.paidAmount) as paidAmount'),
                     new Expression('SUM(ticket.costOfSale) as costOfSale'),
                     new Expression('SUM(ticket.netProfit) as netProfit'),
                     'ticket.customerCategory', 'ticket.bookedOnline'
@@ -228,7 +224,7 @@ class ReportController extends ParentController
                 ->where(['<=', 'ticket.refundRequestDate', $end_date])
                 ->orWhere(['IS', 'ticket.refundRequestDate', NULL])
                 ->andWhere(['between', 'ticket.issueDate', $start_date, $end_date])
-                ->groupBy(['customerCategory', 'bookedOnline'])
+                ->groupBy(['ticket.customerCategory', 'ticket.bookedOnline'])
                 ->orderBy('total DESC')
                 ->asArray()
                 ->all();
@@ -236,15 +232,15 @@ class ReportController extends ParentController
 
         return $this->render('ticket-sales-report', [
             'date' => $date,
-            'supplierWiseData' => $supplierWiseData ?? [],
-            'routingWiseData' => $routingWiseData ?? [],
-            'flightTypeWiseData' => $flightTypeWiseData ?? [],
-            'customerWiseData' => $customerWiseData ?? [],
             'customerCategoryWiseData' => $customerCategoryWiseData ?? [],
             'bookingTypeWiseData' => $bookingTypeWiseData ?? [],
+            'customerCategoryBookingTypeWiseData' => $customerCategoryBookingTypeWiseData ?? [],
+            'flightTypeWiseData' => $flightTypeWiseData ?? [],
+            'routingWiseData' => $routingWiseData ?? [],
             'providerWiseData' => $providerWiseData ?? [],
             'airlineWiseData' => $airlineWiseData ?? [],
-            'customerCategoryBookingTypeWiseData' => $customerCategoryBookingTypeWiseData ?? [],
+            'customerWiseData' => $customerWiseData ?? [],
+            'supplierWiseData' => $supplierWiseData ?? [],
         ]);
     }
 
