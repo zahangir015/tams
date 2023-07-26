@@ -100,7 +100,7 @@ class AgencyController extends ParentController
                 return $this->redirect(['view', 'uid' => $model->uid]);
 
             } catch (Exception $e) {
-                Yii::$app->session->setFlash($e->getMessage() . ' - ' . $e->getFile() . ' - ' . $e->getFile());
+                Yii::$app->session->setFlash('danger',$e->getMessage());
                 $dbTransaction->rollBack();
             }
         } else {

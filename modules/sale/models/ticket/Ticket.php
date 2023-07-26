@@ -77,7 +77,7 @@ class Ticket extends ActiveRecord
     use BehaviorTrait;
 
     public $csv;
-
+    public $total;
     /**
      * {@inheritdoc}
      */

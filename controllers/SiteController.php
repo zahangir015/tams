@@ -2,6 +2,8 @@
 
 namespace app\controllers;
 
+use app\modules\hrm\services\AttendanceService;
+use app\modules\sale\services\SaleService;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -61,69 +63,28 @@ class SiteController extends Controller
      */
     public function actionIndex(): string
     {
+        $saleData = SaleService::dashboardReport();
+        $leaveAttendanceData = AttendanceService::dashboardReport();//dd($leaveAttendanceData);
+        $totalQuote = array_sum(array_column($saleData, 'quoteAmount'));
+        $totalReceived = array_sum(array_column($saleData, 'receivedAmount'));
+        $totalPaid = array_sum(array_column($saleData, 'paidAmount'));
+        $totalCost = array_sum(array_column($saleData, 'costOfSale'));
+        $totalNerProfit = array_sum(array_column($saleData, 'netProfit'));
 
-        return $this->render('index');
-    }
-
-    /**
-     * Login action.
-     *
-     * @return Response|string
-     */
-    public function actionLogin()
-    {
-        if (!Yii::$app->user->isGuest) {
-            return $this->goHome();
-        }
-        $this->layout = 'main-login';
-        $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
-        }
-
-        $model->password = '';
-        return $this->render('login', [
-            'model' => $model,
+        return $this->render('index', [
+            'saleData' => $saleData,
+            'totalQuote' => $totalQuote,
+            'totalReceived' => $totalReceived,
+            'totalPaid' => $totalPaid,
+            'totalCost' => $totalCost,
+            'currentDayTotalNetProfit' => $totalNerProfit,
+            'ticketPercentage' => ($totalQuote) ? ($saleData['ticketSalesData']['quoteAmount'] * 100) / $totalQuote : 0,
+            'hotelPercentage' => ($totalQuote) ? ($saleData['hotelSalesData']['quoteAmount'] * 100) / $totalQuote : 0,
+            'holidayPercentage' => ($totalQuote) ? ($saleData['holidaySalesData']['quoteAmount'] * 100) / $totalQuote : 0,
+            'visaPercentage' => ($totalQuote) ? ($saleData['visaSalesData']['quoteAmount'] * 100) / $totalQuote : 0,
+            'receivable' => ($totalQuote - $totalReceived),
+            'payable' => ($totalCost - $totalPaid),
+            'leaveAttendanceData' => $leaveAttendanceData,
         ]);
-    }
-
-    /**
-     * Logout action.
-     *
-     * @return Response
-     */
-    public function actionLogout()
-    {
-        Yii::$app->user->logout();
-
-        return $this->goHome();
-    }
-
-    /**
-     * Displays contact page.
-     *
-     * @return Response|string
-     */
-    public function actionContact()
-    {
-        $model = new ContactForm();
-        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
-            Yii::$app->session->setFlash('contactFormSubmitted');
-
-            return $this->refresh();
-        }
-        return $this->render('contact', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Displays about page.
-     *
-     * @return string
-     */
-    public function actionAbout()
-    {
-        return $this->render('about');
     }
 }

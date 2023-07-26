@@ -22,6 +22,7 @@ use DateTime;
 use Yii;
 use yii\base\Exception;
 use yii\db\ActiveRecord;
+use yii\db\Expression;
 
 class AttendanceService
 {
@@ -333,7 +334,7 @@ class AttendanceService
 
         $model->entry = date('H:i:00');
         $model->employeeId = $employee->id;
-        $employeeInTime = new DateTime(date('Y-m-d').' '.$model->entry);
+        $employeeInTime = new DateTime(date('Y-m-d') . ' ' . $model->entry);
         $lateCalculationResponse = self::calculateLate($employeeInTime, ($roster) ? $roster->shift : $employeeShift->shift);
         $model->load(['Attendance' => $lateCalculationResponse]);
         $model->date = date('Y-m-d');
@@ -343,7 +344,7 @@ class AttendanceService
         if ($model->hasErrors()) {
             return [
                 'error' => true,
-                'message' => 'Attendance entry failed - '.Utilities::processErrorMessages($model->getErrors())
+                'message' => 'Attendance entry failed - ' . Utilities::processErrorMessages($model->getErrors())
             ];
         }
 
@@ -397,6 +398,67 @@ class AttendanceService
             'totalLateInTime' => str_pad($inTimeDiff->h, 2, '0', STR_PAD_LEFT) . ':' .
                 str_pad($inTimeDiff->i, 2, '0', STR_PAD_LEFT) . ':00',
             'isLate' => 1
+        ];
+    }
+
+    public static function dashboardReport(): array
+    {
+        $employee = Employee::find()
+            ->where(['userId' => Yii::$app->user->id])
+            //->andWhere(['agencyId' => Yii::$app->user->identity->agencyId])
+            ->one();
+        //TODO Current day entry
+        if ($employee) {
+            $currentDayAttendanceData = Attendance::find()
+                ->select(
+                    [
+                        'entry',
+                        'exit',
+                    ]
+                )
+                ->where([Attendance::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
+                ->andWhere([Attendance::tableName() . '.employeeId' => $employee->id])
+                ->andWhere(['date' => date('Y-m-d')])
+                ->asArray()
+                ->one();
+            //TODO Attendance Details
+            $currentMonthAttendanceData = Attendance::find()
+                ->select(
+                    [
+                        new Expression('SUM(isAbsent) as totalAbsent'),
+                        new Expression('SUM(isLate) as totalLate'),
+                        new Expression('SUM(isEarlyOut) as totalEarlyOut'),
+                    ]
+                )
+                ->where([Attendance::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
+                ->andWhere([Attendance::tableName() . '.employeeId' => $employee->id])
+                ->andWhere(['between', 'date', date('Y-m-01'), date('Y-m-t')])
+                ->asArray()
+                ->one();
+            //TODO Leave Details
+            $leaveAllocationData = LeaveAllocation::find()
+                ->with(['leaveType'])
+                ->select(
+                    [
+                        'employeeId',
+                        'leaveTypeId',
+                        'year',
+                        'totalDays',
+                        'availedDays',
+                        'remainingDays'
+                    ]
+                )
+                ->where([LeaveAllocation::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
+                ->andWhere([LeaveAllocation::tableName() . '.employeeId' => $employee->id])
+                ->andWhere([LeaveAllocation::tableName() . '.year' => date('Y')])
+                ->asArray()->all();
+        }
+
+
+        return [
+            'currentDayAttendanceData' => isset($currentDayAttendanceData) ? $currentDayAttendanceData : [],
+            'currentMonthAttendanceData' => isset($currentMonthAttendanceData) ? $currentMonthAttendanceData : [],
+            'leaveAllocationData' => isset($leaveAllocationData) ? $leaveAllocationData : [],
         ];
     }
 }

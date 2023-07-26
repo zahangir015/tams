@@ -64,9 +64,9 @@ a.desc:after {
     color: rgba(255, 255, 255, 0.5);
 }
 
-@media(max-width:767px) {
+@media (max-width: 767px) {
     .nav li > form > button.logout {
-        display:block;
+        display: block;
         text-align: left;
         width: 100%;
         padding: 10px 0;
@@ -81,4 +81,18 @@ a.desc:after {
 
 .nav > li > form > button.logout:focus {
     outline: none;
+}
+
+.bg-light-green {
+    background-color: #6AC06AFF;
+}
+
+.bg-light-blue {
+    background-color: #65ADDAFF;
+}
+.bg-light-yellow {
+    background-color: #DAAD59FF;
+}
+.bg-light-red {
+    background-color: #DA6859FF;
 }

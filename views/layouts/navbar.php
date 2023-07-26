@@ -3,7 +3,7 @@
 use app\models\Company;
 use yii\helpers\Html;
 use yii\helpers\Url;
-$company = Company::find()->select(['name', 'logo'])->where(['agencyId' => Yii::$app->user->identity->agencyId])->one();
+
 ?>
 <!-- Navbar -->
 <nav class="main-header navbar navbar-expand navbar-dark bg-gradient-green font-weight-bold">
@@ -19,6 +19,11 @@ $company = Company::find()->select(['name', 'logo'])->where(['agencyId' => Yii::
 
     <div class="h-30 d-flex align-items-center justify-content-center">
         <?php
+        $company = null;
+        if (isset(Yii::$app->user->identity->agencyId)) {
+            $company = Company::find()->select(['name', 'logo'])->where(['agencyId' => Yii::$app->user->identity->agencyId])->one();
+        }
+
         if ($company && $company->logo) {
             ?>
             <div class="image float-left">
@@ -66,12 +71,13 @@ $company = Company::find()->select(['name', 'logo'])->where(['agencyId' => Yii::
             <a class="nav-link" data-toggle="dropdown" href="#">
                 <div class="user-panel d-flex mb-5">
                     <div class="image">
-                        <img src="<?= $assetDir ?>/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+                        <img src="<?= $assetDir ?>/img/user2-160x160.jpg" class="img-circle elevation-2"
+                             alt="User Image">
                     </div>
                 </div>
             </a>
             <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                <span class="dropdown-item dropdown-header"><?= Yii::$app->user->identity->employee ? (Yii::$app->user->identity->employee->firstName.' '.Yii::$app->user->identity->employee->lastName) : Yii::$app->user->identity->username ?></span>
+                <span class="dropdown-item dropdown-header"><?= isset(Yii::$app->user->identity->employee) ? (Yii::$app->user->identity->employee->firstName . ' ' . Yii::$app->user->identity->employee->lastName) : Yii::$app->user->identity->username ?></span>
                 <div class="dropdown-divider"></div>
                 <a href="/admin/user/change-password" class="dropdown-item">
                     <i class="fas fa-asterisk mr-2"></i> Change Password
