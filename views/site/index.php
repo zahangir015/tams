@@ -23,8 +23,8 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                         <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                             <div class="small-box border border-primary text-primary">
                                 <div class="inner">
-                                    <h3><?= $saleData['ticketSalesData']['total'] ?></h3> Flight
-                                    <p>BDT <?= $saleData['ticketSalesData']['quoteAmount'] ?: 0 ?></p>
+                                    <h3><?= $saleData['ticketSalesData']['currentDayData']['total'] ?></h3> Flight
+                                    <p>BDT <?= $saleData['ticketSalesData']['currentDayData']['quoteAmount'] ?: 0 ?></p>
                                 </div>
                                 <div class="icon">
                                     <i class="fas fa-plane-departure"></i>
@@ -34,8 +34,8 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                         <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                             <div class="small-box border border-success text-success">
                                 <div class="inner">
-                                    <h3><?= $saleData['hotelSalesData']['total'] ?></h3> Hotel
-                                    <p>BDT <?= $saleData['hotelSalesData']['quoteAmount'] ?: 0 ?></p>
+                                    <h3><?= $saleData['hotelSalesData']['currentDayData']['total'] ?></h3> Hotel
+                                    <p>BDT <?= $saleData['hotelSalesData']['currentDayData']['quoteAmount'] ?: 0 ?></p>
                                 </div>
                                 <div class="icon">
                                     <i class="fas fa-hotel"></i>
@@ -45,8 +45,8 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                         <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                             <div class="small-box border border-warning text-warning">
                                 <div class="inner">
-                                    <h3><?= $saleData['holidaySalesData']['total'] ?></h3> Holiday
-                                    <p>BDT <?= $saleData['holidaySalesData']['quoteAmount'] ?: 0 ?></p>
+                                    <h3><?= $saleData['holidaySalesData']['currentDayData']['total'] ?></h3> Holiday
+                                    <p>BDT <?= $saleData['holidaySalesData']['currentDayData']['quoteAmount'] ?: 0 ?></p>
                                 </div>
                                 <div class="icon">
                                     <i class="fas fa-suitcase-rolling"></i>
@@ -57,8 +57,8 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                         <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                             <div class="small-box border border-danger text-danger">
                                 <div class="inner">
-                                    <h3><?= $saleData['visaSalesData']['total'] ?></h3> Visa
-                                    <p>BDT <?= $saleData['visaSalesData']['quoteAmount'] ?: 0 ?></p>
+                                    <h3><?= $saleData['visaSalesData']['currentDayData']['total'] ?></h3> Visa
+                                    <p>BDT <?= $saleData['visaSalesData']['currentDayData']['quoteAmount'] ?: 0 ?></p>
                                 </div>
                                 <div class="icon">
                                     <i class="fas fa-passport"></i>
@@ -109,7 +109,7 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                         <div class="info-box bg-gradient-primary">
                             <span class="info-box-icon"><i class="fas fa-plane-departure"></i></span>
                             <div class="info-box-content">
-                                <span class="info-box-number"><?= $saleData['ticketSalesData']['quoteAmount'] ?></span>
+                                <span class="info-box-number"><?= $saleData['ticketSalesData']['currentDayData']['quoteAmount'] ?></span>
                                 <div class="progress">
                                     <div class="progress-bar" style="width: <?= $ticketPercentage ?>%"></div>
                                 </div>
@@ -123,7 +123,7 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                         <div class="info-box bg-gradient-success">
                             <span class="info-box-icon"><i class="fas fa-hotel"></i></span>
                             <div class="info-box-content">
-                                <span class="info-box-number"><?= $saleData['hotelSalesData']['quoteAmount'] ?></span>
+                                <span class="info-box-number"><?= $saleData['hotelSalesData']['currentDayData']['quoteAmount'] ?></span>
                                 <div class="progress">
                                     <div class="progress-bar" style="width: <?= $hotelPercentage ?>%"></div>
                                 </div>
@@ -137,7 +137,7 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                         <div class="info-box bg-gradient-warning">
                             <span class="info-box-icon"><i class="fas fa-suitcase-rolling"></i></span>
                             <div class="info-box-content">
-                                <span class="info-box-number"><?= $saleData['holidaySalesData']['quoteAmount'] ?></span>
+                                <span class="info-box-number"><?= $saleData['holidaySalesData']['currentDayData']['quoteAmount'] ?></span>
                                 <div class="progress">
                                     <div class="progress-bar" style="width: <?= $holidayPercentage ?>%"></div>
                                 </div>
@@ -151,7 +151,7 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                         <div class="info-box bg-gradient-danger">
                             <span class="info-box-icon"><i class="fas fa-passport"></i></span>
                             <div class="info-box-content">
-                                <span class="info-box-number"><?= $saleData['visaSalesData']['quoteAmount'] ?></span>
+                                <span class="info-box-number"><?= $saleData['visaSalesData']['currentDayData']['quoteAmount'] ?></span>
                                 <div class="progress">
                                     <div class="progress-bar" style="width: <?= $visaPercentage ?>%"></div>
                                 </div>
@@ -172,7 +172,7 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                         <div class="info-box bg-gradient-primary">
                             <span class="info-box-icon"><i class="fas fa-plane-departure"></i></span>
                             <div class="info-box-content">
-                                <span class="info-box-number"><?= $saleData['ticketSalesData']['quoteAmount'] ?></span>
+                                <span class="info-box-number"><?= $saleData['ticketSalesData']['currentDayData']['quoteAmount'] ?></span>
                                 <div class="progress">
                                     <div class="progress-bar" style="width: <?= $ticketPercentage ?>%"></div>
                                 </div>
@@ -186,7 +186,7 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                         <div class="info-box bg-gradient-success">
                             <span class="info-box-icon"><i class="fas fa-hotel"></i></span>
                             <div class="info-box-content">
-                                <span class="info-box-number"><?= $saleData['hotelSalesData']['quoteAmount'] ?></span>
+                                <span class="info-box-number"><?= $saleData['hotelSalesData']['currentDayData']['quoteAmount'] ?></span>
                                 <div class="progress">
                                     <div class="progress-bar" style="width: <?= $hotelPercentage ?>%"></div>
                                 </div>
@@ -200,7 +200,7 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                         <div class="info-box bg-gradient-warning">
                             <span class="info-box-icon"><i class="fas fa-suitcase-rolling"></i></span>
                             <div class="info-box-content">
-                                <span class="info-box-number"><?= $saleData['holidaySalesData']['quoteAmount'] ?></span>
+                                <span class="info-box-number"><?= $saleData['holidaySalesData']['currentDayData']['quoteAmount'] ?></span>
                                 <div class="progress">
                                     <div class="progress-bar" style="width: <?= $holidayPercentage ?>%"></div>
                                 </div>
@@ -214,7 +214,7 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                         <div class="info-box bg-gradient-danger">
                             <span class="info-box-icon"><i class="fas fa-passport"></i></span>
                             <div class="info-box-content">
-                                <span class="info-box-number"><?= $saleData['visaSalesData']['quoteAmount'] ?></span>
+                                <span class="info-box-number"><?= $saleData['visaSalesData']['currentDayData']['quoteAmount'] ?></span>
                                 <div class="progress">
                                     <div class="progress-bar" style="width: <?= $visaPercentage ?>%"></div>
                                 </div>
@@ -235,7 +235,7 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                         <div class="info-box bg-gradient-primary">
                             <span class="info-box-icon"><i class="fas fa-plane-departure"></i></span>
                             <div class="info-box-content">
-                                <span class="info-box-number"><?= $saleData['ticketSalesData']['quoteAmount'] ?></span>
+                                <span class="info-box-number"><?= $saleData['ticketSalesData']['currentDayData']['quoteAmount'] ?></span>
                                 <div class="progress">
                                     <div class="progress-bar" style="width: <?= $ticketPercentage ?>%"></div>
                                 </div>
@@ -249,7 +249,7 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                         <div class="info-box bg-gradient-success">
                             <span class="info-box-icon"><i class="fas fa-hotel"></i></span>
                             <div class="info-box-content">
-                                <span class="info-box-number"><?= $saleData['hotelSalesData']['quoteAmount'] ?></span>
+                                <span class="info-box-number"><?= $saleData['hotelSalesData']['currentDayData']['quoteAmount'] ?></span>
                                 <div class="progress">
                                     <div class="progress-bar" style="width: <?= $hotelPercentage ?>%"></div>
                                 </div>
@@ -263,7 +263,7 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                         <div class="info-box bg-gradient-warning">
                             <span class="info-box-icon"><i class="fas fa-suitcase-rolling"></i></span>
                             <div class="info-box-content">
-                                <span class="info-box-number"><?= $saleData['holidaySalesData']['quoteAmount'] ?></span>
+                                <span class="info-box-number"><?= $saleData['holidaySalesData']['currentDayData']['quoteAmount'] ?></span>
                                 <div class="progress">
                                     <div class="progress-bar" style="width: <?= $holidayPercentage ?>%"></div>
                                 </div>
@@ -277,7 +277,7 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                         <div class="info-box bg-gradient-danger">
                             <span class="info-box-icon"><i class="fas fa-passport"></i></span>
                             <div class="info-box-content">
-                                <span class="info-box-number"><?= $saleData['visaSalesData']['quoteAmount'] ?></span>
+                                <span class="info-box-number"><?= $saleData['visaSalesData']['currentDayData']['quoteAmount'] ?></span>
                                 <div class="progress">
                                     <div class="progress-bar" style="width: <?= $visaPercentage ?>%"></div>
                                 </div>
