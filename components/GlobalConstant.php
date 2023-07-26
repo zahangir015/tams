@@ -70,5 +70,45 @@ final class GlobalConstant
     const TYPE = ['New' => 'New', 'Reissue' => 'Reissue', 'Refund' => 'Refund', 'EMD Voucher' => 'EMD Voucher'];
     const REFUND_PAYMENT_STATUS = ['Due', 'Partially Paid', 'Full Paid'];
 
+    const TICKET_REPORT_TYPE = [
+        'CUSTOMER_CATEGORY' => 'CUSTOMER CATEGORY',
+        'CUSTOMER_CATEGORY_BOOKING_TYPE' => 'CUSTOMER_CATEGORY_BOOKING_TYPE',
+        'FLIGHT_TYPE' => 'FLIGHT_TYPE',
+        'BOOKING_TYPE' => 'BOOKING TYPE',
+        'PROVIDER' => 'PROVIDER',
+        'AIRLINES' => 'AIRLINES',
+        'ROUTING' => 'ROUTING',
+        'SUPPLIER' => 'SUPPLIER',
+        'CUSTOMER' => 'CUSTOMER',
+    ];
+
+    const HOLIDAY_REPORT_TYPE = [
+        'CUSTOMER_CATEGORY' => 'CUSTOMER CATEGORY',
+        'CUSTOMER_CATEGORY_BOOKING_TYPE' => 'CUSTOMER_CATEGORY_BOOKING_TYPE',
+        'BOOKING_TYPE' => 'BOOKING TYPE',
+        'AIRLINES' => 'AIRLINES',
+        'SUPPLIER' => 'SUPPLIER',
+        'CUSTOMER' => 'CUSTOMER',
+    ];
+
+    const HOTEL_REPORT_TYPE = [
+        'CUSTOMER_CATEGORY' => 'CUSTOMER CATEGORY',
+        'BOOKING_TYPE' => 'BOOKING TYPE',
+        'CUSTOMER_CATEGORY_BOOKING_TYPE' => 'CUSTOMER_CATEGORY_BOOKING_TYPE',
+        'AIRLINES' => 'AIRLINES',
+        'SUPPLIER' => 'SUPPLIER',
+        'CUSTOMER' => 'CUSTOMER',
+    ];
+
+    const VISA_REPORT_TYPE = [
+        'COUNTRY' => 'COUNTRY',
+        'CUSTOMER_CATEGORY' => 'CUSTOMER CATEGORY',
+        'BOOKING_TYPE' => 'BOOKING TYPE',
+        'CUSTOMER_CATEGORY_BOOKING_TYPE' => 'CUSTOMER_CATEGORY_BOOKING_TYPE',
+        'AIRLINES' => 'AIRLINES',
+        'SUPPLIER' => 'SUPPLIER',
+        'CUSTOMER' => 'CUSTOMER',
+    ];
+
 
 }

@@ -1,18 +1,15 @@
 <?php
 
 use app\components\Constant;
-use app\modules\employee\models\Employee;
-use app\modules\sales\models\Airline;
-use app\modules\sales\models\FlightAirport;
-use app\modules\sales\components\TicketComponent;
-use app\modules\sales\services\ReportService;
+use app\components\GlobalConstant;
+use app\modules\sale\components\ServiceConstant;
 use kartik\daterange\DateRangePicker;
 use kartik\select2\Select2;
 use yii\bootstrap4\ActiveForm;
 use yii\helpers\Html;
 
 $this->title = Yii::t('app', 'Ticket Reports');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tickets'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tickets'), 'url' => ['/sale/ticket/index']];
 $this->params['breadcrumbs'][] = $this->title;
 $getReportType = [];
 if (isset(Yii::$app->request->get()["reportType"])) {
@@ -25,7 +22,7 @@ if (isset(Yii::$app->request->get()["reportType"])) {
         <div class="card-header">
             <div class="card-title">
                 <h3 class="card-label">
-                    Filter Report
+                    Generate Report
                 </h3>
             </div>
         </div>
@@ -55,13 +52,13 @@ if (isset(Yii::$app->request->get()["reportType"])) {
                     echo Select2::widget([
                         'name' => 'reportType',
                         'value' => $getReportType,
-                        'data' => Constant::TICKET_REPORT_CATEGORY,
+                        'data' => GlobalConstant::TICKET_REPORT_TYPE,
                         'theme' => Select2::THEME_DEFAULT,
                         'options' => ['multiple' => true, 'placeholder' => 'Select Report Type ...', 'class' => 'form-control']
                     ]);
                     ?>
                 </div>
-                <div class="col-md" style="padding-top:24px; padding-right:0">
+                <div class="col-md" style="padding-top:30px; padding-right:0">
                     <?= Html::submitButton(Yii::t('app', 'Generate Report'), ['class' => 'btn btn-success']) ?>
                 </div>
             </div>
@@ -74,10 +71,7 @@ if (isset(Yii::$app->request->get()["reportType"])) {
     <div class="card mb-5">
         <div class="card-header">
             <div class="card-title">
-                Customer Category Wise Ticket Report
-            </div>
-            <div class="card-toolbar">
-                <small class="pull-right">Date: <?= $date ?></small>
+                Customer Category Wise Ticket Report(<?= $date ?>)
             </div>
         </div>
         <div class="card-body">
@@ -151,10 +145,7 @@ if (isset(Yii::$app->request->get()["reportType"])) {
     <div class="card mb-5">
         <div class="card-header">
             <div class="card-title">
-                Booking Type Wise Ticket Report
-            </div>
-            <div class="card-toolbar">
-                <small class="pull-right">Date: <?= $date ?></small>
+                Booking Type Wise Ticket Report(<?= $date ?>)
             </div>
         </div>
         <div class="card-body">
@@ -186,7 +177,7 @@ if (isset(Yii::$app->request->get()["reportType"])) {
                         $due = ($typeData['quoteAmount'] - $typeData['receivedAmount']);
                         ?>
                         <tr>
-                            <td><?= $typeData['bookingType'] ?></td>
+                            <td><?= ServiceConstant::BOOKING_TYPE[$typeData['bookedOnline']] ?></td>
                             <td><?= $typeData['total'] ?></td>
                             <td><?= $typeData['numberOfSegment'] ?></td>
                             <td><?= number_format($gross) ?></td>
@@ -200,9 +191,9 @@ if (isset(Yii::$app->request->get()["reportType"])) {
                         $bookingTypeTotalSegment += $typeData['numberOfSegment'];
                         $bookingTypeTotalQuoteAmount += $typeData['quoteAmount'];
                         $bookingTypeTotalReceivedAmount += $typeData['receivedAmount'];
+                        $bookingTypeTotalNetProfit += $typeData['netProfit'];
                         $bookingTypeTotalDueAmount += $due;
                         $bookingTypeTotalGross += $gross;
-                        $bookingTypeTotalNetProfit += $typeData['netProfit'];
                     }
                     ?>
                     </tbody>
@@ -228,10 +219,7 @@ if (isset(Yii::$app->request->get()["reportType"])) {
     <div class="card mb-5">
         <div class="card-header">
             <div class="card-title">
-                Customer Category & Booking Type Wise Ticket Report
-            </div>
-            <div class="card-toolbar">
-                <small class="pull-right">Date: <?= $date ?></small>
+                Customer Category & Booking Type Wise Ticket Report(<?= $date ?>)
             </div>
         </div>
         <div class="card-body">
@@ -263,7 +251,7 @@ if (isset(Yii::$app->request->get()["reportType"])) {
                         $due = ($typeData['quoteAmount'] - $typeData['receivedAmount']);
                         ?>
                         <tr>
-                            <td><?= $typeData['customerCategory'].' '.$typeData['bookingType'] ?></td>
+                            <td><?= $typeData['customerCategory'] . ' ' . ServiceConstant::BOOKING_TYPE[$typeData['bookedOnline']] ?></td>
                             <td><?= $typeData['total'] ?></td>
                             <td><?= $typeData['numberOfSegment'] ?></td>
                             <td><?= number_format($gross) ?></td>
@@ -277,9 +265,9 @@ if (isset(Yii::$app->request->get()["reportType"])) {
                         $customerCategoryBookingTypeTotalSegment += $typeData['numberOfSegment'];
                         $customerCategoryBookingTypeTotalQuoteAmount += $typeData['quoteAmount'];
                         $customerCategoryBookingTypeTotalReceivedAmount += $typeData['receivedAmount'];
+                        $customerCategoryBookingTypeTotalNetProfit += $typeData['netProfit'];
                         $customerCategoryBookingTypeTotalDueAmount += $due;
                         $customerCategoryBookingTypeTotalGross += $gross;
-                        $customerCategoryBookingTypeTotalNetProfit += $typeData['netProfit'];
                     }
                     ?>
                     </tbody>
@@ -305,12 +293,7 @@ if (isset(Yii::$app->request->get()["reportType"])) {
     <div class="card card-custom mb-5">
         <div class="card-header">
             <div class="card-title">
-                <h3 class="card-label">
-                    Flight Type Wise Ticket Report
-                </h3>
-            </div>
-            <div class="card-toolbar">
-                <small class="pull-right">Date: <?= $date ?></small>
+                Flight Type Wise Ticket Report(<?= $date ?>)
             </div>
         </div>
         <div class="card-body">
@@ -321,58 +304,57 @@ if (isset(Yii::$app->request->get()["reportType"])) {
                         <th>Name</th>
                         <th>Qty</th>
                         <th>Total Segment</th>
-                        <th>Gross Before Discount</th>
+                        <th>Gross</th>
                         <th>Total Quote</th>
-                        <th style="background-color: #e6e8e6">Received Amount</th>
-                        <th style="background-color: lightgrey">Net Revenue</th>
+                        <th>Total Received</th>
+                        <th>Total Due</th>
+                        <th>Net Profit</th>
                     </tr>
                     </thead>
                     <tbody>
                     <?php
-                    $flightTypeWiseTotalQty = 0;
-                    $flightTypeWiseTotalSegment = 0;
-                    $flightTypeWiseTotalNetRevenueAfterDiscount = 0;
-                    $flightTypeWiseTotalQuoteAmount = 0;
-                    $flightTypeWiseTotalReceivedAmount = 0;
-                    $flightTypeWiseTotalGross = 0;
-                    foreach ($flightTypeWiseData as $key => $typeData) {
-                        $gross = $quote = $netRevenue = 0;
-                        $gross = ReportService::grossCalculationForReport($typeData);
-                        $quote = ReportService::quoteAmountCalculationForReport($key, $typeData, $flightTypeWiseRefundData);
-                        $total = (double)array_sum(array_column($typeData, 'total'));
-                        $numberOfSegment = (double)array_sum(array_column($typeData, 'numberOfSegment'));
-                        $receivedAmount = (double)array_sum(array_column($typeData, 'receivedAmount'));
-                        $netRevenueAfterDiscount = ReportService::netRevenueForReport($key, $typeData, $flightTypeWiseRefundData);
+                    $flightTypeTotalQty = 0;
+                    $flightTypeTotalSegment = 0;
+                    $flightTypeTotalNetProfit = 0;
+                    $flightTypeTotalQuoteAmount = 0;
+                    $flightTypeTotalReceivedAmount = 0;
+                    $flightTypeTotalDueAmount = 0;
+                    $flightTypeTotalGross = 0;
+                    foreach ($flightTypeWiseData as $typeData) {
+                        $gross = ($typeData['baseFare'] + $typeData['tax'] + $typeData['otherTax']);
+                        $due = ($typeData['quoteAmount'] - $typeData['receivedAmount']);
                         ?>
                         <tr>
-                            <td><?= $key ?></td>
-                            <td><?= $total ?></td>
-                            <td><?= $numberOfSegment ?></td>
+                            <td><?= ServiceConstant::FLIGHT_TYPE[$typeData['flightType']] ?></td>
+                            <td><?= $typeData['total'] ?></td>
+                            <td><?= $typeData['numberOfSegment'] ?></td>
                             <td><?= number_format($gross) ?></td>
-                            <td><?= number_format($quote) ?></td>
-                            <td style="background-color: #e6e8e6"> <?= number_format($receivedAmount) ?></td>
-                            <td style="background-color: lightgrey">
-                                <?= number_format($netRevenueAfterDiscount) ?></td>
+                            <td><?= number_format($typeData['quoteAmount']) ?></td>
+                            <td><?= number_format($typeData['receivedAmount']) ?></td>
+                            <td><?= number_format($due) ?></td>
+                            <td><?= number_format($typeData['netProfit']) ?></td>
                         </tr>
                         <?php
-                        $flightTypeWiseTotalQty += $total;
-                        $flightTypeWiseTotalSegment += $numberOfSegment;
-                        $flightTypeWiseTotalQuoteAmount += $quote;
-                        $flightTypeWiseTotalGross += $gross;
-                        $flightTypeWiseTotalReceivedAmount += $receivedAmount;
-                        $flightTypeWiseTotalNetRevenueAfterDiscount += $netRevenueAfterDiscount;
+                        $flightTypeTotalQty += $typeData['total'];
+                        $flightTypeTotalSegment += $typeData['numberOfSegment'];
+                        $flightTypeTotalQuoteAmount += $typeData['quoteAmount'];
+                        $flightTypeTotalReceivedAmount += $typeData['receivedAmount'];
+                        $flightTypeTotalNetProfit += $typeData['netProfit'];
+                        $flightTypeTotalDueAmount += $due;
+                        $flightTypeTotalGross += $gross;
                     }
                     ?>
                     </tbody>
                     <tfoot>
-                    <tr style="background-color: #ccc;">
+                    <tr style="background-color: #8eae7f;">
                         <th>Total</th>
-                        <th><?= $flightTypeWiseTotalQty ?></th>
-                        <th><?= $flightTypeWiseTotalSegment ?></th>
-                        <th><?= number_format($flightTypeWiseTotalGross) ?></th>
-                        <th><?= number_format($flightTypeWiseTotalQuoteAmount) ?></th>
-                        <th><?= number_format($flightTypeWiseTotalReceivedAmount) ?></th>
-                        <th><?= number_format($flightTypeWiseTotalNetRevenueAfterDiscount) ?></th>
+                        <th><?= $flightTypeTotalQty ?></th>
+                        <th><?= $flightTypeTotalSegment ?></th>
+                        <th><?= number_format($flightTypeTotalGross) ?></th>
+                        <th><?= number_format($flightTypeTotalQuoteAmount) ?></th>
+                        <th><?= number_format($flightTypeTotalReceivedAmount) ?></th>
+                        <th><?= number_format($flightTypeTotalDueAmount) ?></th>
+                        <th><?= number_format($flightTypeTotalNetProfit) ?></th>
                     </tr>
                     </tfoot>
                 </table>
@@ -385,12 +367,7 @@ if (isset(Yii::$app->request->get()["reportType"])) {
     <div class="card card-custom mb-5">
         <div class="card-header">
             <div class="card-title">
-                <h3 class="card-label">
-                    GDS Wise Ticket Report
-                </h3>
-            </div>
-            <div class="card-toolbar">
-                <small class="pull-right">Date: <?= $date ?></small>
+                GDS Wise Ticket Report(<?= $date ?>)
             </div>
         </div>
         <div class="card-body">
@@ -401,60 +378,57 @@ if (isset(Yii::$app->request->get()["reportType"])) {
                         <th>Name</th>
                         <th>Qty</th>
                         <th>Total Segment</th>
-                        <th>Gross Before Discount</th>
+                        <th>Gross</th>
                         <th>Total Quote</th>
-                        <th style="background-color: #e6e8e6">Received Amount</th>
-                        <th style="background-color: lightgrey">Net Revenue</th>
+                        <th>Total Received</th>
+                        <th>Total Due</th>
+                        <th>Net Profit</th>
                     </tr>
                     </thead>
                     <tbody>
                     <?php
-                    $gdsWiseTotalQty = 0;
-                    $gdsWiseTotalSegment = 0;
-                    $gdsWiseTotalNetRevenueAfterDiscount = 0;
-                    $gdsWiseTotalQuoteAmount = 0;
-                    $gdsWiseTotalReceivedAmount = 0;
-                    $gdsWiseTotalGross = 0;
-
-                    foreach ($gdsWiseData as $key => $gdsData) {
-                        $gross = $quote = $netRevenue = 0;
-                        $gross = ReportService::grossCalculationForReport($gdsData);
-                        $quote = ReportService::quoteAmountCalculationForReport($key, $gdsData, $gdsWiseRefundData);
-                        $total = (double)array_sum(array_column($gdsData, 'total'));
-                        $numberOfSegment = (double)array_sum(array_column($gdsData, 'numberOfSegment'));
-                        $receivedAmount = (double)array_sum(array_column($gdsData, 'receivedAmount'));
-
-                        $netRevenueAfterDiscount = ReportService::netRevenueForReport($key, $gdsData, $gdsWiseRefundData);
+                    $providerTotalQty = 0;
+                    $providerTotalSegment = 0;
+                    $providerTotalNetProfit = 0;
+                    $providerTotalQuoteAmount = 0;
+                    $providerTotalReceivedAmount = 0;
+                    $providerTotalDueAmount = 0;
+                    $providerTotalGross = 0;
+                    foreach ($providerWiseData as $providerData) {
+                        $gross = ($providerData['baseFare'] + $providerData['tax'] + $providerData['otherTax']);
+                        $due = ($providerData['quoteAmount'] - $providerData['receivedAmount']);
                         ?>
                         <tr>
-                            <td><?= $gdsData[0]['provider']['name'] ?></td>
-                            <td><?= $total ?></td>
-                            <td><?= $numberOfSegment ?></td>
+                            <td><?= ($providerData['provider']) ? $typeData['provider']['name'] : 'Not Set' ?></td>
+                            <td><?= $providerData['total'] ?></td>
+                            <td><?= $providerData['numberOfSegment'] ?></td>
                             <td><?= number_format($gross) ?></td>
-                            <td><?= number_format($quote) ?></td>
-                            <td style="background-color: #e6e8e6"> <?= number_format($receivedAmount) ?></td>
-                            <td style="background-color: lightgrey">
-                                <?= number_format($netRevenueAfterDiscount) ?></td>
+                            <td><?= number_format($providerData['quoteAmount']) ?></td>
+                            <td><?= number_format($providerData['receivedAmount']) ?></td>
+                            <td><?= number_format($due) ?></td>
+                            <td><?= number_format($providerData['netProfit']) ?></td>
                         </tr>
                         <?php
-                        $gdsWiseTotalQty += $total;
-                        $gdsWiseTotalSegment += $numberOfSegment;
-                        $gdsWiseTotalQuoteAmount += $quote;
-                        $gdsWiseTotalGross += $gross;
-                        $gdsWiseTotalReceivedAmount += $receivedAmount;
-                        $gdsWiseTotalNetRevenueAfterDiscount += $netRevenueAfterDiscount;
+                        $providerTotalQty += $providerData['total'];
+                        $providerTotalSegment += $providerData['numberOfSegment'];
+                        $providerTotalQuoteAmount += $providerData['quoteAmount'];
+                        $providerTotalReceivedAmount += $providerData['receivedAmount'];
+                        $providerTotalNetProfit += $providerData['netProfit'];
+                        $providerTotalDueAmount += $due;
+                        $providerTotalGross += $gross;
                     }
                     ?>
                     </tbody>
                     <tfoot>
-                    <tr style="background-color: #ccc;">
+                    <tr style="background-color: #8eae7f;">
                         <th>Total</th>
-                        <th><?= $gdsWiseTotalQty ?></th>
-                        <th><?= $gdsWiseTotalSegment ?></th>
-                        <th><?= number_format($gdsWiseTotalGross) ?></th>
-                        <th><?= number_format($gdsWiseTotalQuoteAmount) ?></th>
-                        <th><?= number_format($gdsWiseTotalReceivedAmount) ?></th>
-                        <th><?= number_format($gdsWiseTotalNetRevenueAfterDiscount) ?></th>
+                        <th><?= $providerTotalQty ?></th>
+                        <th><?= $providerTotalSegment ?></th>
+                        <th><?= number_format($providerTotalGross) ?></th>
+                        <th><?= number_format($providerTotalQuoteAmount) ?></th>
+                        <th><?= number_format($providerTotalReceivedAmount) ?></th>
+                        <th><?= number_format($providerTotalDueAmount) ?></th>
+                        <th><?= number_format($providerTotalNetProfit) ?></th>
                     </tr>
                     </tfoot>
                 </table>
@@ -467,12 +441,7 @@ if (isset(Yii::$app->request->get()["reportType"])) {
     <div class="card card-custom mb-5">
         <div class="card-header">
             <div class="card-title">
-                <h3 class="card-label">
-                    Airline Wise Ticket Report
-                </h3>
-            </div>
-            <div class="card-toolbar">
-                <small class="pull-right">Date: <?= $date ?></small>
+                Airline Wise Ticket Report(<?= $date ?>)
             </div>
         </div>
         <div class="card-body">
@@ -483,141 +452,57 @@ if (isset(Yii::$app->request->get()["reportType"])) {
                         <th>Name</th>
                         <th>Qty</th>
                         <th>Total Segment</th>
-                        <th>Gross Before Discount</th>
+                        <th>Gross</th>
                         <th>Total Quote</th>
-                        <th style="background-color: #e6e8e6">Received Amount</th>
-                        <th style="background-color: lightgrey">Net Revenue</th>
+                        <th>Total Received</th>
+                        <th>Total Due</th>
+                        <th>Net Profit</th>
                     </tr>
                     </thead>
                     <tbody>
                     <?php
-                    $airlineWiseTotalQty = 0;
-                    $airlineWiseTotalSegment = 0;
-                    $airlineWiseTotalQuoteAmount = 0;
-                    $airlineWiseTotalReceivedAmount = 0;
-                    $airlineWiseTotalGross = 0;
-                    $airlineWiseTotalNetRevenueAfterDiscount = 0;
-
-                    foreach ($airlineWiseData as $key => $airlineData) {
-                        $gross = $quote = $netRevenue = 0;
-                        $gross = ReportService::grossCalculationForReport($airlineData);
-                        $quote = ReportService::quoteAmountCalculationForReport($key, $airlineData, $airlineWiseRefundData);
-                        $total = (double)array_sum(array_column($airlineData, 'total'));
-                        $numberOfSegment = (double)array_sum(array_column($airlineData, 'numberOfSegment'));
-                        $receivedAmount = (double)array_sum(array_column($airlineData, 'receivedAmount'));
-
-                        $netRevenueAfterDiscount = ReportService::netRevenueForReport($key, $airlineData, $airlineWiseRefundData);
+                    $airlineTotalQty = 0;
+                    $airlineTotalSegment = 0;
+                    $airlineTotalNetProfit = 0;
+                    $airlineTotalQuoteAmount = 0;
+                    $airlineTotalReceivedAmount = 0;
+                    $airlineTotalDueAmount = 0;
+                    $airlineTotalGross = 0;
+                    foreach ($airlineWiseData as $airlineData) {
+                        $gross = ($airlineData['baseFare'] + $airlineData['tax'] + $airlineData['otherTax']);
+                        $due = ($airlineData['quoteAmount'] - $airlineData['receivedAmount']);
                         ?>
                         <tr>
-                            <td><?= $airlineData[0]['airlineName'] ?></td>
-                            <td><?= $total ?></td>
-                            <td><?= $numberOfSegment ?></td>
+                            <td><?= $airlineData['name'] . '(' . $airlineData['code'] . ')' ?></td>
+                            <td><?= $airlineData['total'] ?></td>
+                            <td><?= $airlineData['numberOfSegment'] ?></td>
                             <td><?= number_format($gross) ?></td>
-                            <td><?= number_format($quote) ?></td>
-                            <td style="background-color: #e6e8e6"> <?= number_format($receivedAmount) ?></td>
-                            <td style="background-color: lightgrey">
-                                <?= number_format($netRevenueAfterDiscount) ?></td>
+                            <td><?= number_format($airlineData['quoteAmount']) ?></td>
+                            <td><?= number_format($airlineData['receivedAmount']) ?></td>
+                            <td><?= number_format($due) ?></td>
+                            <td><?= number_format($airlineData['netProfit']) ?></td>
                         </tr>
                         <?php
-                        $airlineWiseTotalQty += $total;
-                        $airlineWiseTotalSegment += $numberOfSegment;
-                        $airlineWiseTotalQuoteAmount += $quote;
-                        $airlineWiseTotalGross += $gross;
-                        $airlineWiseTotalReceivedAmount += $receivedAmount;
-                        $airlineWiseTotalNetRevenueAfterDiscount += $netRevenueAfterDiscount;
+                        $airlineTotalQty += $airlineData['total'];
+                        $airlineTotalSegment += $airlineData['numberOfSegment'];
+                        $airlineTotalQuoteAmount += $airlineData['quoteAmount'];
+                        $airlineTotalReceivedAmount += $airlineData['receivedAmount'];
+                        $airlineTotalNetProfit += $airlineData['netProfit'];
+                        $airlineTotalDueAmount += $due;
+                        $airlineTotalGross += $gross;
                     }
                     ?>
                     </tbody>
                     <tfoot>
-                    <tr style="background-color: #ccc;">
+                    <tr style="background-color: #8eae7f;">
                         <th>Total</th>
-                        <th><?= $airlineWiseTotalQty ?></th>
-                        <th><?= $airlineWiseTotalSegment ?></th>
-                        <th><?= number_format($airlineWiseTotalGross) ?></th>
-                        <th><?= number_format($airlineWiseTotalQuoteAmount) ?></th>
-                        <th><?= number_format($airlineWiseTotalReceivedAmount) ?></th>
-                        <th><?= number_format($airlineWiseTotalNetRevenueAfterDiscount) ?></th>
-                    </tr>
-                    </tfoot>
-                </table>
-            </div>
-        </div>
-    </div>
-<?php } ?>
-
-<?php if (in_array("REFERENCE", $getReportType)) { ?>
-    <div class="card card-custom mb-5">
-        <div class="card-header">
-            <div class="card-title">
-                <h3 class="card-label">
-                    Reference Wise Ticket Report
-                </h3>
-            </div>
-            <div class="card-toolbar">
-                <small class="pull-right">Date: <?= $date ?></small>
-            </div>
-        </div>
-        <div class="card-body">
-            <div class="row table-responsive">
-                <table class="table table-bordered">
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Qty</th>
-                        <th>Total Segment</th>
-                        <th>Gross Before Discount</th>
-                        <th>Total Quote</th>
-                        <th style="background-color: #e6e8e6">Received Amount</th>
-                        <th style="background-color: lightgrey">Net Revenue</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <?php
-                    $refWiseTotalQty = 0;
-                    $refWiseTotalSegment = 0;
-                    $refWiseTotalNetRevenueAfterDiscount = 0;
-                    $refWiseTotalQuoteAmount = 0;
-                    $refWiseTotalReceivedAmount = 0;
-                    $refWiseTotalGross = 0;
-                    foreach ($refWiseData as $key => $refData) {
-                        $gross = $quote = $netRevenue = 0;
-                        $gross = ReportService::grossCalculationForReport($refData);
-                        $quote = ReportService::quoteAmountCalculationForReport($key, $refData, $refWiseRefundData);
-                        $total = (double)array_sum(array_column($refData, 'total'));
-                        $numberOfSegment = (double)array_sum(array_column($refData, 'numberOfSegment'));
-                        $receivedAmount = (double)array_sum(array_column($refData, 'receivedAmount'));
-
-                        $netRevenueAfterDiscount = ReportService::netRevenueForReport($key, $refData, $refWiseRefundData);
-                        ?>
-                        <tr>
-                            <td><?= $key ?></td>
-                            <td><?= $total ?></td>
-                            <td><?= $numberOfSegment ?></td>
-                            <td><?= number_format($gross) ?></td>
-                            <td><?= number_format($quote) ?></td>
-                            <td style="background-color: #e6e8e6"> <?= number_format($receivedAmount) ?></td>
-                            <td style="background-color: lightgrey">
-                                <?= number_format($netRevenueAfterDiscount) ?></td>
-                        </tr>
-                        <?php
-                        $refWiseTotalQty += $total;
-                        $refWiseTotalSegment += $numberOfSegment;
-                        $refWiseTotalQuoteAmount += $quote;
-                        $refWiseTotalGross += $gross;
-                        $refWiseTotalReceivedAmount += $receivedAmount;
-                        $refWiseTotalNetRevenueAfterDiscount += $netRevenueAfterDiscount;
-                    }
-                    ?>
-                    </tbody>
-                    <tfoot>
-                    <tr style="background-color: #ccc;">
-                        <th>Total</th>
-                        <th><?= $refWiseTotalQty ?></th>
-                        <th><?= $refWiseTotalSegment ?></th>
-                        <th><?= number_format($refWiseTotalGross) ?></th>
-                        <th><?= number_format($refWiseTotalQuoteAmount) ?></th>
-                        <th><?= number_format($refWiseTotalReceivedAmount) ?></th>
-                        <th><?= number_format($refWiseTotalNetRevenueAfterDiscount) ?></th>
+                        <th><?= $airlineTotalQty ?></th>
+                        <th><?= $airlineTotalSegment ?></th>
+                        <th><?= number_format($airlineTotalGross) ?></th>
+                        <th><?= number_format($airlineTotalQuoteAmount) ?></th>
+                        <th><?= number_format($airlineTotalReceivedAmount) ?></th>
+                        <th><?= number_format($airlineTotalDueAmount) ?></th>
+                        <th><?= number_format($airlineTotalNetProfit) ?></th>
                     </tr>
                     </tfoot>
                 </table>
@@ -630,12 +515,7 @@ if (isset(Yii::$app->request->get()["reportType"])) {
     <div class="card card-custom mb-5">
         <div class="card-header">
             <div class="card-title">
-                <h3 class="card-label">
-                    Supplier Ticket Report
-                </h3>
-            </div>
-            <div class="card-toolbar">
-                <small class="pull-right">Date: <?= $date ?></small>
+                Supplier Wise Ticket Report(<?= $date ?>)
             </div>
         </div>
         <div class="card-body">
@@ -644,140 +524,59 @@ if (isset(Yii::$app->request->get()["reportType"])) {
                     <thead>
                     <tr>
                         <th>Name</th>
-                        <th>Total Segment</th>
-                        <th>Gross Before Discount</th>
-                        <th>Total Quote</th>
-                        <th style="background-color: #e6e8e6">Paid Amount</th>
-                        <th style="background-color: lightgrey">Net Revenue</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <?php
-                    $supplierWiseTotalQty = 0;
-                    $supplierWiseTotalSegment = 0;
-                    $supplierWiseTotalQuoteAmount = 0;
-                    $supplierWiseTotalPaidAmount = 0;
-                    $supplierWiseTotalGross = 0;
-                    $supplierWiseTotalNetRevenueAfterDiscount = 0;
-                    foreach ($supplierWiseData as $key => $supplierData) {
-                        $gross = $quote = $netRevenue = 0;
-                        $gross = ReportService::grossCalculationForReport($supplierData);
-                        $quote = ReportService::quoteAmountCalculationForReport($key, $supplierData, $supplierWiseRefundData);
-                        $total = (double)array_sum(array_column($supplierData, 'total'));
-                        $numberOfSegment = (double)array_sum(array_column($supplierData, 'numberOfSegment'));
-                        $paidAmount = (double)array_sum(array_column($supplierData, 'paidAmount'));
-
-                        $netRevenueAfterDiscount = ReportService::netRevenueForReport($key, $supplierData, $supplierWiseRefundData);
-                        ?>
-                        <tr>
-                            <td><?= $supplierData[0]['supplierCompany'] ?></td>
-                            <td><?= $numberOfSegment ?></td>
-                            <td><?= number_format($gross) ?></td>
-                            <td><?= number_format($quote) ?></td>
-                            <td style="background-color: #e6e8e6"> <?= number_format($paidAmount) ?></td>
-                            <td style="background-color: lightgrey">
-                                <?= number_format($netRevenueAfterDiscount) ?></td>
-                        </tr>
-                        <?php
-                        $supplierWiseTotalSegment += $numberOfSegment;
-                        $supplierWiseTotalQuoteAmount += $quote;
-                        $supplierWiseTotalGross += $gross;
-                        $supplierWiseTotalPaidAmount += $paidAmount;
-                        $supplierWiseTotalNetRevenueAfterDiscount += $netRevenueAfterDiscount;
-                    }
-                    ?>
-                    </tbody>
-                    <tfoot>
-                    <tr style="background-color: #ccc;">
-                        <th>Total</th>
-                        <th><?= $supplierWiseTotalSegment ?></th>
-                        <th><?= number_format($supplierWiseTotalGross) ?></th>
-                        <th><?= number_format($supplierWiseTotalQuoteAmount) ?></th>
-                        <th><?= number_format($supplierWiseTotalPaidAmount) ?></th>
-                        <th><?= number_format($supplierWiseTotalNetRevenueAfterDiscount) ?></th>
-                    </tr>
-                    </tfoot>
-                </table>
-            </div>
-        </div>
-    </div>
-<?php } ?>
-
-<?php if (in_array("EMPLOYEE", $getReportType)) { ?>
-    <div class="card card-custom mb-5">
-        <div class="card-header">
-            <div class="card-title">
-                <h3 class="card-label">
-                    Employee Wise Ticket Report
-                </h3>
-            </div>
-            <div class="card-toolbar">
-                <small class="pull-right">Date: <?= $date ?></small>
-            </div>
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <table class="table table-bordered">
-                    <thead>
-                    <tr>
-                        <th>Name</th>
                         <th>Qty</th>
                         <th>Total Segment</th>
-                        <th>Gross Before Discount</th>
+                        <th>Gross</th>
                         <th>Total Quote</th>
-                        <th style="background-color: #e6e8e6">Received Amount</th>
-                        <th style="background-color: lightgrey">Net Revenue</th>
+                        <th>Total Received</th>
+                        <th>Total Due</th>
+                        <th>Net Profit</th>
                     </tr>
                     </thead>
                     <tbody>
                     <?php
-                    $employeeWiseTotalQty = 0;
-                    $employeeWiseTotalSegment = 0;
-                    $employeeWiseTotalQuoteAmount = 0;
-                    $employeeWiseTotalReceivedAmount = 0;
-                    $employeeWiseTotalDueAmount = 0;
-                    $employeeWiseTotalGross = 0;
-                    $employeeWiseTotalNetRevenueAfterDiscount = 0;
-                    foreach ($employeeWiseData as $key => $employeeData) {
-                        $gross = $quote = $netRevenue = 0;
-                        $gross = ReportService::grossCalculationForReport($employeeData);
-
-                        $quote = ReportService::quoteAmountCalculationForReport($key, $employeeData, $employeeWiseRefundData);
-                        $total = (double)array_sum(array_column($employeeData, 'total'));
-                        $numberOfSegment = (double)array_sum(array_column($employeeData, 'numberOfSegment'));
-                        $receivedAmount = (double)array_sum(array_column($employeeData, 'receivedAmount'));
-
-                        $netRevenueAfterDiscount = ReportService::netRevenueForReport($key, $employeeData, $employeeWiseRefundData);
+                    $supplierTotalQty = 0;
+                    $supplierTotalSegment = 0;
+                    $supplierTotalNetProfit = 0;
+                    $supplierTotalQuoteAmount = 0;
+                    $supplierTotalReceivedAmount = 0;
+                    $supplierTotalDueAmount = 0;
+                    $supplierTotalGross = 0;
+                    foreach ($supplierWiseData as $supplierData) {
+                        $gross = ($supplierData['baseFare'] + $supplierData['tax'] + $supplierData['otherTax']);
+                        $due = ($supplierData['costOfSale'] - $supplierData['paidAmount']);
                         ?>
                         <tr>
-                            <td><?= Employee::findOne(['userId' => $employeeData[0]['user']['id']])->fullName ?></td>
-                            <td><?= $total ?></td>
-                            <td><?= $numberOfSegment ?></td>
+                            <td><?= $supplierData['name'] . '(' . $supplierData['company'] . ')' ?></td>
+                            <td><?= $supplierData['total'] ?></td>
+                            <td><?= $supplierData['numberOfSegment'] ?></td>
                             <td><?= number_format($gross) ?></td>
-                            <td><?= number_format($quote) ?></td>
-                            <td style="background-color: #e6e8e6"> <?= number_format($receivedAmount) ?></td>
-                            <td style="background-color: lightgrey">
-                                <?= number_format($netRevenueAfterDiscount) ?></td>
+                            <td><?= number_format($supplierData['quoteAmount']) ?></td>
+                            <td><?= number_format($supplierData['receivedAmount']) ?></td>
+                            <td><?= number_format($due) ?></td>
+                            <td><?= number_format($supplierData['netProfit']) ?></td>
                         </tr>
                         <?php
-                        $employeeWiseTotalQty += $total;
-                        $employeeWiseTotalSegment += $numberOfSegment;
-                        $employeeWiseTotalQuoteAmount += $quote;
-                        $employeeWiseTotalGross += $gross;
-                        $employeeWiseTotalReceivedAmount += $receivedAmount;
-                        $employeeWiseTotalNetRevenueAfterDiscount += $netRevenueAfterDiscount;
+                        $supplierTotalQty += $supplierData['total'];
+                        $supplierTotalSegment += $supplierData['numberOfSegment'];
+                        $supplierTotalQuoteAmount += $supplierData['quoteAmount'];
+                        $supplierTotalReceivedAmount += $supplierData['receivedAmount'];
+                        $supplierTotalNetProfit += $supplierData['netProfit'];
+                        $supplierTotalDueAmount += $due;
+                        $supplierTotalGross += $gross;
                     }
                     ?>
                     </tbody>
                     <tfoot>
-                    <tr style="background-color: #ccc;">
+                    <tr style="background-color: #8eae7f;">
                         <th>Total</th>
-                        <th><?= $employeeWiseTotalQty ?></th>
-                        <th><?= $employeeWiseTotalSegment ?></th>
-                        <th><?= number_format($employeeWiseTotalGross) ?></th>
-                        <th><?= number_format($employeeWiseTotalQuoteAmount) ?></th>
-                        <th><?= number_format($employeeWiseTotalReceivedAmount) ?></th>
-                        <th><?= number_format($employeeWiseTotalNetRevenueAfterDiscount) ?></th>
+                        <th><?= $supplierTotalQty ?></th>
+                        <th><?= $supplierTotalSegment ?></th>
+                        <th><?= number_format($supplierTotalGross) ?></th>
+                        <th><?= number_format($supplierTotalQuoteAmount) ?></th>
+                        <th><?= number_format($supplierTotalReceivedAmount) ?></th>
+                        <th><?= number_format($supplierTotalDueAmount) ?></th>
+                        <th><?= number_format($supplierTotalNetProfit) ?></th>
                     </tr>
                     </tfoot>
                 </table>
@@ -790,12 +589,7 @@ if (isset(Yii::$app->request->get()["reportType"])) {
     <div class="card card-custom mb-5">
         <div class="card-header">
             <div class="card-title">
-                <h3 class="card-label">
-                    Routing Wise Ticket Report
-                </h3>
-            </div>
-            <div class="card-toolbar">
-                <small class="pull-right">Date: <?= $date ?></small>
+                Routing Wise Ticket Report(<?= $date ?>)
             </div>
         </div>
         <div class="card-body">
@@ -806,61 +600,57 @@ if (isset(Yii::$app->request->get()["reportType"])) {
                         <th>Name</th>
                         <th>Qty</th>
                         <th>Total Segment</th>
-                        <th>Gross Before Discount</th>
+                        <th>Gross</th>
                         <th>Total Quote</th>
-                        <th style="background-color: #e6e8e6">Received Amount</th>
-                        <th style="background-color: lightgrey">Net Revenue</th>
+                        <th>Total Received</th>
+                        <th>Total Due</th>
+                        <th>Net Profit</th>
                     </tr>
                     </thead>
                     <tbody>
                     <?php
-                    $routingWiseTotalQty = 0;
-                    $routingWiseTotalSegment = 0;
-                    $routingWiseTotalQuoteAmount = 0;
-                    $routingWiseTotalReceivedAmount = 0;
-                    $routingWiseTotalGross = 0;
-
-                    $routingWiseTotalRevenueBeforeDiscount = 0;
-                    $routingWiseTotalNetRevenueAfterDiscount = 0;
-                    foreach ($routingWiseData as $key => $routingdata) {
-                        $gross = $quote = $netRevenue = 0;
-                        $gross = ReportService::grossCalculationForReport($routingdata);
-                        $quote = ReportService::quoteAmountCalculationForReport($key, $routingdata, $routingWiseRefundData);
-                        $total = (double)array_sum(array_column($routingdata, 'total'));
-                        $numberOfSegment = (double)array_sum(array_column($routingdata, 'numberOfSegment'));
-                        $receivedAmount = (double)array_sum(array_column($routingdata, 'receivedAmount'));
-
-                        $netRevenueAfterDiscount = ReportService::netRevenueForReport($key, $routingdata, $routingWiseRefundData);
+                    $routeTotalQty = 0;
+                    $routeTotalSegment = 0;
+                    $routeTotalNetProfit = 0;
+                    $routeTotalQuoteAmount = 0;
+                    $routeTotalReceivedAmount = 0;
+                    $routeTotalDueAmount = 0;
+                    $routeTotalGross = 0;
+                    foreach ($routingWiseData as $routeData) {
+                        $gross = ($routeData['baseFare'] + $routeData['tax'] + $routeData['otherTax']);
+                        $due = ($routeData['quoteAmount'] - $routeData['receivedAmount']);
                         ?>
                         <tr>
-                            <td><?= $key ?></td>
-                            <td><?= $total ?></td>
-                            <td><?= $numberOfSegment ?></td>
+                            <td><?= $routeData['route'] ?></td>
+                            <td><?= $routeData['total'] ?></td>
+                            <td><?= $routeData['numberOfSegment'] ?></td>
                             <td><?= number_format($gross) ?></td>
-                            <td><?= number_format($quote) ?></td>
-                            <td style="background-color: #e6e8e6"> <?= number_format($receivedAmount) ?></td>
-                            <td style="background-color: lightgrey">
-                                <?= number_format($netRevenueAfterDiscount) ?></td>
+                            <td><?= number_format($routeData['quoteAmount']) ?></td>
+                            <td><?= number_format($routeData['receivedAmount']) ?></td>
+                            <td><?= number_format($due) ?></td>
+                            <td><?= number_format($routeData['netProfit']) ?></td>
                         </tr>
                         <?php
-                        $routingWiseTotalQty += $total;
-                        $routingWiseTotalSegment += $numberOfSegment;
-                        $routingWiseTotalQuoteAmount += $quote;
-                        $routingWiseTotalGross += $gross;
-                        $routingWiseTotalReceivedAmount += $receivedAmount;
-                        $routingWiseTotalNetRevenueAfterDiscount += $netRevenueAfterDiscount;
+                        $routeTotalQty += $routeData['total'];
+                        $routeTotalSegment += $routeData['numberOfSegment'];
+                        $routeTotalQuoteAmount += $routeData['quoteAmount'];
+                        $routeTotalReceivedAmount += $routeData['receivedAmount'];
+                        $routeTotalNetProfit += $routeData['netProfit'];
+                        $routeTotalDueAmount += $due;
+                        $routeTotalGross += $gross;
                     }
                     ?>
                     </tbody>
                     <tfoot>
-                    <tr style="background-color: #ccc;">
+                    <tr style="background-color: #8eae7f;">
                         <th>Total</th>
-                        <th><?= $routingWiseTotalQty ?></th>
-                        <th><?= $routingWiseTotalSegment ?></th>
-                        <th><?= number_format($routingWiseTotalGross) ?></th>
-                        <th><?= number_format($routingWiseTotalQuoteAmount) ?></th>
-                        <th><?= number_format($routingWiseTotalReceivedAmount) ?></th>
-                        <th><?= number_format($routingWiseTotalNetRevenueAfterDiscount) ?></th>
+                        <th><?= $routeTotalQty ?></th>
+                        <th><?= $routeTotalSegment ?></th>
+                        <th><?= number_format($routeTotalGross) ?></th>
+                        <th><?= number_format($routeTotalQuoteAmount) ?></th>
+                        <th><?= number_format($routeTotalReceivedAmount) ?></th>
+                        <th><?= number_format($routeTotalDueAmount) ?></th>
+                        <th><?= number_format($routeTotalNetProfit) ?></th>
                     </tr>
                     </tfoot>
                 </table>
@@ -873,12 +663,7 @@ if (isset(Yii::$app->request->get()["reportType"])) {
     <div class="card card-custom mb-5">
         <div class="card-header">
             <div class="card-title">
-                <h3 class="card-label">
-                    Customer Wise Ticket Report
-                </h3>
-            </div>
-            <div class="card-toolbar">
-                <small class="pull-right">Date: <?= $date ?></small>
+                Customer Wise Ticket Report(<?= $date ?>)
             </div>
         </div>
         <div class="card-body">
@@ -887,356 +672,61 @@ if (isset(Yii::$app->request->get()["reportType"])) {
                     <thead>
                     <tr>
                         <th>Name</th>
-                        <th>Category</th>
                         <th>Qty</th>
                         <th>Total Segment</th>
-                        <th>Gross Before Discount</th>
+                        <th>Gross</th>
                         <th>Total Quote</th>
-                        <th style="background-color: #e6e8e6">Received Amount</th>
-                        <th style="background-color: lightgrey">Net Revenue</th>
+                        <th>Total Received</th>
+                        <th>Total Due</th>
+                        <th>Net Profit</th>
                     </tr>
                     </thead>
                     <tbody>
                     <?php
-                    $customerWiseTotalQty = 0;
-                    $customerWiseTotalSegment = 0;
-                    $customerWiseTotalQuoteAmount = 0;
-                    $customerWiseTotalReceivedAmount = 0;
-                    $customerWiseTotalGross = 0;
-                    $customerWiseTotalRevenueBeforeDiscount = 0;
-                    $customerWiseTotalNetRevenueAfterDiscount = 0;
-
-                    foreach ($customerWiseData as $key => $customerdata) {
-                        $gross = $quote = $netRevenue = 0;
-                        $gross = ReportService::grossCalculationForReport($customerdata);
-                        $quote = ReportService::quoteAmountCalculationForReport($key, $customerdata, $customerWiseRefundData);
-                        $total = (double)$customerdata['total'];
-                        $numberOfSegment = (double)$customerdata['numberOfSegment'];
-                        $receivedAmount = (double)$customerdata['receivedAmount'];
-
-                        $netRevenueAfterDiscount = ReportService::netRevenueForReport($key, $customerdata, $customerWiseRefundData);
+                    $customerTotalQty = 0;
+                    $customerTotalSegment = 0;
+                    $customerTotalNetProfit = 0;
+                    $customerTotalQuoteAmount = 0;
+                    $customerTotalReceivedAmount = 0;
+                    $customerTotalDueAmount = 0;
+                    $customerTotalGross = 0;
+                    foreach ($customerWiseData as $customerData) {
+                        $gross = ($customerData['baseFare'] + $customerData['tax'] + $customerData['otherTax']);
+                        $due = ($customerData['quoteAmount'] - $customerData['receivedAmount']);
                         ?>
                         <tr>
-                            <td><?= $customerdata['customer']['company'] ?></td>
-                            <td><?= $customerdata['customer']['category'] ?></td>
-                            <td><?= $total ?></td>
-                            <td><?= $numberOfSegment ?></td>
+                            <td><?= $customerData['customer']['name'] ?></td>
+                            <td><?= $customerData['total'] ?></td>
+                            <td><?= $customerData['numberOfSegment'] ?></td>
                             <td><?= number_format($gross) ?></td>
-                            <td><?= number_format($quote) ?></td>
-                            <td style="background-color: #e6e8e6"> <?= number_format($receivedAmount) ?></td>
-                            <td style="background-color: lightgrey">
-                                <?= number_format($netRevenueAfterDiscount) ?></td>
+                            <td><?= number_format($customerData['quoteAmount']) ?></td>
+                            <td><?= number_format($customerData['receivedAmount']) ?></td>
+                            <td><?= number_format($due) ?></td>
+                            <td><?= number_format($customerData['netProfit']) ?></td>
                         </tr>
                         <?php
-                        $customerWiseTotalQty += $total;
-                        $customerWiseTotalSegment += $numberOfSegment;
-                        $customerWiseTotalQuoteAmount += $quote;
-                        $customerWiseTotalGross += $gross;
-                        $customerWiseTotalReceivedAmount += $receivedAmount;
-                        $customerWiseTotalNetRevenueAfterDiscount += $netRevenueAfterDiscount;
+                        $customerTotalQty += $customerData['total'];
+                        $customerTotalSegment += $customerData['numberOfSegment'];
+                        $customerTotalQuoteAmount += $customerData['quoteAmount'];
+                        $customerTotalReceivedAmount += $customerData['receivedAmount'];
+                        $customerTotalNetProfit += $customerData['netProfit'];
+                        $customerTotalDueAmount += $due;
+                        $customerTotalGross += $gross;
                     }
                     ?>
                     </tbody>
                     <tfoot>
-                    <tr style="background-color: #ccc;">
-                        <th colspan="2">Total</th>
-                        <th><?= $customerWiseTotalQty ?></th>
-                        <th><?= $customerWiseTotalSegment ?></th>
-                        <th><?= number_format($customerWiseTotalGross) ?></th>
-                        <th><?= number_format($customerWiseTotalQuoteAmount) ?></th>
-                        <th><?= number_format($customerWiseTotalReceivedAmount) ?></th>
-                        <th><?= number_format($customerWiseTotalNetRevenueAfterDiscount) ?></th>
+                    <tr style="background-color: #8eae7f;">
+                        <th>Total</th>
+                        <th><?= $customerTotalQty ?></th>
+                        <th><?= $customerTotalSegment ?></th>
+                        <th><?= number_format($customerTotalGross) ?></th>
+                        <th><?= number_format($customerTotalQuoteAmount) ?></th>
+                        <th><?= number_format($customerTotalReceivedAmount) ?></th>
+                        <th><?= number_format($customerTotalDueAmount) ?></th>
+                        <th><?= number_format($customerTotalNetProfit) ?></th>
                     </tr>
                     </tfoot>
-                </table>
-            </div>
-        </div>
-    </div>
-<?php } ?>
-
-<?php if (in_array("AIRLINE_ROUTING_REPORT", $getReportType)) { ?>
-    <div class="card card-custom mb-5">
-        <div class="card-header">
-            <div class="card-title">
-                <h3 class="card-label">
-                    Airlines Routing Wise Report
-                </h3>
-            </div>
-            <div class="card-toolbar">
-                <small class="pull-right">Date: <?= $date ?></small>
-            </div>
-        </div>
-        <div class="card-body">
-            <div class="row table-responsive">
-                <table class="table table-bordered">
-                    <thead>
-                    <tr>
-                        <th>Airline Name</th>
-                        <th>Routing</th>
-                        <th>Qty</th>
-                        <th>Segment</th>
-                        <th>Average Fare</th>
-                        <th>Total Base Fare</th>
-                        <th>Total Sale</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <?php
-                    $airlinesTotalQty = 0;
-                    $airlinesTotalSegment = 0;
-                    $airlinesTotalAmount = 0;
-                    $airlinesTotalAvg = 0;
-                    $airlinesTotalBaseFare = 0;
-                    foreach ($airlineRoutingWiseReport as $key => $single) {
-                        $airlinesTotalQty += $single['total'];
-                        $airlinesTotalSegment += $single['numberOfSegment'];
-                        $airlinesTotalAvg += ($single['baseFare'] / $single['total']);
-                        $airlinesTotalAmount += $single['quoteAmount'];
-                        $airlinesTotalBaseFare += $single['baseFare'];
-                        ?>
-                        <tr>
-                            <td><?= $single['airlineName'] ?></td>
-                            <td><?= $single['routing'] ?></td>
-                            <td><?= $single['total'] ?></td>
-                            <td><?= $single['numberOfSegment'] ?></td>
-                            <td><?= number_format(($single['baseFare'] / $single['total'])) ?></td>
-                            <td><?= number_format($single['baseFare']) ?></td>
-                            <td><?= number_format($single['quoteAmount']) ?></td>
-                        </tr>
-                        <?php
-                    }
-                    ?>
-                    </tbody>
-                    <tfoot>
-                    <tr style="background-color: #ccc;">
-                        <th colspan="3">Total</th>
-                        <th><?= number_format($airlinesTotalQty) ?></th>
-                        <th><?= number_format($airlinesTotalSegment) ?></th>
-                        <th><?= number_format($airlinesTotalAvg) ?></th>
-                        <th><?= number_format($airlinesTotalBaseFare) ?></th>
-                        <th><?= number_format($airlinesTotalAmount) ?></th>
-                    </tr>
-                    </tfoot>
-                </table>
-            </div>
-        </div>
-    </div>
-<?php } ?>
-
-<?php if (in_array("AIRLINE_INTERNATIONAL_ROUTING_REPORT", $getReportType)) { ?>
-    <div class="card card-custom mb-5">
-        <div class="card-header">
-            <div class="card-title">
-                <h3 class="card-label">
-                    Airline's International Routing Wise Report
-                </h3>
-            </div>
-            <div class="card-toolbar">
-                <small class="pull-right">Date: <?= $date ?></small>
-            </div>
-        </div>
-        <div class="card-body">
-            <div class="row table-responsive">
-                <table class="table table-bordered">
-                    <thead>
-                    <tr>
-                        <th>Airline Name</th>
-                        <th>Routing</th>
-                        <th>Airport</th>
-                        <th>City</th>
-                        <th>Country</th>
-                        <th>Region</th>
-                        <th>Segment</th>
-                        <th>Qty</th>
-                        <th>Total Base Fare</th>
-                        <th>Average Fare</th>
-                        <th>Total Sale</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <?php
-                    $airlinesTotalQty = 0;
-                    $airlinesTotalSegment = 0;
-                    $airlinesTotalAmount = 0;
-                    $airlinesTotalAvg = 0;
-                    $airlinesTotalBaseFare = 0;
-                    foreach ($airlinesInternationalRoutingWiseReport as $key => $single) {
-                        $airlinesTotalQty += $single['total'];
-                        $airlinesTotalSegment += $single['numberOfSegment'];
-                        $airlinesTotalAvg += ($single['baseFare'] / $single['total']);
-                        $airlinesTotalAmount += $single['sum'];
-                        $airlinesTotalBaseFare += $single['baseFare'];
-
-                        $airports = array_unique(explode('-', str_replace(' ', '', strtoupper($single['routing']))));
-                        $international = array_values(array_diff($airports, Constant::BD_AIRPORTS));
-                        $airportDetails = empty($international) ? null : FlightAirport::findOne(['iata' => $international[0]]);
-                        ?>
-                        <tr>
-                            <td><?= $single['airlineName'] ?></td>
-                            <td><?= $single['routing'] ?></td>
-                            <td><?= $airportDetails ? $airportDetails->iata : '' ?></td>
-                            <td><?= $airportDetails ? $airportDetails->city : '' ?></td>
-                            <td><?= $airportDetails ? $airportDetails->country : '' ?></td>
-                            <td><?= $airportDetails ? $airportDetails->region : '' ?></td>
-                            <td><?= $single['numberOfSegment'] ?></td>
-                            <td><?= $single['total'] ?></td>
-                            <td><?= number_format($single['baseFare']) ?></td>
-                            <td><?= number_format(($single['baseFare'] / $single['total'])) ?></td>
-                            <td><?= number_format($single['sum']) ?></td>
-                        </tr>
-                        <?php
-                    }
-                    ?>
-                    </tbody>
-                    <tfoot>
-                    <tr style="background-color: #ccc;">
-                        <th colspan="7">Total</th>
-                        <th><?= number_format($airlinesTotalQty) ?></th>
-                        <th><?= number_format($airlinesTotalSegment) ?></th>
-                        <th><?= number_format($airlinesTotalBaseFare) ?></th>
-                        <th><?= number_format($airlinesTotalAvg) ?></th>
-                        <th><?= number_format($airlinesTotalAmount) ?></th>
-                    </tr>
-                    </tfoot>
-                </table>
-            </div>
-        </div>
-    </div>
-<?php } ?>
-
-<?php if (in_array("AIRLINE_DOMESTIC_ROUTING_REPORT", $getReportType)) { ?>
-    <div class="card card-custom mb-5">
-        <div class="card-header">
-            <div class="card-title">
-                <h3 class="card-label">
-                    Airline's Domestic Routing Wise Report
-                </h3>
-            </div>
-            <div class="card-toolbar">
-                <small class="pull-right">Date: <?= $date ?></small>
-            </div>
-        </div>
-        <div class="card-body">
-            <div class="row table-responsive">
-                <table class="table table-bordered">
-                    <thead>
-                    <tr>
-                        <th>Airline Name</th>
-                        <th>Routing</th>
-                        <th>Segment</th>
-                        <th>Qty</th>
-                        <th>Total Base Fare</th>
-                        <th>Average Fare</th>
-                        <th>Total Sale</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <?php
-                    $airlinesTotalQty = 0;
-                    $airlinesTotalSegment = 0;
-                    $airlinesTotalAmount = 0;
-                    $airlinesTotalAvg = 0;
-                    $airlinesTotalBaseFare = 0;
-                    foreach ($airlinesDomesticRoutingWiseReport as $key => $single) {
-                        $airlinesTotalQty += $single['total'];
-                        $airlinesTotalSegment += $single['numberOfSegment'];
-                        $airlinesTotalAvg += ($single['baseFare'] / $single['total']);
-                        $airlinesTotalAmount += $single['sum'];
-                        $airlinesTotalBaseFare += $single['baseFare'];
-                        ?>
-                        <tr>
-                            <td><?= $single['airlineName'] ?></td>
-                            <td><?= $single['code'] ?></td>
-                            <td><?= $single['routing'] ?></td>
-                            <td><?= $single['numberOfSegment'] ?></td>
-                            <td><?= $single['total'] ?></td>
-                            <td><?= number_format($single['baseFare']) ?></td>
-                            <td><?= number_format(($single['baseFare'] / $single['total'])) ?></td>
-                            <td><?= number_format($single['sum']) ?></td>
-                        </tr>
-                        <?php
-                    }
-                    ?>
-                    </tbody>
-                    <tfoot>
-                    <tr style="background-color: #ccc;">
-                        <th colspan="3">Total</th>
-                        <th><?= number_format($airlinesTotalQty) ?></th>
-                        <th><?= number_format($airlinesTotalSegment) ?></th>
-                        <th><?= number_format($airlinesTotalBaseFare) ?></th>
-                        <th><?= number_format($airlinesTotalAvg) ?></th>
-                        <th><?= number_format($airlinesTotalAmount) ?></th>
-                    </tr>
-                    </tfoot>
-                </table>
-            </div>
-        </div>
-    </div>
-<?php } ?>
-
-<?php if (in_array("FLIGHT_TYPE_AIRLINE_REPORT", $getReportType)) { ?>
-    <div class="card card-custom mb-5">
-        <div class="card-header">
-            <div class="card-title">
-                <h3 class="card-label">
-                    Airline wise flight type report
-                </h3>
-            </div>
-            <div class="card-toolbar">
-                <small class="pull-right">Date: <?= $date ?></small>
-            </div>
-        </div>
-        <div class="card-body">
-            <div class="row table-responsive">
-                <table class="table table-bordered">
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Segments</th>
-                        <th>Qty</th>
-                        <th>Total Sale</th>
-                        <th>Average Sale</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <?php
-                    $supplierTotalQty = 0;
-                    $supplierTotalQuoteAmount = 0;
-
-                    foreach ($flightTypeData as $flightType => $value) {
-                        $total = array_sum(array_column($value, 'total'));
-                        $numberOfSegment = array_sum(array_column($value, 'numberOfSegment'));
-                        $quote = ReportService::quoteAmountCalculationForReport($flightType, $value, $flightTypeRefundData);
-                        $allTotal = isset($flightTypeRefundData[$flightType]['total']) ? ($total + $flightTypeRefundData[$flightType]['total']) : $total;
-                        ?>
-                        <tr style="background-color: lightgrey">
-                            <th><?= $flightType ?></th>
-                            <th><?= $numberOfSegment ?></th>
-                            <th><?= $total ?></th>
-                            <th><?= number_format($quote) ?></th>
-                            <th><?= number_format(($quote / $allTotal), 2) ?></th>
-                        </tr>
-                        <?php
-
-                        foreach ($flightTypeWiseAirlineData[$flightType] as $airline => $item) {
-                            $total = array_sum(array_column($item, 'total'));
-                            $numberOfSegment = array_sum(array_column($item, 'numberOfSegment'));
-                            $quote = ReportService::quoteAmountCalculationForReport($airline, $item, $flightTypeWiseAirlineRefundData[$flightType]);
-
-                            $allTotal = isset($flightTypeWiseAirlineRefundData[$flightType]['total']) ? ($total + $flightTypeWiseAirlineRefundData[$flightType]['total']) : $total;
-                            ?>
-                            <tr>
-                                <td><?= $airline ?></td>
-                                <td><?= $numberOfSegment ?></td>
-                                <td><?= $total ?></td>
-                                <td><?= number_format($quote) ?></td>
-                                <td><?= number_format(($quote / $allTotal), 2) ?></td>
-                            </tr>
-                            <?php
-                        }
-                    }
-                    ?>
-                    </tbody>
                 </table>
             </div>
         </div>

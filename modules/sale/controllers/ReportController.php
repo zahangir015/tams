@@ -22,6 +22,9 @@ class ReportController extends ParentController
         if (!is_null($dateRange) && strpos($dateRange, '-') !== false) {
             list($start_date, $end_date) = explode(' - ', $dateRange);
             $date = date('jS \of F', strtotime($start_date)) . ' to ' . date('jS \of F', strtotime($end_date));
+        } else {
+            list($start_date, $end_date) = explode(' - ', date('Y-m-d') . ' - ' . date('Y-m-d'));
+            $date = date('jS \of F');
         }
 
         $reportTypes = Yii::$app->request->get('reportType');
@@ -68,6 +71,7 @@ class ReportController extends ParentController
                 ->groupBy(['ticket.bookedOnline'])
                 ->orderBy('total DESC')
                 ->asArray()->all();
+
         }
 
         if ($reportTypes && in_array('FLIGHT_TYPE', $reportTypes)) {
@@ -119,6 +123,8 @@ class ReportController extends ParentController
             $airlineWiseData = Ticket::find()
                 ->joinWith(['airline'])
                 ->select([
+                    new Expression('airline.name as name'),
+                    new Expression('airline.code as code'),
                     new Expression('COUNT(ticket.id) as total'),
                     new Expression('SUM(ticket.numberOfSegment) as numberOfSegment'),
                     new Expression('SUM(ticket.baseFare) as baseFare'),
@@ -167,13 +173,16 @@ class ReportController extends ParentController
                 ->select([
                     new Expression('supplier.name as name'),
                     new Expression('supplier.company as company'),
-                    new Expression('sum(ticket.numberOfSegment) as numberOfSegment'),
+                    new Expression('SUM(ticket.numberOfSegment) as numberOfSegment'),
+                    new Expression('COUNT(ticket.id) as total'),
                     new Expression('SUM(ticket.quoteAmount) as quoteAmount'),
+                    new Expression('SUM(ticket.receivedAmount) as receivedAmount'),
                     new Expression('SUM(ticket.numberOfSegment) as numberOfSegment'),
                     new Expression('SUM(ticket.baseFare) as baseFare'),
                     new Expression('SUM(ticket.tax) as tax'),
                     new Expression('SUM(ticket.otherTax) as otherTax'),
                     new Expression('SUM(ticket.costOfSale) as costOfSale'),
+                    new Expression('SUM(ticket.netProfit) as netProfit'),
                     new Expression('SUM(ticket_supplier.paidAmount) as paidAmount'),
                     'ticket_supplier.supplierId'
                 ])
@@ -261,13 +270,11 @@ class ReportController extends ParentController
         // Customer category wise report with date range
         if ($reportTypes && in_array('CUSTOMER_CATEGORY', $reportTypes)) {
             $customerCategoryWiseData = Holiday::find()
-                ->joinWith(['holidaySupplier'])
                 ->select([
                     new Expression('COUNT(holiday.id) as total'),
                     new Expression('SUM(holiday.costOfSale) as costOfSale'),
                     new Expression('SUM(holiday.quoteAmount) as quoteAmount'),
                     new Expression('SUM(holiday.receivedAmount) as receivedAmount'),
-                    new Expression('SUM(holiday_supplier.paidAmount) as paidAmount'),
                     'customerCategory'
                 ])
                 ->where(['<=', 'holiday.refundRequestDate', $end_date])
@@ -278,22 +285,38 @@ class ReportController extends ParentController
                 ->asArray()
                 ->all();
         }
-        // Booking type wise report
-        if ($reportTypes && in_array('BOOKING_TYPE', $reportTypes)) {
-            $bookingTypeWiseData = Holiday::find()
-                ->joinWith(['holidaySupplier'])
+        // Customer category and booking type wise report with date range
+        if ($reportTypes && in_array('CUSTOMER_CATEGORY_BOOKING_TYPE', $reportTypes)) {
+            $customerCategoryBookingTypeWiseData = Holiday::find()
                 ->select([
                     new Expression('COUNT(holiday.id) as total'),
                     new Expression('SUM(holiday.costOfSale) as costOfSale'),
                     new Expression('SUM(holiday.quoteAmount) as quoteAmount'),
                     new Expression('SUM(holiday.receivedAmount) as receivedAmount'),
-                    new Expression('SUM(holiday_supplier.paidAmount) as paidAmount'),
-                    'holiday.bookedOnline'
+                    'holiday.customerCategory', 'holiday.isOnlineBooked'
                 ])
                 ->where(['<=', 'holiday.refundRequestDate', $end_date])
                 ->orWhere(['IS', 'holiday.refundRequestDate', NULL])
                 ->andWhere(['between', 'holiday.issueDate', $start_date, $end_date])
-                ->groupBy(['holiday.bookedOnline'])
+                ->groupBy(['holiday.customerCategory', 'holiday.isOnlineBooked'])
+                ->orderBy('total DESC')
+                ->asArray()
+                ->all();
+        }
+        // Booking type wise report
+        if ($reportTypes && in_array('BOOKING_TYPE', $reportTypes)) {
+            $bookingTypeWiseData = Holiday::find()
+                ->select([
+                    new Expression('COUNT(holiday.id) as total'),
+                    new Expression('SUM(holiday.costOfSale) as costOfSale'),
+                    new Expression('SUM(holiday.quoteAmount) as quoteAmount'),
+                    new Expression('SUM(holiday.receivedAmount) as receivedAmount'),
+                    'holiday.isOnlineBooked'
+                ])
+                ->where(['<=', 'holiday.refundRequestDate', $end_date])
+                ->orWhere(['IS', 'holiday.refundRequestDate', NULL])
+                ->andWhere(['between', 'holiday.issueDate', $start_date, $end_date])
+                ->groupBy(['holiday.isOnlineBooked'])
                 ->orderBy('total DESC')
                 ->asArray()
                 ->all();
@@ -301,13 +324,11 @@ class ReportController extends ParentController
         // Route wise report with date range
         if ($reportTypes && in_array('ROUTE', $reportTypes)) {
             $routeWiseDataList = Holiday::find()
-                ->joinWith(['holidaySupplier'])
                 ->select([
                     new Expression('COUNT(holiday.id) as total'),
                     new Expression('SUM(holiday.costOfSale) as costOfSale'),
                     new Expression('SUM(holiday.quoteAmount) as quoteAmount'),
                     new Expression('SUM(holiday.receivedAmount) as receivedAmount'),
-                    new Expression('SUM(holiday_supplier.paidAmount) as paidAmount'),
                     'holiday.route'
                 ])
                 ->where(['<=', 'holiday.refundRequestDate', $end_date])
@@ -321,13 +342,11 @@ class ReportController extends ParentController
         // Customer wise report with date range
         if ($reportTypes && in_array('CUSTOMER', $reportTypes)) {
             $customerWiseDataList = Holiday::find()
-                ->joinWith(['holidaySupplier', 'customer'])
                 ->select([
                     new Expression('COUNT(holiday.id) as total'),
                     new Expression('SUM(holiday.costOfSale) as costOfSale'),
                     new Expression('SUM(holiday.quoteAmount) as quoteAmount'),
                     new Expression('SUM(holiday.receivedAmount) as receivedAmount'),
-                    new Expression('SUM(holiday_supplier.paidAmount) as paidAmount'),
                     'holiday.customerId'
                 ])
                 ->where(['<=', 'holiday.refundRequestDate', $end_date])
@@ -346,7 +365,10 @@ class ReportController extends ParentController
                 ->select([
                     new Expression('supplier.name as name'),
                     new Expression('supplier.company as company'),
+                    new Expression('COUNT(holiday.id) as total'),
                     new Expression('SUM(holiday.quoteAmount) as quoteAmount'),
+                    new Expression('SUM(holiday.receivedAmount) as receivedAmount'),
+                    new Expression('SUM(holiday.netProfit) as netProfit'),
                     new Expression('SUM(holiday_supplier.costOfSale) as costOfSale'),
                     new Expression('SUM(holiday_supplier.paidAmount) as paidAmount'),
                     'holiday_supplier.supplierId',
@@ -358,30 +380,7 @@ class ReportController extends ParentController
                 ->all();
         }
 
-        // Customer category and booking type wise report with date range
-        if ($reportTypes && in_array('CUSTOMER_CATEGORY_BOOKING_TYPE', $reportTypes)) {
-            $customerCategoryBookingTypeWiseData = Holiday::find()
-                ->joinWith(['holidaySupplier'])
-                ->select([
-                    new Expression('COUNT(holiday.id) as total'),
-                    new Expression('SUM(holiday.costOfSale) as costOfSale'),
-                    new Expression('SUM(holiday.quoteAmount) as quoteAmount'),
-                    new Expression('SUM(holiday.receivedAmount) as receivedAmount'),
-                    new Expression('SUM(holiday_supplier.paidAmount) as paidAmount'),
-                    'holiday.customerCategory', 'holiday.bookedOnline'
-                ])
-                ->where(['<=', 'holiday.refundRequestDate', $end_date])
-                ->orWhere(['IS', 'holiday.refundRequestDate', NULL])
-                ->andWhere(['between', 'holiday.issueDate', $start_date, $end_date])
-                ->groupBy(['holiday.customerCategory', 'holiday.bookedOnline'])
-                ->orderBy('total DESC')
-                ->asArray()
-                ->all();
-
-        }
-
-
-        return $this->render('package-sales-report', [
+        return $this->render('holiday-sales-report', [
             'date' => $date,
             'customerCategoryWiseData' => $customerCategoryWiseData ?? [],
             'bookingTypeWiseData' => $bookingTypeWiseData ?? [],
@@ -404,18 +403,15 @@ class ReportController extends ParentController
         }
 
         $reportTypes = Yii::$app->request->get('reportType');
-
         // Customer category wise report with date range
         if ($reportTypes && in_array('CUSTOMER_CATEGORY', $reportTypes)) {
             $customerCategoryWiseData = Hotel::find()
-                ->joinWith(['hotelSupplier'])
                 ->select([
                     new Expression('COUNT(hotel.id) as total'),
                     new Expression('SUM(hotel.totalNights) as totalNights'),
                     new Expression('SUM(hotel.costOfSale) as costOfSale'),
                     new Expression('SUM(hotel.quoteAmount) as quoteAmount'),
                     new Expression('SUM(hotel.receivedAmount) as receivedAmount'),
-                    new Expression('SUM(hotel_supplier.paidAmount) as paidAmount'),
                     'hotel.customerCategory'
                 ])
                 ->where(['<=', 'hotel.refundRequestDate', $end_date])
@@ -430,14 +426,12 @@ class ReportController extends ParentController
         // Booking type wise report with date range
         if ($reportTypes && in_array('BOOKING_TYPE', $reportTypes)) {
             $bookingTypeWiseData = Hotel::find()
-                ->joinWith(['hotelSupplier'])
                 ->select([
                     new Expression('COUNT(hotel.id) as total'),
                     new Expression('SUM(hotel.totalNights) as totalNights'),
                     new Expression('SUM(hotel.costOfSale) as costOfSale'),
                     new Expression('SUM(hotel.quoteAmount) as quoteAmount'),
                     new Expression('SUM(hotel.receivedAmount) as receivedAmount'),
-                    new Expression('SUM(hotel_supplier.paidAmount) as paidAmount'),
                     'hotel.isOnlineBooked'
                 ])
                 ->where(['<=', 'hotel.refundRequestDate', $end_date])
@@ -452,14 +446,12 @@ class ReportController extends ParentController
         // Customer category and booking type wise report with date range
         if ($reportTypes && in_array('CUSTOMER_CATEGORY_BOOKING_TYPE', $reportTypes)) {
             $customerCategoryBookingTypeWiseData = Hotel::find()
-                ->joinWith(['hotelSupplier'])
                 ->select([
                     new Expression('COUNT(hotel.id) as total'),
                     new Expression('SUM(hotel.totalNights) as totalNights'),
                     new Expression('SUM(hotel.costOfSale) as costOfSale'),
                     new Expression('SUM(hotel.quoteAmount) as quoteAmount'),
                     new Expression('SUM(hotel.receivedAmount) as receivedAmount'),
-                    new Expression('SUM(hotel_supplier.paidAmount) as paidAmount'),
                     'hotel.customerCategory', 'hotel.isOnlineBooked'
                 ])
                 ->where(['<=', 'hotel.refundRequestDate', $end_date])
@@ -474,14 +466,12 @@ class ReportController extends ParentController
         // Route wise report with date range
         if ($reportTypes && in_array('ROUTE', $reportTypes)) {
             $routeWiseData = Hotel::find()
-                ->joinWith(['hotelSupplier'])
                 ->select([
                     new Expression('COUNT(hotel.id) as total'),
                     new Expression('SUM(hotel.totalNights) as totalNights'),
                     new Expression('SUM(hotel.costOfSale) as costOfSale'),
                     new Expression('SUM(hotel.quoteAmount) as quoteAmount'),
                     new Expression('SUM(hotel.receivedAmount) as receivedAmount'),
-                    new Expression('SUM(hotel_supplier.paidAmount) as paidAmount'),
                     'hotel.route'
                 ])
                 ->where(['<=', 'hotel.refundRequestDate', $end_date])
@@ -496,7 +486,7 @@ class ReportController extends ParentController
         // Customer wise report with date range
         if ($reportTypes && in_array('CUSTOMER', $reportTypes)) {
             $customerWiseData = Hotel::find()
-                ->joinWith(['hotelSupplier', 'customer'])
+                ->joinWith(['customer'])
                 ->select([
                     new Expression('customer.name as name'),
                     new Expression('COUNT(hotel.id) as total'),
@@ -504,7 +494,6 @@ class ReportController extends ParentController
                     new Expression('SUM(hotel.costOfSale) as costOfSale'),
                     new Expression('SUM(hotel.quoteAmount) as quoteAmount'),
                     new Expression('SUM(hotel.receivedAmount) as receivedAmount'),
-                    new Expression('SUM(hotel_supplier.paidAmount) as paidAmount'),
                     'hotel.customerId'
                 ])
                 ->where(['<=', 'hotel.refundRequestDate', $end_date])
@@ -524,7 +513,10 @@ class ReportController extends ParentController
                 ->select([
                     new Expression('supplier.name as name'),
                     new Expression('supplier.company as company'),
+                    new Expression('COUNT(hotel.id) as total'),
                     new Expression('SUM(hotel.quoteAmount) as quoteAmount'),
+                    new Expression('SUM(hotel.receivedAmount) as receivedAmount'),
+                    new Expression('SUM(hotel.netProfit) as netProfit'),
                     new Expression('SUM(hotel_supplier.costOfSale) as costOfSale'),
                     new Expression('SUM(hotel_supplier.paidAmount) as paidAmount'),
                     'hotel_supplier.supplierId',
@@ -563,13 +555,11 @@ class ReportController extends ParentController
         // Customer category wise report with date range
         if ($reportTypes && in_array('CUSTOMER_CATEGORY', $reportTypes)) {
             $customerCategoryWiseData = Visa::find()
-                ->joinWith(['hotelSupplier'])
                 ->select([
                     new Expression('SUM(visa.totalQuantity) as total'),
                     new Expression('SUM(visa.costOfSale) as costOfSale'),
                     new Expression('SUM(visa.quoteAmount) as quoteAmount'),
                     new Expression('SUM(visa.receivedAmount) as receivedAmount'),
-                    new Expression('SUM(visa_supplier.paidAmount) as paidAmount'),
                     'visa.customerCategory'
                 ])
                 ->where(['<=', 'visa.refundRequestDate', $end_date])
@@ -584,13 +574,11 @@ class ReportController extends ParentController
         // Customer category and booking type wise report with date range
         if ($reportTypes && in_array('CUSTOMER_CATEGORY_BOOKING_TYPE', $reportTypes)) {
             $customerCategoryBookingTypeWiseDataList = Visa::find()
-                ->joinWith(['hotelSupplier'])
                 ->select([
                     new Expression('SUM(visa.totalQuantity) as total'),
                     new Expression('SUM(visa.costOfSale) as costOfSale'),
                     new Expression('SUM(visa.quoteAmount) as quoteAmount'),
                     new Expression('SUM(visa.receivedAmount) as receivedAmount'),
-                    new Expression('SUM(visa_supplier.paidAmount) as paidAmount'),
                     'visa.customerCategory', 'visa.isOnlineBooked'
                 ])
                 ->where(['<=', 'visa.refundRequestDate', $end_date])
@@ -605,13 +593,11 @@ class ReportController extends ParentController
         // Customer category wise report with date range
         if ($reportTypes && in_array('BOOKING_TYPE', $reportTypes)) {
             $bookingTypeWiseData = Visa::find()
-                ->joinWith(['visaSupplier'])
                 ->select([
                     new Expression('SUM(visa.totalQuantity) as total'),
                     new Expression('SUM(visa.costOfSale) as costOfSale'),
                     new Expression('SUM(visa.quoteAmount) as quoteAmount'),
                     new Expression('SUM(visa.receivedAmount) as receivedAmount'),
-                    new Expression('SUM(visa_supplier.paidAmount) as paidAmount'),
                     'visa.isOnlineBooked'
                 ])
                 ->where(['<=', 'visa.refundRequestDate', $end_date])
@@ -631,7 +617,10 @@ class ReportController extends ParentController
                 ->select([
                     new Expression('supplier.name as name'),
                     new Expression('supplier.company as company'),
+                    new Expression('COUNT(hotel.id) as total'),
                     new Expression('SUM(hotel.quoteAmount) as quoteAmount'),
+                    new Expression('SUM(hotel.receivedAmount) as receivedAmount'),
+                    new Expression('SUM(hotel.netProfit) as netProfit'),
                     new Expression('SUM(hotel_supplier.costOfSale) as costOfSale'),
                     new Expression('SUM(hotel_supplier.paidAmount) as paidAmount'),
                     'hotel_supplier.supplierId',
@@ -666,15 +655,14 @@ class ReportController extends ParentController
 
         // Customer wise report with date range
         if ($reportTypes && in_array('CUSTOMER', $reportTypes)) {
-            $customerWiseDataList = Visa::find()
-                ->joinWith(['visaSupplier', 'customer'])
+            $customerWiseData = Visa::find()
+                ->joinWith(['customer'])
                 ->select([
                     new Expression('customer.name as name'),
                     new Expression('SUM(visa.totalQuantity) as total'),
                     new Expression('SUM(visa.costOfSale) as costOfSale'),
                     new Expression('SUM(visa.quoteAmount) as quoteAmount'),
                     new Expression('SUM(visa.receivedAmount) as receivedAmount'),
-                    new Expression('SUM(visa_supplier.paidAmount) as paidAmount'),
                     'visa.customerId'
                 ])
                 ->where(['<=', 'visa.refundRequestDate', $end_date])
@@ -692,6 +680,7 @@ class ReportController extends ParentController
             'bookingTypeWiseData' => $bookingTypeWiseData ?? [],
             'customerCategoryBookingTypeWiseData' => $customerCategoryBookingTypeWiseDataList ?? [],
             'customerWiseData' => $customerWiseData ?? [],
+            'supplierWiseData' => $supplierWiseData ?? [],
             'countryWiseData' => $countryWiseData ?? [],
         ]);
     }

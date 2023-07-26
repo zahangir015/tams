@@ -10,8 +10,8 @@ use kartik\select2\Select2;
 use yii\bootstrap4\ActiveForm;
 use yii\helpers\Html;
 
-$this->title = Yii::t('app', 'Hotel Reports');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Hotels'), 'url' => ['/sale/hotel/index']];
+$this->title = Yii::t('app', 'Holiday Reports');
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Holiday'), 'url' => ['/sale/holiday/index']];
 $this->params['breadcrumbs'][] = $this->title;
 $getReportType = [];
 if (isset(Yii::$app->request->get()["reportType"])) {
@@ -19,7 +19,7 @@ if (isset(Yii::$app->request->get()["reportType"])) {
 }
 ?>
 
-<div class="package-report">
+<div class="holiday-report">
     <div class="card card-custom mb-5">
         <div class="card-header">
             <div class="card-title">
@@ -54,7 +54,7 @@ if (isset(Yii::$app->request->get()["reportType"])) {
                     echo Select2::widget([
                         'name' => 'reportType',
                         'value' => $getReportType,
-                        'data' => GlobalConstant::HOTEL_REPORT_TYPE,
+                        'data' => GlobalConstant::HOLIDAY_REPORT_TYPE,
                         'theme' => Select2::THEME_DEFAULT,
                         'options' => ['multiple' => true, 'placeholder' => 'Select Report Type ...', 'class' => 'form-control']
                     ]);
