@@ -23,8 +23,8 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                         <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                             <div class="small-box border border-primary text-primary">
                                 <div class="inner">
-                                    <h3><?= $saleData['ticketSalesData']['currentDayData']['total'] ?></h3> Flight
-                                    <p>BDT <?= $saleData['ticketSalesData']['currentDayData']['quoteAmount'] ?: 0 ?></p>
+                                    <h3><?= $saleData['currentDaySales']['ticket']['total'] ?></h3> Flight
+                                    <p>BDT <?= $saleData['currentDaySales']['ticket']['quoteAmount'] ?: 0 ?></p>
                                 </div>
                                 <div class="icon">
                                     <i class="fas fa-plane-departure"></i>
@@ -34,8 +34,8 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                         <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                             <div class="small-box border border-success text-success">
                                 <div class="inner">
-                                    <h3><?= $saleData['hotelSalesData']['currentDayData']['total'] ?></h3> Hotel
-                                    <p>BDT <?= $saleData['hotelSalesData']['currentDayData']['quoteAmount'] ?: 0 ?></p>
+                                    <h3><?= $saleData['currentDaySales']['hotel']['total'] ?></h3> Hotel
+                                    <p>BDT <?= $saleData['currentDaySales']['hotel']['quoteAmount'] ?: 0 ?></p>
                                 </div>
                                 <div class="icon">
                                     <i class="fas fa-hotel"></i>
@@ -45,8 +45,8 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                         <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                             <div class="small-box border border-warning text-warning">
                                 <div class="inner">
-                                    <h3><?= $saleData['holidaySalesData']['currentDayData']['total'] ?></h3> Holiday
-                                    <p>BDT <?= $saleData['holidaySalesData']['currentDayData']['quoteAmount'] ?: 0 ?></p>
+                                    <h3><?= $saleData['currentDaySales']['holiday']['total'] ?></h3> Holiday
+                                    <p>BDT <?= $saleData['currentDaySales']['holiday']['quoteAmount'] ?: 0 ?></p>
                                 </div>
                                 <div class="icon">
                                     <i class="fas fa-suitcase-rolling"></i>
@@ -57,8 +57,8 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                         <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                             <div class="small-box border border-danger text-danger">
                                 <div class="inner">
-                                    <h3><?= $saleData['visaSalesData']['currentDayData']['total'] ?></h3> Visa
-                                    <p>BDT <?= $saleData['visaSalesData']['currentDayData']['quoteAmount'] ?: 0 ?></p>
+                                    <h3><?= $saleData['currentDaySales']['visa']['total'] ?></h3> Visa
+                                    <p>BDT <?= $saleData['currentDaySales']['visa']['total'] ?: 0 ?></p>
                                 </div>
                                 <div class="icon">
                                     <i class="fas fa-passport"></i>
@@ -69,30 +69,107 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                 </div>
             </div>
         </div>
+        <div class="col-md">
+            <div class="card card-widget widget-user shadow">
+                <h5 class="font-weight-bold text-center mt-3">Monthly Sale</h5>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                            <div class="small-box border border-primary text-primary">
+                                <div class="inner">
+                                    <h3><?= $saleData['currentMonthSales']['ticket']['total'] ?></h3> Flight
+                                    <p>BDT <?= $saleData['currentMonthSales']['ticket']['quoteAmount'] ?: 0 ?></p>
+                                </div>
+                                <div class="icon">
+                                    <i class="fas fa-plane-departure"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                            <div class="small-box border border-success text-success">
+                                <div class="inner">
+                                    <h3><?= $saleData['currentMonthSales']['hotel']['total'] ?></h3> Hotel
+                                    <p>BDT <?= $saleData['currentMonthSales']['hotel']['quoteAmount'] ?: 0 ?></p>
+                                </div>
+                                <div class="icon">
+                                    <i class="fas fa-hotel"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                            <div class="small-box border border-warning text-warning">
+                                <div class="inner">
+                                    <h3><?= $saleData['currentMonthSales']['holiday']['total'] ?></h3> Holiday
+                                    <p>BDT <?= $saleData['currentMonthSales']['holiday']['quoteAmount'] ?: 0 ?></p>
+                                </div>
+                                <div class="icon">
+                                    <i class="fas fa-suitcase-rolling"></i>
+                                </div>
+                            </div>
+                        </div>
 
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                            <div class="small-box border border-danger text-danger">
+                                <div class="inner">
+                                    <h3><?= $saleData['currentMonthSales']['visa']['total'] ?></h3> Visa
+                                    <p>BDT <?= $saleData['currentMonthSales']['visa']['total'] ?: 0 ?></p>
+                                </div>
+                                <div class="icon">
+                                    <i class="fas fa-passport"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="col-md">
             <div class="card card-widget widget-user shadow">
                 <h5 class="font-weight-bold text-center mt-3">Payable/Receivable</h5>
                 <div class="card-body">
-                    <div class="col-12">
-                        <div class="small-box bg-success">
-                            <div class="inner">
-                                <p>Total Receivable</p>
-                                <h3><?= $receivable ?></h3>
-                            </div>
-                            <div class="icon">
-                                <i class="fas fa-arrow-alt-circle-up"></i>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                            <div class="small-box bg-success">
+                                <div class="inner">
+                                    <p>Today's Receivable</p>
+                                    <h3><?= $receivable ?></h3>
+                                </div>
+                                <div class="icon">
+                                    <i class="fas fa-arrow-alt-circle-up"></i>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="small-box bg-danger">
-                            <div class="inner">
-                                <p>Total Payable</p>
-                                <h3><?= $payable ?></h3>
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                            <div class="small-box bg-danger">
+                                <div class="inner">
+                                    <p>Today's Payable</p>
+                                    <h3><?= $payable ?></h3>
+                                </div>
+                                <div class="icon">
+                                    <i class="fa fa-arrow-circle-down"></i>
+                                </div>
                             </div>
-                            <div class="icon">
-                                <i class="fa fa-arrow-circle-down"></i>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                            <div class="small-box bg-success">
+                                <div class="inner">
+                                    <p>Monthly Receivable</p>
+                                    <h3><?= $monthlyReceivable ?></h3>
+                                </div>
+                                <div class="icon">
+                                    <i class="fas fa-arrow-alt-circle-up"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                            <div class="small-box bg-danger">
+                                <div class="inner">
+                                    <p>Monthly Payable</p>
+                                    <h3><?= $monthlyPayable ?></h3>
+                                </div>
+                                <div class="icon">
+                                    <i class="fa fa-arrow-circle-down"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -105,59 +182,61 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
             <div class="card card-widget widget-user shadow">
                 <h5 class="font-weight-bold text-center mt-3">Top Sales</h5>
                 <div class="card-body">
-                    <div class="col-12">
-                        <div class="info-box bg-gradient-primary">
-                            <span class="info-box-icon"><i class="fas fa-plane-departure"></i></span>
-                            <div class="info-box-content">
-                                <span class="info-box-number"><?= $saleData['ticketSalesData']['currentDayData']['quoteAmount'] ?></span>
-                                <div class="progress">
-                                    <div class="progress-bar" style="width: <?= $ticketPercentage ?>%"></div>
-                                </div>
-                                <span class="progress-description">
-                                    <?= $ticketPercentage ?>% in Today's sale
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="info-box bg-gradient-primary">
+                                <span class="info-box-icon"><i class="fas fa-plane-departure"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-number"><?= $saleData['currentDaySales']['ticket']['quoteAmount'] ?></span>
+                                    <div class="progress">
+                                        <div class="progress-bar" style="width: <?= $ticketPercentage ?>%"></div>
+                                    </div>
+                                    <span class="progress-description">
+                                    <?= $ticketPercentage ?>% in Today's Flight sale
                                 </span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="info-box bg-gradient-success">
-                            <span class="info-box-icon"><i class="fas fa-hotel"></i></span>
-                            <div class="info-box-content">
-                                <span class="info-box-number"><?= $saleData['hotelSalesData']['currentDayData']['quoteAmount'] ?></span>
-                                <div class="progress">
-                                    <div class="progress-bar" style="width: <?= $hotelPercentage ?>%"></div>
-                                </div>
-                                <span class="progress-description">
-                                    <?= $hotelPercentage ?>% in Today's sale
+                        <div class="col-12">
+                            <div class="info-box bg-gradient-success">
+                                <span class="info-box-icon"><i class="fas fa-hotel"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-number"><?= $saleData['currentDaySales']['hotel']['quoteAmount'] ?></span>
+                                    <div class="progress">
+                                        <div class="progress-bar" style="width: <?= $hotelPercentage ?>%"></div>
+                                    </div>
+                                    <span class="progress-description">
+                                    <?= $hotelPercentage ?>% in Today's Hotel sale
                                 </span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="info-box bg-gradient-warning">
-                            <span class="info-box-icon"><i class="fas fa-suitcase-rolling"></i></span>
-                            <div class="info-box-content">
-                                <span class="info-box-number"><?= $saleData['holidaySalesData']['currentDayData']['quoteAmount'] ?></span>
-                                <div class="progress">
-                                    <div class="progress-bar" style="width: <?= $holidayPercentage ?>%"></div>
-                                </div>
-                                <span class="progress-description">
-                                    <?= $holidayPercentage ?>% in Today's sale
+                        <div class="col-12">
+                            <div class="info-box bg-gradient-warning">
+                                <span class="info-box-icon"><i class="fas fa-suitcase-rolling"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-number"><?= $saleData['currentDaySales']['holiday']['quoteAmount'] ?></span>
+                                    <div class="progress">
+                                        <div class="progress-bar" style="width: <?= $holidayPercentage ?>%"></div>
+                                    </div>
+                                    <span class="progress-description">
+                                    <?= $holidayPercentage ?>% in Today's Holiday sale
                                 </span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="info-box bg-gradient-danger">
-                            <span class="info-box-icon"><i class="fas fa-passport"></i></span>
-                            <div class="info-box-content">
-                                <span class="info-box-number"><?= $saleData['visaSalesData']['currentDayData']['quoteAmount'] ?></span>
-                                <div class="progress">
-                                    <div class="progress-bar" style="width: <?= $visaPercentage ?>%"></div>
-                                </div>
-                                <span class="progress-description">
-                                    <?= $visaPercentage ?>% in Today's sale
+                        <div class="col-12">
+                            <div class="info-box bg-gradient-danger">
+                                <span class="info-box-icon"><i class="fas fa-passport"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-number"><?= $saleData['currentDaySales']['visa']['quoteAmount'] ?></span>
+                                    <div class="progress">
+                                        <div class="progress-bar" style="width: <?= $visaPercentage ?>%"></div>
+                                    </div>
+                                    <span class="progress-description">
+                                    <?= $visaPercentage ?>% in Today's Visa sale
                                 </span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -166,68 +245,70 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
         </div>
         <div class="col-md">
             <div class="card card-widget widget-user shadow">
-                <h5 class="font-weight-bold text-center mt-3">Top Suppliers</h5>
+                <h5 class="font-weight-bold text-center mt-3">Top Monthly Sales</h5>
                 <div class="card-body">
-                    <div class="col-12">
-                        <div class="info-box bg-gradient-primary">
-                            <span class="info-box-icon"><i class="fas fa-plane-departure"></i></span>
-                            <div class="info-box-content">
-                                <span class="info-box-number"><?= $saleData['ticketSalesData']['currentDayData']['quoteAmount'] ?></span>
-                                <div class="progress">
-                                    <div class="progress-bar" style="width: <?= $ticketPercentage ?>%"></div>
-                                </div>
-                                <span class="progress-description">
-                                    <?= $ticketPercentage ?>% in Today's sale
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="info-box bg-gradient-primary">
+                                <span class="info-box-icon"><i class="fas fa-plane-departure"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-number"><?= $saleData['currentMonthSales']['ticket']['quoteAmount'] ?></span>
+                                    <div class="progress">
+                                        <div class="progress-bar" style="width: <?= $ticketPercentage ?>%"></div>
+                                    </div>
+                                    <span class="progress-description">
+                                    <?= $ticketPercentage ?>% in Monthly Flight Sales
                                 </span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="info-box bg-gradient-success">
-                            <span class="info-box-icon"><i class="fas fa-hotel"></i></span>
-                            <div class="info-box-content">
-                                <span class="info-box-number"><?= $saleData['hotelSalesData']['currentDayData']['quoteAmount'] ?></span>
-                                <div class="progress">
-                                    <div class="progress-bar" style="width: <?= $hotelPercentage ?>%"></div>
-                                </div>
-                                <span class="progress-description">
-                                    <?= $hotelPercentage ?>% in Today's sale
+                        <div class="col-12">
+                            <div class="info-box bg-gradient-success">
+                                <span class="info-box-icon"><i class="fas fa-hotel"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-number"><?= $saleData['currentMonthSales']['hotel']['quoteAmount'] ?></span>
+                                    <div class="progress">
+                                        <div class="progress-bar" style="width: <?= $hotelPercentage ?>%"></div>
+                                    </div>
+                                    <span class="progress-description">
+                                    <?= $hotelPercentage ?>% in Monthly Hotel Sales
                                 </span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="info-box bg-gradient-warning">
-                            <span class="info-box-icon"><i class="fas fa-suitcase-rolling"></i></span>
-                            <div class="info-box-content">
-                                <span class="info-box-number"><?= $saleData['holidaySalesData']['currentDayData']['quoteAmount'] ?></span>
-                                <div class="progress">
-                                    <div class="progress-bar" style="width: <?= $holidayPercentage ?>%"></div>
-                                </div>
-                                <span class="progress-description">
-                                    <?= $holidayPercentage ?>% in Today's sale
+                        <div class="col-12">
+                            <div class="info-box bg-gradient-warning">
+                                <span class="info-box-icon"><i class="fas fa-suitcase-rolling"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-number"><?= $saleData['currentMonthSales']['holiday']['quoteAmount'] ?></span>
+                                    <div class="progress">
+                                        <div class="progress-bar" style="width: <?= $holidayPercentage ?>%"></div>
+                                    </div>
+                                    <span class="progress-description">
+                                    <?= $holidayPercentage ?>% in Monthly Holiday Sales
                                 </span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="info-box bg-gradient-danger">
-                            <span class="info-box-icon"><i class="fas fa-passport"></i></span>
-                            <div class="info-box-content">
-                                <span class="info-box-number"><?= $saleData['visaSalesData']['currentDayData']['quoteAmount'] ?></span>
-                                <div class="progress">
-                                    <div class="progress-bar" style="width: <?= $visaPercentage ?>%"></div>
-                                </div>
-                                <span class="progress-description">
-                                    <?= $visaPercentage ?>% in Today's sale
+                        <div class="col-12">
+                            <div class="info-box bg-gradient-danger">
+                                <span class="info-box-icon"><i class="fas fa-passport"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-number"><?= $saleData['currentMonthSales']['visa']['quoteAmount'] ?></span>
+                                    <div class="progress">
+                                        <div class="progress-bar" style="width: <?= $visaPercentage ?>%"></div>
+                                    </div>
+                                    <span class="progress-description">
+                                    <?= $visaPercentage ?>% in Monthly Visa Sales
                                 </span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md">
+        <!--<div class="col-md">
             <div class="card card-widget widget-user shadow">
                 <h5 class="font-weight-bold text-center mt-3">Top Sale Source</h5>
                 <div class="card-body">
@@ -235,12 +316,12 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                         <div class="info-box bg-gradient-primary">
                             <span class="info-box-icon"><i class="fas fa-plane-departure"></i></span>
                             <div class="info-box-content">
-                                <span class="info-box-number"><?= $saleData['ticketSalesData']['currentDayData']['quoteAmount'] ?></span>
+                                <span class="info-box-number"><?/*= $saleData['currentDaySales']['ticket']['quoteAmount'] */?></span>
                                 <div class="progress">
-                                    <div class="progress-bar" style="width: <?= $ticketPercentage ?>%"></div>
+                                    <div class="progress-bar" style="width: <?/*= $ticketPercentage */?>%"></div>
                                 </div>
                                 <span class="progress-description">
-                                    <?= $ticketPercentage ?>% in Today's sale
+                                    <?/*= $ticketPercentage */?>% in Today's sale
                                 </span>
                             </div>
                         </div>
@@ -249,12 +330,12 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                         <div class="info-box bg-gradient-success">
                             <span class="info-box-icon"><i class="fas fa-hotel"></i></span>
                             <div class="info-box-content">
-                                <span class="info-box-number"><?= $saleData['hotelSalesData']['currentDayData']['quoteAmount'] ?></span>
+                                <span class="info-box-number"><?/*= $saleData['currentDaysales']{}['quoteAmount'] */?></span>
                                 <div class="progress">
-                                    <div class="progress-bar" style="width: <?= $hotelPercentage ?>%"></div>
+                                    <div class="progress-bar" style="width: <?/*= $hotelPercentage */?>%"></div>
                                 </div>
                                 <span class="progress-description">
-                                    <?= $hotelPercentage ?>% in Today's sale
+                                    <?/*= $hotelPercentage */?>% in Today's sale
                                 </span>
                             </div>
                         </div>
@@ -263,12 +344,12 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                         <div class="info-box bg-gradient-warning">
                             <span class="info-box-icon"><i class="fas fa-suitcase-rolling"></i></span>
                             <div class="info-box-content">
-                                <span class="info-box-number"><?= $saleData['holidaySalesData']['currentDayData']['quoteAmount'] ?></span>
+                                <span class="info-box-number"><?/*= $saleData['holidaySalesData']['currentDayData']['quoteAmount'] */?></span>
                                 <div class="progress">
-                                    <div class="progress-bar" style="width: <?= $holidayPercentage ?>%"></div>
+                                    <div class="progress-bar" style="width: <?/*= $holidayPercentage */?>%"></div>
                                 </div>
                                 <span class="progress-description">
-                                    <?= $holidayPercentage ?>% in Today's sale
+                                    <?/*= $holidayPercentage */?>% in Today's sale
                                 </span>
                             </div>
                         </div>
@@ -277,19 +358,19 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                         <div class="info-box bg-gradient-danger">
                             <span class="info-box-icon"><i class="fas fa-passport"></i></span>
                             <div class="info-box-content">
-                                <span class="info-box-number"><?= $saleData['visaSalesData']['currentDayData']['quoteAmount'] ?></span>
+                                <span class="info-box-number"><?/*= $saleData['visaSalesData']['currentDayData']['quoteAmount'] */?></span>
                                 <div class="progress">
-                                    <div class="progress-bar" style="width: <?= $visaPercentage ?>%"></div>
+                                    <div class="progress-bar" style="width: <?/*= $visaPercentage */?>%"></div>
                                 </div>
                                 <span class="progress-description">
-                                    <?= $visaPercentage ?>% in Today's sale
+                                    <?/*= $visaPercentage */?>% in Today's sale
                                 </span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </div>-->
     </div>
 
     <div class="row">
@@ -298,20 +379,17 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                 <h5 class="font-weight-bold text-center mt-3">Profit/Loos</h5>
                 <div class="card-body">
                     <div class="col-12">
-                        <p><b>Today's</b></p>
+                        <p><b>Today's</b> <?= $totalNetProfit ?></p>
                     </div>
                     <div class="col-12">
-                        <p><b>Last Week</b></p>
-                    </div>
-                    <div class="col-12">
-                        <p><b>Last Month</b></p>
+                        <p><b>Current Month</b> <?= $totalMonthlyNetProfit ?></p>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-md-7">
             <div class="card card-widget widget-user shadow">
-                <h5 class="font-weight-bold text-center mt-3">Profit/Loos</h5>
+                <h5 class="font-weight-bold text-center mt-3">Supplier Details</h5>
                 <div class="card-footer pt-30">
                     <div class="row">
                         <div class="col-sm-3 col-6">
@@ -375,7 +453,7 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                             <div class="small-box bg-danger">
                                 <div class="inner">
                                     <p>Exit Time</p>
-                                    <h3><?=  $leaveAttendanceData['currentDayAttendanceData']['exit'] ?? 0 ?></h3>
+                                    <h3><?= $leaveAttendanceData['currentDayAttendanceData']['exit'] ?? 0 ?></h3>
                                 </div>
                                 <div class="icon">
                                     <i class="fas fa-sign-out-alt"></i>
@@ -386,7 +464,7 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                             <div class="small-box bg-success">
                                 <div class="inner">
                                     <p>Total LateIn</p>
-                                    <h3><?=  $leaveAttendanceData['currentMonthAttendanceData']['totalLate'] ?? 0 ?></h3>
+                                    <h3><?= $leaveAttendanceData['currentMonthAttendanceData']['totalLate'] ?? 0 ?></h3>
                                 </div>
                                 <div class="icon">
                                     <i class="fas fa-fingerprint"></i>
@@ -397,7 +475,7 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                             <div class="small-box bg-danger">
                                 <div class="inner">
                                     <p>Total Short Work</p>
-                                    <h3><?=  $leaveAttendanceData['currentMonthAttendanceData']['totalEarlyOut'] ?? 0 ?></h3>
+                                    <h3><?= $leaveAttendanceData['currentMonthAttendanceData']['totalEarlyOut'] ?? 0 ?></h3>
                                 </div>
                                 <div class="icon">
                                     <i class="fas fa-minus-circle"></i>
