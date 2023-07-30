@@ -2,6 +2,7 @@
 
 namespace app\modules\sale\models;
 
+use app\traits\BehaviorTrait;
 use Yii;
 use yii\db\ActiveRecord;
 
@@ -20,6 +21,7 @@ use yii\db\ActiveRecord;
  */
 class FlightProposalItinerary extends ActiveRecord
 {
+    use BehaviorTrait;
     /**
      * {@inheritdoc}
      */

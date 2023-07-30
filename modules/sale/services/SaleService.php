@@ -266,10 +266,19 @@ class SaleService
 
 
         return [
-            'ticketSalesData' => $ticketSalesData,
-            'holidaySalesData' => $holidaySalesData,
-            'hotelSalesData' => $hotelSalesData,
-            'visaSalesData' => $visaSalesData,
+            'date' => $date,
+            'currentDaySales' => [
+                'ticket' => $ticketSalesData['currentDayData'],
+                'hotel' => $hotelSalesData['currentDayData'],
+                'holiday' => $holidaySalesData['currentDayData'],
+                'visa' => $visaSalesData['currentDayData'],
+            ],
+            'currentMonthSales' => [
+                'ticket' => $ticketSalesData['currentMonthData'],
+                'hotel' => $hotelSalesData['currentMonthData'],
+                'holiday' => $holidaySalesData['currentMonthData'],
+                'visa' => $visaSalesData['currentMonthData'],
+            ],
         ];
 
     }

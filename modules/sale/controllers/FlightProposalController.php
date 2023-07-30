@@ -67,8 +67,11 @@ class FlightProposalController extends ParentController
         if ($this->request->isPost) {
             $requestData = Yii::$app->request->post();
             $response = $this->proposalService->storeFlightProposal($requestData);
-            if ($response) {
-                return $this->redirect('index');
+            if (!$response['error']) {
+                Yii::$app->session->setFlash('success', $response['message']);
+                return $this->redirect('view', ['uid' => $response['model']->uid]);
+            } else {
+                Yii::$app->session->setFlash('danger', $response['message']);
             }
         } else {
             $model->loadDefaultValues();
@@ -88,20 +91,21 @@ class FlightProposalController extends ParentController
      */
     public function actionUpdate(string $uid): Response|string
     {
-        $model = $this->proposalService->findFlightProposal($uid, ['flightProposalItineraries']);
+        $flightProposal = $this->proposalService->findFlightProposal($uid, ['flightProposalItineraries']);
 
         if ($this->request->isPost) {
             // Update Flight
-            $updateResponse = $this->proposalService->updateFlightProposal(Yii::$app->request->post(), $model);
+            $updateResponse = $this->proposalService->updateFlightProposal(Yii::$app->request->post(), $flightProposal);
             if ($updateResponse['error']) {
                 Yii::$app->session->setFlash('danger', $updateResponse['message']);
             } else {
-                return $this->redirect(['view', 'uid' => $model->uid]);
+                Yii::$app->session->setFlash('success', $updateResponse['message']);
+                return $this->redirect(['view', ['uid' => $flightProposal->uid]]);
             }
         }
 
         return $this->render('update', [
-            'model' => $model,
+            'model' => $flightProposal,
         ]);
     }
 
