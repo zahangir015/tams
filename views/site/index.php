@@ -1,5 +1,6 @@
 <?php
 
+use app\components\GlobalConstant;
 use hail812\adminlte\widgets\Alert;
 use hail812\adminlte\widgets\Callout;
 use hail812\adminlte\widgets\InfoBox;
@@ -415,16 +416,13 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                 <div class="card-body">
                     <div class="row">
                         <?php
-                        foreach ($leaveAttendanceData['leaveAllocationData'] as $singleData) {
+                        foreach ($leaveAttendanceData['leaveAllocationData'] as $key => $singleData) {
                             ?>
                             <div class="col-lg-6 col-md-6 col-sm-12 col-12">
-                                <div class="small-box bg-primary">
+                                <div class="small-box <?= GlobalConstant::BG_COLOR_CLASS[$key] ?>">
                                     <div class="inner">
-                                        <p>Casual Leave</p>
-                                        <h3>150</h3>
-                                    </div>
-                                    <div class="icon">
-                                        <i class="fas fa-shopping-cart"></i>
+                                        <p><?= $singleData['leaveAllocationData']['leaveType']['name'] ?></p>
+                                        <h3>Availed <?= $singleData['leaveAllocationData']['availedDays'] ?>  of <?= $singleData['leaveAllocationData']['totalDays'] ?></h3>
                                     </div>
                                 </div>
                             </div>
