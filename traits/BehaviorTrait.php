@@ -3,10 +3,11 @@
 namespace app\traits;
 
 use app\models\History;
+use app\modules\admin\models\User;
 use Yii;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
-use yii\db\Expression;
 use yii\helpers\Json;
 
 trait BehaviorTrait
@@ -77,29 +78,52 @@ trait BehaviorTrait
         return parent::beforeDelete();
     }
 
-    public function afterSave($insert, $changedAttributes)
+    public function afterFind(): void
     {
         if (isset(Yii::$app->controller->action) && (Yii::$app->controller->action->id == "index" || Yii::$app->controller->action->id == "view")) {
-            if ($this->hasAttribute('createdAt')) {
-                $this->createdAt = $this->createdAt ? date(Yii::$app->params['dateTimeFormatInView'], $this->createdAt) : null;
-            }
-            if ($this->hasAttribute('updatedAt')) {
-                $this->updatedAt = $this->updatedAt ? date(Yii::$app->params['dateTimeFormatInView'], $this->updatedAt) : null;
-            }
-            if ($this->hasAttribute('createdBy')) {
-                $this->createdBy = $this->createdBy ? ucfirst($this->creator['username']) : null;
-            }
-            if ($this->hasAttribute('updatedBy')) {
-                $this->updatedBy = $this->updatedBy ? ucfirst($this->updater['username']) : null;
-            }
-            if ($this->hasAttribute('uid')) {
-                $this->uid = $this->uid ?: null;
-            }
-            if ($this->hasAttribute('uid')) {
-                $this->uid = $this->uid ?: null;
-            }
+            $this->modifyColumnsData();
+        }
+        parent::afterFind();
+    }
+
+    public function afterSave($insert, $changedAttributes): void
+    {
+        if (isset(Yii::$app->controller->action) && (Yii::$app->controller->action->id == "index" || Yii::$app->controller->action->id == "view")) {
+            $this->modifyColumnsData();
         }
         parent::afterSave($insert, $changedAttributes);
+    }
+
+    public function modifyColumnsData(): void
+    {
+        if ($this->hasAttribute('createdAt')) {
+            $this->createdAt = $this->createdAt ? date(Yii::$app->params['dateTimeFormatInView'], $this->createdAt) : null;
+        }
+        if ($this->hasAttribute('updatedAt')) {
+            $this->updatedAt = $this->updatedAt ? date(Yii::$app->params['dateTimeFormatInView'], $this->updatedAt) : null;
+        }
+        if ($this->hasAttribute('createdBy')) {
+            $this->createdBy = $this->createdBy ? ucfirst($this->creator['username']) : null;
+        }
+        if ($this->hasAttribute('updatedBy')) {
+            $this->updatedBy = $this->updatedBy ? ucfirst($this->updater['username']) : null;
+        }
+        if ($this->hasAttribute('uid')) {
+            $this->uid = $this->uid ?: null;
+        }
+        if ($this->hasAttribute('uid')) {
+            $this->uid = $this->uid ?: null;
+        }
+    }
+
+    public function getCreator(): ActiveQuery
+    {
+        return $this->hasOne(User::class, ['id' => 'createdBy']);
+    }
+
+    public function getUpdater(): ActiveQuery
+    {
+        return $this->hasOne(User::class, ['id' => 'updatedBy']);
     }
 
     public function createSnapshot($action = 'update'): array
