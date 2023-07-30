@@ -102,10 +102,10 @@ class SiteController extends Controller
             'holidayPercentage' => ($totalQuote) ? ($saleData['currentDaySales']['holiday']['quoteAmount'] * 100) / $totalQuote : 0,
             'visaPercentage' => ($totalQuote) ? ($saleData['currentDaySales']['visa']['quoteAmount'] * 100) / $totalQuote : 0,
 
-            'monthlyTicketPercentage' => ($totalMonthlyQuote) ? ($saleData['currentMonthSales']['ticket']['quoteAmount'] * 100) / $totalQuote : 0,
-            'monthlyHotelPercentage' => ($totalMonthlyQuote) ? ($saleData['currentMonthSales']['hotel']['quoteAmount'] * 100) / $totalQuote : 0,
-            'monthlyHolidayPercentage' => ($totalMonthlyQuote) ? ($saleData['currentMonthSales']['holiday']['quoteAmount'] * 100) / $totalQuote : 0,
-            'monthlyVisaPercentage' => ($totalMonthlyQuote) ? ($saleData['currentMonthSales']['visa']['quoteAmount'] * 100) / $totalQuote : 0,
+            'monthlyTicketPercentage' => ($totalMonthlyQuote) ? ($saleData['currentMonthSales']['ticket']['quoteAmount'] * 100) / $totalMonthlyQuote : 0,
+            'monthlyHotelPercentage' => ($totalMonthlyQuote) ? ($saleData['currentMonthSales']['hotel']['quoteAmount'] * 100) / $totalMonthlyQuote : 0,
+            'monthlyHolidayPercentage' => ($totalMonthlyQuote) ? ($saleData['currentMonthSales']['holiday']['quoteAmount'] * 100) / $totalMonthlyQuote : 0,
+            'monthlyVisaPercentage' => ($totalMonthlyQuote) ? ($saleData['currentMonthSales']['visa']['quoteAmount'] * 100) / $totalMonthlyQuote : 0,
 
             'receivable' => ($totalQuote - $totalReceived),
             'payable' => ($totalCost - $totalPaid),

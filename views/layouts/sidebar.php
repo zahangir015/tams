@@ -68,8 +68,8 @@ use app\modules\admin\components\Helper;
                         'items' => [
                             ['label' => 'Countries', 'icon' => 'globe', 'url' => ['/country'], 'visible' => Helper::checkRoute('/country/')],
                             ['label' => 'Cities', 'icon' => 'globe', 'url' => ['/city'], 'visible' => Helper::checkRoute('/city/')],
-                            ['label' => 'Company', 'icon' => 'building', 'url' => ['/company'], 'visible' => Helper::checkRoute('/company/')],
-                            ['label' => 'Company Profile', 'icon' => 'building', 'url' => ['/company/view'], 'visible' => Helper::checkRoute('/company/view')],
+                            //['label' => 'Company', 'icon' => 'building', 'url' => ['/company'], 'visible' => Helper::checkRoute('/company/')],
+                            //['label' => 'Company Profile', 'icon' => 'building', 'url' => ['/company/view', ['uid' => '']], 'visible' => Helper::checkRoute('/company/view')],
                             ['label' => 'Providers', 'icon' => 'paper-plane', 'url' => ['/sale/provider/index'], 'visible' => Helper::checkRoute('/sale/provider/')],
                             [
                                 'label' => 'Supplier Settings',
