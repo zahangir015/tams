@@ -403,9 +403,17 @@ class AttendanceService
 
     public static function dashboardReport(): array
     {
+        if (!isset(Yii::$app->user->identity->agencyId)){
+            return [
+                'currentDayAttendanceData' => [],
+                'currentMonthAttendanceData' => [],
+                'leaveAllocationData' => [],
+            ];
+        }
+
         $employee = Employee::find()
             ->where(['userId' => Yii::$app->user->id])
-            //->andWhere(['agencyId' => Yii::$app->user->identity->agencyId])
+            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId])
             ->one();
         //TODO Current day entry
         if ($employee) {
@@ -419,6 +427,7 @@ class AttendanceService
                 ->where([Attendance::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
                 ->andWhere([Attendance::tableName() . '.employeeId' => $employee->id])
                 ->andWhere(['date' => date('Y-m-d')])
+                ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId])
                 ->asArray()
                 ->one();
             //TODO Attendance Details
@@ -433,6 +442,7 @@ class AttendanceService
                 ->where([Attendance::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
                 ->andWhere([Attendance::tableName() . '.employeeId' => $employee->id])
                 ->andWhere(['between', 'date', date('Y-m-01'), date('Y-m-t')])
+                ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId])
                 ->asArray()
                 ->one();
             //TODO Leave Details
@@ -451,6 +461,7 @@ class AttendanceService
                 ->where([LeaveAllocation::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
                 ->andWhere([LeaveAllocation::tableName() . '.employeeId' => $employee->id])
                 ->andWhere([LeaveAllocation::tableName() . '.year' => date('Y')])
+                ->andWhere([LeaveAllocation::tableName() . '.agencyId' => Yii::$app->user->identity->agencyId])
                 ->asArray()->all();
         }
 

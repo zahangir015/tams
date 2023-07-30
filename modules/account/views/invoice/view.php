@@ -21,7 +21,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     <div class="row pb-5">
                         <div class="col-md">
                             <h4>
-                                <img alt="Logo" height="60" width="150" src="<?= Url::to('/uploads/company/'.$company->logo) ?>"> <?= $company->name ?>
+                                <img alt="Logo" height="60" width="150"
+                                     src="<?= (isset($company) && isset($company->logo)) ? Url::to('/uploads/company/' . $company->logo) : '' ?>">  <?= isset($company) ? $company->name : '' ?>
                                 <small class="float-right">Date: <?= $model->date ?></small>
                             </h4>
                         </div>
