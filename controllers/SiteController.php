@@ -65,25 +65,54 @@ class SiteController extends Controller
     {
         $saleData = SaleService::dashboardReport();
         $leaveAttendanceData = AttendanceService::dashboardReport();//dd($leaveAttendanceData);
-        $totalQuote = array_sum(array_column($saleData, 'quoteAmount'));
-        $totalReceived = array_sum(array_column($saleData, 'receivedAmount'));
-        $totalPaid = array_sum(array_column($saleData, 'paidAmount'));
-        $totalCost = array_sum(array_column($saleData, 'costOfSale'));
-        $totalNerProfit = array_sum(array_column($saleData, 'netProfit'));
+
+        $totalQuantity = array_sum(array_column($saleData['currentDaySales'], 'total'));
+        $totalQuote = array_sum(array_column($saleData['currentDaySales'], 'quoteAmount'));
+        $totalReceived = array_sum(array_column($saleData['currentDaySales'], 'receivedAmount'));
+        $totalPaid = array_sum(array_column($saleData['currentDaySales'], 'paidAmount'));
+        $totalCost = array_sum(array_column($saleData['currentDaySales'], 'costOfSale'));
+        $totalNerProfit = array_sum(array_column($saleData['currentDaySales'], 'netProfit'));
+
+        $totalMonthlyQuantity = array_sum(array_column($saleData['currentMonthSales'], 'total'));
+        $totalMonthlyQuote = array_sum(array_column($saleData['currentMonthSales'], 'quoteAmount'));
+        $totalMonthlyReceived = array_sum(array_column($saleData['currentMonthSales'], 'receivedAmount'));
+        $totalMonthlyPaid = array_sum(array_column($saleData['currentMonthSales'], 'paidAmount'));
+        $totalMonthlyCost = array_sum(array_column($saleData['currentMonthSales'], 'costOfSale'));
+        $totalMonthlyNerProfit = array_sum(array_column($saleData['currentMonthSales'], 'netProfit'));
 
         return $this->render('index', [
             'saleData' => $saleData,
+
+            'totalQuantity' => $totalQuantity,
             'totalQuote' => $totalQuote,
             'totalReceived' => $totalReceived,
             'totalPaid' => $totalPaid,
             'totalCost' => $totalCost,
-            'currentDayTotalNetProfit' => $totalNerProfit,
-            'ticketPercentage' => ($totalQuote) ? ($saleData['ticketSalesData']['quoteAmount'] * 100) / $totalQuote : 0,
-            'hotelPercentage' => ($totalQuote) ? ($saleData['hotelSalesData']['quoteAmount'] * 100) / $totalQuote : 0,
-            'holidayPercentage' => ($totalQuote) ? ($saleData['holidaySalesData']['quoteAmount'] * 100) / $totalQuote : 0,
-            'visaPercentage' => ($totalQuote) ? ($saleData['visaSalesData']['quoteAmount'] * 100) / $totalQuote : 0,
+            'totalNetProfit' => $totalNerProfit,
+
+            'totalMonthlyQuantity' => $totalMonthlyQuantity,
+            'totalMonthlyQuote' => $totalMonthlyQuote,
+            'totalMonthlyReceived' => $totalMonthlyReceived,
+            'totalMonthlyPaid' => $totalMonthlyPaid,
+            'totalMonthlyCost' => $totalMonthlyCost,
+            'totalMonthlyNetProfit' => $totalMonthlyNerProfit,
+
+            'ticketPercentage' => ($totalQuote) ? ($saleData['currentDaySales']['ticket']['quoteAmount'] * 100) / $totalQuote : 0,
+            'hotelPercentage' => ($totalQuote) ? ($saleData['currentDaySales']['hotel']['quoteAmount'] * 100) / $totalQuote : 0,
+            'holidayPercentage' => ($totalQuote) ? ($saleData['currentDaySales']['holiday']['quoteAmount'] * 100) / $totalQuote : 0,
+            'visaPercentage' => ($totalQuote) ? ($saleData['currentDaySales']['visa']['quoteAmount'] * 100) / $totalQuote : 0,
+
+            'monthlyTicketPercentage' => ($totalMonthlyQuote) ? ($saleData['currentMonthSales']['ticket']['quoteAmount'] * 100) / $totalQuote : 0,
+            'monthlyHotelPercentage' => ($totalMonthlyQuote) ? ($saleData['currentMonthSales']['hotel']['quoteAmount'] * 100) / $totalQuote : 0,
+            'monthlyHolidayPercentage' => ($totalMonthlyQuote) ? ($saleData['currentMonthSales']['holiday']['quoteAmount'] * 100) / $totalQuote : 0,
+            'monthlyVisaPercentage' => ($totalMonthlyQuote) ? ($saleData['currentMonthSales']['visa']['quoteAmount'] * 100) / $totalQuote : 0,
+
             'receivable' => ($totalQuote - $totalReceived),
             'payable' => ($totalCost - $totalPaid),
+
+            'monthlyReceivable' => ($totalMonthlyQuote - $totalMonthlyReceived),
+            'monthlyPayable' => ($totalMonthlyCost - $totalMonthlyPaid),
+
             'leaveAttendanceData' => $leaveAttendanceData,
         ]);
     }

@@ -110,5 +110,16 @@ final class GlobalConstant
         'CUSTOMER' => 'CUSTOMER',
     ];
 
+    const BG_COLOR_CLASS = [
+        'bg-primary',
+        'bg-success',
+        'bg-warning',
+        'bg-danger',
+        'bg-gray',
+        'bg-light-blue',
+        'bg-light-green',
+        'bg-light-red'
+    ];
+
 
 }
