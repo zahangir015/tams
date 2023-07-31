@@ -103,7 +103,7 @@ trait BehaviorTrait
             $this->updatedAt = $this->updatedAt ? date(Yii::$app->params['dateTimeFormatInView'], $this->updatedAt) : null;
         }
         if ($this->hasAttribute('createdBy')) {
-            dd($this->creator);
+            dd([$this->createdBy, $this->creator], false);
             $this->createdBy = $this->createdBy ? ucfirst($this->creator['username']) : null;
         }
         if ($this->hasAttribute('updatedBy')) {
