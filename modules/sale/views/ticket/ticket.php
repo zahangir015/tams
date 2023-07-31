@@ -42,7 +42,7 @@ use yii\bootstrap4\Html;
                 <?= $form->field($model, "[$row]govTax")->textInput(['id' => 'govTax' . $row, 'readOnly' => true]) ?>
             </div>
             <!--<div class="col-md">
-                <?php /*= $form->field($model, "[$row]serviceCharge")->textInput(['id' => 'serviceCharge' . $row, 'readOnly' => true]) */?>
+                <?php /*= $form->field($model, "[$row]serviceCharge")->textInput(['id' => 'serviceCharge' . $row, 'readOnly' => true]) */ ?>
             </div>-->
         </div>
         <div class="row">
@@ -75,7 +75,7 @@ use yii\bootstrap4\Html;
                 <?= $form->field($model, "[$row]paxType")->dropDownList(GlobalConstant::PAX_TYPE, ['id' => 'paxType' . $row]) ?>
             </div>
             <div class="col-md">
-                <?= $form->field($model, "[$row]route")->textInput(['maxlength' => true, 'id' => 'route' . $row, ]) ?>
+                <?= $form->field($model, "[$row]route")->textInput(['maxlength' => true, 'id' => 'route' . $row,]) ?>
             </div>
         </div>
         <div class="row">
@@ -128,8 +128,11 @@ use yii\bootstrap4\Html;
             <div class="col-md">
                 <?= $form->field($model, "[$row]baggage")->textInput(['maxlength' => true]) ?>
             </div>
+            <!--<div class="col-md">
+                <? /*= $form->field($model, "[$row]codeShare")->dropDownList(GlobalConstant::YES_NO, ['value' => 0]) */ ?>
+            </div>-->
             <div class="col-md">
-                <?= $form->field($model, "[$row]codeShare")->dropDownList(GlobalConstant::YES_NO, ['value' => 0]) ?>
+                <?= $form->field($model, "[$row]referenceCommission")->textInput(['type' => 'number', 'maxlength' => true]) ?>
             </div>
             <div class="col-md">
                 <?= $form->field($model, "[$row]reference")->textInput(['maxlength' => true]) ?>

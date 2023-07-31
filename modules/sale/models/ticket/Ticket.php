@@ -59,6 +59,7 @@ use yii\db\ActiveRecord;
  * @property float|null $costOfSale
  * @property float|null $netProfit
  * @property string|null $baggage
+ * @property double|null $referenceCommission
  * @property int $status
  * @property int $createdBy
  * @property int $createdAt
@@ -97,7 +98,7 @@ class Ticket extends ActiveRecord
             [['eTicket', 'airlineId', 'type'], 'unique', 'targetAttribute' => ['eTicket', 'airlineId', 'type'], 'on' => 'create'],
             [['type', 'tripType', 'paymentStatus'], 'string'],
             [['issueDate', 'departureDate', 'refundRequestDate'], 'safe'],
-            [['baseFare', 'tax', 'otherTax', 'commission', 'commissionReceived', 'incentive', 'incentiveReceived', 'govTax', 'serviceCharge', 'ait', 'quoteAmount', 'receivedAmount', 'costOfSale', 'netProfit', 'discount'], 'number'],
+            [['baseFare', 'tax', 'otherTax', 'commission', 'commissionReceived', 'incentive', 'incentiveReceived', 'govTax', 'serviceCharge', 'ait', 'quoteAmount', 'receivedAmount', 'costOfSale', 'netProfit', 'discount', 'referenceCommission'], 'number'],
             [['uid'], 'string', 'max' => 36],
             [['customerCategory'], 'string', 'max' => 10],
             [['paxName'], 'string', 'max' => 120],

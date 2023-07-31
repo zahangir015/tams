@@ -298,10 +298,10 @@ $this->registerJsFile(
                             <?= $form->field($transaction, 'paymentDate')->widget(DatePicker::class, WidgetHelper::getDatewidget('paymentDate', 'paymentDate', false, true)); ?>
                         </div>
                     </div>
-                    <!--<div class="row">
+                    <div class="row">
                         <div class="col-md">
                             <div id="files" style="background-color: #FFFFFF; padding: 10px;">
-                                <?php /*= $form->field($model, 'invoiceFile[]')->widget(FileInput::classname(), [
+                                <?= $form->field($model, 'invoiceFile[]')->widget(FileInput::class, [
                                     'options' => [
                                         'multiple' => true,
                                         'accept' => '*'
@@ -310,10 +310,10 @@ $this->registerJsFile(
                                         'maxFileCount' => 10,
                                     ]
                                 ])->label('Upload files');
-                                */?>
+                                ?>
                             </div>
                         </div>
-                    </div>-->
+                    </div>
                     <div class="row">
                         <div class="col-md">
                             <div class="form-group">
