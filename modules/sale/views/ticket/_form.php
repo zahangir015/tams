@@ -48,16 +48,14 @@ $this->registerJsFile(
             </div>
             <div class="card-body">
                 <div class="row pb-10">
-                    <div class="col-md mb-5">
+                    <div class="col-md">
                         Select Customer
                         <?= Select2::widget(Utilities::ajaxDropDown('customerId', '/sale/customer/get-customers', true)); ?>
                     </div>
-                </div>
-                <div class="row">
                     <?php
                     if ($model->isNewRecord) {
                         ?>
-                        <div class="col-md">
+                        <div class="col-md mt-4">
                             <div class="form-group">
                                 <div class="custom-control custom-checkbox">
                                     <input class="custom-control-input" type="checkbox" id="customCheckbox1"
@@ -66,7 +64,7 @@ $this->registerJsFile(
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md">
+                        <div class="col-md mt-4">
                             <div class="form-group">
                                 <div class="custom-control custom-radio">
                                     <input class="custom-control-input" type="radio" id="customRadio1" name="group"
@@ -75,7 +73,7 @@ $this->registerJsFile(
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md">
+                        <div class="col-md mt-4">
                             <div class="form-group">
                                 <div class="custom-control custom-radio">
                                     <input class="custom-control-input" type="radio" id="customRadio2" name="group"
@@ -88,7 +86,7 @@ $this->registerJsFile(
                         <?php
                     } elseif (!$model->isNewRecord && !$model->invoice) {
                         ?>
-                        <div class="col-md">
+                        <div class="col-md mt-5">
                             <div class="form-group row">
                                 <div class="col-2">
                            <span class="switch switch-icon">

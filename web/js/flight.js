@@ -52,10 +52,10 @@ $(document).on('change', ".airline", function (e) {
         dataType: 'json',
         success: function (data) {
             if (data) {
-                $('#commission' + suffix).val(data.commission);
-                $('#incentive' + suffix).val(data.incentive);
-                $('#govTax' + suffix).val(data.govTax);
-                //$('#serviceCharge' + suffix).val(data.serviceCharge);
+                $('.commission').val(data.commission);
+                $('.incentive').val(data.incentive);
+                $('.govTax').val(data.govTax);
+                $('.airline').val($(this).val()).trigger('change');
             }
         }
     });
@@ -89,13 +89,67 @@ $(document).on('change', ".type", function (e) {
     }
 });
 
-$(document).on("change", ".quoteCalculate", function (e) {
-    var suffix = this.id.match(/\d+/);
-    var baseFare = parseFloat($('#baseFare' + suffix).val());
-    var tax = parseFloat($('#tax' + suffix).val());
-    var otherTax = parseFloat($('#otherTax' + suffix).val());
+$(document).on("change", ".calculateQuote", function (e) {
+    const suffix = this.id.match(/\d+/);
+    const baseFare = parseFloat($('#baseFare' + suffix).val());
+    const tax = parseFloat($('#tax' + suffix).val());
+    const otherTax = parseFloat($('#otherTax' + suffix).val());
     var discount = parseFloat($('#discount' + suffix).val());
-    var serviceCharge = parseFloat($('#serviceCharge' + suffix).val());
-    var quoteAmount = (baseFare + tax + otherTax + serviceCharge - discount);
+    const serviceCharge = parseFloat($('#serviceCharge' + suffix).val());
+    const discountType = $('#discountType' + suffix).val();
+
+    if (discountType === 'Percentage') {
+        discount = baseFare * (discount / 100);
+    }
+    const quoteAmount = (baseFare + tax + otherTax + serviceCharge - discount);
     $('#quoteAmount' + suffix).val(quoteAmount);
+});
+
+$('#airline0').on("change paste keyup", function () {
+    $('.airline').val($(this).val()).trigger('change');
+});
+
+$('#ticket-0-basefare').on("change paste keyup", function () {
+    $('.baseFare').val($(this).val());
+})
+
+$('#ticket-0-tax').on("change paste keyup", function () {
+    $('.tax').val($(this).val());
+})
+
+$('#ticket-0-othertax').on("change paste keyup", function () {
+    $('.otherTax').val($(this).val());
+})
+
+$('#issueDate0').on("change paste keyup", function () {
+    $('.issueDate').val($(this).val());
+});
+
+$('#departureDate0').on("change paste keyup", function () {
+    $('.departureDate').val($(this).val());
+});
+
+$('#ticket-0-paxname').on("change paste keyup", function () {
+    $('.paxName').val($(this).val());
+});
+
+$('#ticket-0-paxtype').on("change paste keyup", function () {
+    $('.paxType').val($(this).val());
+});
+$('#ticket-0-bookedonline').on("change paste keyup", function () {
+    $('.bookedOnline').val($(this).val());
+});
+$('#ticket-0-routing').on("change paste keyup", function () {
+    $('.routing').val($(this).val());
+});
+
+$('#providerId0').on("change paste keyup", function () {
+    $('.providerId0').val($(this).val());
+});
+$('#ticket-0-numberofsegment').on("change paste keyup", function () {
+    $('.numberOfSegment').val($(this).val());
+});
+
+$('#ticket-0-reference').on("change paste keyup", function () {
+    $('.reference').val($(this).val());
 });
