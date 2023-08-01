@@ -160,7 +160,7 @@ class AirlineController extends ParentController
     public function actionGetAirlineDetails(int $airlineId): array|ActiveRecord|null
     {
         return Airline::find()
-            ->select(['id', 'commission', 'incentive', 'govTax', 'serviceCharge'])
+            ->select(['id', 'name', 'code','commission', 'incentive', 'govTax', 'serviceCharge'])
             ->where(['id' => $airlineId])
             ->one();
     }

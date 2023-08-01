@@ -108,11 +108,7 @@ $this->registerJsFile(
                             <?= $form->field($model, 'expectedPaymentDate')->widget(DatePicker::class, Utilities::getDatewidget('expectedPaymentDate', 'expectedPaymentDate', false)) ?>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md">
-                            <?php echo $form->field($model, 'invoiceFile')->widget(FileInput::classname(), Utilities::fileInputWidget())->label('Upload File'); ?>
-                        </div>
-                    </div>
+
                     <div class="row">
                         <div class="col-md" id="comment">
                             <?= $form->field($model, 'remarks')->textarea() ?>

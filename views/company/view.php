@@ -7,34 +7,35 @@ use yii\widgets\DetailView;
 /* @var $model app\models\Company */
 
 $this->title = $model->name;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Companies'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
-<div class="company-view">
+<div class="company-view card card-custom">
+    <div class="card-header bg-gray-dark">
+        <?= Html::encode($this->title) ?>
+    </div>
+    <div class="card-body">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+        <p>
+            <?= Html::a(Yii::t('app', 'Update'), ['update', 'uid' => $model->uid], ['class' => 'btn btn-primary']) ?>
+        </p>
 
-    <p>
-        <?= Html::a(Yii::t('app', 'Update'), ['update', 'uid' => $model->uid], ['class' => 'btn btn-primary']) ?>
-    </p>
-
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'name',
-            'shortName',
-            'phone',
-            'email:email',
-            'address',
-            [
-                'attribute' => 'logo',
-                'format' => ['image'],
-                'value' => function ($model) {
-                    return '/uploads/company/'.$model->logo;
-                }
+        <?= DetailView::widget([
+            'model' => $model,
+            'attributes' => [
+                'name',
+                'shortName',
+                'phone',
+                'email:email',
+                'address',
+                [
+                    'attribute' => 'logo',
+                    'format' => ['image'],
+                    'value' => function ($model) {
+                        return '/uploads/company/' . $model->logo;
+                    }
+                ],
             ],
-        ],
-    ]) ?>
-
+        ]) ?>
+    </div>
 </div>

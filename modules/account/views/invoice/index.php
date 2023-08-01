@@ -3,6 +3,7 @@
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use kartik\grid\GridView;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\modules\account\models\search\InvoiceSearch */
@@ -16,6 +17,66 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
+            [
+                'class' => 'kartik\grid\ActionColumn',
+                'vAlign' => 'middle',
+                'urlCreator' => function ($action, $model, $key, $index) {
+                    return Url::to([$action, 'uid' => $model->uid]);
+                },
+                'width' => '150px',
+                'template' => '{view} {payment} {download} {delete}',
+                'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
+                'buttons' => [
+                    'view' => function ($url, $model) {
+                        return Html::a('<i class="fa fa-info-circle"></i>', ['view', 'uid' => $model->uid], [
+                            'title' => 'view',
+                            'data-pjax' => '0',
+                            'class' => 'btn btn-primary btn-xs'
+                        ]);
+                    },
+                    /*'preview' => function ($url, $model, $key) {
+                        return Html::a('<i class="fa fa-envelope-open"></i>', ['preview', 'uid' => $model->uid], [
+                            'title' => Yii::t('app', 'Preview of Invoice'),
+                            'class' => 'btn btn-primary btn-xs'
+                        ]);
+                    },
+                    'send' => function ($url, $model, $key) {
+                        return Html::a('<i class="fa fa-paper-plane"></i>', ['send', 'uid' => $model->uid], [
+                            'title' => Yii::t('app', 'Send Invoice'),
+                            'class' => 'btn btn-primary btn-xs'
+                        ]);
+                    },*/
+                    'payment' => function ($url, $model, $key) {
+                        if ($model->dueAmount != 0) {
+                            return Html::a('<i class="fa fa-credit-card"></i>', ['pay', 'uid' => $model->uid],
+                                [
+                                    'title' => Yii::t('app', 'pay'),
+                                    'data-pjax' => '0',
+                                    'class' => 'btn btn-primary btn-xs'
+                                ]);
+                        } else {
+                            return false;
+                        }
+                    },
+                    'delete' => function ($url, $model, $key) {
+                        return Html::a('<i class="fa fa-trash-alt"></i>', ['delete', 'uid' => $model->uid], [
+                            'title' => 'delete',
+                            'data-pjax' => '0',
+                            'data' => [
+                                'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
+                                'method' => 'post',
+                            ],
+                            'class' => 'btn btn-danger btn-xs'
+                        ]);
+                    },
+                    'download' => function ($url, $model, $key) {
+                        return Html::a('<i class="fa fa-download"></i>', ['download', 'uid' => $model->uid], [
+                            'title' => Yii::t('app', 'Download Invoice'),
+                            'class' => 'btn btn-warning btn-xs'
+                        ]);
+                    },
+                ]
+            ],
             [
                 'attribute' => 'customer',
                 'label' => 'Customer Code',
@@ -60,60 +121,6 @@ $this->params['breadcrumbs'][] = $this->title;
             'createdAt:date',
             'createdBy',
             'updatedBy',
-            [
-                'class' => 'kartik\grid\ActionColumn',
-                'vAlign' => 'middle',
-                'urlCreator' => function ($action, $model, $key, $index) {
-                    return \yii\helpers\Url::to([$action, 'uid' => $model->uid]);
-                },
-                'width' => '150px',
-                'template' => '{view} {preview} {send} {payment}',
-                'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
-                'buttons' => [
-                    'view' => function ($url, $model) {
-                        return Html::a('<i class="fa fa-info-circle"></i>', ['view', 'uid' => $model->uid], [
-                            'title' => 'view',
-                            'data-pjax' => '0',
-                            'class' => 'btn btn-primary btn-xs'
-                        ]);
-                    },
-                    'preview' => function ($url, $model, $key) {
-                        return Html::a('<i class="fa fa-envelope-open"></i>', ['preview', 'uid' => $model->uid], [
-                            'title' => Yii::t('app', 'Preview of Invoice'),
-                            'class' => 'btn btn-primary btn-xs'
-                        ]);
-                    },
-                    'send' => function ($url, $model, $key) {
-                        return Html::a('<i class="fa fa-paper-plane"></i>', ['send', 'uid' => $model->uid], [
-                            'title' => Yii::t('app', 'Send Invoice'),
-                            'class' => 'btn btn-primary btn-xs'
-                        ]);
-                    },
-                    'payment' => function ($url, $model, $key) {
-                        if ($model->dueAmount != 0) {
-                            return Html::a('<i class="fa fa-credit-card"></i>', ['pay', 'uid' => $model->uid],
-                                [
-                                    'title' => Yii::t('app', 'pay'),
-                                    'data-pjax' => '0',
-                                    'class' => 'btn btn-primary btn-xs'
-                                ]);
-                        } else {
-                            return false;
-                        }
-                    },
-                    'delete' => function ($url, $model, $key) {
-                        return Html::a('<i class="fa fa-trash-alt"></i>', ['delete', 'uid' => $model->uid], [
-                            'title' => 'delete',
-                            'data-pjax' => '0',
-                            'data' => [
-                                'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
-                                'method' => 'post',
-                            ],
-                            'class' => 'btn btn-primary btn-xs'
-                        ]);
-                    },
-                ]
-            ]
         ],
         'toolbar' => [
             [
