@@ -51,6 +51,18 @@ class CompanyController extends ParentController
     }
 
     /**
+     * Displays a single Company model.
+     * @return string
+     */
+    public function actionCompanyProfile(): string
+    {
+        $company = Company::findOne(['agencyId' => Yii::$app->user->identity->agencyId]);
+        return $this->render('view', [
+            'model' => $company,
+        ]);
+    }
+
+    /**
      * Creates a new Company model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|Response

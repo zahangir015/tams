@@ -109,7 +109,13 @@ use yii\bootstrap4\Html;
                 <?= $form->field($model, "[$row]serviceCharge")->textInput(['maxlength' => true, 'id' => 'serviceCharge' . $row, 'type' => 'number', 'step' => 'any', 'class' => 'form-control quoteCalculate serviceCharge']) ?>
             </div>
             <div class="col-md">
-                <?= $form->field($model, "[$row]discount")->textInput(['id' => 'discount' . $row, 'type' => 'number', 'step' => 'any', 'class' => 'form-control quoteCalculate discount']) ?>
+                <label for="serviceCharge0">Discount</label>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <?= Html::dropDownList('discountType', null, ['Amount' => 'Amount', 'Percentage' => 'Percentage'], ['class' => 'form-control']) ?>
+                    </div>
+                    <input type="number" name="[$row]discount" class="form-control" aria-label="Text input with dropdown button">
+                </div>
             </div>
             <div class="col-md">
                 <?= $form->field($model, "[$row]quoteAmount")->textInput(['id' => 'quoteAmount' . $row, 'type' => 'number', 'step' => 'any', 'readOnly' => true]) ?>

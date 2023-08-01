@@ -52,7 +52,6 @@ $(document).on('change', ".airline", function (e) {
         dataType: 'json',
         success: function (data) {
             if (data) {
-                console.log(data.govTax);
                 $('#commission' + suffix).val(data.commission);
                 $('#incentive' + suffix).val(data.incentive);
                 $('#govTax' + suffix).val(data.govTax);
@@ -70,7 +69,6 @@ $(document).on('change', ".motherTicket", function (e) {
         data: {motherTicketId: $(this).val()},
         dataType: 'json',
         success: function (data) {
-            console.log(data);
             if (data) {
                 $('#paxName' + suffix).val(data.paxName);
                 $('#paxType' + suffix).val(data.paxType);
