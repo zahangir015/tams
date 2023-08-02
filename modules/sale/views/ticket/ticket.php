@@ -33,7 +33,7 @@ use yii\bootstrap4\Html;
                 <?= $form->field($model, "[$row]airlineId")->widget(Select2::class, Utilities::ajaxDropDown('airlineId', '/sale/airline/get-airlines', true, 'airlineId' . $row, 'airline', ($model->isNewRecord) ? [] : [$model->airlineId => $model->airline->name . ' | ' . $model->airline->code]))->label('Airline') ?>
             </div>
             <div class="col-md">
-                <?= $form->field($model, "[$row]commission")->textInput(['class' => 'commission form-control','id' => 'commission' . $row, 'readOnly' => true]) ?>
+                <?= $form->field($model, "[$row]commission")->textInput(['class' => 'commission form-control', 'id' => 'commission' . $row, 'readOnly' => true]) ?>
             </div>
             <div class="col-md">
                 <?= $form->field($model, "[$row]incentive")->textInput(['class' => 'incentive form-control', 'id' => 'incentive' . $row, 'readOnly' => true]) ?>
@@ -55,7 +55,7 @@ use yii\bootstrap4\Html;
                 <?= $form->field($model, "[$row]providerId")->widget(Select2::class, Utilities::ajaxDropDown('providerId', '/sale/provider/get-providers', false, 'providerId' . $row, 'providerId', (!$model->isNewRecord && $model->provider) ? [$model->provider->id => $model->provider->name] : []))->label('Select GDS'); ?>
             </div>
             <div class="col-md">
-                <?= $form->field($model, "[$row]type")->dropDownList(ServiceConstant::TICKET_TYPE_FOR_CREATE, ['disabled' => !$model->isNewRecord ? 'disabled' : false, 'class' => 'form-control type']) ?>
+                <?= $form->field($model, "[$row]type")->dropDownList(ServiceConstant::TICKET_TYPE_FOR_CREATE, ['disabled' => !$model->isNewRecord ? 'disabled' : false, 'class' => 'form-control type', 'id' => 'type' . $row]) ?>
             </div>
             <div class="col-md">
                 <?= $form->field($model, "[$row]motherTicketId")->widget(Select2::class, Utilities::ajaxDropDown('motherTicketId', 'get-mother-ticket', true, 'motherTicketId' . $row, 'motherTicket', (!$model->isNewRecord && $model->motherTicket) ? [$model->motherTicket => $model->motherTicket->eTicket . ' | ' . $model->motherTicket->pnrCode] : [], true))->label('Parent') ?>
@@ -63,16 +63,16 @@ use yii\bootstrap4\Html;
         </div>
         <div class="row">
             <div class="col-md">
-                <?= $form->field($model, "[$row]pnrCode")->textInput(['maxlength' => true, 'class' => 'pnrCode form-control'])->label('PNR Code') ?>
+                <?= $form->field($model, "[$row]pnrCode")->textInput(['maxlength' => true, 'class' => 'pnrCode form-control', 'id' => 'pnrCode' . $row])->label('PNR Code') ?>
             </div>
             <div class="col-md">
-                <?= $form->field($model, "[$row]eTicket")->textInput(['maxlength' => true, 'class' => 'eTicket form-control']) ?>
+                <?= $form->field($model, "[$row]eTicket")->textInput(['maxlength' => true, 'class' => 'eTicket form-control', 'id' => 'eTicket' . $row]) ?>
             </div>
             <div class="col-md">
                 <?= $form->field($model, "[$row]paxName")->textInput(['id' => 'paxName' . $row, 'maxlength' => true]) ?>
             </div>
             <div class="col-md">
-                <?= $form->field($model, "[$row]paxType")->dropDownList(GlobalConstant::PAX_TYPE, ['id' => 'paxType' . $row]) ?>
+                <?= $form->field($model, "[$row]paxType")->dropDownList(GlobalConstant::PAX_TYPE, ['id' => 'paxType' . $row, 'class' => 'form-control paxType' . $row]) ?>
             </div>
             <div class="col-md">
                 <?= $form->field($model, "[$row]route")->textInput(['maxlength' => true, 'id' => 'route' . $row, 'class' => 'form-control route']) ?>
@@ -89,10 +89,10 @@ use yii\bootstrap4\Html;
                 <?= $form->field($model, "[$row]departureDate")->widget(DatePicker::class, WidgetHelper::getDatewidget('departureDate' . $row, 'departureDate'))->label('Departure'); ?>
             </div>
             <div class="col-md">
-                <?= $form->field($model, "[$row]numberOfSegment")->textInput(['maxlength' => true, 'class' => 'form-control numberOfSegment']) ?>
+                <?= $form->field($model, "[$row]numberOfSegment")->textInput(['maxlength' => true, 'class' => 'form-control numberOfSegment', 'id' => 'numberOfSegment' . $row]) ?>
             </div>
             <div class="col-md">
-                <?= $form->field($model, "[$row]refundPolicy")->dropDownList(ServiceConstant::REFUND_POLICY, ['class' => 'form-control refundPolicy']) ?>
+                <?= $form->field($model, "[$row]refundPolicy")->dropDownList(ServiceConstant::REFUND_POLICY, ['class' => 'form-control refundPolicy', 'id' => 'refundPolicy' . $row]) ?>
             </div>
         </div>
         <div class="row">
@@ -112,9 +112,11 @@ use yii\bootstrap4\Html;
                 <label for="serviceCharge0">Discount</label>
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
-                        <?= Html::dropDownList('discountType', null, ['Amount' => 'Amount', 'Percentage' => 'Percentage'], ['class' => 'form-control calculateQuote discountType', 'id'=>'discountType'.$row]) ?>
+                        <?= Html::dropDownList('discountType', null, ['Amount' => 'Amount', 'Percentage' => 'Percentage'], ['class' => 'form-control calculateQuote discountType', 'id' => 'discountType' . $row]) ?>
                     </div>
-                    <input type="number" name="[<?= $row?>]discount" class="form-control calculateQuote discount" aria-label="Text input with dropdown button" id='discount<?= $row ?>' value="<?= $model->isNewRecord ? 0 : $model->discount ?>">
+                    <input type="number" name="[<?= $row ?>]discount" class="form-control calculateQuote discount"
+                           aria-label="Text input with dropdown button" id='discount<?= $row ?>'
+                           value="<?= $model->isNewRecord ? 0 : $model->discount ?>">
                 </div>
             </div>
             <div class="col-md">
@@ -123,7 +125,7 @@ use yii\bootstrap4\Html;
         </div>
         <div class="row">
             <div class="col-md">
-                <?= $form->field($model, "[$row]seatClass")->dropDownList(ServiceConstant::SEAT_CLASS, ['class' => 'form-control seatClass']) ?>
+                <?= $form->field($model, "[$row]seatClass")->dropDownList(ServiceConstant::SEAT_CLASS, ['id' => 'seatClass' . $row, 'class' => 'form-control seatClass']) ?>
             </div>
             <div class="col-md">
                 <?= $form->field($model, "[$row]tripType")->dropDownList(ServiceConstant::TRIP_TYPE, ['id' => 'tripType' . $row, 'class' => 'form-control tripType']) ?>
@@ -132,11 +134,8 @@ use yii\bootstrap4\Html;
                 <?= $form->field($model, "[$row]bookedOnline")->dropDownList(GlobalConstant::BOOKING_TYPE, ['value' => 0, 'class' => 'form-control bookedOnline']) ?>
             </div>
             <div class="col-md">
-                <?= $form->field($model, "[$row]baggage")->textInput(['maxlength' => true]) ?>
+                <?= $form->field($model, "[$row]baggage")->textInput(['maxlength' => true, 'id' => 'baggage' . $row, 'class' => 'form-control baggage']) ?>
             </div>
-            <!--<div class="col-md">
-                <? /*= $form->field($model, "[$row]codeShare")->dropDownList(GlobalConstant::YES_NO, ['value' => 0]) */ ?>
-            </div>-->
             <div class="col-md">
                 <?= $form->field($model, "[$row]referenceCommission")->textInput(['type' => 'number', 'maxlength' => true, 'class' => 'form-control referenceCommission']) ?>
             </div>

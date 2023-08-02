@@ -105,19 +105,41 @@ $(document).on("change", ".calculateQuote", function (e) {
     $('#quoteAmount' + suffix).val(quoteAmount);
 });
 
+
+$('#eTicket0').on("change paste keyup", function () {
+    var number;
+    var zero;
+    if (!isNaN(parseInt($(this).val()))) {
+        number = $(this).val();
+        zero = number.startsWith("0");
+    }
+
+    $('.eTicket').each(function (index) {
+        if ((index != 0)) {
+            if (zero) {
+                $(this).val("0" + number);
+            }else {
+                $(this).val(number);
+            }
+        }
+
+        number = (parseInt(number) + 1);
+    });
+});
+
 $('#airline0').on("change paste keyup", function () {
     $('.airline').val($(this).val()).trigger('change');
 });
 
-$('#ticket-0-basefare').on("change paste keyup", function () {
+$('#baseFare0').on("change paste keyup", function () {
     $('.baseFare').val($(this).val());
 })
 
-$('#ticket-0-tax').on("change paste keyup", function () {
+$('#tax0').on("change paste keyup", function () {
     $('.tax').val($(this).val());
 })
 
-$('#ticket-0-othertax').on("change paste keyup", function () {
+$('#otherTax0').on("change paste keyup", function () {
     $('.otherTax').val($(this).val());
 })
 
@@ -129,27 +151,52 @@ $('#departureDate0').on("change paste keyup", function () {
     $('.departureDate').val($(this).val());
 });
 
-$('#ticket-0-paxname').on("change paste keyup", function () {
-    $('.paxName').val($(this).val());
-});
-
-$('#ticket-0-paxtype').on("change paste keyup", function () {
+$('#paxType0').on("change paste keyup", function () {
     $('.paxType').val($(this).val());
 });
-$('#ticket-0-bookedonline').on("change paste keyup", function () {
+$('#bookedonline0').on("change paste keyup", function () {
     $('.bookedOnline').val($(this).val());
 });
-$('#ticket-0-routing').on("change paste keyup", function () {
+$('#routing0').on("change paste keyup", function () {
     $('.routing').val($(this).val());
 });
 
 $('#providerId0').on("change paste keyup", function () {
-    $('.providerId0').val($(this).val());
+    $('.providerId').val($(this).val());
 });
-$('#ticket-0-numberofsegment').on("change paste keyup", function () {
+
+$('#type0').on("change paste keyup", function () {
+    $('.type').val($(this).val());
+});
+
+$('#numberofsegment0').on("change paste keyup", function () {
     $('.numberOfSegment').val($(this).val());
 });
 
-$('#ticket-0-reference').on("change paste keyup", function () {
+$('#pnrCode0').on("change paste keyup", function () {
+    $('.pnrCode').val($(this).val());
+});
+
+$('#reference0').on("change paste keyup", function () {
     $('.reference').val($(this).val());
 });
+
+$('#referenceCommission0').on("change paste keyup", function () {
+    $('.referenceCommission').val($(this).val());
+});
+
+$('#flightType0').on("change paste keyup", function () {
+    $('.flightType').val($(this).val());
+});
+
+$('#seatClass0').on("change paste keyup", function () {
+    $('.seatClass').val($(this).val());
+});
+
+$('#tripType0').on("change paste keyup", function () {
+    $('.tripType').val($(this).val());
+});
+$('#baggage0').on("change paste keyup", function () {
+    $('.baggage').val($(this).val());
+});
+
