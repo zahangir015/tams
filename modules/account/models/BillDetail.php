@@ -3,6 +3,7 @@
 namespace app\modules\account\models;
 
 use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%bill_detail}}".
@@ -15,12 +16,12 @@ use Yii;
  * @property float|null $dueAmount
  * @property int|null $status
  */
-class BillDetail extends \yii\db\ActiveRecord
+class BillDetail extends ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%bill_detail}}';
     }
@@ -28,7 +29,7 @@ class BillDetail extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['billId', 'refId', 'refModel'], 'required'],
@@ -41,7 +42,7 @@ class BillDetail extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),

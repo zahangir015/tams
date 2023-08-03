@@ -5,9 +5,9 @@ namespace app\modules\account\services;
 use app\components\GlobalConstant;
 use app\components\Utilities;
 use app\modules\account\models\BankAccount;
-use app\modules\account\models\Invoice;
-use app\modules\account\models\InvoiceDetail;
+use app\modules\account\models\Bill;
 use app\modules\account\models\RefundTransaction;
+use app\modules\account\repositories\BillRepository;
 use app\modules\account\repositories\InvoiceRepository;
 use app\modules\admin\models\User;
 use app\modules\sale\components\ServiceConstant;
@@ -19,22 +19,22 @@ use yii\db\Exception;
 use yii\db\Expression;
 use yii\helpers\ArrayHelper;
 
-class InvoiceService
+class BillService
 {
-    private InvoiceRepository $invoiceRepository;
+    private BillRepository $billRepository;
     private TransactionService $transactionService;
     private LedgerService $ledgerService;
     private RefundTransactionService $refundTransactionService;
 
     public function __construct()
     {
-        $this->invoiceRepository = new InvoiceRepository();
+        $this->billRepository = new BillRepository();
         $this->transactionService = new TransactionService();
         $this->refundTransactionService = new RefundTransactionService();
         $this->ledgerService = new LedgerService();
     }
 
-    public function storeInvoice($requestData, ActiveRecord $invoice): bool
+    public function storeBill($requestData, ActiveRecord $bill): bool
     {
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
@@ -42,15 +42,15 @@ class InvoiceService
                 throw new Exception('Service select is required.');
             }
 
-            if (!$invoice->load(['Invoice' => $requestData['Invoice']])) {
-                throw new Exception('Invoice loading failed.');
+            if (!$bill->load(['Invoice' => $requestData['Bill']])) {
+                throw new Exception('Bill loading failed.');
             }
 
             $totalDue = 0;
             $totalReceived = 0;
             $user = User::findOne(Yii::$app->user->id);
 
-            // Invoice detail data process
+            // Bill detail data process
             $serviceData = [];
             foreach ($requestData['services'] as $key => $service) {
                 $serviceObj = json_decode($service);
@@ -58,24 +58,23 @@ class InvoiceService
                 $totalReceived += $serviceObj->paidAmount;
                 $serviceData[$key]['refModel'] = $serviceObj->refModel;
                 $serviceData[$key]['refId'] = $serviceObj->refId;
-                $serviceData[$key]['subRefModel'] = Invoice::class;
-                $serviceData[$key]['subRefId'] = $invoice->id;
+                $serviceData[$key]['subRefModel'] = Bill::class;
+                $serviceData[$key]['subRefId'] = $bill->id;
                 $serviceData[$key]['paidAmount'] = 0;
                 $serviceData[$key]['dueAmount'] = $serviceObj->dueAmount;
             }
 
-            // Invoice data process
-            $invoice->dueAmount = $totalDue;
-            $invoice->paidAmount = $totalReceived;
-            $invoice->invoiceNumber = Utilities::invoiceNumber();
-            $invoice = $this->invoiceRepository->store($invoice);
-            if ($invoice->hasErrors()) {
-                throw new Exception('Invoice creation failed - ' . Utilities::processErrorMessages($invoice->getErrors()));
+            // Bill data process
+            $bill->dueAmount = $totalDue;
+            $bill->paidAmount = $totalReceived;
+            $bill->billNumber = Utilities::billNumber();
+            $bill = $this->billRepository->store($bill);
+            if ($bill->hasErrors()) {
+                throw new Exception('Bill creation failed - ' . Utilities::processErrorMessages($bill->getErrors()));
             }
 
-            //AttachmentFile::uploadsById($invoice, 'invoiceFile');
             // Service Data process
-            $serviceDataProcessResponse = self::serviceDataProcessForInvoice($invoice, $serviceData, $user);
+            $serviceDataProcessResponse = self::serviceDataProcessForBill($bill, $serviceData, $user);
             if ($serviceDataProcessResponse['error']) {
                 throw new Exception('Service Data process failed - ' . $serviceDataProcessResponse['message']);
             }
@@ -106,49 +105,33 @@ class InvoiceService
         }
     }
 
-    public function autoInvoice(int $customerId, array $services): array
+    private
+    static function serviceDataProcessForBill(ActiveRecord $bill, array $services, mixed $user): array
     {
-        $invoice = new Invoice();
-        $invoice->date = date('Y-m-d');
-        $invoice->expectedPaymentDate = $invoice->date;
-        $invoice->customerId = $customerId;
-        $invoice->invoiceNumber = Utilities::invoiceNumber();
-        $invoice->dueAmount = array_sum(array_column($services, 'dueAmount'));;
-        $invoice->paidAmount = 0;
-        $invoice->remarks = 'Auto generated invoice';
-        $invoice->discountedAmount = 0;
-        $invoice->status = GlobalConstant::ACTIVE_STATUS;
-
-        // Invoice data process
-        $invoice = $this->invoiceRepository->store($invoice);
-        if ($invoice->hasErrors()) {
-            return ['error' => true, 'message' => 'Invoice creation failed - ' . Utilities::processErrorMessages($invoice->getErrors())];
+        $updatableServices = [];
+        foreach ($services as $service) {
+            // Invoice details entry
+            $billDetailResponse = (new BillService)->storeOrUpdateInvoiceDetail($bill, $service, $user);
+            if ($billDetailResponse['error']) {
+                return $billDetailResponse;
+            }
+            $updatableServices[] = [
+                'refModel' => $service['refModel'],
+                'query' => ['id' => $service['refId']],
+                'data' => ['billId' => $bill->id]
+            ];
         }
 
-        // Service process
-        $serviceProcessResponse = self::serviceProcess($invoice, $services);
-        if ($serviceProcessResponse['error']) {
-            return ['error' => true, 'message' => $serviceProcessResponse['message']];
+        if (!empty($updatableServices)) {
+            $serviceUpdateResponse = SaleService::serviceUpdate($updatableServices);
+            if ($serviceUpdateResponse['error']) {
+                return $serviceUpdateResponse;
+            }
         }
 
-        // Customer Ledger process
-        $ledgerRequestData = [
-            'title' => 'Service Purchase',
-            'reference' => 'Invoice Number - ' . $invoice->invoiceNumber,
-            'refId' => $invoice->customerId,
-            'refModel' => Customer::class,
-            'subRefId' => $invoice->id,
-            'subRefModel' => $invoice::class,
-            'debit' => array_sum(array_column($services, 'dueAmount')),
-            'credit' => 0
-        ];
-        $ledgerRequestResponse = $this->ledgerService->store($ledgerRequestData);
-        if ($ledgerRequestResponse['error']) {
-            return ['error' => true, 'message' => $ledgerRequestResponse['message']];
-        }
-
-        return ['error' => false, 'message' => 'Invoice created successfully', 'data' => $invoice];
+        return ['error' => false, 'message' => 'Service data processed successfully'];
     }
+
 
     public function addRefundServiceToInvoice(ActiveRecord $newRefundService): array
     {
@@ -568,32 +551,6 @@ class InvoiceService
         return ['error' => false, 'message' => "Distribution has been made successfully"];
     }
 
-    private
-    static function serviceDataProcessForInvoice(ActiveRecord $invoice, array $services, mixed $user): array
-    {
-        $updatableServices = [];
-        foreach ($services as $service) {
-            // Invoice details entry
-            $invoiceDetailResponse = (new InvoiceService)->storeOrUpdateInvoiceDetail($invoice, $service, $user);
-            if ($invoiceDetailResponse['error']) {
-                return $invoiceDetailResponse;
-            }
-            $updatableServices[] = [
-                'refModel' => $service['refModel'],
-                'query' => ['id' => $service['refId']],
-                'data' => ['invoiceId' => $invoice->id]
-            ];
-        }
-
-        if (!empty($updatableServices)) {
-            $serviceUpdateResponse = SaleService::serviceUpdate($updatableServices);
-            if ($serviceUpdateResponse['error']) {
-                return $serviceUpdateResponse;
-            }
-        }
-
-        return ['error' => false, 'message' => 'Service data processed successfully'];
-    }
 
     protected function storeOrUpdateInvoiceDetail(ActiveRecord $invoice, $service, $user): array
     {

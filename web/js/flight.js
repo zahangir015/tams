@@ -1,5 +1,5 @@
 let rowNum = 0;
-
+$('#count').text((rowNum+1));
 function addTicket() {
     rowNum++;
     $.ajax({
@@ -11,17 +11,13 @@ function addTicket() {
         success: function (data) {
             $('.card-holder').append(data);
             $('.customerId').val($('.customerId').val());
+            $('#count').text((rowNum+1));
         },
         error: function (error) {
             console.log(error)
         }
     });
 }
-
-function totalRow() {
-    return $('#addButton').attr('data-row-number')
-}
-
 function remove(row) {
     $('#card' + row).remove()
     titleUpdate(row)
@@ -36,6 +32,25 @@ function titleUpdate(row) {
     }
 }
 
+function calculateQuoteAmount() {
+    $('.quoteAmount').each(function (index) {
+        if ((index != 0)) {
+            let suffix = this.id.match(/\d+/);
+            const baseFare = parseFloat($('#baseFare' + suffix).val());
+            const tax = parseFloat($('#tax' + suffix).val());
+            const otherTax = parseFloat($('#otherTax' + suffix).val());
+            let discount = parseFloat($('#discount' + suffix).val());
+            const serviceCharge = parseFloat($('#serviceCharge' + suffix).val());
+            const discountType = $('#discountType' + suffix).val();
+
+            if (discountType === 'Percentage') {
+                discount = baseFare * (discount / 100);
+            }
+            $('#quoteAmount' + suffix).val((baseFare + tax + otherTax + serviceCharge - discount));
+        }
+    })
+}
+
 $('#customerId').on('change', function (e) {
     $('.customerId').val($(this).val());
 });
@@ -43,7 +58,7 @@ $('#supplierId').on('change', function (e) {
     $('.supplierId').val($(this).val());
 });
 
-$(document).on('change', ".airline", function (e) {
+$(document).on('change paste keyup', "#airlineId0", function (e) {
     var suffix = this.id.match(/\d+/);
     $.ajax({
         url: airlineUrl,
@@ -55,7 +70,9 @@ $(document).on('change', ".airline", function (e) {
                 $('.commission').val(data.commission);
                 $('.incentive').val(data.incentive);
                 $('.govTax').val(data.govTax);
-                $('.airline').val($(this).val()).trigger('change');
+                //$('.airline').val($(this).val()).trigger('change');
+                $("#airlineId1").append('<option value="' + $(this).val() + '">' + data.name + '(' + data.code + ')</option>')
+                $("#airlineId1").val($(this).val()).trigger("change");
             }
         }
     });
@@ -89,22 +106,20 @@ $(document).on('change', ".type", function (e) {
     }
 });
 
-$(document).on("change", ".calculateQuote", function (e) {
+$(document).on("change paste keyup", ".calculateQuote", function (e) {
     const suffix = this.id.match(/\d+/);
     const baseFare = parseFloat($('#baseFare' + suffix).val());
     const tax = parseFloat($('#tax' + suffix).val());
     const otherTax = parseFloat($('#otherTax' + suffix).val());
-    var discount = parseFloat($('#discount' + suffix).val());
+    let discount = parseFloat($('#discount' + suffix).val());
     const serviceCharge = parseFloat($('#serviceCharge' + suffix).val());
     const discountType = $('#discountType' + suffix).val();
 
     if (discountType === 'Percentage') {
         discount = baseFare * (discount / 100);
     }
-    const quoteAmount = (baseFare + tax + otherTax + serviceCharge - discount);
-    $('#quoteAmount' + suffix).val(quoteAmount);
+    $('#quoteAmount' + suffix).val((baseFare + tax + otherTax + serviceCharge - discount));
 });
-
 
 $('#eTicket0').on("change paste keyup", function () {
     var number;
@@ -118,7 +133,7 @@ $('#eTicket0').on("change paste keyup", function () {
         if ((index != 0)) {
             if (zero) {
                 $(this).val("0" + number);
-            }else {
+            } else {
                 $(this).val(number);
             }
         }
@@ -133,14 +148,32 @@ $('#airline0').on("change paste keyup", function () {
 
 $('#baseFare0').on("change paste keyup", function () {
     $('.baseFare').val($(this).val());
+    calculateQuoteAmount();
 })
 
 $('#tax0').on("change paste keyup", function () {
     $('.tax').val($(this).val());
+    calculateQuoteAmount();
 })
 
 $('#otherTax0').on("change paste keyup", function () {
     $('.otherTax').val($(this).val());
+    calculateQuoteAmount();
+})
+
+$('#serviceCharge0').on("change paste keyup", function () {
+    $('.serviceCharge').val($(this).val());
+    calculateQuoteAmount();
+})
+
+$('#discount0').on("change paste keyup", function () {
+    $('.discount').val($(this).val());
+    calculateQuoteAmount();
+})
+
+$('#discountType0').on("change paste keyup", function () {
+    $('.discountType').val($(this).val());
+    calculateQuoteAmount();
 })
 
 $('#issueDate0').on("change paste keyup", function () {
@@ -154,7 +187,7 @@ $('#departureDate0').on("change paste keyup", function () {
 $('#paxType0').on("change paste keyup", function () {
     $('.paxType').val($(this).val());
 });
-$('#bookedonline0').on("change paste keyup", function () {
+$('#bookedOnline0').on("change paste keyup", function () {
     $('.bookedOnline').val($(this).val());
 });
 $('#routing0').on("change paste keyup", function () {
@@ -169,7 +202,7 @@ $('#type0').on("change paste keyup", function () {
     $('.type').val($(this).val());
 });
 
-$('#numberofsegment0').on("change paste keyup", function () {
+$('#numberOfSegment0').on("change paste keyup", function () {
     $('.numberOfSegment').val($(this).val());
 });
 
@@ -198,5 +231,8 @@ $('#tripType0').on("change paste keyup", function () {
 });
 $('#baggage0').on("change paste keyup", function () {
     $('.baggage').val($(this).val());
+});
+$('#route00').on("change paste keyup", function () {
+    $('.route').val($(this).val());
 });
 
