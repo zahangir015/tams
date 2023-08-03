@@ -43,7 +43,7 @@ $('#supplierId').on('change', function (e) {
     $('.supplierId').val($(this).val());
 });
 
-$(document).on('change', ".airline", function (e) {
+$(document).on('change paste keyup', "#airlineId0", function (e) {
     var suffix = this.id.match(/\d+/);
     $.ajax({
         url: airlineUrl,
@@ -55,7 +55,9 @@ $(document).on('change', ".airline", function (e) {
                 $('.commission').val(data.commission);
                 $('.incentive').val(data.incentive);
                 $('.govTax').val(data.govTax);
-                $('.airline').val($(this).val()).trigger('change');
+                //$('.airline').val($(this).val()).trigger('change');
+                $("#airlineId1").append('<option value="' + $(this).val() + '">' + data.name + '(' + data.code + ')</option>')
+                $("#airlineId1").val($(this).val()).trigger("change");
             }
         }
     });
@@ -118,7 +120,7 @@ $('#eTicket0').on("change paste keyup", function () {
         if ((index != 0)) {
             if (zero) {
                 $(this).val("0" + number);
-            }else {
+            } else {
                 $(this).val(number);
             }
         }
@@ -198,5 +200,8 @@ $('#tripType0').on("change paste keyup", function () {
 });
 $('#baggage0').on("change paste keyup", function () {
     $('.baggage').val($(this).val());
+});
+$('#route00').on("change paste keyup", function () {
+    $('.route').val($(this).val());
 });
 

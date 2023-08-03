@@ -157,6 +157,27 @@ class AirlineController extends ParentController
         return ['results' => $data];
     }
 
+    public function actionGetAirlineBySupplier(): array
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if ($parents != null) {
+                $supplierId = $parents[0];
+
+                $airlineList = Airline::find()->where(['supplierId' => $supplierId, 'status' => GlobalConstant::ACTIVE_STATUS])->all();
+                $airlineDataArray = [];
+                foreach ($airlineList as $value) {
+                    $airlineDataArray[] = ['id' => $value['id'], 'name' => $value['name'].'('.$value['code'].')'];
+                }
+                // ]
+                return ['output' => $airlineDataArray, 'selected' => ''];
+            }
+        }
+        return ['output' => '', 'selected' => ''];
+    }
+
     public function actionGetAirlineDetails(int $airlineId): array|ActiveRecord|null
     {
         return Airline::find()
@@ -164,4 +185,6 @@ class AirlineController extends ParentController
             ->where(['id' => $airlineId])
             ->one();
     }
+
+
 }

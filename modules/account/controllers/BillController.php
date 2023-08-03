@@ -13,6 +13,17 @@ use yii\filters\VerbFilter;
  */
 class BillController extends ParentController
 {
+    public InvoiceService $invoiceService;
+    public RefundTransactionService $refundTransactionService;
+    public InvoiceRepository $invoiceRepository;
+
+    public function __construct($uid, $module, $config = [])
+    {
+        $this->refundTransactionService = new RefundTransactionService();
+        $this->invoiceService = new InvoiceService();
+        $this->invoiceRepository = new InvoiceRepository();
+        parent::__construct($uid, $module, $config);
+    }
     /**
      * Lists all Bill models.
      *

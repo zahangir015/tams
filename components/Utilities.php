@@ -531,6 +531,11 @@ class Utilities
         return 'INV' . date('ymdhis') . rand(9, 999);
     }
 
+    public static function billNumber(): string
+    {
+        return 'BLL' . date('ymdhis') . rand(9, 999);
+    }
+
     public static function refundTransactionNumber(): string
     {
         return 'RFT' . date('ymdhis') . rand(9, 999);
