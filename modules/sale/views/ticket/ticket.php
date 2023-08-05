@@ -34,7 +34,6 @@ use yii\helpers\Url;
             <?php
         }
         ?>
-
     </div>
     <div class="card-body">
         <div class="row">
@@ -64,9 +63,6 @@ use yii\helpers\Url;
             <div class="col-md">
                 <?= $form->field($model, "[$row]govTax")->textInput(['class' => 'govTax form-control', 'id' => 'govTax' . $row, 'readOnly' => true]) ?>
             </div>
-            <!--<div class="col-md">
-                <?php /*= $form->field($model, "[$row]serviceCharge")->textInput(['id' => 'serviceCharge' . $row, 'readOnly' => true]) */ ?>
-            </div>-->
         </div>
         <div class="row">
             <div class="col-md">
@@ -119,11 +115,9 @@ use yii\helpers\Url;
                 <label for="serviceCharge0">Discount</label>
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
-                        <?= Html::dropDownList('discountType', null, ['Amount' => 'Amount', 'Percentage' => 'Percentage'], ['class' => 'form-control calculateQuote discountType', 'id' => 'discountType' . $row]) ?>
+                        <?= Html::dropDownList("discountType", null, ['Amount' => 'Amount', 'Percentage' => 'Percentage'], ['class' => 'form-control calculateQuote discountType', 'id' => 'discountType' . $row]) ?>
                     </div>
-                    <input type="number" name="Ticket[<?= $row ?>]discount" class="form-control calculateQuote discount"
-                           aria-label="Text input with dropdown button" id='discount<?= $row ?>'
-                           value="<?= $model->isNewRecord ? 0 : $model->discount ?>">
+                    <?= Html::activeInput('string', $model, "[$row]discount", ['value' => ($model->isNewRecord) ? 0 : $model->discount, 'class' => 'form-control calculateQuote discount', 'id' => 'discount' . $row]) ?>
                 </div>
             </div>
             <div class="col-md">
