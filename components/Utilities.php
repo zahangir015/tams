@@ -824,7 +824,7 @@ class Utilities
         return [
             'type' => DepDrop::TYPE_SELECT2,
             'options' => ['id' => $id, 'class' => 'form-control', 'placeholder' => 'Select ...'],
-            'data' => ($model->isNewRecord) ? [] : [$model->departmentId => $model->department->name],
+            'data' => ($data) ? [] : $data,
             'select2Options' => ['pluginOptions' => ['allowClear' => true], 'theme' => Select2::THEME_DEFAULT,],
             'pluginOptions' => [
                 'depends' => [$dependedId],

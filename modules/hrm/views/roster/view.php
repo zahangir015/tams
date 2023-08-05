@@ -35,7 +35,7 @@ YiiAsset::register($this);
                     [
                         'attribute' => 'departmentId',
                         'value' => function ($model) {
-                            return $model->department->name;
+                            return $model->department ? $model->department->name : null;
                         },
                     ],
                     [
