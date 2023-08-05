@@ -3,8 +3,13 @@
 namespace app\modules\sale\models;
 
 use app\components\GlobalConstant;
+use app\modules\sale\models\holiday\HolidaySupplier;
+use app\modules\sale\models\hotel\HotelSupplier;
+use app\modules\sale\models\ticket\TicketSupplier;
+use app\modules\sale\models\visa\VisaSupplier;
 use app\traits\BehaviorTrait;
 use Yii;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
 /**
@@ -84,6 +89,46 @@ class Supplier extends ActiveRecord
             'updatedBy' => Yii::t('app', 'Updated By'),
             'updatedAt' => Yii::t('app', 'Updated At'),
         ];
+    }
+
+    /**
+     * Gets query for [[Supplier]] from [[TicketSupplier]].
+     *
+     * @return ActiveQuery
+     */
+    public function getTickets(): ActiveQuery
+    {
+        return $this->hasMany(TicketSupplier::class, ['supplierId' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Supplier]] from [[VisaSupplier]].
+     *
+     * @return ActiveQuery
+     */
+    public function getVisas(): ActiveQuery
+    {
+        return $this->hasMany(VisaSupplier::class, ['supplierId' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Supplier]] from [[HotelSupplier]].
+     *
+     * @return ActiveQuery
+     */
+    public function getHotels(): ActiveQuery
+    {
+        return $this->hasMany(HotelSupplier::class, ['supplierId' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Supplier]] from [[HolidaySupplier]].
+     *
+     * @return ActiveQuery
+     */
+    public function getHolidays(): ActiveQuery
+    {
+        return $this->hasMany(HolidaySupplier::class, ['supplierId' => 'id']);
     }
 
     public static function query($query): array

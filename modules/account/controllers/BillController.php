@@ -5,23 +5,28 @@ namespace app\modules\account\controllers;
 use app\modules\account\models\Bill;
 use app\modules\account\models\search\BillSearch;
 use app\controllers\ParentController;
+use app\modules\account\repositories\BillRepository;
+use app\modules\account\services\BillService;
+use app\modules\account\services\RefundTransactionService;
+use Yii;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Response;
 
 /**
  * BillController implements the CRUD actions for Bill model.
  */
 class BillController extends ParentController
 {
-    public InvoiceService $invoiceService;
+    public BillService $billService;
     public RefundTransactionService $refundTransactionService;
-    public InvoiceRepository $invoiceRepository;
+    public BillRepository $billRepository;
 
     public function __construct($uid, $module, $config = [])
     {
         $this->refundTransactionService = new RefundTransactionService();
-        $this->invoiceService = new InvoiceService();
-        $this->invoiceRepository = new InvoiceRepository();
+        $this->billService = new BillService();
+        $this->billRepository = new BillRepository();
         parent::__construct($uid, $module, $config);
     }
     /**
@@ -42,7 +47,7 @@ class BillController extends ParentController
 
     /**
      * Displays a single Bill model.
-     * @param int $id ID
+     * @param string $uid UID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
@@ -56,15 +61,18 @@ class BillController extends ParentController
     /**
      * Creates a new Bill model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
+     * @return string|Response
      */
-    public function actionCreate()
+    public function actionCreate(): Response|string
     {
         $model = new Bill();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+            // Store ticket data
+            $requestData = Yii::$app->request->post();
+            $storeResponse = $this->billService->storeBill($requestData, $model);
+            if ($storeResponse) {
+                return $this->redirect(['view', 'uid' => $model->uid]);
             }
         } else {
             $model->loadDefaultValues();
@@ -78,8 +86,8 @@ class BillController extends ParentController
     /**
      * Updates an existing Bill model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id ID
-     * @return string|\yii\web\Response
+     * @param string $uid UID
+     * @return string|Response
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionUpdate($id)
@@ -98,8 +106,8 @@ class BillController extends ParentController
     /**
      * Deletes an existing Bill model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id ID
-     * @return \yii\web\Response
+     * @param string $uid UID
+     * @return Response
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionDelete($id)
@@ -112,7 +120,7 @@ class BillController extends ParentController
     /**
      * Finds the Bill model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id ID
+     * @param string $uid UID
      * @return Bill the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
@@ -123,5 +131,14 @@ class BillController extends ParentController
         }
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+    }
+
+    public function actionPending(): array
+    {
+        $data = Yii::$app->request->get();
+        return $this->billService->getPendingBill();
+
+
+
     }
 }
