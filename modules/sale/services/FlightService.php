@@ -522,7 +522,7 @@ class FlightService
         $ticket->incentiveReceived = $incentiveReceived;
         $ticket->ait = $ait;
         $ticket->tripType = self::tripTypeIdentifier($ticket->route);
-        $ticket->costOfSale = self::calculateCostOfSale($ticket->tax, $ticket->serviceCharge, $ait, $ticket->baseFare, $commissionReceived, $incentiveReceived);
+        $ticket->costOfSale = self::calculateCostOfSale($ticket->tax, $ait, $ticket->baseFare, $commissionReceived, $incentiveReceived);
         //$ticket->flightType = self::flightTypeIdentifier($ticket->route);
         $ticket->netProfit = self::calculateNetProfit($ticket->quoteAmount, $ticket->tax, $ticket->baseFare, $ticket->serviceCharge, $ait, $commissionReceived, $incentiveReceived);
         $ticket->customerCategory = Customer::findOne(['id' => $ticket->customerId])->category;
@@ -577,9 +577,9 @@ class FlightService
         return ($quoteAmount - ($tax + $serviceCharge + $ait + (($baseFare - $commissionReceived) - $incentiveReceived)));
     }
 
-    private static function calculateCostOfSale($tax, $airlineServiceCharge, $ait, $baseFare, $commissionReceived, $incentiveReceived)
+    private static function calculateCostOfSale($tax, $ait, $baseFare, $commissionReceived, $incentiveReceived)
     {
-        return ($tax + $airlineServiceCharge + $ait + (($baseFare - $commissionReceived) - $incentiveReceived));
+        return ($tax + $ait + (($baseFare - $commissionReceived) - $incentiveReceived));
     }
 
     public static function calculateQuoteAmount($baseFare, $tax, $ait, $requestData): float
@@ -609,6 +609,6 @@ class FlightService
         $incentiveReceived = self::calculateIncentiveReceived($baseFare, $airline->commission, $airline->incentive);
         $ait = self::calculateAIT($baseFare, $tax, $airline->govTax);
 
-        return self::calculateCostOfSale($tax, $airline->serviceCharge, $ait, $baseFare, $commissionReceived, $incentiveReceived);
+        return self::calculateCostOfSale($tax, $ait, $baseFare, $commissionReceived, $incentiveReceived);
     }
 }

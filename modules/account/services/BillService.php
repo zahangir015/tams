@@ -12,12 +12,14 @@ use app\modules\account\repositories\InvoiceRepository;
 use app\modules\admin\models\User;
 use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\Customer;
+use app\modules\sale\models\Supplier;
 use app\modules\sale\services\SaleService;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\db\Exception;
 use yii\db\Expression;
 use yii\helpers\ArrayHelper;
+use yii\web\Response;
 
 class BillService
 {
@@ -103,6 +105,139 @@ class BillService
             Yii::$app->session->setFlash('danger', $e->getMessage() . ' - in file - ' . $e->getFile() . ' - in line -' . $e->getLine());
             return false;
         }
+    }
+
+    public function getPendingBill(array $requestData): array
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $supplierId = $requestData['supplierId'];
+        if (!isset($requestData['supplierId'])) {
+            return [
+                'html' => '',
+                'totalPayable' => 0,
+                'message' => 'Supplier info is required'
+            ];
+        }
+
+        $start_date = $end_date = null;
+        if (isset($requestData['dateRange']) && strpos($requestData['dateRange'], '-') !== false) {
+            list($start_date, $end_date) = explode(' - ', $requestData['dateRange']);
+        }
+
+        $pendingServices = Supplier::find()
+            ->select(['id', 'name', 'company'])
+            ->with([
+                'tickets' => function ($query) use ($start_date, $end_date) {
+                    $query->where(['<>', 'paymentStatus', ServiceConstant::PAYMENT_STATUS['Full Paid']])
+                        ->andWhere(['IS', 'billId', NULL]);
+                    if ($start_date && $end_date) {
+                        $query->andWhere(['between', 'issueDate', $start_date, $end_date])->orderBy(['issueDate' => SORT_ASC]);
+                    }
+                },
+                'visas' => function ($query) use ($start_date, $end_date) {
+                    $query->where(['<>', 'paymentStatus', ServiceConstant::PAYMENT_STATUS['Full Paid']])
+                        ->andWhere(['IS', 'billId', NULL]);
+                    if ($start_date && $end_date) {
+                        $query->andWhere(['between', 'issueDate', $start_date, $end_date])->orderBy(['issueDate' => SORT_ASC]);
+                    }
+                },
+                'hotels' => function ($query) use ($start_date, $end_date) {
+                    $query->where(['<>', 'paymentStatus', ServiceConstant::PAYMENT_STATUS['Full Paid']])
+                        ->andWhere(['IS', 'billId', NULL]);
+                    if ($start_date && $end_date) {
+                        $query->andWhere(['between', 'issueDate', $start_date, $end_date])->orderBy(['issueDate' => SORT_ASC]);
+                    }
+                },
+                'holidays' => function ($query) use ($start_date, $end_date) {
+                    $query->where(['<>', 'paymentStatus', ServiceConstant::PAYMENT_STATUS['Full Paid']])
+                        ->andWhere(['IS', 'billId', NULL]);
+                    if ($start_date && $end_date) {
+                        $query->andWhere(['between', 'issueDate', $start_date, $end_date])->orderBy(['issueDate' => SORT_ASC]);
+                    }
+                },
+            ])
+            ->where(['id' => $supplierId])->one();
+
+        $html = '';
+        $key = 1;
+        $totalPayable = 0;
+        if (!empty($pendingServices->tickets)) {
+            foreach ($pendingServices->tickets as $pending) {
+                $totalPayable += ($pending->quoteAmount - $pending->receivedAmount);
+                $html .= '<tr>';
+                $html .= '<td><input type="checkbox" class="chk" id="chk' . $key . '" name="services[]" value="' . htmlspecialchars(json_encode([
+                        'refId' => $pending->id,
+                        'refModel' => get_class($pending),
+                        'paidAmount' => $pending->receivedAmount,
+                        'dueAmount' => ($pending->quoteAmount - $pending->receivedAmount),
+                    ])) . '"></td>';
+                $html .= '<td>' . $pending->formName() . '</td>';
+                $html .= '<td><span class="badge bg-green">' . $pending->eTicket . '</span></td>';
+                $html .= '<td>' . $pending->issueDate . '</td>';
+                $html .= '<td>' . ($pending->quoteAmount - $pending->receivedAmount) . '<input type="text" class="amount form-control" id="amt' . $key . '" value="' . ($pending->quoteAmount - $pending->receivedAmount) . '" hidden></td>';
+                $html .= '</tr>';
+                $key++;
+            }
+        }
+        if (!empty($pendingServices->hotels)) {
+            foreach ($pendingServices->hotels as $pending) {
+                $totalPayable += ($pending->quoteAmount - $pending->receivedAmount);
+                $html .= '<tr>';
+                $html .= '<td><input type="checkbox" class="chk" id="chk' . $key . '" name="services[]" value="' . htmlspecialchars(json_encode([
+                        'refId' => $pending->id,
+                        'refModel' => get_class($pending),
+                        'paidAmount' => $pending->receivedAmount,
+                        'dueAmount' => ($pending->quoteAmount - $pending->receivedAmount),
+                    ])) . '"></td>';
+                $html .= '<td>' . $pending->formName() . '</td>';
+                $html .= '<td><span class="badge bg-green">' . $pending->identificationNumber . '</span></td>';
+                $html .= '<td>' . $pending->issueDate . '</td>';
+                $html .= '<td>' . ($pending->quoteAmount - $pending->receivedAmount) . '<input type="text" class="amount form-control" id="amt' . $key . '" value="' . ($pending->quoteAmount - $pending->receivedAmount) . '" hidden></td>';
+                $html .= '</tr>';
+                $key++;
+            }
+        }
+        if (!empty($pendingServices->visas)) {
+            foreach ($pendingServices->visas as $pending) {
+                $totalPayable += ($pending->quoteAmount - $pending->receivedAmount);
+                $html .= '<tr>';
+                $html .= '<td><input type="checkbox" class="chk" id="chk' . $key . '" name="services[]" value="' . htmlspecialchars(json_encode([
+                        'refId' => $pending->id,
+                        'refModel' => get_class($pending),
+                        'paidAmount' => $pending->receivedAmount,
+                        'dueAmount' => ($pending->quoteAmount - $pending->receivedAmount),
+                    ])) . '"></td>';
+                $html .= '<td>' . $pending->formName() . '</td>';
+                $html .= '<td><span class="badge bg-green">' . $pending->identificationNumber ?? 'N/A' . '</span></td>';
+                $html .= '<td>' . $pending->issueDate . '</td>';
+                $html .= '<td>' . ($pending->quoteAmount - $pending->receivedAmount) . '<input type="text" class="amount form-control" id="amt' . $key . '" value="' . ($pending->quoteAmount - $pending->receivedAmount) . '" hidden></td>';
+                $html .= '</tr>';
+                $key++;
+            }
+        }
+        if (!empty($pendingServices->holidays)) {
+            foreach ($pendingServices->holidays as $pending) {
+                $totalPayable += ($pending->quoteAmount - $pending->receivedAmount);
+                $html .= '<tr>';
+                $html .= '<td><input type="checkbox" class="chk" id="chk' . $key . '" name="services[]" value="' . htmlspecialchars(json_encode([
+                        'refId' => $pending->id,
+                        'refModel' => get_class($pending),
+                        'paidAmount' => $pending->receivedAmount,
+                        'dueAmount' => ($pending->quoteAmount - $pending->receivedAmount),
+                    ])) . '"></td>';
+                $html .= '<td>' . $pending->formName() . '</td>';
+                $html .= '<td><span class="badge bg-green">' . $pending->identificationNumber ?? 'NA' . '</span></td>';
+                $html .= '<td>' . $pending->issueDate . '</td>';
+                $html .= '<td>' . ($pending->quoteAmount - $pending->receivedAmount) . '<input type="text" class="amount form-control" id="amt' . $key . '" value="' . ($pending->quoteAmount - $pending->receivedAmount) . '" hidden></td>';
+                $html .= '</tr>';
+                $key++;
+            }
+        }
+
+        return [
+            'html' => $html,
+            'totalPayable' => $totalPayable,
+        ];
     }
 
     private
