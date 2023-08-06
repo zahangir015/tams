@@ -42,6 +42,7 @@ $this->registerJsFile(
                        onclick="addTicket()"
                        data-row-number="1">
                         <i class="fa fa-plus-circle"></i> Add More
+                        <span class="badge bg-yellow" id="count"></span>
                     </a>
                     <?= Html::submitButton(Yii::t('app', '<i class="fa fa-arrow-alt-circle-down"></i> Save'), ['class' => 'btn btn-primary']) ?>
                 </div>

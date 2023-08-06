@@ -21,19 +21,11 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'kartik\grid\SerialColumn'],
-            //'parentId',
-            /*[
-                'class' => '\kartik\grid\DataColumn',
-                'attribute' => 'departmentId',
-                'value' => function ($model) {
-                    return $model->department->name;
-                },
-                'filter' => $departments
-            ],*/
             [
                 'attribute' => 'departmentId',
+                'label' => 'Department',
                 'value' => function ($model) {
-                    return $model->department->name;
+                    return $model->department ? $model->department->name: null;
                 },
                 'filter' => Select2::widget(Utilities::ajaxDropDown('departmentId', '/hrm/department/get-departments', false, 'departmentId', 'departmentId'))
             ],

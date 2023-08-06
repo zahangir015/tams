@@ -22,12 +22,18 @@ use yii\helpers\Url;
             <h5 class="card-label" id="card-label-<?= $row ?>">
                 Ticket <?= ($model->isNewRecord) ? ($row + 1) : ' - ' . $model->eTicket ?></h5>
         </div>
-        <div class="card-toolbar float-right">
-            <a href="#" class="btn btn-danger btn-sm" onclick="remove(<?= $row ?>)">
+        <?php
+        if ($row !== 0) {
+            ?>
+            <div class="card-toolbar float-right">
+                <a href="#" class="btn btn-danger btn-sm" onclick="remove(<?= $row ?>)">
                     <span class="fa fa-times-circle">
                 </span>
-            </a>
-        </div>
+                </a>
+            </div>
+            <?php
+        }
+        ?>
     </div>
     <div class="card-body">
         <div class="row">
@@ -36,8 +42,8 @@ use yii\helpers\Url;
             </div>
             <div class="col-md">
                 <?= $form->field($model, "[$row]airlineId")->widget(DepDrop::class, [
-                    'data' => $model->isNewRecord ? [] : [$model->airlineId => $model->airline->name.'('.$model->airline->code.')'],
-                    'options' => ['placeholder' => 'Select Airline...', 'id' => 'airlineId'.$row, 'class' => 'airlineId'],
+                    'data' => $model->isNewRecord ? [] : [$model->airlineId => $model->airline->name . '(' . $model->airline->code . ')'],
+                    'options' => ['placeholder' => 'Select Airline...', 'id' => 'airlineId' . $row, 'class' => 'airlineId'],
                     'type' => DepDrop::TYPE_SELECT2,
                     'select2Options' => ['pluginOptions' => ['allowClear' => true], 'theme' => Select2::THEME_DEFAULT],
                     'pluginOptions' => [
@@ -57,9 +63,6 @@ use yii\helpers\Url;
             <div class="col-md">
                 <?= $form->field($model, "[$row]govTax")->textInput(['class' => 'govTax form-control', 'id' => 'govTax' . $row, 'readOnly' => true]) ?>
             </div>
-            <!--<div class="col-md">
-                <?php /*= $form->field($model, "[$row]serviceCharge")->textInput(['id' => 'serviceCharge' . $row, 'readOnly' => true]) */ ?>
-            </div>-->
         </div>
         <div class="row">
             <div class="col-md">
@@ -97,30 +100,28 @@ use yii\helpers\Url;
         </div>
         <div class="row">
             <div class="col-md">
-                <?= $form->field($model, "[$row]baseFare")->textInput(['id' => 'baseFare' . $row, 'type' => 'number', 'class' => 'form-control calculateQuote baseFare']) ?>
+                <?= $form->field($model, "[$row]baseFare")->textInput(['id' => 'baseFare' . $row, 'type' => 'number', 'class' => 'form-control calculateQuote baseFare', 'value' => $model->isNewRecord ? 0 : $model->baseFare]) ?>
             </div>
             <div class="col-md">
-                <?= $form->field($model, "[$row]tax")->textInput(['id' => 'tax' . $row, 'type' => 'number', 'class' => 'form-control calculateQuote tax']) ?>
+                <?= $form->field($model, "[$row]tax")->textInput(['id' => 'tax' . $row, 'type' => 'number', 'class' => 'form-control calculateQuote tax', 'value' => $model->isNewRecord ? 0 : $model->tax]) ?>
             </div>
             <div class="col-md">
-                <?= $form->field($model, "[$row]otherTax")->textInput(['id' => 'otherTax' . $row, 'type' => 'number', 'class' => 'form-control calculateQuote otherTax']) ?>
+                <?= $form->field($model, "[$row]otherTax")->textInput(['id' => 'otherTax' . $row, 'type' => 'number', 'class' => 'form-control calculateQuote otherTax', 'value' => $model->isNewRecord ? 0 : $model->otherTax]) ?>
             </div>
             <div class="col-md">
-                <?= $form->field($model, "[$row]serviceCharge")->textInput(['maxlength' => true, 'id' => 'serviceCharge' . $row, 'type' => 'number', 'step' => 'any', 'class' => 'form-control calculateQuote serviceCharge']) ?>
+                <?= $form->field($model, "[$row]serviceCharge")->textInput(['maxlength' => true, 'id' => 'serviceCharge' . $row, 'type' => 'number', 'step' => 'any', 'class' => 'form-control calculateQuote serviceCharge', 'value' => $model->isNewRecord ? 0 : $model->serviceCharge]) ?>
             </div>
             <div class="col-md">
                 <label for="serviceCharge0">Discount</label>
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
-                        <?= Html::dropDownList('discountType', null, ['Amount' => 'Amount', 'Percentage' => 'Percentage'], ['class' => 'form-control calculateQuote discountType', 'id' => 'discountType' . $row]) ?>
+                        <?= Html::dropDownList("discountType", null, ['Amount' => 'Amount', 'Percentage' => 'Percentage'], ['class' => 'form-control calculateQuote discountType', 'id' => 'discountType' . $row]) ?>
                     </div>
-                    <input type="number" name="Ticket[<?= $row ?>]discount" class="form-control calculateQuote discount"
-                           aria-label="Text input with dropdown button" id='discount<?= $row ?>'
-                           value="<?= $model->isNewRecord ? 0 : $model->discount ?>">
+                    <?= Html::activeInput('string', $model, "[$row]discount", ['value' => ($model->isNewRecord) ? 0 : $model->discount, 'class' => 'form-control calculateQuote discount', 'id' => 'discount' . $row]) ?>
                 </div>
             </div>
             <div class="col-md">
-                <?= $form->field($model, "[$row]quoteAmount")->textInput(['id' => 'quoteAmount' . $row, 'type' => 'number', 'step' => 'any', 'readOnly' => true]) ?>
+                <?= $form->field($model, "[$row]quoteAmount")->textInput(['id' => 'quoteAmount' . $row, 'class' => 'quoteAmount form-control', 'type' => 'number', 'step' => 'any', 'readOnly' => true]) ?>
             </div>
         </div>
         <div class="row">
@@ -159,5 +160,4 @@ use yii\helpers\Url;
         </div>
     </div>
     <?= (!$model->isNewRecord) ? Html::submitButton('<i class="fas fa-save"></i> Update', ['class' => 'btn btn-primary font-weight-bold float-right']) : '' ?>
-</div>
 </div>

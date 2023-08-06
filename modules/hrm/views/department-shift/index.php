@@ -26,7 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'departmentId',
                 'value' => function ($model) {
-                    return $model->department->name;
+                    return $model->department ? $model->department->name : null;
                 },
                 'filter' => Select2::widget(Utilities::ajaxDropDown('DepartmentShiftSearch[departmentId]', '/hrm/department/get-departments', false, 'departmentId', 'departmentId'))
             ],

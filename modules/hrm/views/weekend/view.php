@@ -1,5 +1,6 @@
 <?php
 
+use app\components\Utilities;
 use yii\helpers\Html;
 use yii\web\YiiAsset;
 use yii\widgets\DetailView;
@@ -34,14 +35,14 @@ YiiAsset::register($this);
                     [
                         'attribute' => 'departmentId',
                         'value' => function ($model) {
-                            return $model->department->name;
+                            return $model->department ? $model->department->name : null;
                         },
                     ],
                     'day',
                     [
                         'attribute' => 'status',
                         'value' => function ($model) {
-                            $labelClass = \app\components\Utilities::statusLabelClass($model->status);
+                            $labelClass = Utilities::statusLabelClass($model->status);
                             $labelText = ($model->status) ? 'Active' : 'Inactive';
                             return '<span class="right badge ' . $labelClass . '">' . $labelText . '</span>';
                         },
