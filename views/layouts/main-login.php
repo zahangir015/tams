@@ -53,9 +53,7 @@ $this->registerCssFile('https://code.ionicframework.com/ionicons/2.0.1/css/ionic
                         <img class="align-center" src="<?= Url::to('/uploads/logo.svg') ?>" class="img-fluid"
                              alt="MyTrams">
                         <h1 class="text-dark">Travel Agency Management System</h1>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam aspernatur autem eaque
-                            eveniet, fugiat incidunt ipsa labore necessitatibus neque, nobis odio, recusandae rerum
-                            saepe sed tempore unde vitae. Consectetur, cumque.</p>
+                        <p>Now manage all your travel & tourism-based business operations - starting from HR, Accounts to salesforce tracking, etc. - through MyTrams.</p>
                         <img src="<?= Url::to('/uploads/login_banner.svg') ?>" class="img-fluid" alt="Travel Agency">
                     </div>
                 </div>
