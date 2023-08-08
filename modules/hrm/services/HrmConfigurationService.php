@@ -57,7 +57,7 @@ class HrmConfigurationService
 
     public function getEmployeeList(array $queryArray, array $subQueryArray): array
     {
-        $employeeList = $this->hrmConfigurationRepository->getEmployeeListByDepartment($queryArray, $subQueryArray);
+        $employeeList = $this->hrmConfigurationRepository->getEmployeeListByDepartment($queryArray, $subQueryArray);dd($employeeList);
         $employeeDataArray = [];
         foreach ($employeeList as $value) {
             $employeeDataArray[] = ['id' => $value['id'], 'name' => $value['firstName'] . ' ' . $value['lastName']];
