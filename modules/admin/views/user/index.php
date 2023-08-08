@@ -40,9 +40,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 'template' => Helper::filterActionColumn(['view', 'activate', 'delete']),
                 'buttons' => [
                     'activate' => function($url, $model) {
-                        if ($model->status == 10) {
-                            return '';
-                        }
                         $options = [
                             'title' => Yii::t('rbac-admin', 'Activate'),
                             'aria-label' => Yii::t('rbac-admin', 'Activate'),
