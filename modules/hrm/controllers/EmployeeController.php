@@ -166,7 +166,7 @@ class EmployeeController extends ParentController
         return $this->employeeRepository->findOne(['uid' => $uid], Employee::class, $withArray);
     }
 
-    public function actionGetEmployeeByDepartment()
+    public function actionGetEmployeeByDepartment(): array
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
         $out = [];
