@@ -30,7 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'address',
                 [
                     'attribute' => 'logo',
-                    'format' => ['image'],
+                    'format' => ['image', ['width'=>'200','height'=>'100']],
                     'value' => function ($model) {
                         return '/uploads/company/' . $model->logo;
                     }
