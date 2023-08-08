@@ -11,7 +11,7 @@ class HrmConfigurationRepository extends ParentRepository
 {
     public function getEmployeeListByDepartment(array $queryArray, array $subQueryArray): array
     {
-        return Employee::find()->with(['employeeDesignation' => function ($query) use ($queryArray, $subQueryArray) {
+        return Employee::find()->joinWith(['employeeDesignation' => function ($query) use ($queryArray, $subQueryArray) {
             $query->where($subQueryArray);
         }])->where($queryArray)->all();
     }
