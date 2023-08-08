@@ -80,10 +80,12 @@ class EmployeeController extends ParentController
     {
         $agency = Agency::find()->with(['plan', 'users'])->where(['id' => Yii::$app->user->identity->agencyId])->asArray()->one();
         if (COUNT($agency['users']) >= $agency['plan']['userLimit']) {
-            throw new Exception('You are out of your user limit.');
+            Yii::$app->session->setFlash('danger','You are out of your user limit.');
+            return $this->redirect(['index']);
         }
 
         $signupModel = new Signup();
+        $signupModel->agencyId = Yii::$app->user->identity->agencyId;
         $model = new Employee();
         $designation = new EmployeeDesignation();
         $branches = $this->hrmConfigurationService->getAll(['status' => GlobalConstant::ACTIVE_STATUS, 'agencyId' => Yii::$app->user->identity->agencyId], Branch::class, [], true);
@@ -96,7 +98,6 @@ class EmployeeController extends ParentController
             if ($storeResponse) {
                 return $this->redirect(['index']);
             }
-
         } else {
             $model->loadDefaultValues();
             $designation->loadDefaultValues();

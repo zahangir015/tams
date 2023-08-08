@@ -107,18 +107,6 @@ use app\modules\admin\components\Helper;
                         'visible' => Helper::checkRoute('/country/') || Helper::checkRoute('/city/') || Helper::checkRoute('/company/') || Helper::checkRoute('/company/view')
                     ],
                     [
-                        'label' => 'User Management',
-                        'icon' => 'users-cog',
-                        'items' => [
-                            ['label' => 'Users', 'icon' => 'users', 'url' => ['/admin/user/index'], 'visible' => Helper::checkRoute('admin/user/index')],
-                            ['label' => 'Create User', 'icon' => 'user-plus', 'url' => ['/admin/user/create'], 'visible' => Helper::checkRoute('admin/user/create')],
-                        ],
-                        'options' => [
-                            'class' => 'nav-item has-treeview bg-green mb-2 rounded',
-                        ],
-                        'linkOptions' => ['class' => 'nav-link text-white'],
-                    ],
-                    [
                         'label' => 'Authorization',
                         'icon' => 'users-cog',
                         'items' => [
@@ -168,6 +156,14 @@ use app\modules\admin\components\Helper;
                                     ['label' => 'Employee Add', 'icon' => 'plus', 'url' => ['/hrm/employee/create'], 'visible' => Helper::checkRoute('/hrm/employee/create')],
                                     ['label' => 'Employee List', 'icon' => 'list', 'url' => ['/hrm/employee/index'], 'visible' => Helper::checkRoute('/hrm/employee/')],
                                 ]
+                            ],
+                            [
+                                'label' => 'User Management',
+                                'icon' => 'users-cog',
+                                'items' => [
+                                    ['label' => 'Users', 'icon' => 'users', 'url' => ['/admin/user/index'], 'visible' => Helper::checkRoute('/admin/user/index')],
+                                    ['label' => 'Create User', 'icon' => 'user-plus', 'url' => ['/admin/user/create'], 'visible' => Helper::checkRoute('/admin/user/create')],
+                                ],
                             ],
                             [
                                 'label' => 'Weekend & Holidays',
