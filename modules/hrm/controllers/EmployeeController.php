@@ -174,7 +174,7 @@ class EmployeeController extends ParentController
             $parents = $_POST['depdrop_parents'];
             if ($parents != null) {
                 $departmentId = $parents[0];
-                $out = $this->hrmConfigurationService->getEmployeeList([Employee::tableName().'.status' => GlobalConstant::ACTIVE_STATUS], ['departmentId' => $departmentId, EmployeeDesignation::tableName().'.status' => GlobalConstant::ACTIVE_STATUS]);
+                $out = $this->hrmConfigurationService->getEmployeeList([Employee::tableName().'.status' => GlobalConstant::ACTIVE_STATUS], [EmployeeDesignation::tableName().'.departmentId' => $departmentId, EmployeeDesignation::tableName().'.status' => GlobalConstant::ACTIVE_STATUS]);
                 // the getSubCatList function will query the database based on the
                 // $departmentId and return an array like below:
                 // [
