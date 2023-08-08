@@ -9,11 +9,11 @@ use yii\db\ActiveRecord;
 
 class HrmConfigurationRepository extends ParentRepository
 {
-    public function getEmployeeListByDepartment(array $queryArray, array $subQueryArray)
+    public function getEmployeeListByDepartment(array $queryArray, array $subQueryArray): array
     {
         return Employee::find()->joinWith(['employeeDesignation' => function ($query) use ($subQueryArray) {
             $query->where($subQueryArray);
-        }])->where($queryArray)->createCommand()->getRawSql();
+        }])->where($queryArray)->all();
     }
 
 }
