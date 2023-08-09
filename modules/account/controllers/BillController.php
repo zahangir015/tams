@@ -136,7 +136,7 @@ class BillController extends ParentController
     public function actionPending(): array
     {
         $data = Yii::$app->request->get();
-        return $this->billService->getPendingBill();
+        return $this->billService->getPendingBill($data);
 
 
 

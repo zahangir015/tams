@@ -1,26 +1,26 @@
 $(function () {
-    $(document).on('change', "#customerId", function () {
-        var customerId = $(this).val();
+    $(document).on('change', "#supplierId", function () {
+        var supplierId = $(this).val();
         if ($('input[name=dateRange]').val()) {
             var dateRange = $('input[name=dateRange]').val();
-            pendingServices(customerId, dateRange);
+            pendingServices(supplierId, dateRange);
         } else {
-            pendingServices(customerId, "");
+            pendingServices(supplierId, "");
         }
     });
 
-    $('input[name=dateRange]').change(function (e) {
-        var dateRange = $('input[name=dateRange]').val();
-        if ($('#customerId').val()) {
-            var customerId = $('#customerId').val();
-            pendingServices(customerId, dateRange);
+    $('#bill-daterange').change(function (e) {
+        var dateRange = $('#bill-daterange').val();
+        if ($('#supplierId').val()) {
+            var supplierId = $('#supplierId').val();
+            pendingServices(supplierId, dateRange);
         }
     });
 
-    function pendingServices(customerId, dateRange) {
+    function pendingServices(supplierId, dateRange) {
         $.ajax({
             url: ajaxUrl, type: 'get', data: {
-                customerId: customerId, dateRange: dateRange
+                supplierId: supplierId, dateRange: dateRange
             }, dataType: 'json', success: function (data) {
                 $("tbody#t-body").empty();
                 $("#totalPayable").empty();
@@ -92,7 +92,7 @@ $(function () {
 
     $('#refundId').on('change', function () {
         let adjustmentAmount = calculateAdjustmentAmount();
-        $('#transaction-amount, #groupinvoice-amount').val(adjustmentAmount);
+        $('#transaction-amount').val(adjustmentAmount);
     });
 
 

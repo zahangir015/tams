@@ -157,78 +157,77 @@ class BillService
                 },
             ])
             ->where(['id' => $supplierId])->one();
-
         $html = '';
         $key = 1;
         $totalPayable = 0;
         if (!empty($pendingServices->tickets)) {
             foreach ($pendingServices->tickets as $pending) {
-                $totalPayable += ($pending->quoteAmount - $pending->receivedAmount);
+                $totalPayable += ($pending->costOfSale - $pending->paidAmount);
                 $html .= '<tr>';
                 $html .= '<td><input type="checkbox" class="chk" id="chk' . $key . '" name="services[]" value="' . htmlspecialchars(json_encode([
                         'refId' => $pending->id,
                         'refModel' => get_class($pending),
-                        'paidAmount' => $pending->receivedAmount,
-                        'dueAmount' => ($pending->quoteAmount - $pending->receivedAmount),
+                        'paidAmount' => $pending->paidAmount,
+                        'dueAmount' => ($pending->costOfSale - $pending->paidAmount),
                     ])) . '"></td>';
                 $html .= '<td>' . $pending->formName() . '</td>';
-                $html .= '<td><span class="badge bg-green">' . $pending->eTicket . '</span></td>';
+                //$html .= '<td><span class="badge bg-green">' . $pending->ticket->eTicket . '</span></td>';
                 $html .= '<td>' . $pending->issueDate . '</td>';
-                $html .= '<td>' . ($pending->quoteAmount - $pending->receivedAmount) . '<input type="text" class="amount form-control" id="amt' . $key . '" value="' . ($pending->quoteAmount - $pending->receivedAmount) . '" hidden></td>';
+                $html .= '<td>' . ($pending->costOfSale - $pending->paidAmount) . '<input type="text" class="amount form-control" id="amt' . $key . '" value="' . ($pending->costOfSale - $pending->paidAmount) . '" hidden></td>';
                 $html .= '</tr>';
                 $key++;
             }
         }
         if (!empty($pendingServices->hotels)) {
             foreach ($pendingServices->hotels as $pending) {
-                $totalPayable += ($pending->quoteAmount - $pending->receivedAmount);
+                $totalPayable += ($pending->costOfSale - $pending->paidAmount);
                 $html .= '<tr>';
                 $html .= '<td><input type="checkbox" class="chk" id="chk' . $key . '" name="services[]" value="' . htmlspecialchars(json_encode([
                         'refId' => $pending->id,
                         'refModel' => get_class($pending),
-                        'paidAmount' => $pending->receivedAmount,
-                        'dueAmount' => ($pending->quoteAmount - $pending->receivedAmount),
+                        'paidAmount' => $pending->paidAmount,
+                        'dueAmount' => ($pending->costOfSale - $pending->paidAmount),
                     ])) . '"></td>';
                 $html .= '<td>' . $pending->formName() . '</td>';
-                $html .= '<td><span class="badge bg-green">' . $pending->identificationNumber . '</span></td>';
+                //$html .= '<td><span class="badge bg-green">' . $pending->hotel->identificationNumber . '</span></td>';
                 $html .= '<td>' . $pending->issueDate . '</td>';
-                $html .= '<td>' . ($pending->quoteAmount - $pending->receivedAmount) . '<input type="text" class="amount form-control" id="amt' . $key . '" value="' . ($pending->quoteAmount - $pending->receivedAmount) . '" hidden></td>';
+                $html .= '<td>' . ($pending->costOfSale - $pending->paidAmount) . '<input type="text" class="amount form-control" id="amt' . $key . '" value="' . ($pending->costOfSale - $pending->paidAmount) . '" hidden></td>';
                 $html .= '</tr>';
                 $key++;
             }
         }
         if (!empty($pendingServices->visas)) {
             foreach ($pendingServices->visas as $pending) {
-                $totalPayable += ($pending->quoteAmount - $pending->receivedAmount);
+                $totalPayable += ($pending->costOfSale - $pending->paidAmount);
                 $html .= '<tr>';
                 $html .= '<td><input type="checkbox" class="chk" id="chk' . $key . '" name="services[]" value="' . htmlspecialchars(json_encode([
                         'refId' => $pending->id,
                         'refModel' => get_class($pending),
-                        'paidAmount' => $pending->receivedAmount,
-                        'dueAmount' => ($pending->quoteAmount - $pending->receivedAmount),
+                        'paidAmount' => $pending->paidAmount,
+                        'dueAmount' => ($pending->costOfSale - $pending->paidAmount),
                     ])) . '"></td>';
                 $html .= '<td>' . $pending->formName() . '</td>';
-                $html .= '<td><span class="badge bg-green">' . $pending->identificationNumber ?? 'N/A' . '</span></td>';
+                //$html .= '<td><span class="badge bg-green">' . $pending->visa->identificationNumber ?? 'N/A' . '</span></td>';
                 $html .= '<td>' . $pending->issueDate . '</td>';
-                $html .= '<td>' . ($pending->quoteAmount - $pending->receivedAmount) . '<input type="text" class="amount form-control" id="amt' . $key . '" value="' . ($pending->quoteAmount - $pending->receivedAmount) . '" hidden></td>';
+                $html .= '<td>' . ($pending->costOfSale - $pending->paidAmount) . '<input type="text" class="amount form-control" id="amt' . $key . '" value="' . ($pending->costOfSale - $pending->paidAmount) . '" hidden></td>';
                 $html .= '</tr>';
                 $key++;
             }
         }
         if (!empty($pendingServices->holidays)) {
             foreach ($pendingServices->holidays as $pending) {
-                $totalPayable += ($pending->quoteAmount - $pending->receivedAmount);
+                $totalPayable += ($pending->costOfSale - $pending->paidAmount);
                 $html .= '<tr>';
                 $html .= '<td><input type="checkbox" class="chk" id="chk' . $key . '" name="services[]" value="' . htmlspecialchars(json_encode([
                         'refId' => $pending->id,
                         'refModel' => get_class($pending),
-                        'paidAmount' => $pending->receivedAmount,
-                        'dueAmount' => ($pending->quoteAmount - $pending->receivedAmount),
+                        'paidAmount' => $pending->paidAmount,
+                        'dueAmount' => ($pending->costOfSale - $pending->paidAmount),
                     ])) . '"></td>';
                 $html .= '<td>' . $pending->formName() . '</td>';
-                $html .= '<td><span class="badge bg-green">' . $pending->identificationNumber ?? 'NA' . '</span></td>';
+                //$html .= '<td><span class="badge bg-green">' . $pending->holiday->identificationNumber ?? 'NA' . '</span></td>';
                 $html .= '<td>' . $pending->issueDate . '</td>';
-                $html .= '<td>' . ($pending->quoteAmount - $pending->receivedAmount) . '<input type="text" class="amount form-control" id="amt' . $key . '" value="' . ($pending->quoteAmount - $pending->receivedAmount) . '" hidden></td>';
+                $html .= '<td>' . ($pending->costOfSale - $pending->paidAmount) . '<input type="text" class="amount form-control" id="amt' . $key . '" value="' . ($pending->costOfSale - $pending->paidAmount) . '" hidden></td>';
                 $html .= '</tr>';
                 $key++;
             }
@@ -272,8 +271,8 @@ class BillService
     {
         $invoiceDetail = new InvoiceDetail();
         $invoiceDetail->invoiceId = $newRefundService->invoiceId;
-        $invoiceDetail->dueAmount = ($newRefundService->quoteAmount - $newRefundService->receivedAmount);
-        $invoiceDetail->paidAmount = $newRefundService->receivedAmount;
+        $invoiceDetail->dueAmount = ($newRefundService->costOfSale - $newRefundService->paidAmount);
+        $invoiceDetail->paidAmount = $newRefundService->paidAmount;
         $invoiceDetail->refId = $newRefundService->id;
         $invoiceDetail->refModel = $newRefundService::class;
         $invoiceDetail->status = GlobalConstant::ACTIVE_STATUS;
@@ -475,8 +474,8 @@ class BillService
         // Invoice detail process
         $invoiceDetail = new InvoiceDetail();
         $invoiceDetail->invoiceId = $newReissueService->invoiceId;
-        $invoiceDetail->dueAmount = ($newReissueService->quoteAmount - $newReissueService->receivedAmount);
-        $invoiceDetail->paidAmount = $newReissueService->receivedAmount;
+        $invoiceDetail->dueAmount = ($newReissueService->costOfSale - $newReissueService->paidAmount);
+        $invoiceDetail->paidAmount = $newReissueService->paidAmount;
         $invoiceDetail->refId = $newReissueService->id;
         $invoiceDetail->refModel = $newReissueService::class;
         $invoiceDetail->status = GlobalConstant::ACTIVE_STATUS;
@@ -648,29 +647,29 @@ class BillService
             if (!$service) {
                 return ['error' => true, 'message' => "{$invoiceDetail->refModel} not found with id {$invoiceDetail->refId}"];
             }
-            $due = $service->quoteAmount - $service->receivedAmount;
+            $due = $service->costOfSale - $service->paidAmount;
             if (($service->paymentStatus == ServiceConstant::PAYMENT_STATUS['Full Paid']) && ($due == 0)) {
                 continue;
             }
             if ($due <= $amount) {
-                $service->receivedAmount += $due;
+                $service->paidAmount += $due;
                 $service->paymentStatus = ServiceConstant::PAYMENT_STATUS['Full Paid'];
                 //$paidAmountThisTime = $due;
                 $amount -= $due;
             } else {
-                $service->receivedAmount += $amount;
+                $service->paidAmount += $amount;
                 $service->paymentStatus = ServiceConstant::PAYMENT_STATUS['Partially Paid'];
                 //$paidAmountThisTime = $amount;
                 $amount = 0;
             }
-            $amountDue = $service->quoteAmount - $service->receivedAmount;
+            $amountDue = $service->costOfSale - $service->paidAmount;
             if (!$service->save()) {
                 return ['error' => true, 'message' => "{$invoiceDetail->refModel} not updated with id {$invoiceDetail->refId}"];
             }
 
             // Invoice detail update
             $invoiceDetail->dueAmount = $amountDue;
-            $invoiceDetail->paidAmount = $service->receivedAmount;
+            $invoiceDetail->paidAmount = $service->paidAmount;
             $invoiceDetail = $this->invoiceRepository->store($invoiceDetail);
             if ($invoiceDetail->hasErrors()) {
                 return ['error' => true, 'message' => Utilities::processErrorMessages($invoiceDetail->getErrors())];
@@ -742,7 +741,7 @@ class BillService
                         'invoiceId' => $invoice->id
                     ],
                     'data' => [
-                        'receivedAmount' => sprintf('%.2f', $invoiceDetail->amount),
+                        'paidAmount' => sprintf('%.2f', $invoiceDetail->amount),
                         'paymentStatus' => $paymentStatusResponse,
                         'updatedAt' => Utilities::convertToTimestamp(date('Y-m-d H:i:s')),
                         'updatedBy' => Yii::$app->user->id

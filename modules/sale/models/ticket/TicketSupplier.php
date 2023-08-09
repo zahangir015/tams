@@ -64,10 +64,10 @@ class TicketSupplier extends ActiveRecord
             [['uid'], 'string', 'max' => 36],
             [['eTicket', 'pnrCode'], 'string', 'max' => 50],
             [['uid'], 'unique'],
-            [['airlineId'], 'exist', 'skipOnError' => true, 'targetClass' => Airline::className(), 'targetAttribute' => ['airlineId' => 'id']],
-            [['billId'], 'exist', 'skipOnError' => true, 'targetClass' => Bill::className(), 'targetAttribute' => ['billId' => 'id']],
-            [['supplierId'], 'exist', 'skipOnError' => true, 'targetClass' => Supplier::className(), 'targetAttribute' => ['supplierId' => 'id']],
-            [['ticketId'], 'exist', 'skipOnError' => true, 'targetClass' => Ticket::className(), 'targetAttribute' => ['ticketId' => 'id']],
+            [['airlineId'], 'exist', 'skipOnError' => true, 'targetClass' => Airline::class, 'targetAttribute' => ['airlineId' => 'id']],
+            [['billId'], 'exist', 'skipOnError' => true, 'targetClass' => Bill::class, 'targetAttribute' => ['billId' => 'id']],
+            [['supplierId'], 'exist', 'skipOnError' => true, 'targetClass' => Supplier::class, 'targetAttribute' => ['supplierId' => 'id']],
+            [['ticketId'], 'exist', 'skipOnError' => true, 'targetClass' => Ticket::class, 'targetAttribute' => ['ticketId' => 'id']],
         ];
     }
 
@@ -105,7 +105,7 @@ class TicketSupplier extends ActiveRecord
      */
     public function getAirline(): ActiveQuery
     {
-        return $this->hasOne(Airline::className(), ['id' => 'airlineId']);
+        return $this->hasOne(Airline::class, ['id' => 'airlineId']);
     }
 
     /**
@@ -115,7 +115,7 @@ class TicketSupplier extends ActiveRecord
      */
     public function getBill(): ActiveQuery
     {
-        return $this->hasOne(Bill::className(), ['id' => 'billId']);
+        return $this->hasOne(Bill::class, ['id' => 'billId']);
     }
 
     /**
@@ -125,7 +125,7 @@ class TicketSupplier extends ActiveRecord
      */
     public function getSupplier(): ActiveQuery
     {
-        return $this->hasOne(Supplier::className(), ['id' => 'supplierId']);
+        return $this->hasOne(Supplier::class, ['id' => 'supplierId']);
     }
 
     /**
@@ -135,6 +135,6 @@ class TicketSupplier extends ActiveRecord
      */
     public function getTicket(): ActiveQuery
     {
-        return $this->hasOne(Ticket::className(), ['id' => 'ticketId']);
+        return $this->hasOne(Ticket::class, ['id' => 'ticketId']);
     }
 }
