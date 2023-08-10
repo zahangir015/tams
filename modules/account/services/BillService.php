@@ -135,21 +135,21 @@ class BillService
                     }
                 },
                 'visas' => function ($query) use ($start_date, $end_date) {
-                    $query->where(['<>', 'paymentStatus', ServiceConstant::PAYMENT_STATUS['Full Paid']])
+                    $query->with(['visa'])->where(['<>', 'paymentStatus', ServiceConstant::PAYMENT_STATUS['Full Paid']])
                         ->andWhere(['IS', 'billId', NULL]);
                     if ($start_date && $end_date) {
                         $query->andWhere(['between', 'issueDate', $start_date, $end_date])->orderBy(['issueDate' => SORT_ASC]);
                     }
                 },
                 'hotels' => function ($query) use ($start_date, $end_date) {
-                    $query->where(['<>', 'paymentStatus', ServiceConstant::PAYMENT_STATUS['Full Paid']])
+                    $query->with(['hotel'])->where(['<>', 'paymentStatus', ServiceConstant::PAYMENT_STATUS['Full Paid']])
                         ->andWhere(['IS', 'billId', NULL]);
                     if ($start_date && $end_date) {
                         $query->andWhere(['between', 'issueDate', $start_date, $end_date])->orderBy(['issueDate' => SORT_ASC]);
                     }
                 },
                 'holidays' => function ($query) use ($start_date, $end_date) {
-                    $query->where(['<>', 'paymentStatus', ServiceConstant::PAYMENT_STATUS['Full Paid']])
+                    $query->with(['holiday'])->where(['<>', 'paymentStatus', ServiceConstant::PAYMENT_STATUS['Full Paid']])
                         ->andWhere(['IS', 'billId', NULL]);
                     if ($start_date && $end_date) {
                         $query->andWhere(['between', 'issueDate', $start_date, $end_date])->orderBy(['issueDate' => SORT_ASC]);
@@ -171,7 +171,7 @@ class BillService
                         'dueAmount' => ($pending->costOfSale - $pending->paidAmount),
                     ])) . '"></td>';
                 $html .= '<td>' . $pending->formName() . '</td>';
-                //$html .= '<td><span class="badge bg-green">' . $pending->ticket->eTicket . '</span></td>';
+                $html .= '<td><span class="badge bg-green">' . $pending->eTicket . '</span></td>';
                 $html .= '<td>' . $pending->issueDate . '</td>';
                 $html .= '<td>' . ($pending->costOfSale - $pending->paidAmount) . '<input type="text" class="amount form-control" id="amt' . $key . '" value="' . ($pending->costOfSale - $pending->paidAmount) . '" hidden></td>';
                 $html .= '</tr>';
@@ -189,7 +189,7 @@ class BillService
                         'dueAmount' => ($pending->costOfSale - $pending->paidAmount),
                     ])) . '"></td>';
                 $html .= '<td>' . $pending->formName() . '</td>';
-                //$html .= '<td><span class="badge bg-green">' . $pending->hotel->identificationNumber . '</span></td>';
+                $html .= '<td><span class="badge bg-green">' . $pending->hotel->identificationNumber . '</span></td>';
                 $html .= '<td>' . $pending->issueDate . '</td>';
                 $html .= '<td>' . ($pending->costOfSale - $pending->paidAmount) . '<input type="text" class="amount form-control" id="amt' . $key . '" value="' . ($pending->costOfSale - $pending->paidAmount) . '" hidden></td>';
                 $html .= '</tr>';
@@ -198,36 +198,38 @@ class BillService
         }
         if (!empty($pendingServices->visas)) {
             foreach ($pendingServices->visas as $pending) {
-                $totalPayable += ($pending->costOfSale - $pending->paidAmount);
+                $dueAmount = ($pending->costOfSale - $pending->paidAmount);
+                $totalPayable += $dueAmount;
                 $html .= '<tr>';
                 $html .= '<td><input type="checkbox" class="chk" id="chk' . $key . '" name="services[]" value="' . htmlspecialchars(json_encode([
                         'refId' => $pending->id,
                         'refModel' => get_class($pending),
                         'paidAmount' => $pending->paidAmount,
-                        'dueAmount' => ($pending->costOfSale - $pending->paidAmount),
+                        'dueAmount' => $dueAmount,
                     ])) . '"></td>';
                 $html .= '<td>' . $pending->formName() . '</td>';
-                //$html .= '<td><span class="badge bg-green">' . $pending->visa->identificationNumber ?? 'N/A' . '</span></td>';
+                $html .= '<td><span class="badge bg-green">' . $pending->visa->identificationNumber ?? 'N/A' . '</span></td>';
                 $html .= '<td>' . $pending->issueDate . '</td>';
-                $html .= '<td>' . ($pending->costOfSale - $pending->paidAmount) . '<input type="text" class="amount form-control" id="amt' . $key . '" value="' . ($pending->costOfSale - $pending->paidAmount) . '" hidden></td>';
+                $html .= '<td>' . $dueAmount . '<input type="text" class="amount form-control" id="amt' . $key . '" value="' . $dueAmount . '" hidden></td>';
                 $html .= '</tr>';
                 $key++;
             }
         }
         if (!empty($pendingServices->holidays)) {
             foreach ($pendingServices->holidays as $pending) {
-                $totalPayable += ($pending->costOfSale - $pending->paidAmount);
+                $dueAmount = ($pending->costOfSale - $pending->paidAmount);
+                $totalPayable += $dueAmount;
                 $html .= '<tr>';
                 $html .= '<td><input type="checkbox" class="chk" id="chk' . $key . '" name="services[]" value="' . htmlspecialchars(json_encode([
                         'refId' => $pending->id,
                         'refModel' => get_class($pending),
                         'paidAmount' => $pending->paidAmount,
-                        'dueAmount' => ($pending->costOfSale - $pending->paidAmount),
+                        'dueAmount' => $dueAmount,
                     ])) . '"></td>';
                 $html .= '<td>' . $pending->formName() . '</td>';
-                //$html .= '<td><span class="badge bg-green">' . $pending->holiday->identificationNumber ?? 'NA' . '</span></td>';
+                $html .= '<td><span class="badge bg-green">' . $pending->holiday->identificationNumber ?? 'NA' . '</span></td>';
                 $html .= '<td>' . $pending->issueDate . '</td>';
-                $html .= '<td>' . ($pending->costOfSale - $pending->paidAmount) . '<input type="text" class="amount form-control" id="amt' . $key . '" value="' . ($pending->costOfSale - $pending->paidAmount) . '" hidden></td>';
+                $html .= '<td>' . $dueAmount . '<input type="text" class="amount form-control" id="amt' . $key . '" value="' . $dueAmount . '" hidden></td>';
                 $html .= '</tr>';
                 $key++;
             }

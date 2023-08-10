@@ -51,7 +51,7 @@ $this->registerJsFile(
                                 <tr class="border-bottom fs-7 fw-bolder text-gray-700 text-uppercase">
                                     <th style="width: 10px"><input type="checkbox" id="all"></th>
                                     <th>Service</th>
-                                    <th>Identification Number</th>
+                                    <th>Identification#</th>
                                     <th>Issue Date</th>
                                     <th>Amount Due</th>
                                 </tr>
@@ -86,7 +86,7 @@ $this->registerJsFile(
                         <tr>
                             <td>Total Due:</td>
                             <td id="totalPayable"></td>
-                            <?= $form->field($model, 'dueAmount')->hiddenInput(['value' => 0, 'id' => 'billAmount'])->label(false) ?>
+
                         </tr>
                         <tr>
                             <td>Total Selected:</td>
@@ -98,9 +98,25 @@ $this->registerJsFile(
             </div>
             <div class="card card-custom">
                 <div class="card-body">
+
                     <div class="row">
                         <div class="col-md">
                             <?= $form->field($model, 'date')->widget(DatePicker::class, Utilities::getDatewidget('date', 'date', false)) ?>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md">
+                            <?= $form->field($model, 'billNumber')->textInput(['value' => Utilities::billNumber(), 'id' => 'billAmount']) ?>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md">
+                            <?= $form->field($model, 'dueAmount')->textInput(['value' => 0, 'id' => 'billAmount']) ?>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md">
+                            <?= $form->field($model, 'paidAmount')->textInput(['value' => 0, 'id' => 'billAmount']) ?>
                         </div>
                     </div>
                     <div class="row">
