@@ -44,7 +44,7 @@ class BillService
                 throw new Exception('Service select is required.');
             }
 
-            if (!$bill->load(['Invoice' => $requestData['Bill']])) {
+            if (!$bill->load(['Bill' => $requestData['Bill']])) {
                 throw new Exception('Bill loading failed.');
             }
 
