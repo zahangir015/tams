@@ -1,9 +1,11 @@
 <?php
 
+use app\components\Utilities;
+use app\modules\account\models\Bill;
 use yii\helpers\Html;
 use yii\helpers\Url;
-use yii\grid\ActionColumn;
-use yii\grid\GridView;
+use kartik\grid\ActionColumn;
+use kartik\grid\GridView;
 use yii\widgets\Pjax;
 /* @var $this yii\web\View */
 /* @var $searchModel app\modules\account\models\search\BillSearch */
@@ -13,46 +15,61 @@ $this->title = Yii::t('app', 'Bills');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="bill-index">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <p>
-        <?= Html::a(Yii::t('app', 'Create Bill'), ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
-    <?php Pjax::begin(); ?>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
-            'uid',
-            'supplierId',
-            'billNumber',
-            'date',
-            //'paidAmount',
-            //'dueAmount',
-            //'discountedAmount',
-            //'refundAdjustmentAmount',
-            //'remarks:ntext',
-            //'status',
-            //'createdBy',
-            //'createdAt',
-            //'updatedBy',
-            //'updatedAt',
+            ['class' => 'kartik\grid\SerialColumn'],
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, Bill $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'id' => $model->id]);
-                 }
+                    return Url::toRoute([$action, 'uid' => $model->uid]);
+                },
+                'width' => '150px',
+                'template' => '{view} {edit} {delete}',
+                'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
+                'buttons' => Utilities::getBasicActionColumnArray()
             ],
+            'supplierId',
+            'billNumber',
+            'date',
+            'paidAmount',
+            'dueAmount',
+            'discountedAmount',
+            'refundAdjustmentAmount',
+            'remarks:ntext',
+            'status',
+            'createdBy',
+            'createdAt',
+            'updatedBy',
+            'updatedAt',
+
+        ],
+        'toolbar' => [
+            [
+                'content' =>
+                    Html::a('<i class="fas fa-plus"></i>', ['/account/bill/create'], [
+                        'title' => Yii::t('app', 'Add Bill'),
+                        'class' => 'btn btn-success'
+                    ]) . ' ' .
+                    Html::a('<i class="fas fa-redo"></i>', ['/account/bill/index'], [
+                        'class' => 'btn btn-primary',
+                        'title' => Yii::t('app', 'Reset Grid')
+                    ]),
+            ],
+            '{export}',
+            '{toggleData}'
+        ],
+        'pjax' => true,
+        'bordered' => true,
+        'striped' => false,
+        'condensed' => false,
+        'responsive' => true,
+        'hover' => true,
+        'panel' => [
+            'heading' => '<i class="fas fa-list-alt"></i> ' . Html::encode($this->title),
+            'type' => GridView::TYPE_DARK
         ],
     ]); ?>
-
-    <?php Pjax::end(); ?>
 
 </div>

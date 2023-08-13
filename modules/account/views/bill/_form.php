@@ -1,5 +1,6 @@
 <?php
 
+use app\components\GlobalConstant;
 use app\components\Utilities;
 use app\components\WidgetHelper;
 use kartik\date\DatePicker;
@@ -29,7 +30,7 @@ $this->registerJsFile(
 <div class="bill-form">
     <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-7">
             <div class="card">
                 <div class="card-body">
                     <div class="row">
@@ -73,10 +74,11 @@ $this->registerJsFile(
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-5">
             <div class="card card-custom" id="kt_page_sticky_card">
                 <div class="card-body">
                     <h4>Payment details</h4>
+                    <hr>
                     <table class="table g-5 gs-0 mb-0 fw-bolder text-gray-700 mb-10">
                         <tbody>
                         <tr>
@@ -86,7 +88,6 @@ $this->registerJsFile(
                         <tr>
                             <td>Total Due:</td>
                             <td id="totalPayable"></td>
-
                         </tr>
                         <tr>
                             <td>Total Selected:</td>
@@ -94,40 +95,67 @@ $this->registerJsFile(
                         </tr>
                         </tbody>
                     </table>
-                </div>
-            </div>
-            <div class="card card-custom">
-                <div class="card-body">
-
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($model, 'date')->widget(DatePicker::class, Utilities::getDatewidget('date', 'date', false)) ?>
+                            <?= $form->field($model, 'dueAmount')->textInput(['maxlength' => true, 'id' => 'dueAmount'])->label('Due') ?>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($model, 'billNumber')->textInput(['value' => Utilities::billNumber(), 'id' => 'billAmount']) ?>
+                            <?= $form->field($transaction, 'bankId')->widget(Select2::class, [
+                                'theme' => Select2::THEME_DEFAULT,
+                                'data' => $bankList,
+                                'options' => [
+                                    'id' => 'bankId',
+                                    'class' => 'form-control',
+                                    'placeholder' => 'Select a bank ...',
+                                ],
+                                'pluginOptions' => [
+                                    'allowClear' => true
+                                ],
+                            ])->label('Bank');
+                            ?>
+                        </div>
+                        <div class="col-md">
+                            <?= $form->field($transaction, 'reference')->textInput(['maxlength' => true])->label('Reference') ?>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($model, 'dueAmount')->textInput(['value' => 0, 'id' => 'billAmount']) ?>
+                            <?= $form->field($transaction, 'paidAmount')->textInput(['value' => $model->dueAmount, 'max' => $model->dueAmount, 'min' => 1]) ?>
+                        </div>
+                        <div class="col-md">
+                            <?= $form->field($transaction, 'paymentCharge')->textInput(['value' => 0]) ?>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($model, 'paidAmount')->textInput(['value' => 0, 'id' => 'billAmount']) ?>
+                            <?= $form->field($transaction, 'paymentMode')->dropdownList(GlobalConstant::PAYMENT_MODE, ['prompt' => '']); ?>
+                        </div>
+                        <div class="col-md">
+                            <?= $form->field($transaction, 'paymentDate')->widget(DatePicker::class, WidgetHelper::getDatewidget('paymentDate', 'paymentDate', false, true)); ?>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md" id="comment">
-                            <?= $form->field($model, 'remarks')->textarea() ?>
+                        <div class="col-md">
+                            <div id="files" style="background-color: #FFFFFF; padding: 10px;">
+                                <?= $form->field($model, 'billFile[]')->widget(FileInput::class, [
+                                    'options' => [
+                                        'multiple' => true,
+                                        'accept' => '*'
+                                    ],
+                                    'pluginOptions' => [
+                                        'maxFileCount' => 10,
+                                    ]
+                                ])->label('Upload files');
+                                ?>
+                            </div>
                         </div>
                     </div>
-                    <div class="row mt-10">
-                        <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md">
                             <div class="form-group">
-                                <?= Html::submitButton(Yii::t('app', 'Create'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+                                <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Pay'), ['class' => $model->isNewRecord ? 'btn btn-success float-right' : 'btn btn-primary float-right']) ?>
                             </div>
                         </div>
                     </div>

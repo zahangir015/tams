@@ -5,6 +5,7 @@ namespace app\modules\account\controllers;
 use app\modules\account\models\Bill;
 use app\modules\account\models\search\BillSearch;
 use app\controllers\ParentController;
+use app\modules\account\models\Transaction;
 use app\modules\account\repositories\BillRepository;
 use app\modules\account\services\BillService;
 use app\modules\account\services\RefundTransactionService;
@@ -80,6 +81,8 @@ class BillController extends ParentController
 
         return $this->render('create', [
             'model' => $model,
+            'transaction' => new Transaction(),
+            'bankList' => $this->billService->getBankList()
         ]);
     }
 

@@ -12,5 +12,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="bill-create">
     <?= $this->render('_form', [
         'model' => $model,
+        'transaction' => $transaction,
+        'bankList' => $bankList
     ]) ?>
 </div>

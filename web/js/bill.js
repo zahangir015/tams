@@ -43,13 +43,13 @@ $(function () {
                 }
             });
             $('#amount').val(sum.toFixed(2));
-            $('#total').text(sum.toFixed(2));
-            $('#invoiceAmount').val(sum.toFixed(2));
+            $('#total, #dueAmount').text(sum.toFixed(2));
+            $('#dueAmount').val(sum.toFixed(2));
         } else {
             $('.chk').prop('checked', false);
             $('#amount').val(sum.toFixed(2));
-            $('#total').text(sum.toFixed(2));
-            $('#invoiceAmount').val(sum.toFixed(2));
+            $('#total, #dueAmount').text(sum.toFixed(2));
+            $('#dueAmount').val(sum.toFixed(2));
         }
     });
     
@@ -62,16 +62,16 @@ $(function () {
                 }
             }
         });
-        $('#amount').val(sum);
-        $('#total').text(sum.toFixed(2));
-        $('#invoiceAmount').val(sum.toFixed(2));
+        $('#amount').val(sum.toFixed(2));
+        $('#total, #dueAmount').text(sum.toFixed(2));
+        $('#dueAmount').val(sum.toFixed(2));
     }
 
     $(document).on('change', ".amount", function () {
         sumAllSelectedReceivingAmount();
     });
-    $(document).on('change', ".chk", function () {
 
+    $(document).on('change', ".chk", function () {
         if (this.checked) {
             sumAllSelectedReceivingAmount();
         } else {
@@ -81,58 +81,5 @@ $(function () {
             sumAllSelectedReceivingAmount();
         }
     });
-
-    var payAmount = 0;
-    if ($("#transaction-amount").length) {
-        payAmount = parseFloat($('#transaction-amount').val());
-    }
-    if ($("#groupinvoice-amount").length) {
-        payAmount = parseFloat($('#groupinvoice-amount').val()) || 0;
-    }
-
-    $('#refundId').on('change', function () {
-        let adjustmentAmount = calculateAdjustmentAmount();
-        $('#transaction-amount').val(adjustmentAmount);
-    });
-
-
-    $('#invoice-discount').change(function (e) {
-        var discount = parseFloat($(this).val());
-        if (!isNaN(discount)) {
-            var amount = parseFloat($('#invoice-due').val()) || 0;
-            $('#transaction-amount').val(amount - discount);
-        }
-    });
-
-    $('#clientId').change(function (e) {
-        var clientId = $(this).val();
-        groupAjaxCall(clientId);
-    });
-
-    function calculateAdjustmentAmount() {
-        let adjustmentAmount = 0;
-        let amounts = $("#refundId :selected").map(function (i, el) {
-            return $(el).text().split(" | ")[1];
-        }).get();
-        for (let i = 0; i < amounts.length; i++) {
-            adjustmentAmount += parseFloat(amounts[i]);
-        }
-        return adjustmentAmount;
-    }
-
-    function groupAjaxCall(clientId) {
-        $.ajax({
-            url: groupInvoiceUrl, type: 'get', data: {
-                clientId: clientId
-            }, dataType: 'json', success: function (data) {
-                $('tbody#t-body').append(data.html);
-                $('#totalPayable').text(data.totalPayable);
-                $('#refundId').children('option').remove();
-                $('#refundId').append(data.refundList);
-            }, error: function () {
-                console.log('Error happend!');
-            }
-        });
-    }
 
 });
