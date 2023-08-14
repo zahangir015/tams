@@ -2,6 +2,7 @@
 
 namespace app\modules\sale\controllers;
 
+use app\modules\sale\models\HotelCategory;
 use app\modules\sale\models\HotelProposal;
 use app\modules\sale\models\RoomDetail;
 use app\modules\sale\models\search\HotelProposalSearch;
@@ -9,6 +10,7 @@ use app\controllers\ParentController;
 use app\modules\sale\services\ProposalService;
 use Yii;
 use yii\bootstrap4\ActiveForm;
+use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
@@ -80,7 +82,8 @@ class HotelProposalController extends ParentController
 
         return $this->render('create', [
             'model' => $model,
-            'roomDetail' => new RoomDetail()
+            'roomDetail' => new RoomDetail(),
+            'categories' => ArrayHelper::map(HotelCategory::findAll(['status' => 1]), 'id', 'name')
         ]);
     }
 

@@ -28,9 +28,7 @@ $this->registerJsFile(
             <div class="card card-custom mb-5 sticky-top">
                 <div class="card-header bg-gradient-green">
                     <div class="card-title">
-                        <h5 class="card-label">
-                            Create Hotel Proposal
-                        </h5>
+                        <?= Html::encode($this->title) ?>
                     </div>
                     <div class="card-toolbar float-right">
                         <a href="#" id="addButton" class="btn btn-success font-weight-bolder mr-2"
@@ -44,8 +42,7 @@ $this->registerJsFile(
                     <?php $form = ActiveForm::begin(); ?>
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($model, 'hotelCategoryId')->textInput() ?>
-
+                            <?= $form->field($model, 'hotelCategoryId')->dropDownList($categories) ?>
                         </div>
                         <div class="col-md">
                             <?= $form->field($model, 'hotelName')->textInput(['maxlength' => true]) ?>
@@ -58,11 +55,11 @@ $this->registerJsFile(
                         <div class="col-md">
                             <?= $form->field($model, 'countryId')->textInput() ?>
                         </div>
-                    </div>
-                    <div class="row">
                         <div class="col-md">
                             <?= $form->field($model, 'cityId')->textInput() ?>
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md">
                             <?= $form->field($model, 'numberOfAdult')->textInput() ?>
                         </div>
