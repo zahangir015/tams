@@ -5,6 +5,7 @@ namespace app\modules\sale\controllers;
 use app\modules\sale\models\HotelCategory;
 use app\modules\sale\models\HotelProposal;
 use app\modules\sale\models\RoomDetail;
+use app\modules\sale\models\RoomType;
 use app\modules\sale\models\search\HotelProposalSearch;
 use app\controllers\ParentController;
 use app\modules\sale\services\ProposalService;
@@ -83,7 +84,8 @@ class HotelProposalController extends ParentController
         return $this->render('create', [
             'model' => $model,
             'roomDetail' => new RoomDetail(),
-            'categories' => ArrayHelper::map(HotelCategory::findAll(['status' => 1]), 'id', 'name')
+            'categories' => ArrayHelper::map(HotelCategory::findAll(['status' => 1]), 'id', 'name'),
+            'roomTypes' => ArrayHelper::map(RoomType::findAll(['status' => 1]), 'id', 'name')
         ]);
     }
 

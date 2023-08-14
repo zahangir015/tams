@@ -38,7 +38,7 @@ use kartik\select2\Select2;
     <div class="card-body bg-gray-400">
         <div class="row">
             <div class="col-md">
-                <?= $form->field($roomDetail, "[$row]roomTypeId")->widget(Select2::class, WidgetHelper::ajaxSelect2Widget('roomTypeId', ''))->label('Room Type'); ?>
+                <?= $form->field($roomDetail, "[$row]roomTypeId")->dropDownList($roomTypes)->label('Room Type'); ?>
             </div>
             <div class="col-md">
                 <?= $form->field($roomDetail, "[$row]numberOfRoom")->textInput(['maxlength' => true, 'type' => 'number']); ?>

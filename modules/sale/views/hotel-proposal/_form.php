@@ -97,10 +97,10 @@ $this->registerJsFile(
                 <?php
                 if (!$model->isNewRecord) {
                     foreach ($model->roomDetails as $key => $roomDetail) {
-                        echo $this->render('room', ['row' => $key, 'model' => $model, 'roomDetail' => $roomDetail, 'form' => $form]);
+                        echo $this->render('room', ['row' => $key, 'model' => $model, 'roomDetail' => $roomDetail, 'roomTypes' =>  $roomTypes, 'form' => $form]);
                     }
                 } else {
-                    echo $this->render('room', ['row' => 0, 'model' => $model, 'roomDetail' => $roomDetail, 'form' => $form]);
+                    echo $this->render('room', ['row' => 0, 'model' => $model, 'roomDetail' => $roomDetail, 'roomTypes' =>  $roomTypes, 'form' => $form]);
                 }
                 ?>
             </div>
