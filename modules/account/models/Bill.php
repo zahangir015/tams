@@ -52,7 +52,7 @@ class Bill extends ActiveRecord
     public function rules(): array
     {
         return [
-            [['uid', 'supplierId', 'billNumber', 'date', 'createdBy', 'createdAt'], 'required'],
+            [['uid', 'supplierId', 'billNumber', 'date'], 'required'],
             [['supplierId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['date'], 'safe'],
             [['paidAmount', 'dueAmount', 'discountedAmount', 'refundAdjustmentAmount'], 'number'],
