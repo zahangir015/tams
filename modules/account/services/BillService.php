@@ -6,6 +6,7 @@ use app\components\GlobalConstant;
 use app\components\Utilities;
 use app\modules\account\models\BankAccount;
 use app\modules\account\models\Bill;
+use app\modules\account\models\BillDetail;
 use app\modules\account\models\RefundTransaction;
 use app\modules\account\repositories\BillRepository;
 use app\modules\account\repositories\InvoiceRepository;
@@ -36,74 +37,88 @@ class BillService
         $this->ledgerService = new LedgerService();
     }
 
-    public function storeBill($requestData, ActiveRecord $bill): bool
+    public function storeBill($requestData, ActiveRecord $bill): array
     {
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
             if (!array_key_exists('services', $requestData)) {
-                throw new Exception('Service select is required.');
+                throw new Exception('Service Data is required.');
             }
 
             if (!$bill->load(['Bill' => $requestData['Bill']])) {
                 throw new Exception('Bill loading failed.');
             }
 
-            $totalDue = 0;
-            $totalReceived = 0;
-            $user = User::findOne(Yii::$app->user->id);
-
-            // Bill detail data process
-            $serviceData = [];
-            foreach ($requestData['services'] as $key => $service) {
-                $serviceObj = json_decode($service);
-                $totalDue += $serviceObj->dueAmount;
-                $totalReceived += $serviceObj->paidAmount;
-                $serviceData[$key]['refModel'] = $serviceObj->refModel;
-                $serviceData[$key]['refId'] = $serviceObj->refId;
-                $serviceData[$key]['subRefModel'] = Bill::class;
-                $serviceData[$key]['subRefId'] = $bill->id;
-                $serviceData[$key]['paidAmount'] = 0;
-                $serviceData[$key]['dueAmount'] = $serviceObj->dueAmount;
-            }
-
             // Bill data process
-            $bill->dueAmount = $totalDue;
-            $bill->paidAmount = $totalReceived;
-            $bill->billNumber = Utilities::billNumber();
+            $totalDistributingAmount = ($requestData['Transaction']['paidAmount'] + $requestData['Transaction']['refundAdjustmentAmount'] + $bill->discountedAmount);
+            $bill->date = date('Y-m-d');
+            $bill->paidAmount = $totalDistributingAmount;
+            $bill->dueAmount = ($bill->dueAmount - $totalDistributingAmount);
             $bill = $this->billRepository->store($bill);
             if ($bill->hasErrors()) {
                 throw new Exception('Bill creation failed - ' . Utilities::processErrorMessages($bill->getErrors()));
             }
 
+            // Bill detail data process
+            /*$totalDue = 0;
+            $totalReceived = 0;*/
+
+            $serviceData = [];
+            foreach ($requestData['services'] as $key => $service) {
+                $serviceObj = json_decode($service);
+                /*$totalDue += $serviceObj->dueAmount;
+                $totalReceived += $serviceObj->paidAmount;*/
+                $serviceData[$key]['refModel'] = $serviceObj->refModel;
+                $serviceData[$key]['refId'] = $serviceObj->refId;
+                $serviceData[$key]['subRefModel'] = Bill::class;
+                $serviceData[$key]['subRefId'] = $bill->id;
+                $serviceData[$key]['paidAmount'] = ($totalDistributingAmount >= $serviceObj->dueAmount) ? $serviceObj->dueAmount : $totalDistributingAmount;
+                $serviceData[$key]['dueAmount'] = ($totalDistributingAmount >= $serviceObj->dueAmount) ?  0 : ($serviceObj->dueAmount - $totalDistributingAmount);
+                $totalDistributingAmount = ($totalDistributingAmount >= $serviceObj->dueAmount) ? ($totalDistributingAmount - $serviceObj->dueAmount) : 0;
+            }
+
             // Service Data process
-            $serviceDataProcessResponse = self::serviceDataProcessForBill($bill, $serviceData, $user);
+            $serviceDataProcessResponse = self::serviceDataProcessForBill($bill, $serviceData, User::findOne(Yii::$app->user->id));
             if ($serviceDataProcessResponse['error']) {
                 throw new Exception('Service Data process failed - ' . $serviceDataProcessResponse['message']);
             }
 
-            // Customer Ledger process
+            // Process Transaction Data
+            $transactionStatementStoreResponse = $this->transactionService->store($bill, $bill->supplier, $requestData);
+            if ($transactionStatementStoreResponse['error']) {
+                throw new Exception('Transaction Statement Data process failed - ' . $transactionStatementStoreResponse['message']);
+            }
+            $transaction = $transactionStatementStoreResponse['data'];
+
+            // Supplier Ledger process
             $ledgerRequestData = [
-                'title' => 'Service Purchase',
-                'reference' => 'Invoice Number - ' . $invoice->invoiceNumber,
-                'refId' => $invoice->customerId,
-                'refModel' => Customer::class,
-                'subRefId' => $invoice->id,
-                'subRefModel' => $invoice::class,
-                'debit' => $invoice->paidAmount,
-                'credit' => 0
+                'title' => 'Supplier Bill payment',
+                'reference' => 'Bill Number - ' . $bill->billNumber,
+                'refId' => $bill->supplierId,
+                'refModel' => Supplier::class,
+                'subRefId' => $bill->id,
+                'subRefModel' => $bill::class,
+                'debit' => 0,
+                'credit' => $bill->paidAmount
             ];
             $ledgerRequestResponse = $this->ledgerService->store($ledgerRequestData);
             if ($ledgerRequestResponse['error']) {
-                throw new Exception('Customer Ledger creation failed - ' . $ledgerRequestResponse['message']);
+                throw new Exception('Supplier Ledger creation failed - ' . $ledgerRequestResponse['message']);
             }
 
             $dbTransaction->commit();
             Yii::$app->session->setFlash('success', 'Invoice created successfully.');
-            return true;
+            return [
+                'error' => false,
+                'message' => 'Bill added successfully.',
+                'model' => $bill
+            ];
         } catch (Exception $e) {
             $dbTransaction->rollBack();
-            Yii::$app->session->setFlash('danger', $e->getMessage() . ' - in file - ' . $e->getFile() . ' - in line -' . $e->getLine());
-            return false;
+            return [
+                'error' => true,
+                'message' => $e->getMessage()
+            ];
         }
     }
 
@@ -241,13 +256,33 @@ class BillService
         ];
     }
 
-    private
-    static function serviceDataProcessForBill(ActiveRecord $bill, array $services, mixed $user): array
+    public function storeOrUpdateBillDetail(ActiveRecord $bill, mixed $service, mixed $user): array
+    {
+        $billDetail = $this->billRepository->findOne(['refModel' => $service['refModel'], 'refId' => $service['refId'], 'billId' => $bill->id], BillDetail::class, []);
+        if ($billDetail) {
+            $billDetail->dueAmount = $service['dueAmount'];
+            $billDetail->paidAmount = $service['paidAmount'];
+        } else {
+            $billDetail = new BillDetail();
+            $billDetail->load(['BillDetail' => $service]);
+            $billDetail->billId = $bill->id;
+            $billDetail->status = GlobalConstant::ACTIVE_STATUS;
+        }
+
+        $billDetail = $this->billRepository->store($billDetail);
+        if ($billDetail->hasErrors()) {
+            return ['error' => true, 'message' => 'Bill Details store failed - ' . Utilities::processErrorMessages($billDetail->getErrors())];
+        }
+
+        return ['error' => false, 'message' => 'Successfully stored.'];
+    }
+
+    public function serviceDataProcessForBill(ActiveRecord $bill, array $services, mixed $user): array
     {
         $updatableServices = [];
         foreach ($services as $service) {
-            // Invoice details entry
-            $billDetailResponse = (new BillService)->storeOrUpdateInvoiceDetail($bill, $service, $user);
+            // Bill details entry
+            $billDetailResponse = self::storeOrUpdateBillDetail($bill, $service, $user);
             if ($billDetailResponse['error']) {
                 return $billDetailResponse;
             }

@@ -1,10 +1,7 @@
 <?php
-
 use hail812\adminlte\widgets\Menu;
 use yii\helpers\Url;
 use app\modules\admin\components\Helper;
-
-
 ?>
 <aside class="main-sidebar sidebar-dark-success elevation-4">
     <a href="<?= Url::home() ?>" class="h-100 p-2 text-center">
@@ -300,7 +297,14 @@ use app\modules\admin\components\Helper;
                                     ['label' => 'Invoice List', 'icon' => 'list', 'url' => ['/account/invoice/index'], 'visible' => Helper::checkRoute('/account/invoice/')],
                                 ]
                             ],
-                            ['label' => 'Bill', 'icon' => 'money-bill', 'url' => ['/account/bill/index'], 'visible' => Helper::checkRoute('/account/bill/')],
+                            [
+                                'label' => 'Bill Management',
+                                'icon' => 'file-invoice-dollar',
+                                'items' => [
+                                    ['label' => 'Create Bill', 'icon' => 'plus-circle', 'url' => ['/account/bill/create'], 'visible' => Helper::checkRoute('/account/bill/create')],
+                                    ['label' => 'Bill List', 'icon' => 'list', 'url' => ['/account/bill/index'], 'visible' => Helper::checkRoute('/account/bill/')],
+                                ]
+                            ],
                             ['label' => 'Refund Transactions', 'icon' => 'money-bill', 'url' => ['/account/refund-transaction/index'], 'visible' => Helper::checkRoute('/account/refund-transaction/')],
                             ['label' => 'Ledger', 'icon' => 'book', 'url' => ['/account/ledger/index'], 'visible' => Helper::checkRoute('/account/ledger/')],
                             ['label' => 'Payment Timeline', 'icon' => 'list', 'url' => ['/account/service-payment-timeline/index'], 'visible' => Helper::checkRoute('/account/service-payment-timeline/')],

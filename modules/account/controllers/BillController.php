@@ -2,6 +2,7 @@
 
 namespace app\modules\account\controllers;
 
+use app\models\Company;
 use app\modules\account\models\Bill;
 use app\modules\account\models\search\BillSearch;
 use app\controllers\ParentController;
@@ -30,6 +31,7 @@ class BillController extends ParentController
         $this->billRepository = new BillRepository();
         parent::__construct($uid, $module, $config);
     }
+
     /**
      * Lists all Bill models.
      *
@@ -52,10 +54,11 @@ class BillController extends ParentController
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id)
+    public function actionView(string $uid): string
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $this->billRepository->findOne(['uid' => $uid], Bill::class, ['supplier']),
+            'company' => Company::findOne(['agencyId' => Yii::$app->user->identity->agencyId]),
         ]);
     }
 
@@ -72,8 +75,11 @@ class BillController extends ParentController
             // Store ticket data
             $requestData = Yii::$app->request->post();
             $storeResponse = $this->billService->storeBill($requestData, $model);
-            if ($storeResponse) {
-                return $this->redirect(['view', 'uid' => $model->uid]);
+            if (!$storeResponse['error']) {
+                Yii::$app->session->setFlash('success', $storeResponse['message']);
+                return $this->redirect(['view', 'uid' => $storeResponse['model']->uid]);
+            } else {
+                Yii::$app->session->setFlash('danger', $storeResponse['message']);
             }
         } else {
             $model->loadDefaultValues();
@@ -140,7 +146,6 @@ class BillController extends ParentController
     {
         $data = Yii::$app->request->get();
         return $this->billService->getPendingBill($data);
-
 
 
     }

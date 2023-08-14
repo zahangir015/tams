@@ -97,6 +97,9 @@ $this->registerJsFile(
                     </table>
                     <div class="row">
                         <div class="col-md">
+                            <?= $form->field($model, 'billNumber')->textInput(['maxlength' => true, 'id' => 'billNumber', 'readOnly' => true, 'value' => ($model->isNewRecord) ? Utilities::billNumber() : $model->billNumber])->label('Bill Number') ?>
+                        </div>
+                        <div class="col-md">
                             <?= $form->field($model, 'dueAmount')->textInput(['maxlength' => true, 'id' => 'dueAmount'])->label('Due') ?>
                         </div>
                     </div>
@@ -122,7 +125,15 @@ $this->registerJsFile(
                     </div>
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($transaction, 'paidAmount')->textInput(['value' => $model->dueAmount, 'max' => $model->dueAmount, 'min' => 1]) ?>
+                            <?= $form->field($transaction, 'paidAmount')->textInput(['value' => $model->dueAmount, 'max' => $model->dueAmount, 'min' => 1])->label('Paying Amount') ?>
+                        </div>
+                        <div class="col-md">
+                            <?= $form->field($model, 'discountedAmount')->textInput(['value' => $model->dueAmount, 'max' => $model->dueAmount, 'min' => 1]) ?>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md">
+                            <?= $form->field($transaction, 'refundAdjustmentAmount')->textInput(['value' => 0]) ?>
                         </div>
                         <div class="col-md">
                             <?= $form->field($transaction, 'paymentCharge')->textInput(['value' => 0]) ?>
