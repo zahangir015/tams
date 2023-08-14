@@ -4,6 +4,7 @@ use app\components\GlobalConstant;
 use app\components\Utilities;
 use app\components\WidgetHelper;
 use app\modules\sale\components\ServiceConstant;
+use kartik\datetime\DateTimePicker;
 use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
@@ -15,7 +16,7 @@ use yii\web\View;
 /** @var yii\bootstrap4\ActiveForm $form */
 
 $this->registerJs(
-    "var itinerary = '" . Yii::$app->request->baseUrl . '/sale/flight-proposal/add-itinerary' . "';var room = '" . Yii::$app->request->baseUrl . '/sale/hotel-proposal/add-room' . "';",
+    "var itinerary = '" . Yii::$app->request->baseUrl . '/sale/flight-proposal/add-itinerary' . "';",
     View::POS_HEAD,
     'url'
 );
@@ -54,6 +55,14 @@ $this->registerJsFile(
                         </div>
                         <div class="col-md">
                             <?= $form->field($model, 'class')->dropdownList(ServiceConstant::SEAT_CLASS,['maxlength' => true]) ?>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md">
+                            <?= $form->field($model, 'departure')->widget(DateTimePicker::class, WidgetHelper::getDateTimeWidget('departure', 'departure', true, false)); ?>
+                        </div>
+                        <div class="col-md">
+                            <?= $form->field($model, 'arrival')->widget(DateTimePicker::class, WidgetHelper::getDateTimeWidget('arrival', 'arrival', true, false)); ?>
                         </div>
                     </div>
                     <div class="row">
@@ -110,7 +119,6 @@ $this->registerJsFile(
                             <?= $form->field($model, 'notes')->textInput(['rows' => 6]) ?>
                         </div>
                     </div>
-
 
                     <div class="form-group">
                         <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>

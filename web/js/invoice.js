@@ -42,12 +42,12 @@ $(function () {
                     sum += parseFloat($(this).val());
                 }
             });
-            $('#amount, #groupinvoice-amount').val(sum.toFixed(2));
+            $('#amount').val(sum.toFixed(2));
             $('#total').text(sum.toFixed(2));
             $('#invoiceAmount').val(sum.toFixed(2));
         } else {
             $('.chk').prop('checked', false);
-            $('#amount, #groupinvoice-amount').val(sum.toFixed(2));
+            $('#amount').val(sum.toFixed(2));
             $('#total').text(sum.toFixed(2));
             $('#invoiceAmount').val(sum.toFixed(2));
         }
@@ -62,7 +62,7 @@ $(function () {
                 }
             }
         });
-        $('#amount, #groupinvoice-amount').val(sum);
+        $('#amount').val(sum);
         $('#total').text(sum.toFixed(2));
         $('#invoiceAmount').val(sum.toFixed(2));
     }

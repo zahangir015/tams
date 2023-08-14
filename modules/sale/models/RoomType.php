@@ -2,7 +2,10 @@
 
 namespace app\modules\sale\models;
 
+use app\traits\BehaviorTrait;
 use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%room_type}}".
@@ -18,12 +21,14 @@ use Yii;
  *
  * @property RoomDetail[] $roomDetails
  */
-class RoomType extends \yii\db\ActiveRecord
+class RoomType extends ActiveRecord
 {
+    use BehaviorTrait;
+
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%room_type}}';
     }
@@ -31,10 +36,10 @@ class RoomType extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            [['uid', 'name', 'createdBy', 'createdAt'], 'required'],
+            [['name'], 'required'],
             [['status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['name'], 'string', 'max' => 255],
@@ -45,7 +50,7 @@ class RoomType extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),
@@ -62,9 +67,9 @@ class RoomType extends \yii\db\ActiveRecord
     /**
      * Gets query for [[RoomDetails]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getRoomDetails()
+    public function getRoomDetails(): ActiveQuery
     {
         return $this->hasMany(RoomDetail::class, ['roomTypeId' => 'id']);
     }

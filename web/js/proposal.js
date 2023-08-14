@@ -1,9 +1,25 @@
 let rowNum = 0;
-
 function addItinerary() {
     rowNum++;
     $.ajax({
         url: itinerary,
+        type: 'get',
+        data: {
+            row: rowNum,
+        },
+        success: function (data) {
+            $('.itinerary').append(data)
+        },
+        error: function (error) {
+            console.log(error)
+        }
+    });
+}
+
+function addRoom() {
+    rowNum++;
+    $.ajax({
+        url: room,
         type: 'get',
         data: {
             row: rowNum,
@@ -24,6 +40,16 @@ function totalRow() {
 function remove(row) {
     $('#card' + row).remove()
     titleUpdate(row)
+    rowNum--
+    $('#addButton').attr('data-row-number', rowNum)
+}
+
+function removeRoom(row) {
+    $('#card' + row).remove()
+    while (($('#card-label-' + (row + 1)).length !== 0)) {
+        $('#card-label-' + (row + 1)).text('Room Detail ' + (row + 1))
+        row++
+    }
     rowNum--
     $('#addButton').attr('data-row-number', rowNum)
 }

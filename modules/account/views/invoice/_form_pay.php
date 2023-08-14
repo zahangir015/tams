@@ -289,7 +289,6 @@ $this->registerJsFile(
                             <?= $form->field($transaction, 'paymentCharge')->textInput(['value' => 0]) ?>
                         </div>
                     </div>
-
                     <div class="row">
                         <div class="col-md">
                             <?= $form->field($transaction, 'paymentMode')->dropdownList(GlobalConstant::PAYMENT_MODE, ['prompt' => '']); ?>

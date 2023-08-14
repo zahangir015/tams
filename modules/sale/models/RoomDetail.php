@@ -3,6 +3,8 @@
 namespace app\modules\sale\models;
 
 use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%room_detail}}".
@@ -21,12 +23,12 @@ use Yii;
  * @property HotelProposal $hotelProposal
  * @property RoomType $roomType
  */
-class RoomDetail extends \yii\db\ActiveRecord
+class RoomDetail extends ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%room_detail}}';
     }
@@ -34,7 +36,7 @@ class RoomDetail extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['hotelProposalId', 'roomTypeId', 'numberOfRoom', 'numberOfNight', 'perNightPrice'], 'required'],
@@ -49,7 +51,7 @@ class RoomDetail extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),
@@ -68,9 +70,9 @@ class RoomDetail extends \yii\db\ActiveRecord
     /**
      * Gets query for [[HotelProposal]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getHotelProposal()
+    public function getHotelProposal(): ActiveQuery
     {
         return $this->hasOne(HotelProposal::class, ['id' => 'hotelProposalId']);
     }
@@ -78,9 +80,9 @@ class RoomDetail extends \yii\db\ActiveRecord
     /**
      * Gets query for [[RoomType]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getRoomType()
+    public function getRoomType(): ActiveQuery
     {
         return $this->hasOne(RoomType::class, ['id' => 'roomTypeId']);
     }

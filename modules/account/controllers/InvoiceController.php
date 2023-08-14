@@ -141,7 +141,6 @@ class InvoiceController extends ParentController
             return $this->redirect('index');
         }
 
-        $transaction = new Transaction();
         if (Yii::$app->request->isPost) {
             $invoicePaymentResponse = $this->invoiceService->payment($model, Yii::$app->request->post());
             Yii::$app->session->setFlash($invoicePaymentResponse['error'] ? 'error' : 'success', $invoicePaymentResponse['message']);
@@ -155,7 +154,7 @@ class InvoiceController extends ParentController
 
         return $this->render('payment', [
             'model' => $model,
-            'transaction' => $transaction,
+            'transaction' => new Transaction(),
             'refundList' => $this->refundTransactionService->getRefundList(Customer::class, $model->customerId),
             'bankList' => $this->invoiceService->getBankList()
         ]);

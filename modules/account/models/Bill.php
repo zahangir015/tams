@@ -35,6 +35,8 @@ use yii\db\ActiveRecord;
 class Bill extends ActiveRecord
 {
     use BehaviorTrait;
+    public $dateRange;
+    public $billFile;
 
     /**
      * {@inheritdoc}

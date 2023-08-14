@@ -4,6 +4,7 @@ namespace app\modules\sale\models;
 
 use app\traits\BehaviorTrait;
 use Yii;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
 /**
@@ -33,7 +34,7 @@ class FlightProposalItinerary extends ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['flightProposalId', 'flightNumber', 'departureFrom', 'departure', 'arrivalTo', 'arrival'], 'required'],
@@ -48,7 +49,7 @@ class FlightProposalItinerary extends ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),
@@ -64,7 +65,7 @@ class FlightProposalItinerary extends ActiveRecord
     /**
      * Gets query for [[FlightProposal]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getFlightProposal()
     {

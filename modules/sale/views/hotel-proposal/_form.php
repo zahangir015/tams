@@ -10,7 +10,7 @@ use yii\widgets\ActiveForm;
 /** @var yii\widgets\ActiveForm $form */
 
 $this->registerJs(
-    "var itinerary = '" . Yii::$app->request->baseUrl . '/sale/hotel-proposal/add-room' . "';var room = '" . Yii::$app->request->baseUrl . '/sale/hotel-proposal/add-room' . "';",
+    "var room = '" . Yii::$app->request->baseUrl . '/sale/hotel-proposal/add-room' . "';",
     View::POS_HEAD,
     'url'
 );
@@ -28,9 +28,7 @@ $this->registerJsFile(
             <div class="card card-custom mb-5 sticky-top">
                 <div class="card-header bg-gradient-green">
                     <div class="card-title">
-                        <h5 class="card-label">
-                            Create Hotel Proposal
-                        </h5>
+                        <?= Html::encode($this->title) ?>
                     </div>
                     <div class="card-toolbar float-right">
                         <a href="#" id="addButton" class="btn btn-success font-weight-bolder mr-2"
@@ -44,8 +42,7 @@ $this->registerJsFile(
                     <?php $form = ActiveForm::begin(); ?>
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($model, 'hotelCategoryId')->textInput() ?>
-
+                            <?= $form->field($model, 'hotelCategoryId')->dropDownList($categories) ?>
                         </div>
                         <div class="col-md">
                             <?= $form->field($model, 'hotelName')->textInput(['maxlength' => true]) ?>
@@ -58,21 +55,16 @@ $this->registerJsFile(
                         <div class="col-md">
                             <?= $form->field($model, 'countryId')->textInput() ?>
                         </div>
-                    </div>
-                    <div class="row">
                         <div class="col-md">
                             <?= $form->field($model, 'cityId')->textInput() ?>
                         </div>
-                        <div class="col-md">
-                            <?= $form->field($model, 'numberOfAdult')->textInput() ?>
-                        </div>
                     </div>
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($model, 'numberOfChild')->textInput() ?>
+                            <?= $form->field($model, 'numberOfAdult')->textInput() ?>
                         </div>
                         <div class="col-md">
-                            <?= $form->field($model, 'amenities')->textarea(['rows' => 6]) ?>
+                            <?= $form->field($model, 'numberOfChild')->textInput() ?>
                         </div>
                     </div>
                     <div class="row">
@@ -85,7 +77,10 @@ $this->registerJsFile(
                     </div>
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($model, 'notes')->textInput(['rows' => 6]) ?>
+                            <?= $form->field($model, 'amenities')->textarea(['rows' => 6]) ?>
+                        </div>
+                        <div class="col-md">
+                            <?= $form->field($model, 'notes')->textarea(['rows' => 6]) ?>
                         </div>
                     </div>
 
@@ -105,7 +100,7 @@ $this->registerJsFile(
                         echo $this->render('room', ['row' => $key, 'model' => $model, 'roomDetail' => $roomDetail, 'form' => $form]);
                     }
                 } else {
-                    echo $this->render('itinerary', ['row' => 0, 'model' => $model, 'roomDetail' => $roomDetail, 'form' => $form]);
+                    echo $this->render('room', ['row' => 0, 'model' => $model, 'roomDetail' => $roomDetail, 'form' => $form]);
                 }
                 ?>
             </div>

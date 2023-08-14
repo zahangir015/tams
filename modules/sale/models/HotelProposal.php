@@ -5,6 +5,7 @@ namespace app\modules\sale\models;
 use app\models\City;
 use app\models\Country;
 use app\modules\agent\models\Agency;
+use app\traits\BehaviorTrait;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
@@ -40,6 +41,8 @@ use yii\db\ActiveRecord;
  */
 class HotelProposal extends ActiveRecord
 {
+    use BehaviorTrait;
+
     /**
      * {@inheritdoc}
      */

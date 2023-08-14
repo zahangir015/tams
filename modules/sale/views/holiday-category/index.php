@@ -21,6 +21,16 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'kartik\grid\SerialColumn'],
+            [
+                'class' => ActionColumn::className(),
+                'urlCreator' => function ($action, HolidayCategory $model, $key, $index, $column) {
+                    return Url::toRoute([$action, 'uid' => $model->uid]);
+                },
+                'width' => '150px',
+                'template' => '{view} {edit} {delete}',
+                'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
+                'buttons' => Utilities::getBasicActionColumnArray()
+            ],
             'name',
             [
                 'class' => '\kartik\grid\DataColumn',
@@ -32,16 +42,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
                 'filter' => GlobalConstant::DEFAULT_STATUS,
                 'format' => 'html',
-            ],
-            [
-                'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, HolidayCategory $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'uid' => $model->uid]);
-                },
-                'width' => '150px',
-                'template' => '{view} {edit} {delete}',
-                'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
-                'buttons' => Utilities::getBasicActionColumnArray()
             ],
         ],
         'toolbar' => [

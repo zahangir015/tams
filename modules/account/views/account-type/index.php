@@ -54,7 +54,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'content' =>
                     Html::a('<i class="fas fa-plus"></i>', ['/account/account-type/create'], [
-                        'title' => Yii::t('app', 'Add Airline'),
+                        'title' => Yii::t('app', 'Add Account Type'),
                         'class' => 'btn btn-success'
                     ]) . ' ' .
                     Html::a('<i class="fas fa-redo"></i>', ['/account/account-type/index'], [

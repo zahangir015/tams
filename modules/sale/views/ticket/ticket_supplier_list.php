@@ -32,7 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'supplier',
                 'value' => function ($model) {
-                    return $model->supplier->company;
+                    return $model->supplier ? $model->supplier->company : null;
                 },
                 'label' => 'Supplier',
             ],
