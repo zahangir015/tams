@@ -19,21 +19,31 @@ use yii\bootstrap4\Html;
             <h5 class="card-label" id="card-label-<?= $row ?>">Visa Supplier <?= ($row + 1) ?></h5>
         </div>
         <div class="card-toolbar float-right">
+            <?php
+            if ($model->isNewRecord && $row) {
+                ?>
                 <a href="#" class="btn btn-danger btn-sm" onclick="remove(<?= $row ?>)">
                     <span class="fa fa-times-circle"></span>
                 </a>
+                <?php
+            } else {
+                ?>
+                <?= $form->field($visaSupplier, "[$row]id")->hiddenInput(['maxlength' => true, 'value' => $visaSupplier->id])->label(false); ?>
+                <?php
+            }
+            ?>
         </div>
     </div>
     <div class="card-body">
         <div class="row">
             <div class="col-md">
-                <?= $form->field($visaSupplier, "[$row]supplierId")->widget(Select2::class, Utilities::ajaxDropDown('supplierId', '/sale/supplier/get-suppliers', true, 'supplierId'.$row, 'supplier'))->label('Supplier') ?>
+                <?= $form->field($visaSupplier, "[$row]supplierId")->widget(Select2::class, Utilities::ajaxDropDown('supplierId', '/sale/supplier/get-suppliers', true, 'supplierId' . $row, 'supplier'))->label('Supplier') ?>
             </div>
             <div class="col-md">
                 <?= $form->field($visaSupplier, "[$row]supplierRef")->textInput(['maxlength' => true]); ?>
             </div>
             <div class="col-md">
-                <?= $form->field($visaSupplier, "[$row]countryId")->widget(Select2::class, Utilities::ajaxDropDown('countryId', '/country/get-countries', true, 'countryId'.$row, 'country'))->label('Country') ?>
+                <?= $form->field($visaSupplier, "[$row]countryId")->widget(Select2::class, Utilities::ajaxDropDown('countryId', '/country/get-countries', true, 'countryId' . $row, 'country'))->label('Country') ?>
             </div>
         </div>
         <div class="row calcData">
@@ -49,7 +59,7 @@ use yii\bootstrap4\Html;
         </div>
         <div class="row">
             <div class="col-md">
-                <?= $form->field($visaSupplier, "[$row]issueDate")->widget(DatePicker::class, WidgetHelper::getDateWidget('issueDate'.$row, 'issueDate'.$row, false, true)); ?>
+                <?= $form->field($visaSupplier, "[$row]issueDate")->widget(DatePicker::class, WidgetHelper::getDateWidget('issueDate' . $row, 'issueDate' . $row, false, true)); ?>
             </div>
             <div class="col-md">
                 <?= $form->field($visaSupplier, "[$row]type")->textInput(['readOnly' => 'readOnly', 'value' => ServiceConstant::ALL_SERVICE_TYPE['New']]) ?>

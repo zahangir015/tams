@@ -2,11 +2,15 @@
 
 namespace app\modules\sale\controllers;
 
+use app\components\GlobalConstant;
+use app\components\Utilities;
 use app\modules\sale\models\HotelCategory;
 use app\modules\sale\models\search\HotelCategorySearch;
 use app\controllers\ParentController;
+use Yii;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Response;
 
 /**
  * HotelCategoryController implements the CRUD actions for HotelCategory model.
@@ -31,30 +35,33 @@ class HotelCategoryController extends ParentController
 
     /**
      * Displays a single HotelCategory model.
-     * @param int $id ID
+     * @param string $uid UID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id)
+    public function actionView(string $uid): string
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $this->findModel($uid),
         ]);
     }
 
     /**
      * Creates a new HotelCategory model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
+     * @return string|Response
      */
-    public function actionCreate()
+    public function actionCreate(): Response|string
     {
         $model = new HotelCategory();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+                Yii::$app->session->setFlash('success', 'Hotel Category created successfully.');
+                return $this->redirect(['view', 'uid' => $model->uid]);
             }
+
+            Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
         } else {
             $model->loadDefaultValues();
         }
@@ -67,16 +74,20 @@ class HotelCategoryController extends ParentController
     /**
      * Updates an existing HotelCategory model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id ID
-     * @return string|\yii\web\Response
+     * @param string $uid UID
+     * @return string|Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionUpdate(string $uid): Response|string
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel($uid);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post()) && $model->save()) {
+                Yii::$app->session->setFlash('success', 'Hotel Category updated successfully.');
+                return $this->redirect(['view', 'uid' => $model->uid]);
+            }
+            Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
         }
 
         return $this->render('update', [
@@ -87,27 +98,29 @@ class HotelCategoryController extends ParentController
     /**
      * Deletes an existing HotelCategory model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id ID
-     * @return \yii\web\Response
+     * @param string $uid UID
+     * @return Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($id)
+    public function actionDelete(string $uid): Response
     {
-        $this->findModel($id)->delete();
-
+        $model = $this->findModel($uid);
+        $model->status = GlobalConstant::INACTIVE_STATUS;
+        $model->save();
+        Yii::$app->session->setFlash('success', 'Successfully Deleted');
         return $this->redirect(['index']);
     }
 
     /**
      * Finds the HotelCategory model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id ID
+     * @param string $uid UID
      * @return HotelCategory the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel(string $uid): HotelCategory
     {
-        if (($model = HotelCategory::findOne(['id' => $id])) !== null) {
+        if (($model = HotelCategory::findOne(['uid' => $uid])) !== null) {
             return $model;
         }
 

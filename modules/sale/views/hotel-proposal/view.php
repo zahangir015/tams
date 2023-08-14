@@ -12,9 +12,6 @@ $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
 <div class="hotel-proposal-view">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
     <p>
         <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->id], [
@@ -26,12 +23,84 @@ $this->params['breadcrumbs'][] = $this->title;
         ]) ?>
     </p>
 
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">
+                <?= Html::encode($this->title) ?>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <p class="lead">Flight Proposal Details</p>
+                    <table class="table table-bordered">
+                        <tbody>
+                        <tr>
+                            <th>Hotel Category</th>
+                            <th>Hotel Name</th>
+                            <th>Address</th>
+                            <th>Country</th>
+                            <th>City</th>
+                        </tr>
+                        <tr>
+                            <td><?= $model->hotelCategory->name ?></td>
+                            <td><?= $model->hotelName ?></td>
+                            <td><?= $model->hotelAddress ?></td>
+                            <td><?= $model->country ?></td>
+                            <td><?= $model->city ?></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-12">
+                    <p class="lead">Amount Details</p>
+                    <table class="table table-bordered">
+                        <tbody>
+                        <tr>
+                            <th>#Adult</th>
+                            <th>#Child</th>
+                            <th>Total Price</th>
+                            <th>Discount</th>
+                            <th>Notes</th>
+                        </tr>
+                        <tr>
+                            <td><?= $model->numberOfAdult ?></td>
+                            <td><?= $model->numberOfChild ?></td>
+                            <td><?= $model->totalPrice ?></td>
+                            <td><?= $model->discount ?></td>
+                            <td><?= $model->notes ?></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-12">
+                    <p class="lead">Amount Details</p>
+                    <table class="table table-bordered">
+                        <tbody>
+                        <tr>
+                            <th>#Adult</th>
+                            <th>#Child</th>
+                            <th>Total Price</th>
+                            <th>Discount</th>
+                            <th>Notes</th>
+                        </tr>
+                        <tr>
+                            <td><?= $model->numberOfAdult ?></td>
+                            <td><?= $model->numberOfChild ?></td>
+                            <td><?= $model->totalPrice ?></td>
+                            <td><?= $model->discount ?></td>
+                            <td><?= $model->notes ?></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'id',
-            'uid',
-            'agencyId',
             'hotelCategoryId',
             'hotelName',
             'hotelAddress',
