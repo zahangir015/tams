@@ -69,7 +69,7 @@ class FlightProposalController extends ParentController
             $response = $this->proposalService->storeFlightProposal($requestData);
             if (!$response['error']) {
                 Yii::$app->session->setFlash('success', $response['message']);
-                return $this->redirect('view', ['uid' => $response['model']->uid]);
+                return $this->redirect(['view', 'uid' => $response['model']->uid]);
             } else {
                 Yii::$app->session->setFlash('danger', $response['message']);
             }

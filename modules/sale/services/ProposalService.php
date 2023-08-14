@@ -47,7 +47,8 @@ class ProposalService
             if (!$flightProposal->load($requestData)) {
                 throw new Exception('Flight proposal loading failed - ' . Utilities::processErrorMessages($flightProposal->getErrors()));
             }
-            $flightProposal->agencyId = Yii::$app->user->identity->agencyId;
+
+            $flightProposalItinerary = $requestData['FlightProposalItinerary'];
             $flightProposal = $this->proposalRepository->store($flightProposal);
             if ($flightProposal->hasErrors()) {
                 throw new Exception('Flight proposal creation failed - ' . Utilities::processErrorMessages($flightProposal->getErrors()));
@@ -55,11 +56,11 @@ class ProposalService
 
             // Flight proposal itinerary process
             $flightProposalItineraryData = [];
-            foreach ($requestData['FlightProposalItinerary'] as $itinerary) {
+            foreach ($flightProposalItinerary as $itinerary) {
                 $flightProposalItinerary = new FlightProposalItinerary();
-                $flightProposalItinerary->load(['HotelSupplier' => $itinerary]);
+                $flightProposalItinerary->load(['FlightProposalItinerary' => $itinerary]);
                 $flightProposalItinerary->flightProposalId = $flightProposal->id;
-                $flightProposalItinerary = $this->proposalRepository->store($flightProposalItinerary);
+                //$flightProposalItinerary = $this->proposalRepository->store($flightProposalItinerary);
                 if (!$flightProposalItinerary->validate()) {
                     throw new Exception('Itinerary creation failed - ' . Utilities::processErrorMessages($flightProposalItinerary->getErrors()));
                 }
@@ -139,7 +140,6 @@ class ProposalService
             if (!$hotelProposal->load($requestData)) {
                 throw new Exception('Hotel proposal loading failed - ' . Utilities::processErrorMessages($hotelProposal->getErrors()));
             }
-            $hotelProposal->agencyId = Yii::$app->user->identity->agencyId;
             $hotelProposal = $this->proposalRepository->store($hotelProposal);
             if ($hotelProposal->hasErrors()) {
                 throw new Exception('Hotel proposal creation failed - ' . Utilities::processErrorMessages($hotelProposal->getErrors()));
@@ -152,7 +152,7 @@ class ProposalService
                 $roomDetail->load(['RoomDetail' => $room]);
                 $roomDetail->hotelProposalId = $hotelProposal->id;
                 if (!$roomDetail->validate()) {
-                    throw new Exception('Itinerary creation failed - ' . Utilities::processErrorMessages($roomDetail->getErrors()));
+                    throw new Exception('Room details creation failed - ' . Utilities::processErrorMessages($roomDetail->getErrors()));
                 }
                 $roomDetailData[] = $roomDetail->getAttributes();
             }
@@ -214,7 +214,7 @@ class ProposalService
             $roomDetail->load(['RoomDetail' => $roomDetail]);
             $roomDetail = $this->proposalRepository->store($roomDetail);
             if ($roomDetail->hasErrors()) {
-                return ['error' => true, 'message' => 'Hotel room update failed - ' . Utilities::processErrorMessages($roomDetail->getErrors())];
+                return ['error' => true, 'message' => 'Hotel room details update failed - ' . Utilities::processErrorMessages($roomDetail->getErrors())];
             }
         }
 

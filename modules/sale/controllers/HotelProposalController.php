@@ -3,8 +3,12 @@
 namespace app\modules\sale\controllers;
 
 use app\modules\sale\models\HotelProposal;
+use app\modules\sale\models\RoomDetail;
 use app\modules\sale\models\search\HotelProposalSearch;
 use app\controllers\ParentController;
+use app\modules\sale\services\ProposalService;
+use Yii;
+use yii\bootstrap4\ActiveForm;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
@@ -14,6 +18,15 @@ use yii\web\Response;
  */
 class HotelProposalController extends ParentController
 {
+
+    public ProposalService $proposalService;
+
+    public function __construct($uid, $module, $config = [])
+    {
+        $this->proposalService = new ProposalService();
+        parent::__construct($uid, $module, $config);
+    }
+
     /**
      * Lists all HotelProposal models.
      *
@@ -34,12 +47,12 @@ class HotelProposalController extends ParentController
      * Displays a single HotelProposal model.
      * @param string $uid UID
      * @return string
-     * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($uid)
+    public function actionView(string $uid): string
     {
+        $model = $this->proposalService->findHotelProposal($uid, ['roomDetails']);
         return $this->render('view', [
-            'model' => $this->findModel($uid),
+            'model' => $model,
         ]);
     }
 
@@ -53,8 +66,13 @@ class HotelProposalController extends ParentController
         $model = new HotelProposal();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'uid' => $model->uid]);
+            $requestData = Yii::$app->request->post();
+            $response = $this->proposalService->storeHotelProposal($requestData);
+            if (!$response['error']) {
+                Yii::$app->session->setFlash('success', $response['message']);
+                return $this->redirect(['view', 'uid' => $response['model']->uid]);
+            } else {
+                Yii::$app->session->setFlash('danger', $response['message']);
             }
         } else {
             $model->loadDefaultValues();
@@ -62,6 +80,7 @@ class HotelProposalController extends ParentController
 
         return $this->render('create', [
             'model' => $model,
+            'roomDetail' => new RoomDetail()
         ]);
     }
 
@@ -74,10 +93,17 @@ class HotelProposalController extends ParentController
      */
     public function actionUpdate(string $uid): Response|string
     {
-        $model = $this->findModel($uid);
+        $hotelProposal = $this->proposalService->findHotelProposal($uid, ['roomDetails']);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($this->request->isPost) {
+            // Update Flight
+            $updateResponse = $this->proposalService->updateHotelProposal(Yii::$app->request->post(), $hotelProposal);
+            if ($updateResponse['error']) {
+                Yii::$app->session->setFlash('danger', $updateResponse['message']);
+            } else {
+                Yii::$app->session->setFlash('success', $updateResponse['message']);
+                return $this->redirect(['view', ['uid' => $hotelProposal->uid]]);
+            }
         }
 
         return $this->render('update', [
@@ -113,5 +139,17 @@ class HotelProposalController extends ParentController
         }
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+    }
+
+    public function actionAddRoom($row): string
+    {
+        $model = new HotelProposal();
+        $roomDetail = new RoomDetail();
+        return $this->renderAjax('room', [
+            'row' => $row,
+            'model' => $model,
+            'roomDetail' => $roomDetail,
+            'form' => ActiveForm::begin(['class' => 'form'])
+        ]);
     }
 }

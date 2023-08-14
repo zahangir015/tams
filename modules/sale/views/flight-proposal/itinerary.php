@@ -48,10 +48,10 @@ use kartik\select2\Select2;
         </div>
         <div class="row">
             <div class="col-md">
-                <?= $form->field($itinerary, "[$row]arrival")->widget(DateTimePicker::class, WidgetHelper::getDateTimeWidget('arrival' . $row, 'arrival' . $row, true, true)); ?>
+                <?= $form->field($itinerary, "[$row]arrival")->widget(DateTimePicker::class, WidgetHelper::getDateTimeWidget('arrival' . $row, 'arrival' . $row, true, false)); ?>
             </div>
             <div class="col-md">
-                <?= $form->field($itinerary, "[$row]departure")->widget(DateTimePicker::class, WidgetHelper::getDateTimeWidget('departure' . $row, 'departure' . $row, true, true)); ?>
+                <?= $form->field($itinerary, "[$row]departure")->widget(DateTimePicker::class, WidgetHelper::getDateTimeWidget('departure' . $row, 'departure' . $row, true, false)); ?>
             </div>
         </div>
     </div>

@@ -59,14 +59,14 @@ class FlightProposal extends ActiveRecord
     public function rules(): array
     {
         return [
-            [['uid', 'agencyId', 'airlineId', 'class', 'tripType', 'route', 'departure', 'arrival', 'numberOfAdult', 'createdBy', 'createdAt'], 'required'],
-            [['agencyId', 'airlineId', 'tripType', 'numberOfAdult', 'numberOfChild', 'numberOfInfant', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
+            [['uid', 'agencyId', 'airlineId', 'class', 'tripType', 'route', 'departure', 'arrival', 'numberOfAdult'], 'required'],
+            [['agencyId', 'airlineId', 'numberOfAdult', 'numberOfChild', 'numberOfInfant', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['departure', 'arrival'], 'safe'],
             [['pricePerAdult', 'pricePerChild', 'pricePerInfant', 'totalPrice', 'discount'], 'number'],
             [['notes'], 'string'],
             [['uid'], 'string', 'max' => 36],
             [['class', 'route'], 'string', 'max' => 120],
-            [['baggagePerAdult', 'baggagePerChild', 'baggagePerInfant'], 'string', 'max' => 255],
+            [['baggagePerAdult', 'baggagePerChild', 'baggagePerInfant', 'tripType'], 'string', 'max' => 255],
             [['uid'], 'unique'],
             [['agencyId'], 'exist', 'skipOnError' => true, 'targetClass' => Agency::class, 'targetAttribute' => ['agencyId' => 'id']],
             [['airlineId'], 'exist', 'skipOnError' => true, 'targetClass' => Airline::class, 'targetAttribute' => ['airlineId' => 'id']],

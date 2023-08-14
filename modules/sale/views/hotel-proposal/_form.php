@@ -10,7 +10,7 @@ use yii\widgets\ActiveForm;
 /** @var yii\widgets\ActiveForm $form */
 
 $this->registerJs(
-    "var itinerary = '" . Yii::$app->request->baseUrl . '/sale/hotel-proposal/add-room' . "';var room = '" . Yii::$app->request->baseUrl . '/sale/hotel-proposal/add-room' . "';",
+    "var room = '" . Yii::$app->request->baseUrl . '/sale/hotel-proposal/add-room' . "';",
     View::POS_HEAD,
     'url'
 );
@@ -66,13 +66,8 @@ $this->registerJsFile(
                         <div class="col-md">
                             <?= $form->field($model, 'numberOfAdult')->textInput() ?>
                         </div>
-                    </div>
-                    <div class="row">
                         <div class="col-md">
                             <?= $form->field($model, 'numberOfChild')->textInput() ?>
-                        </div>
-                        <div class="col-md">
-                            <?= $form->field($model, 'amenities')->textarea(['rows' => 6]) ?>
                         </div>
                     </div>
                     <div class="row">
@@ -85,7 +80,10 @@ $this->registerJsFile(
                     </div>
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($model, 'notes')->textInput(['rows' => 6]) ?>
+                            <?= $form->field($model, 'amenities')->textarea(['rows' => 6]) ?>
+                        </div>
+                        <div class="col-md">
+                            <?= $form->field($model, 'notes')->textarea(['rows' => 6]) ?>
                         </div>
                     </div>
 
@@ -105,7 +103,7 @@ $this->registerJsFile(
                         echo $this->render('room', ['row' => $key, 'model' => $model, 'roomDetail' => $roomDetail, 'form' => $form]);
                     }
                 } else {
-                    echo $this->render('itinerary', ['row' => 0, 'model' => $model, 'roomDetail' => $roomDetail, 'form' => $form]);
+                    echo $this->render('room', ['row' => 0, 'model' => $model, 'roomDetail' => $roomDetail, 'form' => $form]);
                 }
                 ?>
             </div>
