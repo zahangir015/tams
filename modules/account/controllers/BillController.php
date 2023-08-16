@@ -92,22 +92,37 @@ class BillController extends ParentController
     }
 
     /**
-     * Updates an existing Bill model.
+     * Pay an existing Bill model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param string $uid UID
      * @return string|Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id): Response|string
+    public function actionPay(string $uid): mixed
     {
-        $model = $this->findModel($id);
+        $model = $this->billRepository->findOne(['uid' => $uid], Bill::class, ['details', 'supplier', 'transactions']);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->dueAmount == 0) {
+            Yii::$app->session->setFlash('danger', 'Invalid payment request!');
+            return $this->redirect('index');
         }
 
-        return $this->render('update', [
+        if (Yii::$app->request->isPost) {
+            $invoicePaymentResponse = $this->billService->payment($model, Yii::$app->request->post());
+            Yii::$app->session->setFlash($invoicePaymentResponse['error'] ? 'error' : 'success', $invoicePaymentResponse['message']);
+            if (!$invoicePaymentResponse['error']) {
+                return $this->render('view', [
+                    'model' => $model,
+                    'company' => Company::findOne(['agencyId' => Yii::$app->user->identity->agencyId]),
+                ]);
+            }
+        }
+
+        return $this->render('payment', [
             'model' => $model,
+            'transaction' => new Transaction(),
+            'refundList' => $this->refundTransactionService->getRefundList(Customer::class, $model->customerId),
+            'bankList' => $this->invoiceService->getBankList()
         ]);
     }
 

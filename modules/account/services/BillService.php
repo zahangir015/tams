@@ -7,6 +7,7 @@ use app\components\Utilities;
 use app\modules\account\models\BankAccount;
 use app\modules\account\models\Bill;
 use app\modules\account\models\BillDetail;
+use app\modules\account\models\Invoice;
 use app\modules\account\models\RefundTransaction;
 use app\modules\account\repositories\BillRepository;
 use app\modules\account\repositories\InvoiceRepository;
@@ -58,10 +59,6 @@ class BillService
             if ($bill->hasErrors()) {
                 throw new Exception('Bill creation failed - ' . Utilities::processErrorMessages($bill->getErrors()));
             }
-
-            // Bill detail data process
-            /*$totalDue = 0;
-            $totalReceived = 0;*/
 
             $serviceData = [];
             foreach ($requestData['services'] as $key => $service) {
@@ -303,363 +300,66 @@ class BillService
         return ['error' => false, 'message' => 'Service data processed successfully'];
     }
 
-
-    public function addRefundServiceToInvoice(ActiveRecord $newRefundService): array
-    {
-        $invoiceDetail = new InvoiceDetail();
-        $invoiceDetail->invoiceId = $newRefundService->invoiceId;
-        $invoiceDetail->dueAmount = ($newRefundService->costOfSale - $newRefundService->paidAmount);
-        $invoiceDetail->paidAmount = $newRefundService->paidAmount;
-        $invoiceDetail->refId = $newRefundService->id;
-        $invoiceDetail->refModel = $newRefundService::class;
-        $invoiceDetail->status = GlobalConstant::ACTIVE_STATUS;
-        $invoiceDetail = $this->invoiceRepository->store($invoiceDetail);
-        if ($invoiceDetail->hasErrors()) {
-            return ['error' => true, 'message' => 'Invoice Detail creation failed - ' . Utilities::processErrorMessages($invoiceDetail->getErrors())];
-        }
-
-        // Mother Invoice Detail status update
-        $motherInvoiceDetail = $this->invoiceRepository->findOne(['refId' => $newRefundService->motherTicketId, 'refModel' => $newRefundService::class], InvoiceDetail::class, []);
-        $motherInvoiceDetail->status = 2;
-        $motherInvoiceDetail = $this->invoiceRepository->store($motherInvoiceDetail);
-        if ($motherInvoiceDetail->hasErrors()) {
-            return ['error' => true, 'message' => 'Mother Invoice details update failed - ' . Utilities::processErrorMessages($motherInvoiceDetail->getErrors())];
-        }
-
-        // Invoice due update
-        $invoice = $this->invoiceRepository->findOne(['id' => $newRefundService->invoiceId], Invoice::class, ['details']);
-        $invoiceDetailArray = ArrayHelper::toArray($invoice->details);
-        $invoice->dueAmount = (double)array_sum(array_column($invoiceDetailArray, 'dueAmount'));
-        $invoice = $this->invoiceRepository->store($invoice);
-        if ($invoice->hasErrors()) {
-            return ['error' => true, 'message' => 'Invoice due update failed - ' . Utilities::processErrorMessages($invoice->getErrors())];
-        }
-
-        // Customer Ledger process
-        $ledgerRequestData = [
-            'title' => 'Service Refund',
-            'reference' => 'Invoice Number - ' . $invoice->invoiceNumber,
-            'refId' => $invoice->customerId,
-            'refModel' => Customer::class,
-            'subRefId' => $invoice->id,
-            'subRefModel' => Invoice::class,
-            'debit' => ($invoiceDetail->dueAmount > 0) ? $invoiceDetail->dueAmount : 0,
-            'credit' => ($invoiceDetail->dueAmount > 0) ? 0 : $invoiceDetail->dueAmount
-        ];
-
-        $ledgerRequestResponse = $this->ledgerService->store($ledgerRequestData);
-        if ($ledgerRequestResponse['error']) {
-            return ['error' => $ledgerRequestResponse['error'], 'message' => 'Customer Ledger creation failed - ' . $ledgerRequestResponse['message']];
-        }
-
-        return ['error' => false, 'data' => $invoiceDetail];
-    }
-
-    public function autoInvoiceForRefund(Invoice $invoice, array $service, $user): array
-    {
-        // Invoice Details process
-        $invoiceDetail = new InvoiceDetail();
-        if ($invoiceDetail->load(['InvoiceDetail' => $service])) {
-            if (!$invoiceDetail->save()) {
-                return ['error' => true, 'message' => 'Invoice Detail create failed - ' . Utilities::processErrorMessages($invoiceDetail->getErrors())];
-            }
-        } else {
-            return ['error' => true, 'message' => 'Invoice Detail loading failed - ' . Utilities::processErrorMessages($invoiceDetail->getErrors())];
-        }
-
-        // Mother Invoice Detail status update
-        $motherInvoiceDetailUpdateResponse = InvoiceDetail::find()->where(['refId' => $service['motherId'], 'refModel' => $service['refModel']])->one();
-        $motherInvoiceDetailUpdateResponse->status = GlobalConstant::REFUND_REQUESTED_STATUS;
-        if (!$motherInvoiceDetailUpdateResponse->save()) {
-            return ['error' => true, 'message' => 'Mother Invoice details update failed'];
-        }
-
-        // Invoice due update
-        $invoiceDue = InvoiceDetail::find()
-            ->select([new Expression('SUM(dueAmount) AS dueAmount')])
-            ->where(['status' => GlobalConstant::ACTIVE_STATUS])
-            ->andWhere(['invoiceId' => $invoiceDetail->invoiceId])
-            ->asArray()->all();
-        if (!$invoiceDue) {
-            return ['status' => false, 'message' => 'Mother Invoice details update failed'];
-        }
-
-        $invoice->dueAmount = $invoiceDue[0]['dueAmount'];
-        if (!$invoice->save()) {
-            return ['error' => false, 'message' => 'Invoice due update failed - ' . Utilities::processErrorMessages($invoice->getErrors())];
-        }
-
-        // Customer Ledger process
-        $ledgerRequestData = [
-            'title' => 'Service Refund',
-            'reference' => 'Invoice Number - ' . $invoice->invoiceNumber,
-            'refId' => $invoice->customerId,
-            'refModel' => Customer::class,
-            'subRefId' => $invoice->id,
-            'subRefModel' => $invoice::class,
-            'debit' => ($invoiceDetail->dueAmount > 0) ? $invoiceDetail->dueAmount : 0,
-            'credit' => ($invoiceDetail->dueAmount > 0) ? 0 : $invoiceDetail->dueAmount
-        ];
-        $ledgerRequestResponse = $this->ledgerService->store($ledgerRequestData);
-        if ($ledgerRequestResponse['error']) {
-            return ['error' => true, 'message' => 'Customer Ledger creation failed - ' . $ledgerRequestResponse['message']];
-        }
-
-        return ['error' => false, 'data' => $invoiceDetail];
-    }
-
-    public function autoInvoiceForReissue(Invoice $invoice, array $service, $user): array
-    {
-        // Invoice Details process
-        $invoiceDetail = new InvoiceDetail();
-        if ($invoiceDetail->load(['InvoiceDetail' => $service])) {
-            if (!$invoiceDetail->save()) {
-                return ['error' => true, 'message' => 'Invoice Detail create failed - ' . Utilities::processErrorMessages($invoiceDetail->getErrors())];
-            }
-        } else {
-            return ['error' => true, 'message' => 'Invoice Detail loading failed - ' . Utilities::processErrorMessages($invoiceDetail->getErrors())];
-        }
-
-        // Mother Invoice Detail status update
-        /*$motherInvoiceDetailUpdateResponse = InvoiceDetail::find()->where(['refId' => $service['motherId'], 'refModel' => $service['refModel']])->one();
-        $motherInvoiceDetailUpdateResponse->status = GlobalConstant::REFUND_REQUESTED_STATUS;
-        if (!$motherInvoiceDetailUpdateResponse->save()) {
-            return ['error' => true, 'message' => 'Mother Invoice details update failed'];
-        }*/
-
-        // Invoice due update
-        $invoiceDue = InvoiceDetail::find()
-            ->select([new Expression('SUM(dueAmount) AS dueAmount')])
-            ->where(['status' => GlobalConstant::ACTIVE_STATUS])
-            ->andWhere(['invoiceId' => $invoiceDetail->invoiceId])
-            ->asArray()->all();
-        if (!$invoiceDue) {
-            return ['status' => false, 'message' => 'Mother Invoice details update failed'];
-        }
-
-        $invoice->dueAmount = $invoiceDue[0]['dueAmount'];
-        if (!$invoice->save()) {
-            return ['error' => false, 'message' => 'Invoice due update failed - ' . Utilities::processErrorMessages($invoice->getErrors())];
-        }
-
-        // Customer Ledger process
-        $ledgerRequestData = [
-            'title' => 'Service Refund',
-            'reference' => 'Invoice Number - ' . $invoice->invoiceNumber,
-            'refId' => $invoice->customerId,
-            'refModel' => Customer::class,
-            'subRefId' => $invoice->id,
-            'subRefModel' => $invoice::class,
-            'debit' => ($invoiceDetail->dueAmount > 0) ? $invoiceDetail->dueAmount : 0,
-            'credit' => ($invoiceDetail->dueAmount > 0) ? 0 : $invoiceDetail->dueAmount
-        ];
-        $ledgerRequestResponse = $this->ledgerService->store($ledgerRequestData);
-        if ($ledgerRequestResponse['error']) {
-            return ['error' => true, 'message' => 'Customer Ledger creation failed - ' . $ledgerRequestResponse['message']];
-        }
-
-        return ['error' => false, 'data' => $invoiceDetail];
-    }
-
-    private
-    static function serviceProcess(Invoice $invoice, array $services): array
-    {
-        $invoiceDetailBatchData = [];
-        $paymentTimelineBatchData = [];
-        foreach ($services as $singleService) {
-            $invoiceDetail = new InvoiceDetail();
-            $invoiceDetail->invoiceId = $invoice->id;
-            if (!$invoiceDetail->load(['InvoiceDetail' => $singleService]) || !$invoiceDetail->validate()) {
-                return ['error' => true, 'message' => 'Invoice Details validation failed - ' . Utilities::processErrorMessages($invoiceDetail->getErrors())];
-            }
-            $invoiceDetailBatchData[] = $invoiceDetail->getAttributes();
-
-            // Payment timeline process
-            /*$processedData = PaymentTimelineService::processData($invoice, $singleService);
-            $paymentTimelineBatchData = array_merge($paymentTimelineBatchData, $processedData);*/
-
-            // service update
-            $serviceObject = $singleService['refModel']::findOne(['id' => $singleService['refId']]);
-            if (!$serviceObject) {
-                return ['error' => true, 'message' => 'Service not found'];
-            }
-            $serviceObject->invoiceId = $invoice->id;
-            if (!$serviceObject->update()) {
-                return ['error' => true, 'message' => 'Service update failed - ' . Utilities::processErrorMessages($serviceObject->getErrors())];
-            }
-        }
-
-        // Invoice Details insert process
-        if (empty($invoiceDetailBatchData)) {
-            return ['error' => true, 'message' => 'Invoice Detail Batch Data can not be empty.'];
-        }
-        if (!(new InvoiceRepository())->batchStore(InvoiceDetail::tableName(), array_keys($invoiceDetailBatchData[0]), $invoiceDetailBatchData)) {
-            return ['error' => true, 'message' => 'Invoice Details batch insert failed'];
-        }
-
-        // Service Payment timeline batch insert
-        /*$paymentTimelineProcessResponse = PaymentTimelineService::batchInsert($paymentTimelineBatchData);
-        if ($paymentTimelineProcessResponse['error']) {
-            return $paymentTimelineProcessResponse;
-        }*/
-
-        return ['error' => false, 'message' => 'Service process done.'];
-    }
-
-    public function addReissueServiceToInvoice(ActiveRecord $newReissueService): array
-    {
-        // Invoice detail process
-        $invoiceDetail = new InvoiceDetail();
-        $invoiceDetail->invoiceId = $newReissueService->invoiceId;
-        $invoiceDetail->dueAmount = ($newReissueService->costOfSale - $newReissueService->paidAmount);
-        $invoiceDetail->paidAmount = $newReissueService->paidAmount;
-        $invoiceDetail->refId = $newReissueService->id;
-        $invoiceDetail->refModel = $newReissueService::class;
-        $invoiceDetail->status = GlobalConstant::ACTIVE_STATUS;
-        $invoiceDetail = $this->invoiceRepository->store($invoiceDetail);
-        if ($invoiceDetail->hasErrors()) {
-            return ['error' => true, 'message' => 'Invoice Detail creation failed - ' . Utilities::processErrorMessages($invoiceDetail->getErrors())];
-        }
-
-        // Mother Invoice Detail status update
-        $motherInvoiceDetail = $this->invoiceRepository->findOne(['refId' => $newReissueService->motherTicketId, 'refModel' => $newReissueService::class], InvoiceDetail::class, []);
-        $motherInvoiceDetail->status = ServiceConstant::INVOICE_DETAIL_REISSUE_STATUS;
-        $motherInvoiceDetail = $this->invoiceRepository->store($motherInvoiceDetail);
-        if ($motherInvoiceDetail->hasErrors()) {
-            return ['error' => true, 'message' => 'Mother Invoice details update failed - ' . Utilities::processErrorMessages($motherInvoiceDetail->getErrors())];
-        }
-
-        // Invoice due update
-        $invoice = $this->invoiceRepository->findOne(['id' => $newReissueService->invoiceId], Invoice::class, []);
-        $invoice->dueAmount += $invoiceDetail->dueAmount;
-        $invoice = $this->invoiceRepository->store($invoice);
-        if ($invoice->hasErrors()) {
-            return ['error' => true, 'message' => 'Invoice due update failed - ' . Utilities::processErrorMessages($invoice->getErrors())];
-        }
-
-        // Customer Ledger process
-        $ledgerRequestData = [
-            'title' => 'Service Reissue',
-            'reference' => 'Invoice Number - ' . $invoice->invoiceNumber,
-            'refId' => $invoice->customerId,
-            'refModel' => Customer::class,
-            'subRefId' => $invoice->id,
-            'subRefModel' => Invoice::class,
-            'debit' => ($invoiceDetail->dueAmount > 0) ? $invoiceDetail->dueAmount : 0,
-            'credit' => ($invoiceDetail->dueAmount > 0) ? 0 : $invoiceDetail->dueAmount
-        ];
-
-        $ledgerRequestResponse = $this->ledgerService->store($ledgerRequestData);
-        if ($ledgerRequestResponse['error']) {
-            return ['error' => $ledgerRequestResponse['error'], 'message' => 'Customer Ledger creation failed - ' . $ledgerRequestResponse['message']];
-        }
-
-        return ['error' => false, 'data' => $invoiceDetail->invoice];
-    }
-
-    public
-    static function checkAndDetectPaymentStatus($due, $amount): string
-    {
-        $paymentStatus = NULL;
-        $difference = abs(($due - $amount));
-        if ($difference <= GlobalConstant::GRACE_DISCOUNT) {
-            $paymentStatus = GlobalConstant::PAYMENT_STATUS['Full Paid'];
-        } elseif ($amount > 0 && $due > 0) {
-            $paymentStatus = GlobalConstant::PAYMENT_STATUS['Partially Paid'];
-        } elseif ($amount == 0 && $due > 0) {
-            $paymentStatus = GlobalConstant::PAYMENT_STATUS['Due'];
-        }
-
-        return $paymentStatus;
-    }
-
-    public function payment(ActiveRecord $invoice, array $requestData): array
+    public function payment(ActiveRecord $bill, array $requestData): array
     {
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
-            // If invoice is already paid
-            if ($invoice->dueAmount <= 0) {
-                throw  new Exception('You are not allowed to perform this action. This invoice is already paid.');
+            // If bill is already paid
+            if ($bill->dueAmount <= 0) {
+                throw  new Exception('Invalid request. This bill is already paid.');
             }
 
-            // If distribtion amount is greater than dueAmount
-            if ($invoice->dueAmount < $requestData['Transaction']['paidAmount']) {
-                throw  new Exception('You are not allowed to perform this action. This invoice will be over paid.');
+            // If distribution amount is greater than dueAmount
+            $totalDistributingAmount = ($requestData['Transaction']['paidAmount'] + $requestData['Transaction']['refundAdjustmentAmount'] + $bill->discountedAmount);
+            if ($bill->dueAmount < $totalDistributingAmount) {
+                throw  new Exception('Invalid Request. This bill will be over paid.');
             }
 
-            $customer = $invoice->customer;
+            $bill->paidAmount += $totalDistributingAmount;
+            $bill->dueAmount -= $totalDistributingAmount;
+            $bill = $this->billRepository->store($bill);
+            if ($bill->hasErrors()) {
+                throw new Exception('Bill payment failed - ' . Utilities::processErrorMessages($bill->getErrors()));
+            }
+
+            $amountDistributionResponse = self::distributePaidAmountToServices($bill, $totalDistributingAmount);
+            if ($amountDistributionResponse['error']) {
+                throw new Exception($amountDistributionResponse['message']);
+            }
+
             // Process Transaction Data
-            $transactionStatementStoreResponse = $this->transactionService->store($invoice, $customer, $requestData);
+            $transactionStatementStoreResponse = $this->transactionService->store($bill, $bill->supplier, $requestData);
             if ($transactionStatementStoreResponse['error']) {
                 throw new Exception('Transaction Statement Data process failed - ' . $transactionStatementStoreResponse['message']);
             }
             $transaction = $transactionStatementStoreResponse['data'];
 
-            $distributionAmount = $transaction->paidAmount;
-            $invoice->dueAmount -= $distributionAmount;
-            $invoice->paidAmount += $distributionAmount;
-            if (!$invoice->save()) {
-                throw new Exception('Invoice update failed for payment - ' . Utilities::processErrorMessages($invoice->getErrors()));
-            }
-
-            // Refund status update
-            if ($requestData['Transaction']['refundIds']) {
-                $refundTransactions = RefundTransaction::find()->where(['id' => $requestData['Transaction']['refundIds']])->all();
-                if (empty($refundTransactions)) {
-                    throw new Exception('Refund Adjustment Failed');
-                }
-
-                // TODO check the refund adjustment calculation
-                foreach ($refundTransactions as $key => $singleRefundTransaction) {
-                    $singleRefundTransaction->adjustedAmount = $singleRefundTransaction->adjustmentAmount;
-                    $singleRefundTransaction->isAdjusted = 1;
-                    if (!$singleRefundTransaction->save()) {
-                        throw new Exception('Refund Adjustment not save' . Utilities::processErrorMessages($singleRefundTransaction->getErrors()));
-                    }
-                }
-            }
-
-            //AttachmentFile::uploadsById($invoice, 'invoiceFile');
-            // Amount distributions
-            /*$invoiceDetails = InvoiceDetail::find()->select(['refId', 'refModel'])->where(['invoiceId' => $invoice->id])->all();
-            if (!count($invoiceDetails)) {
-                throw new Exception('No invoice details found');
-            }
-            $amountDistributionResponse = self::distributeAmountToServices($invoice, $distributionAmount);
-            if (!count($invoiceDetails)) {
-                throw new Exception('No invoice details found');
-            }*/
-            $amountDistributionResponse = self::distributePaidAmountToServices($invoice, $distributionAmount);
-            if ($amountDistributionResponse['error']) {
-                throw new Exception($amountDistributionResponse['message']);
-            }
-
-            // Customer Ledger process
-            $customerLedgerRequestData = [
-                'title' => 'Payment received',
-                'reference' => 'Invoice Number - ' . $invoice->invoiceNumber,
-                'refId' => $invoice->customerId,
-                'refModel' => Customer::class,
-                'subRefId' => $invoice->id,
-                'subRefModel' => $invoice::class,
-                'debit' => 0,
-                'credit' => $distributionAmount
+            // Supplier Ledger process
+            $supplierLedgerRequestData = [
+                'title' => 'Bill Paid',
+                'reference' => 'Bill Number - ' . $bill->billNumber,
+                'refId' => $bill->supplierId,
+                'refModel' => Supplier::class,
+                'subRefId' => $bill->id,
+                'subRefModel' => $bill::class,
+                'debit' => $totalDistributingAmount,
+                'credit' => 0
             ];
-            $customerLedgerRequestResponse = $this->ledgerService->store($customerLedgerRequestData);
-            if ($customerLedgerRequestResponse['error']) {
-                throw new Exception('Customer Ledger creation failed - ' . $customerLedgerRequestResponse['message']);
+            $supplierLedgerRequestResponse = $this->ledgerService->store($supplierLedgerRequestData);
+            if ($supplierLedgerRequestResponse['error']) {
+                throw new Exception('Customer Ledger creation failed - ' . $supplierLedgerRequestResponse['message']);
             }
 
             // Bank Ledger process
             $bankLedgerRequestData = [
-                'title' => 'Service Payment received',
-                'reference' => 'Invoice Number - ' . $invoice->invoiceNumber,
+                'title' => 'Bill Paid',
+                'reference' => 'Bill Number - ' . $bill->invoiceNumber,
                 'refId' => $transaction->bankId,
                 'refModel' => BankAccount::class,
-                'subRefId' => $invoice->id,
-                'subRefModel' => $invoice::class,
-                'debit' => $distributionAmount,
-                'credit' => 0
+                'subRefId' => $bill->id,
+                'subRefModel' => $bill::class,
+                'debit' => 0,
+                'credit' => $transaction->paidAmount
             ];
             $bankLedgerRequestResponse = $this->ledgerService->store($bankLedgerRequestData);
             if ($bankLedgerRequestResponse['error']) {
@@ -667,23 +367,24 @@ class BillService
             }
 
             $dbTransaction->commit();
-            return ['error' => false, 'message' => 'Invoice paid successfully.'];
+            return ['error' => false, 'message' => 'Bill paid successfully.'];
         } catch (\Exception $e) {
             $dbTransaction->rollBack();
-            return ['error' => true, 'message' => $e->getMessage() . ' - ' . $e->getFile() . ' - ' . $e->getLine()];
+            return ['error' => true, 'message' => $e->getMessage()];
         }
     }
 
-    private function distributePaidAmountToServices($invoice, $amount): array
+    private function distributePaidAmountToServices($bill, $amount): array
     {
-        foreach ($invoice->details as $invoiceDetail) {
+        foreach ($bill->details as $billDetail) {
             if ($amount <= 0) {
                 break;
             }
-            $service = $this->invoiceRepository->findOne(['id' => $invoiceDetail->refId], $invoiceDetail->refModel, []);
+            $service = $this->billRepository->findOne(['id' => $billDetail->refId], $billDetail->refModel);
             if (!$service) {
-                return ['error' => true, 'message' => "{$invoiceDetail->refModel} not found with id {$invoiceDetail->refId}"];
+                return ['error' => true, 'message' => "Service not found."];
             }
+
             $due = $service->costOfSale - $service->paidAmount;
             if (($service->paymentStatus == ServiceConstant::PAYMENT_STATUS['Full Paid']) && ($due == 0)) {
                 continue;
@@ -691,118 +392,32 @@ class BillService
             if ($due <= $amount) {
                 $service->paidAmount += $due;
                 $service->paymentStatus = ServiceConstant::PAYMENT_STATUS['Full Paid'];
-                //$paidAmountThisTime = $due;
                 $amount -= $due;
             } else {
                 $service->paidAmount += $amount;
                 $service->paymentStatus = ServiceConstant::PAYMENT_STATUS['Partially Paid'];
-                //$paidAmountThisTime = $amount;
                 $amount = 0;
             }
             $amountDue = $service->costOfSale - $service->paidAmount;
             if (!$service->save()) {
-                return ['error' => true, 'message' => "{$invoiceDetail->refModel} not updated with id {$invoiceDetail->refId}"];
+                return ['error' => true, 'message' => 'Service update failed - '.Utilities::processErrorMessages($service->getErrors())];
             }
 
             // Invoice detail update
-            $invoiceDetail->dueAmount = $amountDue;
-            $invoiceDetail->paidAmount = $service->paidAmount;
-            $invoiceDetail = $this->invoiceRepository->store($invoiceDetail);
-            if ($invoiceDetail->hasErrors()) {
-                return ['error' => true, 'message' => Utilities::processErrorMessages($invoiceDetail->getErrors())];
+            $billDetail->dueAmount = $amountDue;
+            $billDetail->paidAmount = $service->paidAmount;
+            $billDetail = $this->billRepository->store($billDetail);
+            if ($billDetail->hasErrors()) {
+                return ['error' => true, 'message' => 'Bill details update failed - '.Utilities::processErrorMessages($billDetail->getErrors())];
             }
-
-            /*$servicePaymentDetailsStoreResponse = ServicePaymentDetail::storeServicePaymentDetail($invoiceDetail->refModel, $invoiceDetail->refId, Invoice::class, $service->invoiceId, $paidAmountThisTime, $amountDue, $user);
-            if ($servicePaymentDetailsStoreResponse['error']) {
-                return ['error' => true, 'message' => $servicePaymentDetailsStoreResponse['message']];
-            }*/
-
         }
 
-        return ['error' => false, 'message' => "Distribution has been made successfully"];
-    }
-
-
-    protected function storeOrUpdateInvoiceDetail(ActiveRecord $invoice, $service, $user): array
-    {
-        $invoiceDetail = $this->invoiceRepository->findOne(['refModel' => $service['refModel'], 'refId' => $service['refId'], 'invoiceId' => $invoice->id], InvoiceDetail::class, []);
-        if ($invoiceDetail) {
-            $invoiceDetail->dueAmount = $service['dueAmount'];
-            $invoiceDetail->paidAmount = $service['paidAmount'];
-        } else {
-            $invoiceDetail = new InvoiceDetail();
-            $invoiceDetail->load(['InvoiceDetail' => $service]);
-            $invoiceDetail->invoiceId = $invoice->id;
-            $invoiceDetail->status = GlobalConstant::ACTIVE_STATUS;
-        }
-
-        $invoiceDetail = $this->invoiceRepository->store($invoiceDetail);
-        if ($invoiceDetail->hasErrors()) {
-            return ['error' => true, 'message' => 'Invoice Details store failed - ' . Utilities::processErrorMessages($invoiceDetail->getErrors())];
-        }
-
-        return ['error' => false, 'message' => 'Success'];
+        return ['error' => false, 'message' => "Distribution has been made successfully."];
     }
 
     public function getBankList(): array
     {
         return ArrayHelper::map(BankAccount::findAll(['status' => GlobalConstant::ACTIVE_STATUS, 'agencyId' => Yii::$app->user->identity->agencyId]), 'id', 'name');
-    }
-
-    public static function updateInvoice(Invoice $invoice, array $services, $updateService = null): array
-    {
-        $totalInvoiceDueDifference = 0;
-        // Invoice Detail update
-        foreach ($services as $service) {
-            // Invoice details finding
-            $invoiceDetail = InvoiceDetail::find()->where(['invoiceId' => $invoice->id, 'refId' => $service['refId'], 'refModel' => $service['refModel']])->one();
-            if (!$invoiceDetail) {
-                return ['status' => false, 'message' => "Invoice Detail not found for sales Id: {$service['refId']} and sales: {$service['refModel']}"];
-            }
-
-            // Invoice Detail update
-            if (!$invoiceDetail->load(['InvoiceDetail' => $service])) {
-                return ['status' => false, 'message' => "Invoice Detail loading failed - " . Utilities::processErrorMessages($invoiceDetail->getErrors())];
-            }
-            $invoiceDetail = (new InvoiceRepository)->store($invoiceDetail);
-            if ($invoiceDetail->hasErrors()) {
-                return ['error' => false, 'message' => "Invoice Detail update failed - " . Utilities::processErrorMessages($invoiceDetail->getErrors())];
-            }
-
-            if ($updateService) {
-                $paymentStatusResponse = self::checkAndDetectPaymentStatus($invoiceDetail->due, $invoiceDetail->amount);
-                $updateAbleServiceArray[] = [
-                    'refModel' => $invoiceDetail->refModel,
-                    'query' => [
-                        'id' => $invoiceDetail->refId,
-                        'invoiceId' => $invoice->id
-                    ],
-                    'data' => [
-                        'paidAmount' => sprintf('%.2f', $invoiceDetail->amount),
-                        'paymentStatus' => $paymentStatusResponse,
-                        'updatedAt' => Utilities::convertToTimestamp(date('Y-m-d H:i:s')),
-                        'updatedBy' => Yii::$app->user->id
-                    ],
-                ];
-                $updateSaleResponse = SaleService::serviceUpdate($updateAbleServiceArray);
-                if ($updateSaleResponse['error']) {
-                    return ['error' => true, 'message' => "Service update failed - " . $updateSaleResponse['message']];
-                }
-            }
-        }
-
-        // Invoice due update
-        $invoiceDue = InvoiceDetail::find()->select([new Expression('SUM(dueAmount) AS dueAmount')])->where(['status' => 1])->andWhere(['invoiceId' => $invoiceDetail->invoiceId])->asArray()->one();
-        if (!$invoiceDue) {
-            return ['error' => true, 'message' => 'Invoice due calculation failed.'];
-        }
-        $invoice->dueAmount = $invoiceDue['dueAmount'];
-        $invoice = (new InvoiceRepository)->store($invoice);
-        if ($invoice->hasErrors()) {
-            return ['error' => true, 'message' => "Invoice due update failed - " . Utilities::processErrorMessages($invoice->getErrors())];
-        }
-
-        return ['error' => false, 'message' => "Invoice due updated successfully", 'data' => $invoice];
     }
 
 }
