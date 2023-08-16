@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
@@ -42,21 +43,23 @@ $this->params['breadcrumbs'][] = $this->title;
                         <div class="col-sm invoice-col">
                             From
                             <address>
-                                <strong><?= $company->name ?></strong><br>
-                                <?= $company->address ?><br>
-                                Phone: <?= $company->phone ?><br>
-                                Email: <?= $company->email ?>
-                            </address>
-                        </div>
-                        <div class="col-sm invoice-col">
-                            To
-                            <address>
                                 <strong><?= $model->supplier->company ?></strong><br>
                                 <?= $model->supplier->address ?><br>
                                 Phone: <?= $model->supplier->phone ?><br>
                                 Email: <?= $model->supplier->email ?>
                             </address>
                         </div>
+
+                        <div class="col-sm invoice-col">
+                            To
+                            <address>
+                                <strong><?= $company->name ?></strong><br>
+                                <?= $company->address ?><br>
+                                Phone: <?= $company->phone ?><br>
+                                Email: <?= $company->email ?>
+                            </address>
+                        </div>
+
                     </div>
                     <div class="row pb-5">
                         <div class="table-responsive border-bottom">
@@ -71,7 +74,6 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <th>Issue</th>
                                     <th>Quote</th>
                                     <th>Received</th>
-                                    <th>Payment Status</th>
                                     <th>Action</th>
                                 </tr>
                                 </thead>

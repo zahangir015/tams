@@ -52,10 +52,10 @@ class BillController extends ParentController
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id)
+    public function actionView(string $uid)
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $this->findModel($uid),
         ]);
     }
 
@@ -93,7 +93,7 @@ class BillController extends ParentController
      * @return string|Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionUpdate($id): Response|string
     {
         $model = $this->findModel($id);
 
@@ -113,7 +113,7 @@ class BillController extends ParentController
      * @return Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($id)
+    public function actionDelete($id): Response
     {
         $this->findModel($id)->delete();
 
@@ -127,7 +127,7 @@ class BillController extends ParentController
      * @return Bill the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel($id): Bill
     {
         if (($model = Bill::findOne(['id' => $id])) !== null) {
             return $model;
