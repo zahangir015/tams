@@ -2,8 +2,12 @@
 
 namespace app\modules\account\models;
 
+use app\components\GlobalConstant;
+use app\modules\sale\models\holiday\HolidaySupplier;
+use app\modules\sale\models\hotel\HotelSupplier;
 use app\modules\sale\models\Supplier;
 use app\modules\sale\models\ticket\TicketSupplier;
+use app\modules\sale\models\visa\VisaSupplier;
 use app\traits\BehaviorTrait;
 use Yii;
 use yii\db\ActiveQuery;
@@ -107,5 +111,51 @@ class Bill extends ActiveRecord
     public function getTicketSuppliers(): ActiveQuery
     {
         return $this->hasMany(TicketSupplier::class, ['billId' => 'id']);
+    }
+    /**
+     * Gets query for [[HolidaySupplier]].
+     *
+     * @return ActiveQuery
+     */
+    public function getHolidaySuppliers(): ActiveQuery
+    {
+        return $this->hasMany(HolidaySupplier::class, ['billId' => 'id']);
+    }
+    /**
+     * Gets query for [[HotelSupplier]].
+     *
+     * @return ActiveQuery
+     */
+    public function getHotelSuppliers(): ActiveQuery
+    {
+        return $this->hasMany(HotelSupplier::class, ['billId' => 'id']);
+    }
+    /**
+     * Gets query for [[VisaSupplier]].
+     *
+     * @return ActiveQuery
+     */
+    public function getVisaSuppliers(): ActiveQuery
+    {
+        return $this->hasMany(VisaSupplier::class, ['billId' => 'id']);
+    }
+    /**
+     * Gets query for [[TicketSuppliers]].
+     *
+     * @return ActiveQuery
+     */
+    public function getDetails(): ActiveQuery
+    {
+        return $this->hasMany(BillDetail::class, ['billId' => 'id']);
+    }
+
+    /**
+     * Gets query for [[InvoiceDetail]].
+     *
+     * @return ActiveQuery
+     */
+    public function getTransactions(): ActiveQuery
+    {
+        return $this->hasMany(Transaction::class, ['refId' => 'id'])->onCondition([Transaction::tableName() . '.refModel' => 'app\\modules\\account\\models\\Bill', Transaction::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS, Transaction::tableName() . '.agencyId' => Yii::$app->user->identity->agencyId]);
     }
 }

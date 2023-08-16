@@ -52,12 +52,11 @@ class BillController extends ParentController
      * Displays a single Bill model.
      * @param string $uid UID
      * @return string
-     * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionView(string $uid): string
     {
         return $this->render('view', [
-            'model' => $this->billRepository->findOne(['uid' => $uid], Bill::class, ['supplier']),
+            'model' => $this->billRepository->findOne(['uid' => $uid], Bill::class, ['supplier', 'details', 'transactions']),
             'company' => Company::findOne(['agencyId' => Yii::$app->user->identity->agencyId]),
         ]);
     }
@@ -99,7 +98,7 @@ class BillController extends ParentController
      * @return string|Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionUpdate($id): Response|string
     {
         $model = $this->findModel($id);
 
@@ -119,7 +118,7 @@ class BillController extends ParentController
      * @return Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($id)
+    public function actionDelete($id): Response
     {
         $this->findModel($id)->delete();
 
@@ -133,7 +132,7 @@ class BillController extends ParentController
      * @return Bill the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel($id): Bill
     {
         if (($model = Bill::findOne(['id' => $id])) !== null) {
             return $model;
@@ -146,7 +145,5 @@ class BillController extends ParentController
     {
         $data = Yii::$app->request->get();
         return $this->billService->getPendingBill($data);
-
-
     }
 }
