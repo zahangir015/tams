@@ -1,5 +1,6 @@
 <?php
 
+use app\components\Utilities;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\DetailView;
@@ -78,23 +79,23 @@ $this->params['breadcrumbs'][] = $this->title;
                                 </tr>
                                 </thead>
                                 <tbody id="t-body">
-                                <?php foreach ($model->details as $invoiceDetail) {
-                                    if (!$invoiceDetail->service) {
+                                <?php foreach ($model->details as $billDetail) {
+                                    if (!$billDetail->service) {
                                         continue;
                                     }
                                     ?>
                                     <tr>
-                                        <td><?= $invoiceDetail->service->formName() ?></td>
-                                        <td><?= $invoiceDetail->getIdentificationNumber($invoiceDetail->service) ?></td>
-                                        <td><?= $invoiceDetail->service->type ?></td>
-                                        <td><?= $invoiceDetail->service->issueDate ?></td>
-                                        <td><?= $invoiceDetail->service->quoteAmount ?></td>
-                                        <td><?= $invoiceDetail->service->receivedAmount ?></td>
-                                        <td><?= $invoiceDetail->service->paymentStatus ?></td>
+                                        <td><?= $billDetail->service->formName() ?></td>
+                                        <td><?= $billDetail->getIdentificationNumber($billDetail->service) ?></td>
+                                        <td><?= $billDetail->service->type ?></td>
+                                        <td><?= $billDetail->service->issueDate ?></td>
+                                        <td><?= $billDetail->service->costOfSale ?></td>
+                                        <td><?= $billDetail->service->paidAmount ?></td>
+                                        <td><?= $billDetail->service->dueAmount ?></td>
                                         <td>
                                             <?php
-                                            $url = '/sale/' . Utilities::getServiceName($invoiceDetail->refModel) . '/view';
-                                            echo Html::a('<i class="fa fa-info-circle"></i>', [$url, 'uid' => $invoiceDetail->service->uid],
+                                            $url = '/sale/' . Utilities::getServiceName($billDetail->refModel) . '/view';
+                                            echo Html::a('<i class="fa fa-info-circle"></i>', [$url, 'uid' => $billDetail->service->uid],
                                                 [
                                                     'title' => Yii::t('app', 'View More'),
                                                     'target' => '_blank',
@@ -145,7 +146,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                                     'title' => Yii::t('app', 'View Money Receipt'),
                                                     'class' => 'btn btn-primary btn-xs',
                                                     'target' => '_blank'
-                                                ]) ?></td>
+                                                ]) ?>
+                                        </td>
                                     </tr>
                                     <?php
                                 }
@@ -155,29 +157,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         </div>
                     <?php
                     endif; ?>
-                    <?php if (!empty($refundTransactions['total_payable']) && !empty($refundTransactions['total_receivable'])) : ?>
-                        <div class="col-md">
-                            <div class="border" style="padding: 10px;">
-                                <h4>Refund details</h4>
-                                <hr>
-                                <table class="table table-bordered">
-                                    <tbody>
-                                    <tr>
-                                        <td><h4>Total Payable:</h4></td>
-                                        <td><h3 id="totalPayable">BDT <?= $refundTransactions['total_payable'] ?></h3>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><h4>Total Receiable:</h4></td>
-                                        <td><h3 id="totalPayable">
-                                                BDT <?= $refundTransactions['total_receivable'] ?></h3>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    <?php endif; ?>
+
                 </div>
             </div>
         </div>
@@ -191,12 +171,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                 <table class="table">
                                     <tbody>
                                     <tr>
-                                        <th>Invoice #:</th>
-                                        <td><?= $model->invoiceNumber ?></td>
-                                    </tr>
-                                    <tr>
-                                        <th>Due Date:</th>
-                                        <td><?= date('l jS \of F Y', strtotime($model->expectedPaymentDate)) ?></td>
+                                        <th>Bill #:</th>
+                                        <td><?= $model->billNumber ?></td>
                                     </tr>
                                     <tr>
                                         <th>Creator:</th>
@@ -239,47 +215,9 @@ $this->params['breadcrumbs'][] = $this->title;
                                 </table>
                             </div>
                         </div>
-                        <div class="col-12">
-                            <?php
-                            if ($model->dueAmount != 0) {
-                                echo Html::a('<i class="far fa-credit-card"></i> Payment', ['pay', 'uid' => $model->uid], [
-                                    'title' => 'pay', 'class' => 'btn btn-success float-right',
-                                ]);
-                            }
-                            ?>
-                            <?= Html::a('<i class="fa fa-envelope-open"></i> Send to Customer', ['send', 'uid' => $model->uid], [
-                                'title' => 'send', 'class' => 'btn btn-primary float-right',
-                            ]); ?>
-                            <?= Html::a('<i class="fas fa-print"></i> Preview Invoice Mail', ['preview', 'uid' => $model->uid], [
-                                'title' => 'preview',
-                                'class' => 'btn btn-default float-right',
-                                ''
-                            ]); ?>
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'id',
-            'uid',
-            'supplierId',
-            'billNumber',
-            'date',
-            'paidAmount',
-            'dueAmount',
-            'discountedAmount',
-            'refundAdjustmentAmount',
-            'remarks:ntext',
-            'status',
-            'createdBy',
-            'createdAt',
-            'updatedBy',
-            'updatedAt',
-        ],
-    ]) ?>
-
 </div>
