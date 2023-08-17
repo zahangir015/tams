@@ -1,5 +1,8 @@
 <?php
 
+use app\components\WidgetHelper;
+use kartik\depdrop\DepDrop;
+use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\web\JqueryAsset;
 use yii\web\View;
@@ -53,10 +56,10 @@ $this->registerJsFile(
                             <?= $form->field($model, 'hotelAddress')->textInput(['maxlength' => true]) ?>
                         </div>
                         <div class="col-md">
-                            <?= $form->field($model, 'countryId')->textInput() ?>
+                            <?= $form->field($model, "countryId")->widget(Select2::class, WidgetHelper::ajaxSelect2Widget('countryId', '/country/get-countries', true, 'countryId', 'country', ($model->country) ? [$model->countryId => $model->country->name] : []))->label('Country') ?>
                         </div>
                         <div class="col-md">
-                            <?= $form->field($model, 'cityId')->textInput() ?>
+                            <?= $form->field($model, "cityId")->widget(DepDrop::class, WidgetHelper::depDropConfigurationGenerate($model, 'cityId', 'countryId', '/city/get-city-by-country', ($model->city) ? [$model->cityId => $model->city->name] : [])) ?>
                         </div>
                     </div>
                     <div class="row">
@@ -97,10 +100,10 @@ $this->registerJsFile(
                 <?php
                 if (!$model->isNewRecord) {
                     foreach ($model->roomDetails as $key => $roomDetail) {
-                        echo $this->render('room', ['row' => $key, 'model' => $model, 'roomDetail' => $roomDetail, 'roomTypes' =>  $roomTypes, 'form' => $form]);
+                        echo $this->render('room', ['row' => $key, 'model' => $model, 'roomDetail' => $roomDetail, 'roomTypes' => $roomTypes, 'form' => $form]);
                     }
                 } else {
-                    echo $this->render('room', ['row' => 0, 'model' => $model, 'roomDetail' => $roomDetail, 'roomTypes' =>  $roomTypes, 'form' => $form]);
+                    echo $this->render('room', ['row' => 0, 'model' => $model, 'roomDetail' => $roomDetail, 'roomTypes' => $roomTypes, 'form' => $form]);
                 }
                 ?>
             </div>
