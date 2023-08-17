@@ -237,7 +237,7 @@ use app\modules\admin\components\Helper;
                                     ['label' => 'Ticket Supplier List', 'icon' => 'list', 'url' => ['/sale/ticket/ticket-supplier-list'], 'visible' => Helper::checkRoute('/sale/ticket/ticket-supplier-list')],
                                     ['label' => 'Refund List', 'icon' => 'minus-circle', 'url' => ['/sale/ticket/refund-list'], 'visible' => Helper::checkRoute('/sale/ticket/refund-list')],
                                     ['label' => 'Void List', 'icon' => 'circle', 'url' => ['/sale/ticket/void-list'], 'visible' => Helper::checkRoute('/sale/ticket/void-list')],
-                                    ['label' => 'Flight Proposal', 'icon' => 'circle', 'url' => ['/sale/flight-proposal/index'], 'visible' => Helper::checkRoute('/sale/flight-proposal')],
+                                    ['label' => 'Flight Proposal', 'icon' => 'circle', 'url' => ['/sale/flight-proposal/index'], 'visible' => Helper::checkRoute('/sale/flight-proposal/')],
                                     ['label' => 'Flight Report', 'icon' => 'circle', 'url' => ['/sale/report/ticket-sales-report'], 'visible' => Helper::checkRoute('/sale/report/ticket-sales-report')],
                                 ]
                             ],
@@ -263,7 +263,7 @@ use app\modules\admin\components\Helper;
                                     ['label' => 'Hotel List', 'icon' => 'list', 'url' => ['/sale/hotel/index'], 'visible' => Helper::checkRoute('/sale/hotel/')],
                                     ['label' => 'Hotel Supplier List', 'icon' => 'list', 'url' => ['/sale/hotel/hotel-supplier-list'], 'visible' => Helper::checkRoute('/sale/hotel/hotel-supplier-list')],
                                     ['label' => 'Refund List', 'icon' => 'minus-circle', 'url' => ['/sale/hotel/refund-list'], 'visible' => Helper::checkRoute('/sale/hotel/refund-list')],
-                                    ['label' => 'Hotel Proposal', 'icon' => 'circle', 'url' => ['/sale/hotel-proposal/index'], 'visible' => Helper::checkRoute('/sale/hotel-proposal')],
+                                    ['label' => 'Hotel Proposal', 'icon' => 'circle', 'url' => ['/sale/hotel-proposal/index'], 'visible' => Helper::checkRoute('/sale/hotel-proposal/')],
                                     ['label' => 'Hotel Report', 'icon' => 'circle', 'url' => ['/sale/report/hotel-sales-report'], 'visible' => Helper::checkRoute('/sale/report/hotel-sales-report')],
                                 ]
                             ],
