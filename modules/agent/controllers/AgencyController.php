@@ -100,7 +100,7 @@ class AgencyController extends ParentController
                 return $this->redirect(['view', 'uid' => $model->uid]);
 
             } catch (Exception $e) {
-                Yii::$app->session->setFlash('danger',$e->getMessage());
+                Yii::$app->session->setFlash('danger', $e->getMessage());
                 $dbTransaction->rollBack();
             }
         } else {
@@ -129,7 +129,7 @@ class AgencyController extends ParentController
             $model = $this->agencyRepository->store($model);
             if (!$model->hasErrors()) {
                 $users = User::find()->where(['agencyId' => $model->id])->all();
-                foreach ($users as $user){
+                foreach ($users as $user) {
                     // the following three lines were added:
                     $auth = \Yii::$app->authManager;
                     $authorRole = $auth->getRole($model->plan->name);

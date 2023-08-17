@@ -13,8 +13,7 @@ $this->params['breadcrumbs'][] = ['label' => $model->title, 'url' => ['view', 'i
 $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 ?>
 <div class="agency-update">
-    <?= $this->render('_form', [
+    <?= $this->render('_form_update', [
         'model' => $model,
     ]) ?>
-
 </div>
