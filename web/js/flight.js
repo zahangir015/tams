@@ -19,16 +19,18 @@ function addTicket() {
     });
 }
 function remove(row) {
-    $('#card' + row).remove()
-    titleUpdate(row)
-    rowNum--
-    $('#addButton').attr('data-row-number', rowNum)
+    $('#card' + row).remove();
+    titleUpdate(row);
+
+    rowNum--;
+    $('#addButton').attr('data-row-number', rowNum);
+    $('#count').text((rowNum+1));
 }
 
 function titleUpdate(row) {
     while (($('#card-label-' + (row + 1)).length !== 0)) {
-        $('#card-label-' + (row + 1)).text('Ticket ' + (row + 1))
-        row++
+        $('#card-label-' + (row + 1)).text('Ticket ' + (row + 1));
+        row++;
     }
 }
 

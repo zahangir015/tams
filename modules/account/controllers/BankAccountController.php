@@ -8,6 +8,10 @@ use app\components\Utilities;
 use app\modules\account\models\BankAccount;
 use app\modules\account\models\search\BankAccountSearch;
 use app\controllers\ParentController;
+use app\modules\account\repositories\BillRepository;
+use app\modules\account\services\LedgerService;
+use app\modules\account\services\RefundTransactionService;
+use app\modules\account\services\TransactionService;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\helpers\Json;
@@ -73,8 +77,24 @@ class BankAccountController extends ParentController
 
                 $model->tag = Json::encode($model->tag);
                 if ($model->save()) {
-                    Yii::$app->session->setFlash('success', 'Bank Account created successfully.');
-                    return $this->redirect(['view', 'uid' => $model->uid]);
+                    // Bank Ledger process
+                    $bankLedgerRequestData = [
+                        'title' => 'Bank account open',
+                        'reference' => $model->name,
+                        'refId' => $model->id,
+                        'refModel' => BankAccount::class,
+                        'subRefId' => null,
+                        'subRefModel' => null,
+                        'debit' => $model->balance,
+                        'credit' => 0
+                    ];
+                    $bankLedgerRequestResponse = (new LedgerService)->store($bankLedgerRequestData);
+                    if ($bankLedgerRequestResponse['error']) {
+                        Yii::$app->session->setFlash('danger', 'Bank Ledger creation failed - ' . $bankLedgerRequestResponse['message']);
+                    } else {
+                        Yii::$app->session->setFlash('success', 'Bank Account created successfully.');
+                        return $this->redirect(['view', 'uid' => $model->uid]);
+                    }
                 }
 
                 Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
