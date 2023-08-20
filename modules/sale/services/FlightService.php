@@ -574,7 +574,7 @@ class FlightService
 
     private static function calculateNetProfit($quoteAmount, $tax, $baseFare, $serviceCharge, $ait, $commissionReceived, $incentiveReceived)
     {
-        return ($quoteAmount - ($tax + $serviceCharge + $ait + (($baseFare - $commissionReceived) - $incentiveReceived)));
+        return ($quoteAmount - ($tax + $ait + (($baseFare - $commissionReceived) - $incentiveReceived)));
     }
 
     private static function calculateCostOfSale($tax, $ait, $baseFare, $commissionReceived, $incentiveReceived)
