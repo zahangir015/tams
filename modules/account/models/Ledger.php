@@ -31,6 +31,8 @@ use yii\db\ActiveRecord;
 class Ledger extends ActiveRecord
 {
     use BehaviorTrait;
+    public $ref;
+    public $subRef;
 
     /**
      * {@inheritdoc}
@@ -81,5 +83,27 @@ class Ledger extends ActiveRecord
             'updatedBy' => Yii::t('app', 'Updated By'),
             'updatedAt' => Yii::t('app', 'Updated At'),
         ];
+    }
+
+    public static function getReferenceName($refId, $refModel)
+    {
+        $model = $refModel::findOne(['id' => $refId]);
+        return $model->name;
+    }
+
+    public static function getSubReferenceName($subRefId, $subRefModel)
+    {
+        $model = $subRefModel::findOne(['id' => $subRefId]);
+
+        if (str_contains($subRefModel, 'Invoice')){
+            return $model->invoiceNumber;
+        }elseif (str_contains($subRefModel, 'Bill')){
+            return $model->billNumber;
+        }elseif (str_contains($subRefModel, 'Expense')){
+            return $model->identificationNumber;
+        }else{
+            return $model->journalNumber;
+        }
+
     }
 }

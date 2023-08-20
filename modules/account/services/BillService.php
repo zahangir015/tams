@@ -103,6 +103,22 @@ class BillService
                 throw new Exception('Supplier Ledger creation failed - ' . $ledgerRequestResponse['message']);
             }
 
+            // Bank Ledger process
+            $bankLedgerRequestData = [
+                'title' => 'Supplier Bill Paid',
+                'reference' => 'Bill Number - ' . $bill->billNumber,
+                'refId' => $transaction->bankId,
+                'refModel' => BankAccount::class,
+                'subRefId' => $bill->id,
+                'subRefModel' => Bill::class,
+                'debit' => 0,
+                'credit' => $bill->paidAmount
+            ];
+            $bankLedgerRequestResponse = $this->ledgerService->store($bankLedgerRequestData);
+            if ($bankLedgerRequestResponse['error']) {
+                throw new Exception('Bank Ledger creation failed - ' . $bankLedgerRequestResponse['message']);
+            }
+
             $dbTransaction->commit();
             Yii::$app->session->setFlash('success', 'Invoice created successfully.');
             return [
@@ -342,8 +358,8 @@ class BillService
                 'refModel' => Supplier::class,
                 'subRefId' => $bill->id,
                 'subRefModel' => $bill::class,
-                'debit' => $totalDistributingAmount,
-                'credit' => 0
+                'debit' => 0,
+                'credit' => $totalDistributingAmount
             ];
             $supplierLedgerRequestResponse = $this->ledgerService->store($supplierLedgerRequestData);
             if ($supplierLedgerRequestResponse['error']) {

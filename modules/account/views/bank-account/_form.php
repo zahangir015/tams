@@ -48,21 +48,22 @@ use yii\bootstrap4\ActiveForm;
                     <?= $form->field($model, 'swiftCode')->textInput(['maxlength' => true]) ?>
                 </div>
                 <div class="col-md">
-                    <?= $form->field($model, 'paymentCharge')->textInput() ?>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md">
-                    <?= $form->field($model, 'status')->dropdownList(GlobalConstant::DEFAULT_STATUS) ?>
-                </div>
-                <div class="col-md">
-                    <?= $form->field($model, 'tag')->widget(Select2::classname(), Utilities::getTagWidget($model->tag))->label('Tag'); ?>
+                    <?= $form->field($model, 'paymentCharge')->textInput(['type' => 'number', 'min' => 0, 'step' => 'any', 'value' => $model->isNewRecord ? 0 : $model->paymentCharge]) ?>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md">
                     <?= $form->field($model, 'logo')->fileInput(['maxlength' => true, 'class' => 'form-control']) ?>
                 </div>
+                <div class="col-md">
+                    <?= $form->field($model, 'balance')->textInput(['type' => 'number', 'min' => 0, 'step' => 'any', 'value' => 0]) ?>
+                </div>
+                <div class="col-md">
+                    <?= $form->field($model, 'tag')->widget(Select2::classname(), Utilities::getTagWidget($model->tag))->label('Tag'); ?>
+                </div>
+            </div>
+            <div class="row">
+
             </div>
             <div class="form-group">
                 <?= Html::submitButton(Yii::t('app', ($model->isNewRecord) ? 'Save' : 'Update'), ['class' => 'btn btn-success']) ?>
