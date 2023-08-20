@@ -57,7 +57,7 @@ class HotelProposal extends ActiveRecord
     public function rules(): array
     {
         return [
-            [['uid', 'agencyId', 'hotelCategoryId', 'hotelName', 'hotelAddress', 'countryId', 'cityId', 'numberOfAdult', 'createdBy', 'createdAt'], 'required'],
+            [['uid', 'agencyId', 'hotelCategoryId', 'hotelName', 'hotelAddress', 'countryId', 'cityId', 'numberOfAdult'], 'required'],
             [['agencyId', 'hotelCategoryId', 'countryId', 'cityId', 'numberOfAdult', 'numberOfChild', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'], 'integer'],
             [['amenities', 'notes'], 'string'],
             [['totalPrice', 'discount'], 'number'],
