@@ -74,7 +74,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <th>Type</th>
                                     <th>Issue</th>
                                     <th>Quote</th>
-                                    <th>Received</th>
+                                    <th>Paid</th>
                                     <th>Action</th>
                                 </tr>
                                 </thead>
@@ -91,7 +91,6 @@ $this->params['breadcrumbs'][] = $this->title;
                                         <td><?= $billDetail->service->issueDate ?></td>
                                         <td><?= $billDetail->service->costOfSale ?></td>
                                         <td><?= $billDetail->service->paidAmount ?></td>
-                                        <td><?= $billDetail->service->dueAmount ?></td>
                                         <td>
                                             <?php
                                             $url = '/sale/' . Utilities::getServiceName($billDetail->refModel) . '/view';
