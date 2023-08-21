@@ -3,6 +3,8 @@
 namespace app\modules\account\controllers;
 
 use app\components\GlobalConstant;
+use app\components\PdfGen;
+use app\components\pdfGenerator;
 use app\models\Company;
 use app\modules\account\models\Invoice;
 use app\modules\account\models\search\InvoiceSearch;
@@ -297,5 +299,14 @@ class InvoiceController extends ParentController
             'html' => $html,
             'totalPayable' => $totalPayable,
         ];
+    }
+
+    public function actionDownload(string $uid)
+    {
+        $fileName = 'invoice';
+        pdfGenerator::makeInvoice([
+            'invoice' => $this->invoiceRepository->findOne(['uid' => $uid], Invoice::class, ['details', 'customer', 'transactions']),
+            'company' => Company::findOne(['agencyId' => Yii::$app->user->identity->agencyId]),
+        ], $fileName);
     }
 }

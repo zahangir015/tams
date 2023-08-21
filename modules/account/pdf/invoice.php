@@ -21,8 +21,8 @@ $logo = Yii::$app->basePath . '/web/uploads/' . \app\models\Company::findOne(1)-
             <div style="width: 50%; float: left; position: relative; text-align: left; font-size: 16px;color: #000000;">
                 <p>
                     <span>Customer Details</span><br>
-                    <strong><?= $customer->name ?></strong><br>
-                    <strong><?= $customer->address ?></strong>
+                    <strong><?= $invoice->customer->name ?></strong><br>
+                    <strong><?= $invoice->customer->address ?></strong>
                 </p>
             </div>
             <div style="width: 45%; float: left; position: relative; text-align: left; font-size: 16px;color: #000000;">
@@ -35,13 +35,13 @@ $logo = Yii::$app->basePath . '/web/uploads/' . \app\models\Company::findOne(1)-
             <div style="width: 50%; float: left; position: relative; text-align: left;color: #000000;">
                 <p>
                     Payment Due Date:<br>
-                    <strong><?= ($invoice->expectedDate) ? date('j F Y', strtotime($invoice->expectedDate)) : '' ?> </strong>
+                    <strong><?= ($invoice->expectedPaymentDate) ? date('j F Y', strtotime($invoice->expectedPaymentDate)) : '' ?> </strong>
                 </p>
             </div>
             <div style="width: 45%; float: left; position: relative; text-align: left;color: #000000;">
                 <p>
                     Reference Number:<br>
-                    <strong><?= ($invoice->couponInvoiceNumber) ? $invoice->couponInvoiceNumber : '' ?> </strong>
+                    <strong><?= ($invoice->invoiceNumber) ? $invoice->invoiceNumber : '' ?> </strong>
                 </p>
             </div>
             <div style=" clear: both;"></div>
@@ -101,147 +101,61 @@ $logo = Yii::$app->basePath . '/web/uploads/' . \app\models\Company::findOne(1)-
                     </thead>
                     <tbody>
                     <?php
-                    $totalAmount = 0;
                     if ($invoiceDetail->service->formName() == 'Ticket') {
                         ?>
                         <tr>
                             <td style="padding: .75rem;text-align: left;"><?= $invoiceDetail->service->eTicket ?></td>
-                            <td style="padding: .75rem; text-align: left;"><?= $invoiceDetail->service->issuDate ?></td>
-                            <td style="padding: .75rem; text-align: left;"><?= $invoiceDetail->service->routing ?></td>
+                            <td style="padding: .75rem; text-align: left;"><?= $invoiceDetail->service->issueDate ?></td>
+                            <td style="padding: .75rem; text-align: left;"><?= $invoiceDetail->service->route ?></td>
                             <td style="padding: .75rem; text-align: right;"><?= number_format($invoiceDetail->paidAmount) ?></td>
                             <td style="padding: .75rem; text-align: right;"><?= number_format($invoiceDetail->dueAmount) ?></td>
                         </tr>
                         <?php
                     } elseif ($invoiceDetail->service->formName() == 'Visa') {
-                        $serviceDetails = implode('.', array_search())
+                        $serviceDetails = implode('.', array_column($invoiceDetail->service->visaSuppliers, 'serviceDetails'));
                         ?>
                         <tr>
                             <td style="padding: .75rem; text-align: left;"><?= $invoiceDetail->service->identificationNumber ?></td>
                             <td style="padding: .75rem; text-align: left;"><?= $invoiceDetail->service->issueDate ?></td>
-                            <td style="padding: .75rem; text-align: left;"><?= $invoiceDetail->service->visasupplier->serviceDetails ?></td>
+                            <td style="padding: .75rem; text-align: left;"><?= $serviceDetails ?></td>
                             <td style="padding: .75rem; text-align: left;"><?= number_format($invoiceDetail->paidAmount) ?></td>
                             <td style="padding: .75rem; text-align: right;"><?= number_format($invoiceDetail->dueAmount) ?></td>
                         </tr>
                         <?php
-                    } elseif ($invoiceDetail->service->formName() == 'Hotel') { ?>
+                    } elseif ($invoiceDetail->service->formName() == 'Hotel') {
+                        $serviceDetails = implode('.', array_column($invoiceDetail->service->hotelSuppliers, 'serviceDetails'));
+                        ?>
                         <tr>
                             <td style="padding: .75rem; text-align: left;"><?= $invoiceDetail->service->identificationNumber ?></td>
                             <td style="padding: .75rem; text-align: left;"><?= $invoiceDetail->service->issueDate ?></td>
-                            <td style="padding: .75rem; text-align: left;"><?= $invoiceDetail->service->details ?></td>
+                            <td style="padding: .75rem; text-align: left;"><?= $serviceDetails ?></td>
                             <td style="padding: .75rem; text-align: left;"><?= number_format($invoiceDetail->paidAmount) ?></td>
                             <td style="padding: .75rem; text-align: right;"><?= number_format($invoiceDetail->dueAmount) ?></td>
                         </tr>
                         <?php
                     } else {
+                        $serviceDetails = implode('.', array_column($invoiceDetail->service->holidaySuppliers, 'serviceDetails'));
                         ?>
                         <td style="padding: .75rem; text-align: left;"><?= $invoiceDetail->service->identificationNumber ?></td>
                         <td style="padding: .75rem; text-align: left;"><?= $invoiceDetail->service->issueDate ?></td>
-                        <td style="padding: .75rem; text-align: left;"><?= $invoiceDetail->service->details ?></td>
+                        <td style="padding: .75rem; text-align: left;"><?= $serviceDetails ?></td>
                         <td style="padding: .75rem; text-align: left;"><?= number_format($invoiceDetail->paidAmount) ?></td>
                         <td style="padding: .75rem; text-align: right;"><?= number_format($invoiceDetail->dueAmount) ?></td>
                     <?php
                     }
+                    }
                     ?>
                     </tbody>
-                    <tfoot style="background-color: #e0e0e1; color: #0a0a0a; text-align: left; font-weight: 700;font-size: 16px;">
-                    <?php if (!$invoice->breakDown) { ?>
+                    <!--<tfoot style="background-color: #e0e0e1; color: #0a0a0a; text-align: left; font-weight: 700;font-size: 16px;">
                     <tr>
                         <td colspan="4"
                             style="padding: .75rem; text-align: left; font-weight: 700; font-size: 16px">
                             Total Amount
                         </td>
-                        <td style="padding: .75rem; text-align: right; font-weight: 700; font-size: 16px">
-                            BDT <?= number_format($totalAmount) ?></td>
+                        <td style="padding: .75rem; text-align: right; font-weight: 700; font-size: 16px"> BDT <?/*= number_format(array_sum()) */?></td>
                     </tr>
-                    <?php
-                    if ($invoice->serviceCharge || $invoice->vat || $invoice->paymentCharge || $invoice->AIT) {
-                    ?>
-                    <tr>
-                        <td colspan="4"
-                            style="padding: .75rem; text-align: left; font-weight: 700; font-size: 16px">
-                            Service Charge
-                        </td>
-                        <td style="padding: .75rem; text-align: right; font-weight: 700; font-size: 16px">
-                            BDT <?= number_format($invoice->serviceCharge) ?></td>
-                    </tr>
-                    <tr>
-                        <td colspan="4"
-                            style="padding: .75rem; text-align: left; font-weight: 700; font-size: 16px">
-                            VAT(Value Added Service)
-                        </td>
-                        <td style="padding: .75rem; text-align: right; font-weight: 700; font-size: 16px">
-                            BDT <?= number_format($invoice->vat) ?></td>
-                    </tr>
-                    <tr>
-                        <td colspan="4"
-                            style="padding: .75rem; text-align: left; font-weight: 700; font-size: 16px">
-                            AIT(Advance Income Tax)
-                        </td>
-                        <td style="padding: .75rem; text-align: right; font-weight: 700; font-size: 16px">
-                            BDT <?= number_format($invoice->AIT) ?></td>
-                    </tr>
-                    <tr>
-                        <td colspan="4"
-                            style="padding: .75rem; text-align: left; font-weight: 700; font-size: 16px">
-                            Grand Total
-                        </td>
-                        <td style="padding: .75rem; text-align: right; font-weight: 700; font-size: 16px"> BDT <?= number_format(($totalAmount + $invoice->vat + $invoice->AIT)) ?></td>
-                    </tr>
-                    <?php
-                    }
-                    ?>
-
-                        <?php } else { ?>
-                    <tr>
-                        <td colspan="4" style="padding: .75rem;">
-                            Total Amount
-                        </td>
-                        <td style="padding: .75rem; text-align: right">
-                            BDT <?= number_format($totalAmount) ?></td>
-                    </tr>
-
-                    <?php
-                    if ($invoice->serviceCharge || $invoice->vat || $invoice->paymentCharge || $invoice->AIT) {
-                    ?>
-                    <tr>
-                        <td colspan="4"
-                            style="padding: .75rem; text-align: left; font-weight: 700; font-size: 16px">
-                            Service Charge
-                        </td>
-                        <td style="padding: .75rem; text-align: right; font-weight: 700; font-size: 16px">
-                            BDT <?= number_format($invoice->serviceCharge) ?></td>
-                    </tr>
-                    <tr>
-                        <td colspan="4" style="padding: .75rem;">
-                            VAT(Value Added Service)
-                        </td>
-                        <td style="padding: .75rem; text-align: right">
-                            BDT <?= number_format($invoice->vat) ?></td>
-                    </tr>
-                    <tr>
-                        <td colspan="4" style="padding: .75rem;">
-                            AIT(Advance Income Tax)
-                        </td>
-                        <td style="padding: .75rem; text-align: right">
-                            BDT <?= number_format($invoice->AIT) ?></td>
-                    </tr>
-                    <tr>
-                        <td colspan="4" style="padding: .75rem;">
-                            Grand Total
-                        </td>
-                        <td style="padding: .75rem; text-align: right">
-                            BDT <?= number_format(($totalAmount + $invoice->vat + $invoice->AIT)) ?></td>
-                    </tr>
-                    <?php
-                    }
-                    }
-                    ?>
-
-                    </tfoot>
+                    </tfoot>-->
                 </table>
-                <?php
-                }
-                ?>
             </div>
 
             <div style="margin-top: 10px;">
@@ -253,7 +167,7 @@ $logo = Yii::$app->basePath . '/web/uploads/' . \app\models\Company::findOne(1)-
                             Balance Due
                         </td>
                         <td width="20%" style="padding: .75rem; text-align: right">
-                            BDT <?= number_format($invoice->due) ?>
+                            BDT <?= number_format($invoice->dueAmount) ?>
                         </td>
                     </tr>
                     <tr>
@@ -261,7 +175,7 @@ $logo = Yii::$app->basePath . '/web/uploads/' . \app\models\Company::findOne(1)-
                             Total Paid
                         </td>
                         <td width="20%" style="padding: .75rem; text-align: right">
-                            BDT <?= number_format($invoice->amount) ?>
+                            BDT <?= number_format($invoice->paidAmount) ?>
                         </td>
                     </tr>
                     </tfoot>
@@ -272,16 +186,18 @@ $logo = Yii::$app->basePath . '/web/uploads/' . \app\models\Company::findOne(1)-
 
         <div style="background: #EFEFF4; box-sizing: border-box; padding: 15px; padding-bottom: 32px; padding-top: 32px; text-align: left; width: 100%; color: #474749;line-height: 0.5; font-size: 16px; margin-top: 10px; text-align: center">
             <h4>Contact:</h4>
-            <?= CompanyProfile::findOne(['id' => 1])->address ?><br>
+            <?= $company->address ?><br>
             <p>
                 <a href="mailto:ask@sharetrip.net"
-                   style="color:#2A8CFF;font-weight:700;line-height:1.6;text-align:left;text-decoration:none;">ask@sharetrip.net</a>
+                   style="color:#2A8CFF;font-weight:700;line-height:1.6;text-align:left;text-decoration:none;"><?= $company->email ?></a>
                 |
                 <a href="tel:+8809617617617"
-                   style="color:#2A8CFF;font-weight:700;line-height:1.6;text-align:left;text-decoration:none;">+8809617617617</a>
+                   style="color:#2A8CFF;font-weight:700;line-height:1.6;text-align:left;text-decoration:none;"><?= $company->phone ?></a>
             </p>
         </div>
     </div>
 </div>
 </body>
 </html>
+<?php
+die();

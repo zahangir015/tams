@@ -104,6 +104,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'attribute' => 'dueAmount',
+                'label' => 'Due',
                 'format' => ['decimal', 2],
                 'pageSummary' => true,
                 'pageSummaryFunc' => GridView::F_SUM
@@ -116,12 +117,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 'pageSummaryFunc' => GridView::F_SUM
             ],
             [
-                'attribute' => 'expectedDate',
-                'label' => 'Expected Date',
+                'attribute' => 'expectedPaymentDate',
                 'format' => 'date',
                 'filter' => DateRangePicker::widget([
                     'model' => $searchModel,
-                    'attribute' => 'expectedDate',
+                    'attribute' => 'expectedPaymentDate',
                     'pluginOptions' => [
                         'format' => 'Y-m-d',
                         'autoUpdateInput' => false
