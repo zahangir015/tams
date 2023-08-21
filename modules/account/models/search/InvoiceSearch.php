@@ -53,9 +53,9 @@ class InvoiceSearch extends Invoice
                 list($start_date, $end_date) = explode(' - ', $params['InvoiceSearch']['date']);
                 $query->andFilterWhere(['between', 'date', date('Y-m-d', strtotime($start_date)), date('Y-m-d', strtotime($end_date))]);
             }
-            if (!empty($params['InvoiceSearch']['expectedDate']) && str_contains($params['InvoiceSearch']['expectedDate'], '-')) {
-                list($start_date, $end_date) = explode(' - ', $params['InvoiceSearch']['expectedDate']);
-                $query->andFilterWhere(['between', 'expectedDate', date('Y-m-d', strtotime($start_date)), date('Y-m-d', strtotime($end_date))]);
+            if (!empty($params['InvoiceSearch']['expectedPaymentDate']) && str_contains($params['InvoiceSearch']['expectedPaymentDate'], '-')) {
+                list($start_date, $end_date) = explode(' - ', $params['InvoiceSearch']['expectedPaymentDate']);
+                $query->andFilterWhere(['between', 'expectedPaymentDate', date('Y-m-d', strtotime($start_date)), date('Y-m-d', strtotime($end_date))]);
             }
         }
 
