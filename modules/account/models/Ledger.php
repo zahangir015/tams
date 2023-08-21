@@ -88,7 +88,7 @@ class Ledger extends ActiveRecord
     public static function getReferenceName($refId, $refModel)
     {
         $model = $refModel::findOne(['id' => $refId]);
-        return $model->name;
+        return $model ? $model->name : null;
     }
 
     public static function getSubReferenceName($subRefId, $subRefModel)

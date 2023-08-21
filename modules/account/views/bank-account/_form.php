@@ -59,11 +59,8 @@ use yii\bootstrap4\ActiveForm;
                     <?= $form->field($model, 'balance')->textInput(['type' => 'number', 'min' => 0, 'step' => 'any', 'value' => 0]) ?>
                 </div>
                 <div class="col-md">
-                    <?= $form->field($model, 'tag')->widget(Select2::classname(), Utilities::getTagWidget($model->tag))->label('Tag'); ?>
+                    <?= $form->field($model, 'tag')->widget(Select2::class, Utilities::getTagWidget($model->tag))->label('Tag'); ?>
                 </div>
-            </div>
-            <div class="row">
-
             </div>
             <div class="form-group">
                 <?= Html::submitButton(Yii::t('app', ($model->isNewRecord) ? 'Save' : 'Update'), ['class' => 'btn btn-success']) ?>
