@@ -36,6 +36,7 @@ use yii\db\ActiveRecord;
 class BankAccount extends ActiveRecord
 {
     use BehaviorTrait;
+    public $balance;
     /**
      * {@inheritdoc}
      */
@@ -51,7 +52,7 @@ class BankAccount extends ActiveRecord
     {
         return [
             [['name', 'shortName', 'accountName', 'accountNumber', 'branch'], 'required'],
-            [['paymentCharge'], 'number'],
+            [['paymentCharge', 'balance'], 'number'],
             [['tag'], 'safe'],
             [['status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['uid'], 'string', 'max' => 36],

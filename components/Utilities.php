@@ -636,8 +636,8 @@ class Utilities
 
     public static function getServiceName($invoiceDetailRefModel): string
     {
-        $splittedRefModel = explode('\\', $invoiceDetailRefModel);
-        return $refModel = strtolower(end($splittedRefModel));
+        $splitRefModel = explode('\\', $invoiceDetailRefModel);
+        return $refModel = strtolower(end($splitRefModel));
     }
 
     public static function getBasicActionColumnArray(): array

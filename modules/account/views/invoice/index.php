@@ -1,5 +1,6 @@
 <?php
 
+use kartik\daterange\DateRangePicker;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use kartik\grid\GridView;
@@ -114,8 +115,32 @@ $this->params['breadcrumbs'][] = $this->title;
                 'pageSummary' => true,
                 'pageSummaryFunc' => GridView::F_SUM
             ],
-            'expectedDate',
-            'date',
+            [
+                'attribute' => 'expectedDate',
+                'label' => 'Expected Date',
+                'format' => 'date',
+                'filter' => DateRangePicker::widget([
+                    'model' => $searchModel,
+                    'attribute' => 'expectedDate',
+                    'pluginOptions' => [
+                        'format' => 'Y-m-d',
+                        'autoUpdateInput' => false
+                    ]
+                ])
+            ],
+            [
+                'attribute' => 'date',
+                'label' => 'Date',
+                'format' => 'date',
+                'filter' => DateRangePicker::widget([
+                    'model' => $searchModel,
+                    'attribute' => 'date',
+                    'pluginOptions' => [
+                        'format' => 'Y-m-d',
+                        'autoUpdateInput' => false
+                    ]
+                ])
+            ],
             'discount',
             'comment:ntext',
             'createdAt:date',

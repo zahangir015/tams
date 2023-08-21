@@ -3,6 +3,10 @@
 namespace app\modules\account\components;
 
 use app\modules\account\models\BankAccount;
+use app\modules\account\models\Bill;
+use app\modules\account\models\Expense;
+use app\modules\account\models\Invoice;
+use app\modules\account\models\Journal;
 use app\modules\sale\models\Customer;
 use app\modules\sale\models\Supplier;
 
@@ -34,6 +38,14 @@ final class AccountConstant
         Supplier::class => 'Supplier',
         BankAccount::class => 'Bank',
     ];
+
+    const SUB_REF_MODEL = [
+        Invoice::class => 'Invoice',
+        Bill::class => 'Bill',
+        Expense::class => 'Expense',
+        Journal::class => 'Journal',
+    ];
+
     const REFUND_PAYMENT_TYPE = [
         'Payable' => 'Payable',
         'Receivable' => 'Receivable'

@@ -48,6 +48,17 @@ class InvoiceSearch extends Invoice
         $query->where([self::tableName().'.status' => GlobalConstant::ACTIVE_STATUS])
             ->andWhere([self::tableName().'.agencyId' => Yii::$app->user->identity->agencyId]);
 
+        if (isset($params['InvoiceSearch'])) {
+            if (!empty($params['InvoiceSearch']['date']) && str_contains($params['InvoiceSearch']['date'], '-')) {
+                list($start_date, $end_date) = explode(' - ', $params['InvoiceSearch']['date']);
+                $query->andFilterWhere(['between', 'date', date('Y-m-d', strtotime($start_date)), date('Y-m-d', strtotime($end_date))]);
+            }
+            if (!empty($params['InvoiceSearch']['expectedDate']) && str_contains($params['InvoiceSearch']['expectedDate'], '-')) {
+                list($start_date, $end_date) = explode(' - ', $params['InvoiceSearch']['expectedDate']);
+                $query->andFilterWhere(['between', 'expectedDate', date('Y-m-d', strtotime($start_date)), date('Y-m-d', strtotime($end_date))]);
+            }
+        }
+
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'sort' => ['defaultOrder' => ['id' => SORT_DESC]],
