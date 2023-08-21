@@ -185,8 +185,7 @@ $logo = Yii::$app->basePath . '/web/uploads/' . \app\models\Company::findOne(1)-
                             style="padding: .75rem; text-align: left; font-weight: 700; font-size: 16px">
                             Grand Total
                         </td>
-                        <td style="padding: .75rem; text-align: right; font-weight: 700; font-size: 16px">
-                            BDT <?= number_format(($totalAmount + $invoice->vat + $invoice->AIT)) ?></td>
+                        <td style="padding: .75rem; text-align: right; font-weight: 700; font-size: 16px"> BDT <?= number_format(($totalAmount + $invoice->vat + $invoice->AIT)) ?></td>
                     </tr>
                     <?php
                     }
