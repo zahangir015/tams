@@ -199,5 +199,3 @@ use app\models\Company;
 </div>
 </body>
 </html>
-<?php
-die();
