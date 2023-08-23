@@ -1,8 +1,3 @@
-<?php
-
-use app\models\Company;
-
-?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -78,15 +73,6 @@ use app\models\Company;
                     }
                     ?>
                     </tbody>
-                    <!--<tfoot style="background-color: #e0e0e1; color: #0a0a0a; text-align: left; font-weight: 700;font-size: 16px;">
-                    <tr>
-                        <td colspan="4"
-                            style="padding: .75rem; text-align: left; font-weight: 700; font-size: 16px">
-                            Total Amount
-                        </td>
-                        <td style="padding: .75rem; text-align: right; font-weight: 700; font-size: 16px"> BDT <? /*= number_format(array_sum()) */ ?></td>
-                    </tr>
-                    </tfoot>-->
                 </table>
             </div>
 
