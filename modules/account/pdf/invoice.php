@@ -1,5 +1,5 @@
 <?php
-$logo = Yii::$app->basePath . '/web/uploads/' . \app\models\Company::findOne(1)->logo;
+use app\models\Company;
 ?>
 <!DOCTYPE html>
 <html>
@@ -11,7 +11,7 @@ $logo = Yii::$app->basePath . '/web/uploads/' . \app\models\Company::findOne(1)-
 <div style="width: 100%; margin: auto; background: #ffffff; padding: 10px 0;">
     <div style="width: 100%; margin: auto; background: white; font-family: 'Helvetica','Arial',sans-serif; color: #585858;">
         <div style="text-align: center; height: auto; margin-top: 10px;">
-            <img src="<?= $logo ?>" alt="" style="width: 100%; height: auto; max-width: 220px">
+            <img src="<?= $company ? $company->logo : '' ?>" alt="" style="width: 100%; height: auto; max-width: 220px">
             <h4><?= ($invoice->paidAmount == 0) ? 'Unpaid Payment Update!' : (($invoice->paidAmount && $invoice->dueAmount) ? 'Partial Payment Update!' : 'Your Payment has been Received!') ?></h4>
         </div>
         <div>
