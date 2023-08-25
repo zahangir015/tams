@@ -1,3 +1,9 @@
+<?php
+
+use yii\helpers\Url;
+
+$logo = $company ? Url::to('@web/uploads/company/').$company->logo : '';
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,7 +14,7 @@
 <div style="width: 100%; margin: auto; background: #ffffff; padding: 10px 0;">
     <div style="width: 100%; margin: auto; background: white; font-family: 'Helvetica','Arial',sans-serif; color: #585858;">
         <div style="text-align: center; height: auto; margin-top: 10px;">
-            <img src="<?= $company ? '/uploads/company/'.$company->logo : '' ?>" alt="" style="width: 100%; height: auto; max-width: 220px">
+            <img src="<?= $logo ?>" alt="" style="width: 100%; height: auto; max-width: 220px">
             <h4><?= ($invoice->paidAmount == 0) ? 'Unpaid Payment Update!' : (($invoice->paidAmount && $invoice->dueAmount) ? 'Partial Payment Update!' : 'Your Payment has been Received!') ?></h4>
         </div>
         <div>

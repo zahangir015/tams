@@ -309,7 +309,8 @@ class InvoiceController extends ParentController
                 'details' => function ($query) {
                     $query->with(['service']);
                 },
-                'customer', 'transactions']),
+                'customer',
+            ]),
             'company' => Company::findOne(['agencyId' => Yii::$app->user->identity->agencyId]),
         ], $fileName);
     }
