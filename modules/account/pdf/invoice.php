@@ -1,7 +1,8 @@
 <?php
 
-use app\models\Company;
+use yii\helpers\Url;
 
+$logo = $company ? Url::to('@web/uploads/company/').$company->logo : '';
 ?>
 <!DOCTYPE html>
 <html>
@@ -13,7 +14,7 @@ use app\models\Company;
 <div style="width: 100%; margin: auto; background: #ffffff; padding: 10px 0;">
     <div style="width: 100%; margin: auto; background: white; font-family: 'Helvetica','Arial',sans-serif; color: #585858;">
         <div style="text-align: center; height: auto; margin-top: 10px;">
-            <img src="<?= $company ? '/uploads/company/'.$company->logo : '' ?>" alt="" style="width: 100%; height: auto; max-width: 220px">
+            <img src="<?= $logo ?>" alt="" style="width: 100%; height: auto; max-width: 220px">
             <h4><?= ($invoice->paidAmount == 0) ? 'Unpaid Payment Update!' : (($invoice->paidAmount && $invoice->dueAmount) ? 'Partial Payment Update!' : 'Your Payment has been Received!') ?></h4>
         </div>
         <div>
@@ -78,15 +79,6 @@ use app\models\Company;
                     }
                     ?>
                     </tbody>
-                    <!--<tfoot style="background-color: #e0e0e1; color: #0a0a0a; text-align: left; font-weight: 700;font-size: 16px;">
-                    <tr>
-                        <td colspan="4"
-                            style="padding: .75rem; text-align: left; font-weight: 700; font-size: 16px">
-                            Total Amount
-                        </td>
-                        <td style="padding: .75rem; text-align: right; font-weight: 700; font-size: 16px"> BDT <? /*= number_format(array_sum()) */ ?></td>
-                    </tr>
-                    </tfoot>-->
                 </table>
             </div>
 
