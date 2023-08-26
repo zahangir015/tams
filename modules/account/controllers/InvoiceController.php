@@ -172,7 +172,7 @@ class InvoiceController extends ParentController
                 'html' => '',
                 'totalPayable' => 0,
                 'message' => 'Customer info is required'
-                ];
+            ];
         }
 
         $start_date = $end_date = null;
@@ -305,7 +305,12 @@ class InvoiceController extends ParentController
     {
         $fileName = 'invoice';
         pdfGenerator::makeInvoice([
-            'invoice' => $this->invoiceRepository->findOne(['uid' => $uid], Invoice::class, ['details', 'customer', 'transactions']),
+            'invoice' => $this->invoiceRepository->findOne(['uid' => $uid], Invoice::class, [
+                'details' => function ($query) {
+                    $query->with(['service']);
+                },
+                'customer',
+            ]),
             'company' => Company::findOne(['agencyId' => Yii::$app->user->identity->agencyId]),
         ], $fileName);
     }

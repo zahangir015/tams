@@ -1,5 +1,8 @@
 <?php
-use app\models\Company;
+
+use yii\helpers\Url;
+
+$logo = $company ? Url::to('@web/uploads/company/').$company->logo : '';
 ?>
 <!DOCTYPE html>
 <html>
@@ -11,150 +14,71 @@ use app\models\Company;
 <div style="width: 100%; margin: auto; background: #ffffff; padding: 10px 0;">
     <div style="width: 100%; margin: auto; background: white; font-family: 'Helvetica','Arial',sans-serif; color: #585858;">
         <div style="text-align: center; height: auto; margin-top: 10px;">
-            <img src="<?= $company ? $company->logo : '' ?>" alt="" style="width: 100%; height: auto; max-width: 220px">
+            <img src="<?= $logo ?>" alt="" style="width: 100%; height: auto; max-width: 220px">
             <h4><?= ($invoice->paidAmount == 0) ? 'Unpaid Payment Update!' : (($invoice->paidAmount && $invoice->dueAmount) ? 'Partial Payment Update!' : 'Your Payment has been Received!') ?></h4>
         </div>
         <div>
-            <h3 style="color: #000000; text-align: left; font-size: 20px; font-weight: 700">
+            <h3 style="color: #000000; text-align: left; font-size: 16px; font-weight: 500">
                 INVOICE:&nbsp;<?= $invoice->invoiceNumber ?>
             </h3>
-            <div style="width: 50%; float: left; position: relative; text-align: left; font-size: 16px;color: #000000;">
+            <div style="width: 50%; float: left; position: relative; text-align: left; font-size: 15px;color: #000000;">
                 <p>
                     <span>Customer Details</span><br>
                     <strong><?= $invoice->customer->name ?></strong><br>
                     <strong><?= $invoice->customer->address ?></strong>
                 </p>
             </div>
-            <div style="width: 45%; float: left; position: relative; text-align: left; font-size: 16px;color: #000000;">
+            <div style="width: 45%; float: left; position: relative; text-align: left; font-size: 15px;color: #000000;">
                 <p>
                     Date:<br>
-                    <strong><?= date('j F Y', strtotime($invoice->createdAt)) ?></strong>
-                </p>
-            </div>
-            <div style=" clear: both;"></div>
-            <div style="width: 50%; float: left; position: relative; text-align: left;color: #000000;">
-                <p>
+                    <strong><?= date('j F Y', strtotime($invoice->createdAt)) ?></strong><br>
                     Payment Due Date:<br>
                     <strong><?= ($invoice->expectedPaymentDate) ? date('j F Y', strtotime($invoice->expectedPaymentDate)) : '' ?> </strong>
                 </p>
             </div>
-            <div style="width: 45%; float: left; position: relative; text-align: left;color: #000000;">
-                <p>
-                    Reference Number:<br>
-                    <strong><?= ($invoice->invoiceNumber) ? $invoice->invoiceNumber : '' ?> </strong>
-                </p>
-            </div>
             <div style=" clear: both;"></div>
-            <div style="background: #ffffff; margin-top: 10px; border-radius: 4px;">
-                <?php
-                foreach ($invoice->details as $key => $invoiceDetail) {
-                ?>
-                <h2 style="color: #000000; font-weight: 600; width: 100%; font-size: 16px">
-                    <?= $invoiceDetail->service->formName() ?>
-                </h2>
+
+            <div style="background: #ffffff; margin-top: 8px; border-radius: 4px;">
                 <table width="100%"
-                       style="margin: auto; font-size: 14px; border: none !important; border-collapse: collapse">
-                    <thead style="color: #0a0a0a; font-weight: 700; text-align: left; background-color: #e0e0e1; padding: .75rem;">
-                    <?php
-                    if ($invoiceDetail->service->formName() == 'Ticket') {
-                        ?>
-                        <tr>
-                            <th style="padding: .75rem;">eTicket</th>
-                            <th style="padding: .75rem;">Issue</th>
-                            <th style="padding: .75rem;">Route</th>
-                            <th style="padding: .75rem; text-align: right">paid Amount</th>
-                            <th style="padding: .75rem; text-align: right">Due Amount</th>
-                        </tr>
-                        <?php
-                    } elseif ($invoiceDetail->service->formName() == 'Visa') {
-                        ?>
-                        <tr>
-                            <th style="padding: .75rem;">Identification #</th>
-                            <th style="padding: .75rem;">Issue</th>
-                            <th style="padding: .75rem;">Details</th>
-                            <th style="padding: .75rem;">Paid Amount</th>
-                            <th style="padding: .75rem; text-align: right">Due Amount</th>
-                        </tr>
-                        <?php
-                    } elseif ($invoiceDetail->service->formName() == 'Hotel') {
-                        ?>
-                        <tr>
-                            <th style="padding: .75rem;">Identification #</th>
-                            <th style="padding: .75rem;">Issue</th>
-                            <th style="padding: .75rem;">Details</th>
-                            <th style="padding: .75rem;">Paid Amount</th>
-                            <th style="padding: .75rem; text-align: right">Due Amount</th>
-                        </tr>
-                        <?php
-                    } else {
-                        ?>
-                        <tr>
-                            <th style="padding: .75rem;">Identification #</th>
-                            <th style="padding: .75rem;">Issue</th>
-                            <th style="padding: .75rem;">Details</th>
-                            <th style="padding: .75rem;">Paid Amount</th>
-                            <th style="padding: .75rem; text-align: right">Due Amount</th>
-                        </tr>
-                        <?php
-                    }
-                    ?>
+                       style="margin: auto; font-size: 15px; border: none !important; border-collapse: collapse">
+                    <thead style="color: #0a0a0a; font-weight: 500; text-align: left; background-color: #e0e0e1; padding: .75rem;">
+                    <tr>
+                        <th style="padding: .75rem;">Service Type</th>
+                        <th style="padding: .75rem;">Identification #</th>
+                        <th style="padding: .75rem;">Issue</th>
+                        <th style="padding: .75rem;">Pax Name</th>
+                        <th style="padding: .75rem;">Route/Details</th>
+                        <th style="padding: .75rem; text-align: right">paid Amount</th>
+                        <th style="padding: .75rem; text-align: right">Due Amount</th>
+                    </tr>
                     </thead>
                     <tbody>
                     <?php
+                    foreach ($invoice->details as $key => $invoiceDetail) {
+                    $supplierModel = strtolower($invoiceDetail->service->formName()) . 'Suppliers';
                     if ($invoiceDetail->service->formName() == 'Ticket') {
-                        ?>
-                        <tr>
-                            <td style="padding: .75rem;text-align: left;"><?= $invoiceDetail->service->eTicket ?></td>
-                            <td style="padding: .75rem; text-align: left;"><?= $invoiceDetail->service->issueDate ?></td>
-                            <td style="padding: .75rem; text-align: left;"><?= $invoiceDetail->service->route ?></td>
-                            <td style="padding: .75rem; text-align: right;"><?= number_format($invoiceDetail->paidAmount) ?></td>
-                            <td style="padding: .75rem; text-align: right;"><?= number_format($invoiceDetail->dueAmount) ?></td>
-                        </tr>
-                        <?php
-                    } elseif ($invoiceDetail->service->formName() == 'Visa') {
-                        $serviceDetails = implode('.', array_column($invoiceDetail->service->visaSuppliers, 'serviceDetails'));
-                        ?>
-                        <tr>
-                            <td style="padding: .75rem; text-align: left;"><?= $invoiceDetail->service->identificationNumber ?></td>
-                            <td style="padding: .75rem; text-align: left;"><?= $invoiceDetail->service->issueDate ?></td>
-                            <td style="padding: .75rem; text-align: left;"><?= $serviceDetails ?></td>
-                            <td style="padding: .75rem; text-align: left;"><?= number_format($invoiceDetail->paidAmount) ?></td>
-                            <td style="padding: .75rem; text-align: right;"><?= number_format($invoiceDetail->dueAmount) ?></td>
-                        </tr>
-                        <?php
-                    } elseif ($invoiceDetail->service->formName() == 'Hotel') {
-                        $serviceDetails = implode('.', array_column($invoiceDetail->service->hotelSuppliers, 'serviceDetails'));
-                        ?>
-                        <tr>
-                            <td style="padding: .75rem; text-align: left;"><?= $invoiceDetail->service->identificationNumber ?></td>
-                            <td style="padding: .75rem; text-align: left;"><?= $invoiceDetail->service->issueDate ?></td>
-                            <td style="padding: .75rem; text-align: left;"><?= $serviceDetails ?></td>
-                            <td style="padding: .75rem; text-align: left;"><?= number_format($invoiceDetail->paidAmount) ?></td>
-                            <td style="padding: .75rem; text-align: right;"><?= number_format($invoiceDetail->dueAmount) ?></td>
-                        </tr>
-                        <?php
+                        $serviceDetails = $invoiceDetail->service->route;
+                        $identificationNumber = $invoiceDetail->service->eTicket;
+                        $paxName = $invoiceDetail->service->paxName;
                     } else {
-                        $serviceDetails = implode('.', array_column($invoiceDetail->service->holidaySuppliers, 'serviceDetails'));
-                        ?>
-                        <td style="padding: .75rem; text-align: left;"><?= $invoiceDetail->service->identificationNumber ?></td>
-                        <td style="padding: .75rem; text-align: left;"><?= $invoiceDetail->service->issueDate ?></td>
-                        <td style="padding: .75rem; text-align: left;"><?= $serviceDetails ?></td>
-                        <td style="padding: .75rem; text-align: left;"><?= number_format($invoiceDetail->paidAmount) ?></td>
-                        <td style="padding: .75rem; text-align: right;"><?= number_format($invoiceDetail->dueAmount) ?></td>
-                    <?php
+                        $serviceDetails = implode('.', array_column($invoiceDetail->service->$supplierModel, 'serviceDetails'));
+                        $identificationNumber = $invoiceDetail->service->identificationNumber;
+                        $paxName = $customer->name;
                     }
+                    ?>
+                    <tr>
+                        <td style="padding: .75rem;text-align: left;"><?= $invoiceDetail->service->formName() ?></td>
+                        <td style="padding: .75rem;text-align: left;"><?= $identificationNumber ?></td>
+                        <td style="padding: .75rem; text-align: left;"><?= $invoiceDetail->service->issueDate ?></td>
+                        <td style="padding: .75rem; text-align: left;"><?= $paxName ?></td>
+                        <td style="padding: .75rem; text-align: left;"><?= $serviceDetails ?></td>
+                        <td style="padding: .75rem; text-align: right;"><?= number_format($invoiceDetail->paidAmount) ?></td>
+                        <td style="padding: .75rem; text-align: right;"><?= number_format($invoiceDetail->dueAmount) ?></td>
+                    </tr>
+                    <?php
                     }
                     ?>
                     </tbody>
-                    <!--<tfoot style="background-color: #e0e0e1; color: #0a0a0a; text-align: left; font-weight: 700;font-size: 16px;">
-                    <tr>
-                        <td colspan="4"
-                            style="padding: .75rem; text-align: left; font-weight: 700; font-size: 16px">
-                            Total Amount
-                        </td>
-                        <td style="padding: .75rem; text-align: right; font-weight: 700; font-size: 16px"> BDT <?/*= number_format(array_sum()) */?></td>
-                    </tr>
-                    </tfoot>-->
                 </table>
             </div>
 
@@ -184,15 +108,15 @@ use app\models\Company;
         </div>
         <div style="clear: both"></div>
 
-        <div style="background: #EFEFF4; box-sizing: border-box; padding: 15px; padding-bottom: 32px; padding-top: 32px; text-align: left; width: 100%; color: #474749;line-height: 0.5; font-size: 16px; margin-top: 10px; text-align: center">
+        <div style="background: #EFEFF4; box-sizing: border-box; padding: 10px; padding-bottom: 25px; text-align: left; width: 100%; color: #474749;line-height: 0.5; font-size: 15px; margin-top: 10px; text-align: center">
             <h4>Contact:</h4>
             <?= $company->address ?><br>
             <p>
                 <a href="mailto:ask@sharetrip.net"
-                   style="color:#2A8CFF;font-weight:700;line-height:1.6;text-align:left;text-decoration:none;"><?= $company->email ?></a>
+                   style="color:#2A8CFF;font-weight:500;line-height:0.6;text-align:left;text-decoration:none;"><?= $company->email ?></a>
                 |
                 <a href="tel:+8809617617617"
-                   style="color:#2A8CFF;font-weight:700;line-height:1.6;text-align:left;text-decoration:none;"><?= $company->phone ?></a>
+                   style="color:#2A8CFF;font-weight:500;line-height:0.6;text-align:left;text-decoration:none;"><?= $company->phone ?></a>
             </p>
         </div>
     </div>
