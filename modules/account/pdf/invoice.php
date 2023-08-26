@@ -2,7 +2,7 @@
 
 use yii\helpers\Url;
 
-$logo = $company ? Url::to('@web/uploads/company/').$company->logo : '';
+$logo = ($company && $company->logo) ? Url::to('@web/uploads/company/').$company->logo : '';
 ?>
 <!DOCTYPE html>
 <html>
