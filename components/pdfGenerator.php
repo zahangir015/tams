@@ -10,8 +10,8 @@ class pdfGenerator
 {
     public static function makeInvoice($data, $fileName): void
     {
-        header('Content-type: application/pdf');
-        header('Content-Disposition: attachment;');
+        /*header('Content-type: application/pdf');
+        header('Content-Disposition: attachment;');*/
         define('DOMPDF_ENABLE_AUTOLOAD', false);
         define('DOMPDF_ENABLE_CSS_FLOAT', true);
         $pdfTemplate = '@app/modules/account/pdf/' . $fileName;
