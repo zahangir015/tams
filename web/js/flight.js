@@ -1,5 +1,7 @@
 let rowNum = 0;
+
 $('#count').text((rowNum+1));
+
 function addTicket() {
     rowNum++;
     $.ajax({
@@ -18,6 +20,7 @@ function addTicket() {
         }
     });
 }
+
 function remove(row) {
     $('#card' + row).remove();
     titleUpdate(row);
@@ -56,6 +59,7 @@ function calculateQuoteAmount() {
 $('#customerId').on('change', function (e) {
     $('.customerId').val($(this).val());
 });
+
 $('#supplierId').on('change', function (e) {
     $('.supplierId').val($(this).val());
 });
@@ -192,7 +196,7 @@ $('#paxType0').on("change paste keyup", function () {
 $('#bookedOnline0').on("change paste keyup", function () {
     $('.bookedOnline').val($(this).val());
 });
-$('#routing0').on("change paste keyup", function () {
+$('#route0').on("change paste keyup", function () {
     $('.routing').val($(this).val());
 });
 
@@ -231,10 +235,8 @@ $('#seatClass0').on("change paste keyup", function () {
 $('#tripType0').on("change paste keyup", function () {
     $('.tripType').val($(this).val());
 });
+
 $('#baggage0').on("change paste keyup", function () {
     $('.baggage').val($(this).val());
-});
-$('#route00').on("change paste keyup", function () {
-    $('.route').val($(this).val());
 });
 
