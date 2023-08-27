@@ -58,7 +58,6 @@ class AssignmentController extends Controller
      */
     public function actionIndex()
     {
-
         if ($this->searchClass === null) {
             $searchModel = new AssignmentSearch;
             $dataProvider = $searchModel->search(Yii::$app->getRequest()->getQueryParams(), $this->userClassName, $this->usernameField);
@@ -85,12 +84,28 @@ class AssignmentController extends Controller
     public function actionView($id)
     {
         $model = $this->findModel($id);
-
         return $this->render('view', [
                 'model' => $model,
                 'idField' => $this->idField,
                 'usernameField' => $this->usernameField,
                 'fullnameField' => $this->fullnameField,
+        ]);
+    }
+
+    /**
+     * Displays a single Assignment model.
+     * @param  integer $id
+     * @return mixed
+     */
+    public function actionAssignRoute($id)
+    {
+        $model = $this->findModel($id);
+
+        return $this->render('assign_route', [
+            'model' => $model,
+            'idField' => $this->idField,
+            'usernameField' => $this->usernameField,
+            'fullnameField' => $this->fullnameField,
         ]);
     }
 

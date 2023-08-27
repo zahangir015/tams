@@ -22,16 +22,25 @@ if (!empty($extraColumns)) {
 }
 $columns[] = [
     'class' => 'yii\grid\ActionColumn',
-    'template' => '{view}'
+    'template' => '{view}',
+    'buttons' => [
+        'view' => function ($url, $model, $key) {
+            return Html::a('<span class="fa fa-eye"></span>', [isset(Yii::$app->user->identity->agencyId) ? 'assign-route' : 'view', 'id' => $model->id], [
+                'title' => Yii::t('app', 'Details'),
+                'class' => 'btn btn-default btn-xs custom_button',
+                'data-pjax' => '0',
+            ]);
+        },
+    ],
 ];
+
 ?>
 <div class="assignment-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
     <?php Pjax::begin(); ?>
-    <?=
-    GridView::widget([
+    <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => $columns,
