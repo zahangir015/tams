@@ -92,12 +92,12 @@ $this->registerJsFile(
                     <div class="col-md"><?= $form->field($model, 'inProhibition')->dropDownList(GlobalConstant::YES_NO) ?></div>
                     <div class="col-md"><?= $form->field($model, 'jobCategory')->textInput(['maxlength' => true]) ?></div>
                     <div class="col-md">
-                        <?= $form->field($designation, 'branchId')->dropDownList($branchList); ?>
+                        <?= $form->field($designation, 'branchId')->dropDownList($branchList, ['prompt' => '']); ?>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md">
-                        <?= $form->field($designation, 'departmentId')->dropDownList($departmentList); ?>
+                        <?= $form->field($designation, 'departmentId')->dropDownList($departmentList, ['prompt' => '']); ?>
                     </div>
                     <div class="col-md">
                         <?= $form->field($designation, 'designationId')->widget(DepDrop::class, [
