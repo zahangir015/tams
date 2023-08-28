@@ -117,6 +117,7 @@ use app\modules\admin\components\Helper;
                             'class' => 'nav-item has-treeview bg-green mb-2 rounded',
                         ],
                         'linkOptions' => ['class' => 'nav-link text-white'],
+                        'visible' => Helper::checkRoute('/admin/')
                     ],
                     [
                         'label' => 'HRM',
