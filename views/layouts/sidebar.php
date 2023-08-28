@@ -107,11 +107,11 @@ use app\modules\admin\components\Helper;
                         'label' => 'Authorization',
                         'icon' => 'users-cog',
                         'items' => [
-                            ['label' => 'Roles', 'icon' => 'user-tie', 'url' => ['/admin/role'], 'visible' => Helper::checkRoute('/admin/role')],
-                            ['label' => 'Rules', 'icon' => 'truck', 'url' => ['/admin/rule'], 'visible' => Helper::checkRoute('/admin/rule')],
-                            ['label' => 'Routes', 'icon' => 'list-alt', 'url' => ['/admin/route'], 'visible' => Helper::checkRoute('/admin/route')],
-                            ['label' => 'Permission', 'icon' => 'key', 'url' => ['/admin/permission'], 'visible' => Helper::checkRoute('/admin/permission')],
-                            ['label' => 'Assignment', 'icon' => 'check-double', 'url' => ['/admin/assignment'], 'visible' => Helper::checkRoute('/admin/assignment')],
+                            ['label' => 'Roles', 'icon' => 'user-tie', 'url' => ['/admin/role'], 'visible' => Helper::checkRoute('/admin/role/')],
+                            ['label' => 'Rules', 'icon' => 'truck', 'url' => ['/admin/rule'], 'visible' => Helper::checkRoute('/admin/rule/')],
+                            ['label' => 'Routes', 'icon' => 'list-alt', 'url' => ['/admin/route'], 'visible' => Helper::checkRoute('/admin/route/')],
+                            ['label' => 'Permission', 'icon' => 'key', 'url' => ['/admin/permission'], 'visible' => Helper::checkRoute('/admin/permission/')],
+                            ['label' => 'Assignment', 'icon' => 'check-double', 'url' => ['/admin/assignment'], 'visible' => Helper::checkRoute('/admin/assignment/')],
                         ],
                         'options' => [
                             'class' => 'nav-item has-treeview bg-green mb-2 rounded',
@@ -167,7 +167,7 @@ use app\modules\admin\components\Helper;
                                 'icon' => 'suitcase',
                                 'items' => [
                                     ['label' => 'Weekend', 'icon' => 'calendar-day', 'url' => ['/hrm/weekend/index'], 'visible' => Helper::checkRoute('/hrm/weekend/')],
-                                    ['label' => 'Public Holiday', 'icon' => 'calendar-times', 'url' => ['/hrm/public-holiday/index'], 'visible' => Helper::checkRoute('/hrm/weekend/')],
+                                    ['label' => 'Public Holiday', 'icon' => 'calendar-times', 'url' => ['/hrm/public-holiday/index'], 'visible' => Helper::checkRoute('/hrm/public-holiday/')],
                                 ]
                             ],
                             [

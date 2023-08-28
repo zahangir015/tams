@@ -85,6 +85,41 @@ class Assignment extends BaseObject
      * Get all available and assigned roles/permission
      * @return array
      */
+    public function getItemsForAgent(): array
+    {
+        $manager = Configs::authManager();
+        $available = [];
+        foreach (array_keys($manager->getRolesByUser(Yii::$app->user->id)) as $name) {
+            $available[$name] = 'role';
+            foreach (array_keys($manager->getPermissionsByRole($name)) as $name) {
+                $available[$name] = 'routes';
+            }
+        }
+
+        foreach (array_keys($manager->getPermissionsByUser($this->id)) as $name) {
+            if ($name[0] != '/') {
+                $available[$name] = 'permission';
+            }
+        }
+
+        $assigned = [];
+        foreach ($manager->getAssignments($this->id) as $item) {
+            $assigned[$item->roleName] = $available[$item->roleName];
+            unset($available[$item->roleName]);
+        }
+
+        ksort($available);
+        ksort($assigned);
+        return [
+            'available' => $available,
+            'assigned' => $assigned,
+        ];
+    }
+
+    /**
+     * Get all available and assigned roles/permission
+     * @return array
+     */
     public function getItems()
     {
         $manager = Configs::authManager();
@@ -102,7 +137,7 @@ class Assignment extends BaseObject
         $assigned = [];
         foreach ($manager->getAssignments($this->id) as $item) {
             $assigned[$item->roleName] = $available[$item->roleName];
-            unset($available[$item->roleName]);
+            //unset($available[$item->roleName]);
         }
 
         ksort($available);

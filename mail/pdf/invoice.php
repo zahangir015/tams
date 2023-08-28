@@ -2,20 +2,19 @@
 
 use yii\helpers\Url;
 
-$logo = ($company && $company->logo) ? Url::to('@web/uploads/company/').$company->logo : '';
+$logo = ($company && $company->logo) ? Url::to('@web/uploads/company/'.$company->logo) : '';
+//$logo = Yii::getAlias('@app') . '/mail/pdf/img/logo-iata.png';
 ?>
 <!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Invoice <?= $invoice->invoiceNumber ?></title>
 </head>
 <body style="margin: 0; padding: 0;font-family: Helvetica,Arial,sans-serif;">
-<div style="width: 100%; margin: auto; background: #ffffff; padding: 10px 0;">
+<div style="width: 100%; margin: auto; background: #ffffff;">
     <div style="width: 100%; margin: auto; background: white; font-family: 'Helvetica','Arial',sans-serif; color: #585858;">
-        <div style="text-align: center; height: auto; margin-top: 10px;">
-            <img src="<?= $logo ?>" alt="" style="width: 100%; height: auto; max-width: 220px">
+        <div style="text-align: center; height: auto;">
+            <img src="<?= $logo ?>" alt="" style="width: 100%; height: 100px; max-width: 220px">
             <h4><?= ($invoice->paidAmount == 0) ? 'Unpaid Payment Update!' : (($invoice->paidAmount && $invoice->dueAmount) ? 'Partial Payment Update!' : 'Your Payment has been Received!') ?></h4>
         </div>
         <div>
@@ -38,7 +37,6 @@ $logo = ($company && $company->logo) ? Url::to('@web/uploads/company/').$company
                 </p>
             </div>
             <div style=" clear: both;"></div>
-
             <div style="background: #ffffff; margin-top: 8px; border-radius: 4px;">
                 <table width="100%"
                        style="margin: auto; font-size: 15px; border: none !important; border-collapse: collapse">
@@ -82,11 +80,10 @@ $logo = ($company && $company->logo) ? Url::to('@web/uploads/company/').$company
                     </tbody>
                 </table>
             </div>
-
             <div style="margin-top: 10px;">
                 <table width="100%"
                        style="margin: auto; font-size: 16px; border: none !important; text-align: left; border-collapse: collapse">
-                    <tfoot style="background-color: #E3F0FF; color: #0a0a0a; text-align: left; font-weight: 700;font-size: 16px;">
+                    <tfoot style="background-color: #E3F0FF; color: #0a0a0a; text-align: left; font-weight: 500;font-size: 14px;">
                     <tr>
                         <td width="80%" style="padding: .75rem;">
                             Balance Due
@@ -108,7 +105,6 @@ $logo = ($company && $company->logo) ? Url::to('@web/uploads/company/').$company
             </div>
         </div>
         <div style="clear: both"></div>
-
         <div style="background: #EFEFF4; box-sizing: border-box; padding: 10px; padding-bottom: 25px; text-align: left; width: 100%; color: #474749;line-height: 0.5; font-size: 15px; margin-top: 10px; text-align: center">
             <h4>Contact:</h4>
             <?= $company->address ?><br>

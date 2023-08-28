@@ -8,7 +8,7 @@ use yii\data\ActiveDataProvider;
 
 /**
  * AssignmentSearch represents the model behind the search form about Assignment.
- * 
+ *
  * @author Misbahul D Munir <misbahuldmunir@gmail.com>
  * @since 1.0
  */
@@ -41,14 +41,20 @@ class Assignment extends Model
 
     /**
      * Create data provider for Assignment model.
-     * @param  array                        $params
-     * @param  \yii\db\ActiveRecord         $class
-     * @param  string                       $usernameField
+     * @param array $params
+     * @param \yii\db\ActiveRecord $class
+     * @param string $usernameField
      * @return \yii\data\ActiveDataProvider
      */
     public function search($params, $class, $usernameField)
     {
         $query = $class::find();
+
+        if (isset(Yii::$app->user->identity->agencyId)) {
+            $query->where(['agencyId' => Yii::$app->user->identity->agencyId])
+                ->andWhere(['!=', 'id', Yii::$app->user->id]);
+        }
+
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
