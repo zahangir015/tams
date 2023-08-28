@@ -24,7 +24,7 @@ $this->params['breadcrumbs'][] = $userName;
 AnimateAsset::register($this);
 YiiAsset::register($this);
 $opts = Json::htmlEncode([
-    'items' => $model->getItemsForAgent(),
+    'items' => $model->getItems(),
 ]);
 
 $this->registerJs("var _opts = {$opts};");
