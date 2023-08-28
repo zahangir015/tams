@@ -85,7 +85,7 @@ class Assignment extends BaseObject
      * Get all available and assigned roles/permission
      * @return array
      */
-    public function getItemsForAgent(): array
+    public function getItems(): array
     {
         $manager = Configs::authManager();
         $available = [];
@@ -120,7 +120,7 @@ class Assignment extends BaseObject
      * Get all available and assigned roles/permission
      * @return array
      */
-    public function getItems()
+    /*public function getItems()
     {
         $manager = Configs::authManager();
         $available = [];
@@ -146,7 +146,7 @@ class Assignment extends BaseObject
             'available' => $available,
             'assigned' => $assigned,
         ];
-    }
+    }*/
 
     /**
      * @inheritdoc

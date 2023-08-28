@@ -117,7 +117,7 @@ use app\modules\admin\components\Helper;
                             'class' => 'nav-item has-treeview bg-green mb-2 rounded',
                         ],
                         'linkOptions' => ['class' => 'nav-link text-white'],
-                        'visible' => Helper::checkRoute('/admin/role/') || Helper::checkRoute('/admin/rule/') || Helper::checkRoute('/admin/route/') || Helper::checkRoute('/admin/permission/') || Helper::checkRoute('/admin/assignment/')
+                        'visible' => Helper::checkRoute('/admin/role/') || Helper::checkRoute('/admin/rule/') || Helper::checkRoute('/admin/route/') || Helper::checkRoute('/admin/permission/') || Helper::checkRoute('/admin/assignment/index')
                     ],
                     [
                         'label' => 'HRM',
@@ -161,6 +161,7 @@ use app\modules\admin\components\Helper;
                                 'items' => [
                                     ['label' => 'Users', 'icon' => 'users', 'url' => ['/admin/user/index'], 'visible' => Helper::checkRoute('/admin/user/index')],
                                     ['label' => 'Create User', 'icon' => 'user-plus', 'url' => ['/admin/user/create'], 'visible' => Helper::checkRoute('/admin/user/create')],
+                                    ['label' => 'Permission Assignment', 'icon' => 'check-double', 'url' => ['/admin/assignment/index'], 'visible' => Helper::checkRoute('/admin/assignment/index')],
                                 ],
                             ],
                             [
