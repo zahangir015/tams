@@ -112,6 +112,14 @@ use app\modules\admin\components\Helper;
                             ['label' => 'Routes', 'icon' => 'list-alt', 'url' => ['/admin/route'], 'visible' => Helper::checkRoute('/admin/route/')],
                             ['label' => 'Permission', 'icon' => 'key', 'url' => ['/admin/permission'], 'visible' => Helper::checkRoute('/admin/permission/')],
                             ['label' => 'Assignment', 'icon' => 'check-double', 'url' => ['/admin/assignment'], 'visible' => Helper::checkRoute('/admin/assignment/')],
+                            [
+                                'label' => 'User Management',
+                                'icon' => 'users-cog',
+                                'items' => [
+                                    ['label' => 'Users', 'icon' => 'users', 'url' => ['/admin/user/index'], 'visible' => Helper::checkRoute('/admin/user/index')],
+                                    ['label' => 'Create User', 'icon' => 'user-plus', 'url' => ['/admin/user/create'], 'visible' => Helper::checkRoute('/admin/user/create')],
+                                ],
+                            ],
                         ],
                         'options' => [
                             'class' => 'nav-item has-treeview bg-green mb-2 rounded',
@@ -160,7 +168,6 @@ use app\modules\admin\components\Helper;
                                 'icon' => 'users-cog',
                                 'items' => [
                                     ['label' => 'Users', 'icon' => 'users', 'url' => ['/admin/user/index'], 'visible' => Helper::checkRoute('/admin/user/index')],
-                                    ['label' => 'Create User', 'icon' => 'user-plus', 'url' => ['/admin/user/create'], 'visible' => Helper::checkRoute('/admin/user/create')],
                                     ['label' => 'Permission Assignment', 'icon' => 'check-double', 'url' => ['/admin/assignment/index'], 'visible' => Helper::checkRoute('/admin/assignment/index')],
                                 ],
                             ],

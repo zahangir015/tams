@@ -44,8 +44,10 @@ class User extends Model
         $class = Yii::$app->getUser()->identityClass ? : 'app\modules\admin\models\User';
         $query = $class::find()->joinWith(['agency']);
 
-        $query->where([\app\modules\admin\models\User::tableName().'.status' => GlobalConstant::ACTIVE_USER_STATUS])
-            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId]);
+        if(Yii::$app->user->identity->agencyId){
+            $query->where([\app\modules\admin\models\User::tableName().'.status' => GlobalConstant::ACTIVE_USER_STATUS])
+                ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId]);
+        }
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
