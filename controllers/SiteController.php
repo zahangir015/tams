@@ -64,7 +64,9 @@ class SiteController extends Controller
      */
     public function actionIndex(): string
     {
-        if (Helper::checkRoute('/site/sales-report/')) {
+        $dataArray = [];
+
+        if (Helper::checkRoute('/site/sales-report')) {
             $saleData = SaleService::dashboardReport();
             $totalQuantity = array_sum(array_column($saleData['currentDaySales'], 'total'));
             $totalQuote = array_sum(array_column($saleData['currentDaySales'], 'quoteAmount'));
@@ -80,7 +82,7 @@ class SiteController extends Controller
             $totalMonthlyCost = array_sum(array_column($saleData['currentMonthSales'], 'costOfSale'));
             $totalMonthlyNerProfit = array_sum(array_column($saleData['currentMonthSales'], 'netProfit'));
 
-            return $this->render('index', [
+            $dataArray = [
                 'saleData' => $saleData,
                 'totalQuantity' => $totalQuantity,
                 'totalQuote' => $totalQuote,
@@ -111,18 +113,16 @@ class SiteController extends Controller
 
                 'monthlyReceivable' => ($totalMonthlyQuote - $totalMonthlyReceived),
                 'monthlyPayable' => ($totalMonthlyCost - $totalMonthlyPaid),
-            ]);
+            ];
+
+
         }
 
-        if (Helper::checkRoute('/site/attendance-report/')) {
-            $leaveAttendanceData = AttendanceService::dashboardReport();//dd($leaveAttendanceData);
-            return $this->render('index',
-                [
-                    'leaveAttendanceData' => $leaveAttendanceData,
-                ]);
+        if (Helper::checkRoute('/site/attendance-report')) {
+            $dataArray['leaveAttendanceData'] = AttendanceService::dashboardReport();
         }
-
-        return $this->render('index');
+        //dd([Helper::checkRoute('/site/sales-report'), Helper::checkRoute('/site/attendance-report')], false);
+        return $this->render('index', $dataArray);
     }
 
     public function actionSalesReport()

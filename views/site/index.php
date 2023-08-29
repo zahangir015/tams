@@ -9,6 +9,7 @@ use hail812\adminlte\widgets\SmallBox;
 
 $this->title = 'Dashboard';
 $this->params['breadcrumbs'] = [['label' => $this->title]];
+
 ?>
 <div class="container-fluid">
     <!--<div class="chart">
@@ -448,7 +449,7 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
         </div>
         <?php
     }
-    if (\app\modules\admin\components\Helper::checkRoute('/site/sales-report')) {
+    if (\app\modules\admin\components\Helper::checkRoute('/site/attendance-report')) {
         ?>
         <div class="row">
             <div class="col-md-5">
@@ -501,7 +502,6 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
