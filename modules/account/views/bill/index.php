@@ -30,7 +30,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
                 'buttons' => Utilities::getBasicActionColumnArray()
             ],
-            'supplierId',
+            [
+                'attribute' => 'supplier',
+                'value' => function ($model) {
+                    return $model->supplier ? $model->supplier->company : null;
+                },
+                'label' => 'Supplier',
+            ],
             'billNumber',
             'date',
             'paidAmount',
