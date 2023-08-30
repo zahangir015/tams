@@ -3,6 +3,7 @@
 namespace app\modules\agent\models;
 
 use app\models\City;
+use app\models\Company;
 use app\models\Country;
 use app\modules\admin\models\User;
 use app\traits\BehaviorTrait;
@@ -138,5 +139,15 @@ class Agency extends ActiveRecord
     public function getUsers(): ActiveQuery
     {
         return $this->hasMany(User::class, ['agencyId' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Company]].
+     *
+     * @return ActiveQuery
+     */
+    public function getCompanyProfile(): ActiveQuery
+    {
+        return $this->hasOne(Company::class, ['agencyId' => 'id']);
     }
 }

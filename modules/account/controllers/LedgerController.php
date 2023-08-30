@@ -4,6 +4,7 @@ namespace app\modules\account\controllers;
 
 use app\modules\account\models\Ledger;
 use app\controllers\ParentController;
+use app\modules\account\models\search\CustomerLedgerSearch;
 use app\modules\account\models\search\LedgerSearch;
 use Yii;
 use yii\web\NotFoundHttpException;
@@ -20,9 +21,9 @@ class LedgerController extends ParentController
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionCustomerLedger(): string
     {
-        $searchModel = new LedgerSearch();
+        $searchModel = new CustomerLedgerSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [

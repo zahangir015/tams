@@ -6,6 +6,7 @@ use yii\helpers\Url;
 use kartik\grid\ActionColumn;
 use kartik\grid\GridView;
 use yii\widgets\Pjax;
+
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\CompanySearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -26,10 +27,16 @@ $this->params['breadcrumbs'][] = $this->title;
             'address',
             'logo',
             [
-                'class' => ActionColumn::className(),
+                'attribute' => 'agency',
+                'value' => function ($model) {
+                    return $model->agency ? $model->agency->company : null;
+                }
+            ],
+            [
+                'class' => ActionColumn::class,
                 'urlCreator' => function ($action, Company $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'uid' => $model->uid]);
-                 }
+                }
             ],
         ],
         'toolbar' => [
@@ -54,7 +61,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'responsive' => true,
         'hover' => true,
         'panel' => [
-            'heading'=> '<i class="fas fa-list-alt"></i> '.Html::encode($this->title),
+            'heading' => '<i class="fas fa-list-alt"></i> ' . Html::encode($this->title),
             'type' => GridView::TYPE_DARK
         ],
     ]); ?>

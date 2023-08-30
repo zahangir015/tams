@@ -2,8 +2,10 @@
 
 namespace app\models;
 
+use app\modules\agent\models\Agency;
 use app\traits\BehaviorTrait;
 use Yii;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
 /**
@@ -66,5 +68,15 @@ class Company extends ActiveRecord
             'address' => Yii::t('app', 'Address'),
             'logo' => Yii::t('app', 'Logo'),
         ];
+    }
+
+    /**
+     * Gets query for [[Agency]].
+     *
+     * @return ActiveQuery
+     */
+    public function getAgency(): ActiveQuery
+    {
+        return $this->hasOne(Agency::class, ['id' => 'agencyId']);
     }
 }

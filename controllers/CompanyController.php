@@ -43,7 +43,7 @@ class CompanyController extends ParentController
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView(string $uid)
+    public function actionView(string $uid): string
     {
         return $this->render('view', [
             'model' => $this->findModel($uid),

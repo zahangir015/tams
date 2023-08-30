@@ -3,7 +3,9 @@
 namespace app\modules\agent\controllers;
 
 use app\components\GlobalConstant;
+use app\components\Uploader;
 use app\components\Utilities;
+use app\models\Company;
 use app\modules\admin\models\form\Signup;
 use app\modules\admin\models\User;
 use app\modules\agent\models\Agency;
@@ -14,6 +16,7 @@ use app\modules\agent\services\AgencyService;
 use Exception;
 use Yii;
 use yii\web\Response;
+use yii\web\UploadedFile;
 
 /**
  * AgencyController implements the CRUD actions for Agency model.
@@ -111,6 +114,39 @@ class AgencyController extends ParentController
         return $this->render('create', [
             'model' => $model,
             'signup' => $signup,
+        ]);
+    }
+
+    /**
+     * Create a company for agency.
+     * @param string $uid UID
+     * @return string
+     */
+    public function actionCreateCompany(string $uid)
+    {
+        $company = new Company();
+        $model = $this->agencyService->findModel(['uid' => $uid], Agency::class, ['companyProfile']);
+        if ($this->request->isPost) {
+            if ($company->load($this->request->post())) {
+                $file = UploadedFile::getInstance($company, 'logo');
+                $uploadResponse = Uploader::processFile($file, false, 'uploads/company');
+                if (!$uploadResponse['error']) {
+                    $company->logo = $uploadResponse['name'];
+                    $company->agencyId = $model->id;
+                    if ($company->save()) {
+                        return $this->redirect(['/company/view', 'uid' => $company->uid]);
+                    } else {
+                        Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($company->getErrors()));
+                    }
+                } else {
+                    Yii::$app->session->setFlash('danger', 'Image upload failed - '. $uploadResponse['message']);
+                }
+            }
+        }
+
+        return $this->render('create_company', [
+            'model' => $model,
+            'company' => $company,
         ]);
     }
 
