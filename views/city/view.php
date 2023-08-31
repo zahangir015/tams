@@ -1,5 +1,7 @@
 <?php
 
+use app\components\GlobalConstant;
+use app\components\Utilities;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -30,11 +32,22 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= DetailView::widget([
                 'model' => $model,
                 'attributes' => [
-                    //'id',
-                    //'uid',
-                    'countryId',
+                    [
+                        'attribute' => 'countryId',
+                        'label' => 'Country',
+                        'value' => function ($model) {
+                            return $model->country->name . '(' . $model->country->code . ')';
+                        },
+                    ],
                     'name',
-                    'status',
+                    [
+                        'attribute' => 'status',
+                        'value' => function ($model) {
+                            $labelClass = Utilities::statusLabelClass($model->status);
+                            return '<span class="right badge ' . $labelClass . '">' . GlobalConstant::DEFAULT_STATUS[$model->status] . '</span>';
+                        },
+                        'format' => 'html'
+                    ]
                 ],
             ]) ?>
         </div>

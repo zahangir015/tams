@@ -31,8 +31,10 @@ use yii\db\ActiveRecord;
 class Ledger extends ActiveRecord
 {
     use BehaviorTrait;
-    public $ref;
-    public $subRef;
+
+    public $customer;
+    public $supplier;
+    public $bank;
 
     /**
      * {@inheritdoc}
@@ -95,15 +97,20 @@ class Ledger extends ActiveRecord
     {
         $model = $subRefModel::findOne(['id' => $subRefId]);
 
-        if (str_contains($subRefModel, 'Invoice')){
+        if (str_contains($subRefModel, 'Invoice')) {
             return $model->invoiceNumber;
-        }elseif (str_contains($subRefModel, 'Bill')){
+        } elseif (str_contains($subRefModel, 'Bill')) {
             return $model->billNumber;
-        }elseif (str_contains($subRefModel, 'Expense')){
+        } elseif (str_contains($subRefModel, 'Expense')) {
             return $model->identificationNumber;
-        }else{
+        } else {
             return $model->journalNumber;
         }
 
+    }
+
+    public function getRef()
+    {
+        return $this->hasOne($this->refModel::class, ['id' => $this->refId]);
     }
 }

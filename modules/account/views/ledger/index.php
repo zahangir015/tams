@@ -57,16 +57,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ])
             ],
             [
-                'class' => '\kartik\grid\DataColumn',
-                'attribute' => 'refModel',
-                'label' => 'Ref Type',
-                'value' => function ($model) {
-                    return ucfirst(Utilities::getServiceName($model->refModel));
-                },
-                'filter' => AccountConstant::REF_MODEL
-            ],
-            [
-                'attribute' => 'refId',
+                'attribute' => 'ref',
                 'label' => 'Ref Name',
                 'value' => function ($model) {
                     return Ledger::getReferenceName($model->refId, $model->refModel);
@@ -75,13 +66,6 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'reference',
             ],
-            /*[
-                'attribute' => 'subRefId',
-                'label' => 'SubRef Name',
-                'value' => function ($model) {
-                    return Ledger::getSubReferenceName($model->subRefId, $model->subRefModel);
-                }
-            ],*/
             [
                 'attribute' => 'debit',
                 'format' => ['decimal', 2],

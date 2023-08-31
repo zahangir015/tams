@@ -3,6 +3,7 @@
 namespace app\models;
 
 use app\components\GlobalConstant;
+use app\modules\agent\models\Agency;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
@@ -12,6 +13,7 @@ use yii\data\ActiveDataProvider;
  */
 class CompanySearch extends Company
 {
+    public $agency;
     /**
      * {@inheritdoc}
      */
@@ -19,7 +21,7 @@ class CompanySearch extends Company
     {
         return [
             [['id', 'agencyId'], 'integer'],
-            [['uid', 'name', 'shortName', 'phone', 'email', 'address', 'logo'], 'safe'],
+            [['uid', 'name', 'shortName', 'phone', 'email', 'address', 'logo', 'agency'], 'safe'],
         ];
     }
 
@@ -44,11 +46,17 @@ class CompanySearch extends Company
         $query = Company::find();
 
         // add conditions that should always apply here
-        $query->where(['agencyId' => Yii::$app->user->identity->agencyId]);
+        $query->joinWith(['agency']);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => ['defaultOrder' => ['name' => SORT_ASC]],
         ]);
+
+        $dataProvider->sort->attributes['agency'] = [
+            'asc' => [Agency::tableName() . '.company' => SORT_ASC],
+            'desc' => [Agency::tableName() . '.company' => SORT_DESC],
+        ];
 
         $this->load($params);
 
@@ -69,6 +77,7 @@ class CompanySearch extends Company
             ->andFilterWhere(['like', 'phone', $this->phone])
             ->andFilterWhere(['like', 'email', $this->email])
             ->andFilterWhere(['like', 'address', $this->address])
+            ->andFilterWhere(['like', Agency::tableName() . '.company', $this->agency])
             ->andFilterWhere(['like', 'logo', $this->logo]);
 
         return $dataProvider;

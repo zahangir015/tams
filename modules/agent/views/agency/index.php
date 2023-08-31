@@ -30,13 +30,47 @@ $this->params['breadcrumbs'][] = $this->title;
                     return Url::toRoute([$action, 'uid' => $model->uid]);
                 },
                 'width' => '150px',
-                'template' => '{view} {edit} {delete}',
+                'template' => '{view} {edit} {createCompany} {delete}',
                 'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
-                'buttons' => Utilities::getBasicActionColumnArray()
+                'buttons' => [
+                    'view' => function ($url, $model) {
+                        return \yii\bootstrap4\Html::a('<i class="fa fa-info-circle"></i>', ['view', 'uid' => $model->uid], [
+                            'title' => Yii::t('app', 'View'),
+                            'data-pjax' => '0',
+                            'class' => 'btn btn-success btn-xs'
+                        ]);
+                    },
+                    'edit' => function ($url, $model, $key) {
+                        return Html::a('<i class="fa fa-pencil-alt"></i>', ['update', 'uid' => $model->uid], [
+                            'title' => Yii::t('app', 'Update'),
+                            'class' => 'btn btn-primary btn-xs'
+                        ]);
+                    },
+                    'createCompany' => function ($url, $model, $key) {
+                        if ($model->companyProfile) {
+                            return false;
+                        }
+                        return Html::a('<i class="fa fa-industry"></i>', ['create-company', 'uid' => $model->uid], [
+                            'title' => Yii::t('app', 'Create Company'),
+                            'class' => 'btn btn-warning btn-xs'
+                        ]);
+                    },
+                    'delete' => function ($url, $model, $key) {
+                        return Html::a('<i class="fa fa-trash-alt"></i>', ['delete', 'uid' => $model->uid], [
+                            'title' => Yii::t('app', 'Delete'),
+                            'data-pjax' => '0',
+                            'data' => [
+                                'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
+                                'method' => 'post',
+                            ],
+                            'class' => 'btn btn-danger btn-xs'
+                        ]);
+                    },
+                ]
             ],
             [
                 'attribute' => 'planId',
-                'value' => function($model){
+                'value' => function ($model) {
                     return $model->plan->name;
                 },
                 'filter' => ArrayHelper::map(Plan::find()->select(['id', 'name'])->where(['status' => GlobalConstant::ACTIVE_STATUS])->all(), 'id', 'name')
@@ -45,13 +79,13 @@ $this->params['breadcrumbs'][] = $this->title;
             'company',
             [
                 'attribute' => 'country',
-                'value' => function($model){
+                'value' => function ($model) {
                     return $model->country->name;
                 },
             ],
             [
                 'attribute' => 'city',
-                'value' => function($model){
+                'value' => function ($model) {
                     return $model->city->name;
                 },
             ],
