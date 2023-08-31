@@ -57,7 +57,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ])
             ],
             [
-                'attribute' => 'refId',
+                'attribute' => 'ref',
                 'label' => 'Ref Name',
                 'value' => function ($model) {
                     return Ledger::getReferenceName($model->refId, $model->refModel);

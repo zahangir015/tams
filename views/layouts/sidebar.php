@@ -319,11 +319,11 @@ use app\modules\admin\components\Helper;
                             ['label' => 'Refund Transactions', 'icon' => 'money-bill', 'url' => ['/account/refund-transaction/index'], 'visible' => Helper::checkRoute('/account/refund-transaction/')],
                             [
                                 'label' => 'Ledger Management',
-                                'icon' => 'file-list',
+                                'icon' => 'list',
                                 'items' => [
-                                    ['label' => 'Customer Ledger', 'icon' => 'list', 'url' => ['/account/account-type/index'], 'visible' => Helper::checkRoute('/account/account-type/')],
-                                    ['label' => 'Supplier Ledger', 'icon' => 'list', 'url' => ['/account/account-group/index'], 'visible' => Helper::checkRoute('/account/account-group/')],
-                                    ['label' => 'Bank Ledger', 'icon' => 'list', 'url' => ['/account/chart-of-account/index'], 'visible' => Helper::checkRoute('/account/chart-of-account/')],
+                                    ['label' => 'Customer Ledger', 'icon' => 'list', 'url' => ['/account/ledger/customer-ledger'], 'visible' => Helper::checkRoute('/account/ledger/customer-ledger')],
+                                    ['label' => 'Supplier Ledger', 'icon' => 'list', 'url' => ['/account/ledger/supplier-ledger'], 'visible' => Helper::checkRoute('/account/ledger/supplier-ledger')],
+                                    ['label' => 'Bank Ledger', 'icon' => 'list', 'url' => ['/account/ledger/bank-ledger'], 'visible' => Helper::checkRoute('/account/ledger/bank-ledger')],
                                 ]
                             ],
                             [

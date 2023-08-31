@@ -16,6 +16,8 @@ use app\modules\account\models\Ledger;
  */
 class CustomerLedgerSearch extends Ledger
 {
+    public $ref;
+
     /**
      * {@inheritdoc}
      */
@@ -23,7 +25,7 @@ class CustomerLedgerSearch extends Ledger
     {
         return [
             [['id', 'refId', 'subRefId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
-            [['uid', 'title', 'date', 'reference', 'refModel', 'subRefModel', 'ref', 'subRef'], 'safe'],
+            [['uid', 'title', 'date', 'reference', 'refModel', 'subRefModel', 'ref'], 'safe'],
             [['debit', 'credit', 'balance'], 'number'],
         ];
     }
@@ -47,6 +49,7 @@ class CustomerLedgerSearch extends Ledger
     public function search(array $params): ActiveDataProvider
     {
         $query = Ledger::find();
+        $query->joinWith(['ref']);
         // add conditions that should always apply here
         $query->where([self::tableName().'.status' => GlobalConstant::ACTIVE_STATUS])
             ->andWhere([self::tableName().'.agencyId' => Yii::$app->user->identity->agencyId])
@@ -63,6 +66,11 @@ class CustomerLedgerSearch extends Ledger
             'query' => $query,
             'sort' => ['defaultOrder' => ['date' => SORT_DESC]],
         ]);
+
+        $dataProvider->sort->attributes['ref'] = [
+            'asc' => [Supplier::tableName() . '.name' => SORT_ASC],
+            'desc' => [Supplier::tableName() . '.name' => SORT_DESC],
+        ];
 
         $this->load($params);
 
@@ -82,7 +90,8 @@ class CustomerLedgerSearch extends Ledger
             'status' => $this->status,
         ]);
 
-        $query->andFilterWhere(['like', 'title', $this->title])
+        $query->andFilterWhere(['like', Customer::tableName() . '.name', $this->ref])
+            ->andFilterWhere(['like', 'title', $this->title])
             ->andFilterWhere(['like', 'reference', $this->reference])
             ->andFilterWhere(['like', 'refModel', $this->refModel])
             ->andFilterWhere(['like', 'subRefModel', $this->subRefModel]);

@@ -120,9 +120,9 @@ class AgencyController extends ParentController
     /**
      * Create a company for agency.
      * @param string $uid UID
-     * @return string
+     * @return Response
      */
-    public function actionCreateCompany(string $uid)
+    public function actionCreateCompany(string $uid): Response|string
     {
         $company = new Company();
         $model = $this->agencyService->findModel(['uid' => $uid], Agency::class, ['companyProfile']);
@@ -132,14 +132,13 @@ class AgencyController extends ParentController
                 $uploadResponse = Uploader::processFile($file, false, 'uploads/company');
                 if (!$uploadResponse['error']) {
                     $company->logo = $uploadResponse['name'];
-                    $company->agencyId = $model->id;
                     if ($company->save()) {
                         return $this->redirect(['/company/view', 'uid' => $company->uid]);
                     } else {
                         Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($company->getErrors()));
                     }
                 } else {
-                    Yii::$app->session->setFlash('danger', 'Image upload failed - '. $uploadResponse['message']);
+                    Yii::$app->session->setFlash('danger', 'Image upload failed - ' . $uploadResponse['message']);
                 }
             }
         }

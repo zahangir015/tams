@@ -40,7 +40,7 @@ trait BehaviorTrait
             }
 
             if ($this->isNewRecord && $this->hasAttribute('agencyId')) {
-                $this->agencyId = Yii::$app->user->identity->agencyId;
+                $this->agencyId = $this->agencyId ?: Yii::$app->user->identity->agencyId;
             }
         }
         return parent::beforeValidate();
@@ -59,7 +59,7 @@ trait BehaviorTrait
         }
 
         if ($this->isNewRecord && $this->hasAttribute('agencyId')) {
-            $this->agencyId = Yii::$app->user->identity->agencyId ? Yii::$app->user->identity->agencyId : 1;
+            $this->agencyId = $this->agencyId ?: (Yii::$app->user->identity->agencyId ? Yii::$app->user->identity->agencyId : 1);
         }
 
         if (!$this->isNewRecord) {

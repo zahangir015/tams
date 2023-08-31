@@ -4,8 +4,10 @@ namespace app\modules\account\controllers;
 
 use app\modules\account\models\Ledger;
 use app\controllers\ParentController;
+use app\modules\account\models\search\BankLedgerSearch;
 use app\modules\account\models\search\CustomerLedgerSearch;
 use app\modules\account\models\search\LedgerSearch;
+use app\modules\account\models\search\SupplierLedgerSearch;
 use Yii;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -24,6 +26,38 @@ class LedgerController extends ParentController
     public function actionCustomerLedger(): string
     {
         $searchModel = new CustomerLedgerSearch();
+        $dataProvider = $searchModel->search($this->request->queryParams);
+
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
+     * Lists all Ledger models.
+     *
+     * @return string
+     */
+    public function actionSupplierLedger(): string
+    {
+        $searchModel = new SupplierLedgerSearch();
+        $dataProvider = $searchModel->search($this->request->queryParams);
+
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
+     * Lists all Ledger models.
+     *
+     * @return string
+     */
+    public function actionBankLedger(): string
+    {
+        $searchModel = new BankLedgerSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [

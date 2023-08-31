@@ -41,7 +41,7 @@ class City extends ActiveRecord
             [['uid'], 'string', 'max' => 36],
             [['name'], 'string', 'max' => 120],
             [['uid'], 'unique'],
-            [['countryId', 'name'], 'unique'],
+            [['countryId', 'name'], 'unique', 'targetAttribute' => ['countryId', 'name']],
             [['countryId'], 'exist', 'skipOnError' => true, 'targetClass' => Country::class, 'targetAttribute' => ['countryId' => 'id']],
         ];
     }

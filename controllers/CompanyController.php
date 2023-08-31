@@ -141,12 +141,12 @@ class CompanyController extends ParentController
      * @return Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    /*public function actionDelete(string $uid)
+    public function actionDelete(string $uid)
     {
         $this->findModel($uid)->delete();
 
         return $this->redirect(['index']);
-    }*/
+    }
 
     /**
      * Finds the Company model based on its primary key value.
