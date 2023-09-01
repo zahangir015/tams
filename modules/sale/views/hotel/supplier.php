@@ -6,6 +6,7 @@ use app\modules\sale\components\ServiceConstant;
 use kartik\date\DatePicker;
 use kartik\daterange\DateRangePicker;
 use kartik\select2\Select2;
+use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $form yii\bootstrap4\ActiveForm */
@@ -33,6 +34,9 @@ use kartik\select2\Select2;
         <div class="row">
             <div class="col-md">
                 <?= $form->field($hotelSupplier, "[$row]supplierId")->widget(Select2::class, Utilities::ajaxDropDown('supplierId', '/sale/supplier/get-suppliers', true, 'supplierId' . $row, 'supplier', ($hotelSupplier->isNewRecord) ? [] : [$hotelSupplier->supplier->id => $hotelSupplier->supplier->company], !$hotelSupplier->isNewRecord))->label('Supplier') ?>
+                <small id="passwordHelpBlock" class="form-text text-muted">
+                    Add Supplier if not available. <?=  Html::a('Create Supplier', '/sale/supplier/create', ['target' => '_blank'])?>
+                </small>
             </div>
             <div class="col-md">
                 <?= $form->field($hotelSupplier, "[$row]supplierRef")->textInput(['maxlength' => true]); ?>

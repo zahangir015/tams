@@ -52,6 +52,9 @@ $this->registerJsFile(
                     <div class="col-md">
                         Select Customer
                         <?= Select2::widget(Utilities::ajaxDropDown('customerId', '/sale/customer/get-customers', true)); ?>
+                        <small id="passwordHelpBlock" class="form-text text-muted">
+                            Add Customer if not available. <?=  Html::a('Create Customer', '/sale/customer/create', ['target' => '_blank'])?>
+                        </small>
                     </div>
                     <?php
                     if ($model->isNewRecord) {
