@@ -1,6 +1,7 @@
 <?php
 
 use app\components\Utilities;
+use app\components\WidgetHelper;
 use app\modules\account\components\AccountConstant;
 use app\modules\account\models\Ledger;
 use kartik\daterange\DateRangePicker;
@@ -13,7 +14,7 @@ use kartik\grid\GridView;
 /* @var $searchModel app\modules\account\models\LedgerSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Ledgers');
+$this->title = Yii::t('app', 'Supplier Ledgers');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="ledger-index">
@@ -57,11 +58,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 ])
             ],
             [
-                'attribute' => 'ref',
+                'attribute' => 'refId',
                 'label' => 'Ref Name',
                 'value' => function ($model) {
                     return Ledger::getReferenceName($model->refId, $model->refModel);
-                }
+                },
+                'filter' => kartik\select2\Select2::widget(WidgetHelper::ajaxSelect2Widget('SupplierLedgerSearch[refId]', '/sale/supplier/get-suppliers', false, 'refId', 'refId'))
             ],
             [
                 'attribute' => 'reference',
@@ -89,7 +91,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'toolbar' => [
             [
                 'content' =>
-                    Html::a('<i class="fas fa-redo"></i>', ['/account/ledger/index'], [
+                    Html::a('<i class="fas fa-redo"></i>', ['/account/ledger/supplier-ledger'], [
                         'class' => 'btn btn-primary',
                         'title' => Yii::t('app', 'Reset Grid')
                     ]),
@@ -97,7 +99,7 @@ $this->params['breadcrumbs'][] = $this->title;
             '{export}',
             '{toggleData}'
         ],
-        'pjax' => true,
+        'pjax' => false,
         'bordered' => true,
         'striped' => false,
         'condensed' => false,

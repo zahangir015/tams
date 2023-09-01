@@ -28,7 +28,7 @@ class LedgerController extends ParentController
         $searchModel = new CustomerLedgerSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
-        return $this->render('index', [
+        return $this->render('customer_ledger', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
@@ -44,7 +44,7 @@ class LedgerController extends ParentController
         $searchModel = new SupplierLedgerSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
-        return $this->render('index', [
+        return $this->render('supplier_ledger', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
@@ -60,7 +60,7 @@ class LedgerController extends ParentController
         $searchModel = new BankLedgerSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
-        return $this->render('index', [
+        return $this->render('bank_ledger', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);

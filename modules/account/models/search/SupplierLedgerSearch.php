@@ -76,6 +76,7 @@ class SupplierLedgerSearch extends Ledger
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
+            'refId' => $this->refId,
             'date' => $this->date,
             'debit' => $this->debit,
             'credit' => $this->credit,

@@ -108,9 +108,4 @@ class Ledger extends ActiveRecord
         }
 
     }
-
-    public function getRef()
-    {
-        return $this->hasOne($this->refModel::class, ['id' => $this->refId]);
-    }
 }
