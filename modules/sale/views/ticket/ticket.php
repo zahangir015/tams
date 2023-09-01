@@ -39,6 +39,9 @@ use yii\helpers\Url;
         <div class="row">
             <div class="col-md">
                 <?= $form->field($ticketSupplier, "[$row]supplierId")->widget(Select2::class, Utilities::ajaxDropDown('supplierId', '/sale/supplier/get-suppliers', true, 'supplierId' . $row, 'supplier', ($model->isNewRecord) ? [] : [$ticketSupplier->supplierId => $ticketSupplier->supplier->name . ' | ' . $ticketSupplier->supplier->company], $model->isNewRecord ? false : true))->label('Supplier') ?>
+                <small id="passwordHelpBlock" class="form-text text-muted">
+                    Add Supplier if not available. <?=  Html::a('Create Supplier', '/sale/supplier/create', ['target' => '_blank'])?>
+                </small>
             </div>
             <div class="col-md">
                 <?= $form->field($model, "[$row]airlineId")->widget(DepDrop::class, [
@@ -53,6 +56,9 @@ use yii\helpers\Url;
                         'loadingText' => 'Loading airline ...',
                     ],
                 ])->label('Airline'); ?>
+                <small id="passwordHelpBlock" class="form-text text-muted">
+                    Add Airline if not available. <?=  Html::a('Create Airline', '/sale/airline/create', ['target' => '_blank'])?>
+                </small>
             </div>
             <div class="col-md">
                 <?= $form->field($model, "[$row]commission")->textInput(['class' => 'commission form-control', 'id' => 'commission' . $row, 'readOnly' => true]) ?>

@@ -52,6 +52,9 @@ $this->registerJsFile(
                 <div class="row">
                     <div class="col-md">
                         <?= $form->field($model, 'customerId')->widget(Select2::class, Utilities::ajaxDropDown('customerId', '/sale/customer/get-customers', true, 'customerId'))->label('Customer') ?>
+                        <small id="passwordHelpBlock" class="form-text text-muted">
+                            Add Customer if not available. <?=  Html::a('Create Customer', '/sale/customer/create', ['target' => '_blank'])?>
+                        </small>
                     </div>
                     <div class="col-md">
                         <?= $form->field($model, 'issueDate')->widget(DatePicker::class, WidgetHelper::getDateWidget('issueDate', 'issueDate form-control', false, true)) ?>

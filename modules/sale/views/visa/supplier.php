@@ -38,6 +38,9 @@ use yii\bootstrap4\Html;
         <div class="row">
             <div class="col-md">
                 <?= $form->field($visaSupplier, "[$row]supplierId")->widget(Select2::class, Utilities::ajaxDropDown('supplierId', '/sale/supplier/get-suppliers', true, 'supplierId' . $row, 'supplier'))->label('Supplier') ?>
+                <small id="passwordHelpBlock" class="form-text text-muted">
+                    Add Supplier if not available. <?=  Html::a('Create Supplier', '/sale/supplier/create', ['target' => '_blank'])?>
+                </small>
             </div>
             <div class="col-md">
                 <?= $form->field($visaSupplier, "[$row]supplierRef")->textInput(['maxlength' => true]); ?>
