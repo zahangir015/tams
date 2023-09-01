@@ -49,7 +49,6 @@ class CustomerLedgerSearch extends Ledger
     public function search(array $params): ActiveDataProvider
     {
         $query = Ledger::find();
-        $query->joinWith(['ref']);
         // add conditions that should always apply here
         $query->where([self::tableName().'.status' => GlobalConstant::ACTIVE_STATUS])
             ->andWhere([self::tableName().'.agencyId' => Yii::$app->user->identity->agencyId])
@@ -83,6 +82,7 @@ class CustomerLedgerSearch extends Ledger
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
+            'refId' => $this->refId,
             'date' => $this->date,
             'debit' => $this->debit,
             'credit' => $this->credit,
