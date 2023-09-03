@@ -3,7 +3,6 @@
 use yii\helpers\Url;
 
 $logo = 'http://mytrams.com/uploads/company/'.$company->logo;
-//$logo = 'http://mytrams.com/uploads/avatar.png';
 ?>
 <!DOCTYPE html>
 <html>
