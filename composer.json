@@ -31,8 +31,7 @@
         "kartik-v/yii2-widget-depdrop": "dev-master",
         "kartik-v/yii2-widget-datetimepicker": "v1.5.1",
         "himiklab/yii2-recaptcha-widget": "v2.1.1",
-        "dompdf/dompdf": "v2.0.3",
-        "kartik-v/yii2-mpdf": "v1.0.6"
+        "dompdf/dompdf": "^2.0"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

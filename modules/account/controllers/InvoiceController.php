@@ -301,7 +301,7 @@ class InvoiceController extends ParentController
         ];
     }
 
-    public function actionDownload(string $uid)
+    public function actionDownload(string $uid): void
     {
         $fileName = 'invoice';
         pdfGenerator::makeInvoice([
