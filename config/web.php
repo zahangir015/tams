@@ -84,10 +84,10 @@ $config = [
         ],
         'gridview' => [
             'class' => Module::class,
-            'bsVersion' => '4.x',
-            'downloadAction' => 'gridview/export/download',
-            'i18n' => [],
-            'exportEncryptSalt' => 'tG85vd1',
+//            'bsVersion' => '4.x',
+//            'downloadAction' => 'gridview/export/download',
+//            'i18n' => [],
+//            'exportEncryptSalt' => 'tG85vd1',
         ],
         'sale' => [
             'class' => 'app\modules\sale\Module',
@@ -116,6 +116,7 @@ $config = [
             'admin/user/request-password-reset',
             'country/get-countries',
             'city/get-city-by-country',
+            'gridview/export/download'
 //            'site/*',
 //            'admin/*',
 //            'gii/*',
