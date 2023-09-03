@@ -72,8 +72,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                     'download' => function ($url, $model, $key) {
                         return Html::a('<i class="fa fa-download"></i>', ['download', 'uid' => $model->uid], [
+                            'target' => "_blank",
                             'title' => Yii::t('app', 'Download Invoice'),
-                            'class' => 'btn btn-warning btn-xs'
+                            'class' => 'btn btn-warning btn-xs',
                         ]);
                     },
                 ]
@@ -162,7 +163,7 @@ $this->params['breadcrumbs'][] = $this->title;
             '{export}',
             '{toggleData}'
         ],
-        'pjax' => true,
+        //'pjax' => true,
         'bordered' => true,
         'striped' => false,
         'condensed' => false,

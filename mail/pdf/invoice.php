@@ -2,12 +2,15 @@
 
 use yii\helpers\Url;
 
-$logo = ($company && $company->logo) ? Url::to('@web/uploads/company/'.$company->logo) : '';
-//$logo = Yii::getAlias('@app') . '/mail/pdf/img/logo-iata.png';
+$logo = 'http://mytrams.com/uploads/company/'.$company->logo;
+//$logo = 'http://mytrams.com/uploads/avatar.png';
 ?>
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Invoice <?= $invoice->invoiceNumber ?></title>
 </head>
 <body style="margin: 0; padding: 0;font-family: Helvetica,Arial,sans-serif;">
@@ -109,10 +112,10 @@ $logo = ($company && $company->logo) ? Url::to('@web/uploads/company/'.$company-
             <h4>Contact:</h4>
             <?= $company->address ?><br>
             <p>
-                <a href="mailto:ask@sharetrip.net"
+                <a href="mailto:<?= $company->email ?>"
                    style="color:#2A8CFF;font-weight:500;line-height:0.6;text-align:left;text-decoration:none;"><?= $company->email ?></a>
                 |
-                <a href="tel:+8809617617617"
+                <a href="tel:<?= $company->phone ?>"
                    style="color:#2A8CFF;font-weight:500;line-height:0.6;text-align:left;text-decoration:none;"><?= $company->phone ?></a>
             </p>
         </div>
