@@ -279,7 +279,7 @@ class TicketController extends ParentController
      */
     public function actionDelete(string $uid)
     {
-        $model = $this->findModel($uid);
+        $model = $this->flightService->findTicket($uid, Ticket::class);
         $model->status = GlobalConstant::INACTIVE_STATUS;
         $model->save();
 
@@ -323,83 +323,4 @@ class TicketController extends ParentController
             ->andWhere([Ticket::tableName() . '.agencyId' => Yii::$app->user->identity->agencyId])
             ->one();
     }
-    /*public function getData()
-    {
-        return [
-            ['_csrf'] => 'dxluxf_vo-78LaLwZBiHr3v6Tmk3TF1s08Zqn_zJMBwkQyeglqrzuc9kk6hVW7TNHrR7IkZ1PAeakBr6tZ1BcA==',
-            ['customerId'] => 1,
-            ['invoice'] => 'on',
-            ['group'] => 1,
-            ['Ticket'] => [
-                [0] => [
-                    ['airlineId'] => 1,
-                    ['commission'] => 0.07,
-                    ['incentive'] => 0.003,
-                    ['govTax'] => 0,
-                    ['serviceCharge'] => 0,
-                    ['type'] => 'new',
-                    ['numberOfSegment'] => 1,
-                    ['pnrCode'] => 'ASDDAF',
-                    ['eTicket'] => '12356487',
-                    ['paxName'] => 'Chloe Nolan',
-                    ['paxType'] => 'A',
-                    ['seatClass'] => 'Y',
-                    ['providerId'] => 1,
-                    ['route'] => 'DAC-CTG',
-                    ['issueDate'] => '2022-09-05',
-                    ['departureDate'] => '2022-09-10',
-                    ['baseFare'] => 100,
-                    ['tax'] => 10,
-                    ['otherTax'] => 0,
-                    ['quoteAmount'] => 150,
-                    ['tripType'] => 'One Way',
-                    ['bookedOnline'] => 0,
-                    ['codeShare'] => 0,
-                    ['baggage'] => '20kg',
-                    ['reference'] => 'Ref',
-                    ['customerId'] => 1,
-                ],
-                [2] => [
-                    ['airlineId'] => 1,
-                    ['commission'] => 0.07,
-                    ['incentive'] => 0.003,
-                    ['govTax'] => 0,
-                    ['serviceCharge'] => 0,
-                    ['type'] => 'new',
-                    ['numberOfSegment'] => 1,
-                    ['pnrCode'] => 'ASDDAF',
-                    ['eTicket'] => '4535235345',
-                    ['paxName'] => 'sdfgdsf sdfgsdg',
-                    ['paxType'] => 'A',
-                    ['seatClass'] => 'y',
-                    ['providerId'] => 1,
-                    ['route'] => 'DAC-ASD',
-                    ['issueDate'] => '2022 - 09 - 05',
-                    ['departureDate'] => '2022 - 09 - 10',
-                    ['baseFare'] => 100,
-                    ['tax'] => 10,
-                    ['otherTax'] => 0,
-                    ['quoteAmount'] => 150,
-                    ['tripType'] => 'One Way',
-                    ['bookedOnline'] => 0,
-                    ['codeShare'] => 0,
-                    ['baggage'] => '13kg',
-                    ['reference'] => 'ref',
-                    ['customerId'] => 1,
-                ]
-            ],
-            ['TicketSupplier'] => [
-                [0] => [
-                    ['supplierId'] => 1,
-                    ['status'] => 1,
-                    ['paidAmount'] => 0,
-                ],
-                [2] => [
-                    ['supplierId'] => 1,
-                    ['status'] => 1,
-                    ['paidAmount'] => 0,
-                ]
-            ]
-        ];
-    }*/
 }
