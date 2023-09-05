@@ -40,6 +40,7 @@ use yii\db\ActiveRecord;
 class Customer extends ActiveRecord
 {
     use BehaviorTrait;
+    public $balance;
 
     /**
      * {@inheritdoc}
@@ -57,6 +58,7 @@ class Customer extends ActiveRecord
         return [
             [['name', 'company', 'customerCode', 'category', 'email'], 'required'],
             [['category'], 'string'],
+            [['balance'], 'number'],
             [['creditModality', 'starCategoryId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['name', 'company', 'email', 'address'], 'string', 'max' => 255],

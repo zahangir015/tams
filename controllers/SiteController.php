@@ -108,11 +108,11 @@ class SiteController extends Controller
                 'monthlyHolidayPercentage' => ($totalMonthlyQuote) ? ($saleData['currentMonthSales']['holiday']['quoteAmount'] * 100) / $totalMonthlyQuote : 0,
                 'monthlyVisaPercentage' => ($totalMonthlyQuote) ? ($saleData['currentMonthSales']['visa']['quoteAmount'] * 100) / $totalMonthlyQuote : 0,
 
-                'receivable' => ($totalQuote - $totalReceived),
-                'payable' => ($totalCost - $totalPaid),
+                'receivable' => number_format(ceil($totalQuote - $totalReceived)),
+                'payable' => number_format(ceil($totalCost - $totalPaid)),
 
-                'monthlyReceivable' => ($totalMonthlyQuote - $totalMonthlyReceived),
-                'monthlyPayable' => ($totalMonthlyCost - $totalMonthlyPaid),
+                'monthlyReceivable' => number_format(ceil($totalMonthlyQuote - $totalMonthlyReceived)),
+                'monthlyPayable' => number_format(ceil($totalMonthlyCost - $totalMonthlyPaid)),
             ];
 
 

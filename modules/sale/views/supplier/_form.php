@@ -54,6 +54,9 @@ use yii\bootstrap4\ActiveForm;
             </div>
             <div class="row">
                 <div class="col-md">
+                    <?= $form->field($model, 'balance')->textInput(['type' => 'number', 'min' => 0, 'step' => 'any', 'value' => 0]) ?>
+                </div>
+                <div class="col-md">
                     <?= $form->field($model, 'categories')->widget(Select2::classname(), [
                         'theme' => Select2::THEME_BOOTSTRAP,
                         'data' => $categories,

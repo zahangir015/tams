@@ -21,6 +21,26 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'kartik\grid\SerialColumn'],
             [
+                'class' => 'kartik\grid\ActionColumn',
+                'urlCreator' => function ($action, $model) {
+                    return Url::to([$action, 'uid' => $model->uid]);
+                },
+                'template' => '{view} {update} {delete} {refund}',
+                'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
+                //'updateOptions' => ['role' => 'modal-remote', 'title' => 'Update', 'data-toggle' => 'tooltip'],
+                'buttons' => [
+                    'refund' => function ($url, $model) {
+                        if ($model->type === ServiceConstant::TYPE['Refund'] || $model->type === ServiceConstant::TYPE['Refund Requested']) {
+                            return false;
+                        }
+                        return Html::a('<span class="fas fa-minus-square"></span>', ['/sale/ticket/refund', 'uid' => $model->uid], [
+                            'title' => 'Refund',
+                            'data-toggle' => 'tooltip'
+                        ]);
+                    },
+                ]
+            ],
+            [
                 'attribute' => 'motherTicketId',
                 'value' => 'motherTicketId',
                 'label' => 'Mother'
@@ -258,26 +278,7 @@ $this->params['breadcrumbs'][] = $this->title;
             //'createdAt',
             'updatedBy',
             //'updatedAt',
-            [
-                'class' => 'kartik\grid\ActionColumn',
-                'urlCreator' => function ($action, $model) {
-                    return Url::to([$action, 'uid' => $model->uid]);
-                },
-                'template' => '{view} {update} {delete} {refund}',
-                'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
-                //'updateOptions' => ['role' => 'modal-remote', 'title' => 'Update', 'data-toggle' => 'tooltip'],
-                'buttons' => [
-                    'refund' => function ($url, $model) {
-                        if ($model->type === ServiceConstant::TYPE['Refund'] || $model->type === ServiceConstant::TYPE['Refund Requested']) {
-                            return false;
-                        }
-                        return Html::a('<span class="fas fa-minus-square"></span>', ['/sale/ticket/refund', 'uid' => $model->uid], [
-                            'title' => 'Refund',
-                            'data-toggle' => 'tooltip'
-                        ]);
-                    },
-                ]
-            ]
+
         ],
         'toolbar' => [
             [
