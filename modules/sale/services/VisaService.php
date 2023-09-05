@@ -5,6 +5,7 @@ namespace app\modules\sale\services;
 use app\components\GlobalConstant;
 use app\components\Utilities;
 use app\modules\account\services\InvoiceService;
+use app\modules\account\services\LedgerService;
 use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\Customer;
 use app\modules\sale\models\visa\Visa;
@@ -20,11 +21,13 @@ class VisaService
 {
     private VisaRepository $visaRepository;
     private InvoiceService $invoiceService;
+    private LedgerService $ledgerService;
 
     public function __construct()
     {
         $this->visaRepository = new VisaRepository();
         $this->invoiceService = new InvoiceService();
+        $this->ledgerService = new LedgerService();
     }
 
     public function storeVisa(array $requestData): array
@@ -57,6 +60,17 @@ class VisaService
                 if ($visaSupplier->hasErrors()) {
                     throw new Exception('Visa Supplier creation failed - ' . Utilities::processErrorMessages($visaSupplier->getErrors()));
                 }
+
+                // Supplier ledger data process
+                if (isset($supplierLedgerArray[$visaSupplier->supplierId])) {
+                    $supplierLedgerArray[$visaSupplier->supplierId]['credit'] += $visaSupplier->costOfSale;
+                } else {
+                    $supplierLedgerArray[$visaSupplier->supplierId] = [
+                        'debit' => 0,
+                        'credit' => $visaSupplier->costOfSale,
+                        'subRefId' => null
+                    ];
+                }
             }
 
             // Invoice process and create
@@ -72,6 +86,24 @@ class VisaService
                 $autoInvoiceCreateResponse = $this->invoiceService->autoInvoice($customer->id, $services);
                 if ($autoInvoiceCreateResponse['error']) {
                     throw new Exception('Auto Invoice creation failed - ' . $autoInvoiceCreateResponse['message']);
+                }
+            }
+
+            // Supplier Ledger process
+            foreach ($supplierLedgerArray as $key => $value) {
+                $ledgerRequestData = [
+                    'title' => 'Service Purchase',
+                    'reference' => 'Service Purchase',
+                    'refId' => $key,
+                    'refModel' => Supplier::className(),
+                    'subRefId' => null,
+                    'subRefModel' => null,
+                    'debit' => $value['debit'],
+                    'credit' => $value['credit']
+                ];
+                $ledgerRequestResponse = $this->ledgerService->store($ledgerRequestData);
+                if ($ledgerRequestResponse['error']) {
+                    throw new Exception('Supplier ledger creation failed - ' . $ledgerRequestResponse['message']);
                 }
             }
 
@@ -172,7 +204,7 @@ class VisaService
             $oldQuoteAmount = $visa->quoteAmount;
 
             // Update Visa
-            if ($visa->load($requestData)){
+            if ($visa->load($requestData)) {
                 throw new Exception('Visa data loading failed - ' . Utilities::processErrorMessages($visa->getErrors()));
             }
             $visa->netProfit = self::calculateNetProfit($visa->quoteAmount, $visa->costOfSale);
