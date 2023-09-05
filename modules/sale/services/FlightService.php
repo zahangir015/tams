@@ -76,6 +76,17 @@ class FlightService
                     throw new Exception('Ticket Supplier create failed - ' . Utilities::processErrorMessages($ticketSupplier->getErrors()));
                 }
 
+                // Supplier ledger data process
+                if (isset($supplierLedgerArray[$ticketSupplier->supplierId])) {
+                    $supplierLedgerArray[$ticketSupplier->supplierId]['credit'] += $ticketSupplier->costOfSale;
+                } else {
+                    $supplierLedgerArray[$ticketSupplier->supplierId] = [
+                        'debit' => 0,
+                        'credit' => $ticketSupplier->costOfSale,
+                        'subRefId' => null
+                    ];
+                }
+
                 // Invoice details data process
                 if (($ticket->type == ServiceConstant::TICKET_TYPE_FOR_CREATE['Reissue']) && ($ticket->invoiceId)) {
                     $autoInvoiceCreateResponse = $this->invoiceService->addReissueServiceToInvoice($ticket);
@@ -107,6 +118,24 @@ class FlightService
                             throw new Exception('Invoice - ' . $autoInvoiceCreateResponse['message']);
                         }
                     }
+                }
+            }
+
+            // Supplier Ledger process
+            foreach ($supplierLedgerArray as $key => $value) {
+                $ledgerRequestData = [
+                    'title' => 'Service Purchase',
+                    'reference' => 'Service Purchase',
+                    'refId' => $key,
+                    'refModel' => Supplier::className(),
+                    'subRefId' => null,
+                    'subRefModel' => null,
+                    'debit' => $value['debit'],
+                    'credit' => $value['credit']
+                ];
+                $ledgerRequestResponse = $this->ledgerService->store($ledgerRequestData);
+                if ($ledgerRequestResponse['error']) {
+                    throw new Exception('Supplier ledger creation failed - ' . $ledgerRequestResponse['message']);
                 }
             }
 
