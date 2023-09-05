@@ -57,7 +57,7 @@ use yii\bootstrap4\ActiveForm;
                 if ($model->isNewRecord) {
                     ?>
                     <div class="col-md">
-                        <?= $form->field($model, 'balance')->textInput(['type' => 'number', 'min' => 0, 'step' => 'any', 'value' => 0]) ?>
+                        <?= $form->field($model, 'balance')->textInput(['type' => 'number', 'step' => 'any', 'value' => 0]) ?>
                     </div>
                     <?php
                 }
