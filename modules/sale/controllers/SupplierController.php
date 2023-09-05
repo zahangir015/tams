@@ -63,10 +63,10 @@ class SupplierController extends ParentController
                     if ($model->save()) {
                         // Supplier Ledger process
                         $ledgerRequestData = [
-                            'title' => 'Service Purchase',
-                            'reference' => 'Invoice Number - ' . $model->invoiceNumber,
+                            'title' => 'New Supplier Add',
+                            'reference' => 'New Supplier add',
                             'refId' => $model->id,
-                            'refModel' => Supplier::className(),
+                            'refModel' => Supplier::class,
                             'subRefId' => null,
                             'subRefModel' => null,
                             'debit' => 0,
