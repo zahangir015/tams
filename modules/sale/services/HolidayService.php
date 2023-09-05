@@ -3,7 +3,6 @@
 namespace app\modules\sale\services;
 
 use app\components\Utilities;
-use app\modules\account\models\Invoice;
 use app\modules\account\services\InvoiceService;
 use app\modules\account\services\LedgerService;
 use app\modules\sale\components\ServiceConstant;
@@ -23,10 +22,13 @@ class HolidayService
     private HolidayRepository $holidayRepository;
     private InvoiceService $invoiceService;
 
+    private LedgerService $ledgerService;
+
     public function __construct()
     {
         $this->holidayRepository = new HolidayRepository();
         $this->invoiceService = new InvoiceService();
+        $this->ledgerService = new LedgerService();
     }
 
     /**
@@ -64,13 +66,17 @@ class HolidayService
                 if ($holidaySupplier->hasErrors()) {
                     throw new Exception('Holiday Supplier refund creation failed - ' . Utilities::processErrorMessages($holidaySupplier->getErrors()));
                 }
-                $supplierData[] = [
-                    'refId' => $holidaySupplier->id,
-                    'refModel' => HolidaySupplier::class,
-                    'subRefModel' => Invoice::class,
-                    'dueAmount' => $holidaySupplier->costOfSale,
-                    'paidAmount' => $holidaySupplier->paidAmount,
-                ];
+
+                // Supplier ledger data process
+                if (isset($supplierLedgerArray[$holidaySupplier->supplierId])) {
+                    $supplierLedgerArray[$holidaySupplier->supplierId]['credit'] += $holidaySupplier->costOfSale;
+                } else {
+                    $supplierLedgerArray[$holidaySupplier->supplierId] = [
+                        'debit' => 0,
+                        'credit' => $holidaySupplier->costOfSale,
+                        'subRefId' => null
+                    ];
+                }
             }
 
             // Invoice process and create
@@ -81,12 +87,29 @@ class HolidayService
                     'refModel' => Holiday::class,
                     'dueAmount' => $holiday->quoteAmount,
                     'paidAmount' => 0,
-                    'supplierData' => $supplierData
                 ];
                 // Invoice data process and storing
                 $autoInvoiceCreateResponse = $this->invoiceService->autoInvoice($customer->id, $services);
                 if ($autoInvoiceCreateResponse['error']) {
                     throw new Exception('Auto Invoice creation failed - ' . $autoInvoiceCreateResponse['message']);
+                }
+            }
+
+            // Supplier Ledger process
+            foreach ($supplierLedgerArray as $key => $value) {
+                $ledgerRequestData = [
+                    'title' => 'Service Purchase',
+                    'reference' => 'Service Purchase',
+                    'refId' => $key,
+                    'refModel' => Supplier::className(),
+                    'subRefId' => null,
+                    'subRefModel' => null,
+                    'debit' => $value['debit'],
+                    'credit' => $value['credit']
+                ];
+                $ledgerRequestResponse = $this->ledgerService->store($ledgerRequestData);
+                if ($ledgerRequestResponse['error']) {
+                    throw new Exception('Supplier ledger creation failed - ' . $ledgerRequestResponse['message']);
                 }
             }
 

@@ -4,7 +4,6 @@ namespace app\modules\sale\services;
 
 use app\components\GlobalConstant;
 use app\components\Utilities;
-use app\modules\account\models\Invoice;
 use app\modules\account\services\InvoiceService;
 use app\modules\account\services\LedgerService;
 use app\modules\sale\components\ServiceConstant;
@@ -24,11 +23,13 @@ class HotelService
 {
     private HotelRepository $hotelRepository;
     private InvoiceService $invoiceService;
+    private LedgerService $ledgerService;
 
     public function __construct()
     {
         $this->hotelRepository = new HotelRepository();
         $this->invoiceService = new InvoiceService();
+        $this->ledgerService = new LedgerService();
     }
 
     private static function calculateNetProfit(mixed $quoteAmount, mixed $costOfSale)
@@ -70,6 +71,17 @@ class HotelService
                 if ($hotelSupplier->hasErrors()) {
                     throw new Exception('Hotel Supplier refund creation failed - ' . Utilities::processErrorMessages($hotelSupplier->getErrors()));
                 }
+
+                // Supplier ledger data process
+                if (isset($supplierLedgerArray[$hotelSupplier->supplierId])) {
+                    $supplierLedgerArray[$hotelSupplier->supplierId]['credit'] += $hotelSupplier->costOfSale;
+                } else {
+                    $supplierLedgerArray[$hotelSupplier->supplierId] = [
+                        'debit' => 0,
+                        'credit' => $hotelSupplier->costOfSale,
+                        'subRefId' => null
+                    ];
+                }
             }
 
             // Invoice process and create
@@ -86,6 +98,24 @@ class HotelService
                 $autoInvoiceCreateResponse = $this->invoiceService->autoInvoice($customer->id, $services);
                 if ($autoInvoiceCreateResponse['error']) {
                     throw new Exception('Auto Invoice creation failed - ' . $autoInvoiceCreateResponse['message']);
+                }
+            }
+
+            // Supplier Ledger process
+            foreach ($supplierLedgerArray as $key => $value) {
+                $ledgerRequestData = [
+                    'title' => 'Service Purchase',
+                    'reference' => 'Service Purchase',
+                    'refId' => $key,
+                    'refModel' => Supplier::className(),
+                    'subRefId' => null,
+                    'subRefModel' => null,
+                    'debit' => $value['debit'],
+                    'credit' => $value['credit']
+                ];
+                $ledgerRequestResponse = $this->ledgerService->store($ledgerRequestData);
+                if ($ledgerRequestResponse['error']) {
+                    throw new Exception('Supplier ledger creation failed - ' . $ledgerRequestResponse['message']);
                 }
             }
 
@@ -186,7 +216,7 @@ class HotelService
             $oldQuoteAmount = $hotel->quoteAmount;
 
             // Update Hotel
-            if ($hotel->load($requestData)){
+            if ($hotel->load($requestData)) {
                 throw new Exception('Hotel data loading failed - ' . Utilities::processErrorMessages($hotel->getErrors()));
             }
             $hotel->netProfit = self::calculateNetProfit($hotel->quoteAmount, $hotel->costOfSale);
