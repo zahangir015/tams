@@ -80,7 +80,7 @@ class BankAccountController extends ParentController
                     // Bank Ledger process
                     $bankLedgerRequestData = [
                         'title' => 'Bank account open',
-                        'reference' => $model->name,
+                        'reference' => 'New Bank added - '.$model->name,
                         'refId' => $model->id,
                         'refModel' => BankAccount::class,
                         'subRefId' => null,

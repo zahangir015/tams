@@ -65,11 +65,11 @@ class CustomerController extends ParentController
                 $ledgerRequestData = [
                     'title' => 'Service Purchase',
                     'reference' => 'New Customer added - ' . $model->name,
-                    'refId' => $invoice->customerId,
+                    'refId' => $model->id,
                     'refModel' => Customer::class,
-                    'subRefId' => $invoice->id,
-                    'subRefModel' => $invoice::class,
-                    'debit' => $invoice->paidAmount,
+                    'subRefId' => null,
+                    'subRefModel' => null,
+                    'debit' => $model->balance,
                     'credit' => 0
                 ];
                 $ledgerRequestResponse = (new LedgerService)->store($ledgerRequestData);
@@ -79,8 +79,6 @@ class CustomerController extends ParentController
                     Yii::$app->session->setFlash('success', 'Customer Account created successfully.');
                     return $this->redirect(['view', 'uid' => $model->uid]);
                 }
-
-                return $this->redirect(['view', 'uid' => $model->uid]);
             }
         } else {
             $model->loadDefaultValues();

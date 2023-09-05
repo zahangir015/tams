@@ -50,9 +50,15 @@ use yii\bootstrap4\ActiveForm;
                 </div>
             </div>
             <div class="row">
-                <div class="col-md">
-                    <?= $form->field($model, 'balance')->textInput(['type' => 'number', 'min' => 0, 'step' => 'any', 'value' => 0]) ?>
-                </div>
+                <?php
+                if ($model->isNewRecord) {
+                    ?>
+                    <div class="col-md">
+                        <?= $form->field($model, 'balance')->textInput(['type' => 'number', 'min' => 0, 'step' => 'any', 'value' => 0]) ?>
+                    </div>
+                    <?php
+                }
+                ?>
                 <div class="col-md">
                     <?= $form->field($model, 'status')->dropdownList(GlobalConstant::DEFAULT_STATUS) ?>
                 </div>

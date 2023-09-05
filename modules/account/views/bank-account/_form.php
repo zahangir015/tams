@@ -55,9 +55,15 @@ use yii\bootstrap4\ActiveForm;
                 <div class="col-md">
                     <?= $form->field($model, 'logo')->fileInput(['maxlength' => true, 'class' => 'form-control']) ?>
                 </div>
-                <div class="col-md">
-                    <?= $form->field($model, 'balance')->textInput(['type' => 'number', 'min' => 0, 'step' => 'any', 'value' => 0]) ?>
-                </div>
+                <?php
+                if ($model->isNewRecord) {
+                    ?>
+                    <div class="col-md">
+                        <?= $form->field($model, 'balance')->textInput(['type' => 'number', 'min' => 0, 'step' => 'any', 'value' => 0]) ?>
+                    </div>
+                    <?php
+                }
+                ?>
                 <div class="col-md">
                     <?= $form->field($model, 'tag')->widget(Select2::class, Utilities::getTagWidget($model->tag))->label('Tag'); ?>
                 </div>
