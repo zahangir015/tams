@@ -279,8 +279,9 @@ class TicketController extends ParentController
      */
     public function actionDelete(string $uid)
     {
-        $model = $this->flightService->findTicket($uid, Ticket::class);
+        $model = $this->flightService->findTicket($uid, Ticket::class, ['ticketSupplier']);
         $model->status = GlobalConstant::INACTIVE_STATUS;
+        $model->ticketSupplier->status = GlobalConstant::INACTIVE_STATUS;
         $model->save();
 
         return $this->redirect(['index']);

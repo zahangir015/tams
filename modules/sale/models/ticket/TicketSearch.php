@@ -78,7 +78,7 @@ class TicketSearch extends Ticket
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'sort' => ['defaultOrder' => ['issueDate' => SORT_DESC]],
+            'sort' => ['defaultOrder' => ['issueDate' => SORT_DESC, 'id' => SORT_DESC]],
         ]);
 
         $dataProvider->sort->attributes['customer'] = [

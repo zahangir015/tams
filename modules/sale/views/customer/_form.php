@@ -48,6 +48,17 @@ use yii\bootstrap4\ActiveForm;
                 <div class="col-md">
                     <?= $form->field($model, 'creditModality')->dropDownList(GlobalConstant::YES_NO, ['prompt' => '']) ?>
                 </div>
+            </div>
+            <div class="row">
+                <?php
+                if ($model->isNewRecord) {
+                    ?>
+                    <div class="col-md">
+                        <?= $form->field($model, 'balance')->textInput(['type' => 'number', 'min' => 0, 'step' => 'any', 'value' => 0]) ?>
+                    </div>
+                    <?php
+                }
+                ?>
                 <div class="col-md">
                     <?= $form->field($model, 'status')->dropdownList(GlobalConstant::DEFAULT_STATUS) ?>
                 </div>

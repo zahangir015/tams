@@ -20,6 +20,26 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'kartik\grid\SerialColumn'],
+            [
+                'class' => 'kartik\grid\ActionColumn',
+                'urlCreator' => function ($action, $model) {
+                    return Url::to([$action, 'uid' => $model->uid]);
+                },
+                'template' => '{view} {update} {delete} {refund}',
+                'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
+                'updateOptions' => ['role' => 'modal-remote', 'title' => 'Update', 'data-toggle' => 'tooltip'],
+                'buttons' => [
+                    'refund' => function ($url, $model) {
+                        if ($model->type === ServiceConstant::TYPE['Refund'] || $model->type === ServiceConstant::TYPE['Refund Requested']) {
+                            return false;
+                        }
+                        return Html::a('<span class="fas fa-minus-square"></span>', ['/sale/visa/refund', 'uid' => $model->uid], [
+                            'title' => 'Refund',
+                            'data-toggle' => 'tooltip'
+                        ]);
+                    },
+                ]
+            ],
             'motherId',
             [
                 'attribute' => 'invoice',
@@ -88,15 +108,30 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'quoteAmount',
                 'label' => 'Quote',
+                'format' => ['decimal', 2],
+                'pageSummary' => true,
+                'pageSummaryFunc' => GridView::F_SUM,
             ],
             [
                 'attribute' => 'costOfSale',
                 'label' => 'Cost',
+                'format' => ['decimal', 2],
+                'pageSummary' => true,
+                'pageSummaryFunc' => GridView::F_SUM,
             ],
-            'netProfit',
+            [
+                'attribute' => 'netProfit',
+                'label' => 'Profit',
+                'format' => ['decimal', 2],
+                'pageSummary' => true,
+                'pageSummaryFunc' => GridView::F_SUM,
+            ],
             [
                 'attribute' => 'receivedAmount',
                 'label' => 'Received',
+                'format' => ['decimal', 2],
+                'pageSummary' => true,
+                'pageSummaryFunc' => GridView::F_SUM,
             ],
             [
                 'attribute' => 'isOnlineBooked',
@@ -112,26 +147,6 @@ $this->params['breadcrumbs'][] = $this->title;
             //'createdAt',
             //'updatedBy',
             //'updatedAt',
-            [
-                'class' => 'kartik\grid\ActionColumn',
-                'urlCreator' => function ($action, $model) {
-                    return Url::to([$action, 'uid' => $model->uid]);
-                },
-                'template' => '{view} {update} {delete} {refund}',
-                'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
-                'updateOptions' => ['role' => 'modal-remote', 'title' => 'Update', 'data-toggle' => 'tooltip'],
-                'buttons' => [
-                    'refund' => function ($url, $model) {
-                        if ($model->type === ServiceConstant::TYPE['Refund'] || $model->type === ServiceConstant::TYPE['Refund Requested']) {
-                            return false;
-                        }
-                        return Html::a('<span class="fas fa-minus-square"></span>', ['/sale/visa/refund', 'uid' => $model->uid], [
-                            'title' => 'Refund',
-                            'data-toggle' => 'tooltip'
-                        ]);
-                    },
-                ]
-            ],
         ],
         'toolbar' => [
             [
@@ -155,6 +170,8 @@ $this->params['breadcrumbs'][] = $this->title;
         'responsive' => true,
         'responsiveWrap' => false,
         'hover' => true,
+        'showFooter' => true,
+        'showPageSummary' => true,
         'panel' => [
             'heading' => '<i class="fas fa-list-alt"></i> ' . Html::encode($this->title),
             'type' => GridView::TYPE_DARK

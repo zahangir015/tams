@@ -62,7 +62,7 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                                 <div class="small-box border border-danger text-danger">
                                     <div class="inner">
                                         <h3><?= $saleData['currentDaySales']['visa']['total'] ?></h3> Visa
-                                        <p>BDT <?= $saleData['currentDaySales']['visa']['total'] ?: 0 ?></p>
+                                        <p>BDT <?= $saleData['currentDaySales']['visa']['quoteAmount'] ?: 0 ?></p>
                                     </div>
                                     <div class="icon">
                                         <i class="fas fa-passport"></i>
@@ -116,7 +116,7 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                                 <div class="small-box border border-danger text-danger">
                                     <div class="inner">
                                         <h3><?= $saleData['currentMonthSales']['visa']['total'] ?></h3> Visa
-                                        <p>BDT <?= $saleData['currentMonthSales']['visa']['total'] ?: 0 ?></p>
+                                        <p>BDT <?= $saleData['currentMonthSales']['visa']['quoteAmount'] ?: 0 ?></p>
                                     </div>
                                     <div class="icon">
                                         <i class="fas fa-passport"></i>
@@ -136,7 +136,7 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                                 <div class="small-box bg-success">
                                     <div class="inner">
                                         <p>Today's Receivable</p>
-                                        <h3><?= $receivable ?></h3>
+                                        <h5><?= $receivable ?></h5>
                                     </div>
                                     <div class="icon">
                                         <i class="fas fa-arrow-alt-circle-up"></i>
@@ -147,7 +147,7 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                                 <div class="small-box bg-danger">
                                     <div class="inner">
                                         <p>Today's Payable</p>
-                                        <h3><?= $payable ?></h3>
+                                        <h5><?= $payable ?></h5>
                                     </div>
                                     <div class="icon">
                                         <i class="fa fa-arrow-circle-down"></i>
@@ -158,7 +158,7 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                                 <div class="small-box bg-success">
                                     <div class="inner">
                                         <p>Monthly Receivable</p>
-                                        <h3><?= $monthlyReceivable ?></h3>
+                                        <h5><?= $monthlyReceivable ?></h5>
                                     </div>
                                     <div class="icon">
                                         <i class="fas fa-arrow-alt-circle-up"></i>
@@ -169,7 +169,7 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                                 <div class="small-box bg-danger">
                                     <div class="inner">
                                         <p>Monthly Payable</p>
-                                        <h3><?= $monthlyPayable ?></h3>
+                                        <h5><?= $monthlyPayable ?></h5>
                                     </div>
                                     <div class="icon">
                                         <i class="fa fa-arrow-circle-down"></i>

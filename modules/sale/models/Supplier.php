@@ -36,7 +36,7 @@ use yii\db\ActiveRecord;
 class Supplier extends ActiveRecord
 {
     use BehaviorTrait;
-
+    public $balance;
     /**
      * {@inheritdoc}
      */
@@ -53,7 +53,7 @@ class Supplier extends ActiveRecord
         return [
             [['name', 'email', 'company', 'type', 'createdBy'], 'required'],
             [['type', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
-            [['refundCharge', 'reissueCharge'], 'number'],
+            [['refundCharge', 'reissueCharge', 'balance'], 'number'],
             [['uid'], 'string', 'max' => 36],
             [['name'], 'string', 'max' => 30],
             [['email'], 'string', 'max' => 100],

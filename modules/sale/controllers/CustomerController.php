@@ -3,11 +3,13 @@
 namespace app\modules\sale\controllers;
 
 use app\components\GlobalConstant;
+use app\modules\account\services\LedgerService;
 use app\modules\sale\models\Customer;
 use app\modules\sale\models\search\CustomerSearch;
 use app\controllers\ParentController;
 use app\modules\sale\models\StarCategory;
 use Yii;
+use yii\db\Exception;
 use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -59,7 +61,24 @@ class CustomerController extends ParentController
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'uid' => $model->uid]);
+                // Customer Ledger process
+                $ledgerRequestData = [
+                    'title' => 'Service Purchase',
+                    'reference' => 'New Customer added - ' . $model->name,
+                    'refId' => $model->id,
+                    'refModel' => Customer::class,
+                    'subRefId' => null,
+                    'subRefModel' => null,
+                    'debit' => $model->balance,
+                    'credit' => 0
+                ];
+                $ledgerRequestResponse = (new LedgerService)->store($ledgerRequestData);
+                if ($ledgerRequestResponse['error']) {
+                    Yii::$app->session->setFlash('danger', 'Customer Ledger creation failed - ' . $ledgerRequestResponse['message']);
+                } else {
+                    Yii::$app->session->setFlash('success', 'Customer Account created successfully.');
+                    return $this->redirect(['view', 'uid' => $model->uid]);
+                }
             }
         } else {
             $model->loadDefaultValues();

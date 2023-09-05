@@ -4,6 +4,7 @@ namespace app\modules\sale\controllers;
 
 use app\components\GlobalConstant;
 use app\components\Utilities;
+use app\modules\account\services\LedgerService;
 use app\modules\sale\models\Supplier;
 use app\modules\sale\models\search\SupplierSearch;
 use app\controllers\ParentController;
@@ -60,8 +61,24 @@ class SupplierController extends ParentController
                 if ($model->load($this->request->post())) {
                     $model->categories = Json::encode($model->categories);
                     if ($model->save()) {
-                        Yii::$app->session->setFlash('success', 'Supplier created successfully.');
-                        return $this->redirect(['view', 'uid' => $model->uid]);
+                        // Supplier Ledger process
+                        $ledgerRequestData = [
+                            'title' => 'Service Purchase',
+                            'reference' => 'Invoice Number - ' . $model->invoiceNumber,
+                            'refId' => $model->id,
+                            'refModel' => Supplier::className(),
+                            'subRefId' => null,
+                            'subRefModel' => null,
+                            'debit' => 0,
+                            'credit' => $model->balance
+                        ];
+                        $ledgerRequestResponse = (new LedgerService)->store($ledgerRequestData);
+                        if ($ledgerRequestResponse['error']) {
+                            Yii::$app->session->setFlash('danger', 'Supplier Ledger creation failed - ' . $ledgerRequestResponse['message']);
+                        } else {
+                            Yii::$app->session->setFlash('success', 'Supplier created successfully.');
+                            return $this->redirect(['view', 'uid' => $model->uid]);
+                        }
                     }
                     Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
                 }
