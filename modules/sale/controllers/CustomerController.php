@@ -69,8 +69,8 @@ class CustomerController extends ParentController
                     'refModel' => Customer::class,
                     'subRefId' => null,
                     'subRefModel' => null,
-                    'debit' => ($model->balance > 0) ? $model->balance : 0,
-                    'credit' => ($model->balance > 0) ? 0 : $model->balance
+                    'debit' => ($model->balance > 0) ? abs($model->balance) : 0,
+                    'credit' => ($model->balance > 0) ? 0 : abs($model->balance)
                 ];
                 $ledgerRequestResponse = (new LedgerService)->store($ledgerRequestData);
                 if ($ledgerRequestResponse['error']) {
