@@ -69,8 +69,8 @@ class SupplierController extends ParentController
                             'refModel' => Supplier::class,
                             'subRefId' => null,
                             'subRefModel' => null,
-                            'debit' => 0,
-                            'credit' => $model->balance
+                            'debit' => ($model->balance > 0) ? 0 : $model->balance,
+                            'credit' => ($model->balance > 0) ? $model->balance : 0
                         ];
                         $ledgerRequestResponse = (new LedgerService)->store($ledgerRequestData);
                         if ($ledgerRequestResponse['error']) {
