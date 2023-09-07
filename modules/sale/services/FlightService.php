@@ -127,7 +127,7 @@ class FlightService
                     'title' => 'Service Purchase',
                     'reference' => 'Service Purchase',
                     'refId' => $key,
-                    'refModel' => Supplier::className(),
+                    'refModel' => Supplier::class,
                     'subRefId' => null,
                     'subRefModel' => null,
                     'debit' => $value['debit'],
