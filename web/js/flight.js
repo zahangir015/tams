@@ -47,11 +47,12 @@ function calculateQuoteAmount() {
             let discount = parseFloat($('#discount' + suffix).val());
             const serviceCharge = parseFloat($('#serviceCharge' + suffix).val());
             const discountType = $('#discountType' + suffix).val();
+            const ait = ((baseFare + tax) * govtTax);
 
             if (discountType === 'Percentage') {
                 discount = baseFare * (discount / 100);
             }
-            $('#quoteAmount' + suffix).val((baseFare + tax + otherTax + serviceCharge - discount));
+            $('#quoteAmount' + suffix).val((baseFare + tax + otherTax + serviceCharge + ait - discount));
         }
     })
 }

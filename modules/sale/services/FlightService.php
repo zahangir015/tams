@@ -18,6 +18,7 @@ use app\modules\sale\models\ticket\TicketRefund;
 use app\modules\sale\models\ticket\TicketSupplier;
 use app\modules\sale\repositories\FlightRepository;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\db\ActiveRecord;
 use yii\db\Exception;
 use yii\web\UploadedFile;
@@ -149,6 +150,9 @@ class FlightService
         }
     }
 
+    /**
+     * @throws InvalidConfigException
+     */
     public function uploadTicket(UploadedFile $file, array $requestData): array
     {
         // Upload to tmp
@@ -441,7 +445,6 @@ class FlightService
         }
     }
 
-
     public function updateRefundTicket(array $requestData, Ticket $ticket): array
     {
         $dbTransaction = Yii::$app->db->beginTransaction();
@@ -542,7 +545,6 @@ class FlightService
 
     protected static function processTicketData(Ticket $ticket): Ticket
     {
-
         $commissionReceived = self::calculateCommissionReceived($ticket->baseFare, $ticket->commission);
         $incentiveReceived = self::calculateIncentiveReceived($ticket->baseFare, $ticket->commission, $ticket->incentive);
         $ait = self::calculateAIT($ticket->baseFare, $ticket->tax, $ticket->govTax);
@@ -639,5 +641,13 @@ class FlightService
         $ait = self::calculateAIT($baseFare, $tax, $airline->govTax);
 
         return self::calculateCostOfSale($tax, $ait, $baseFare, $commissionReceived, $incentiveReceived);
+    }
+
+    public function deleteTicket(ActiveRecord $model): array
+    {
+        // Todo Invoice and Details update or inactive
+        // Todo Ledger update or delete
+        // Todo Ticket status inactive
+        // Todo Ticket Supplier status inactive
     }
 }
