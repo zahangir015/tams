@@ -277,12 +277,20 @@ class TicketController extends ParentController
      * @return Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete(string $uid)
+    public function actionDelete(string $uid): Response
     {
         $model = $this->flightService->findTicket($uid, Ticket::class, ['ticketSupplier']);
-        $model->status = GlobalConstant::INACTIVE_STATUS;
-        $model->ticketSupplier->status = GlobalConstant::INACTIVE_STATUS;
-        $model->save();
+
+        if ($this->request->isPost) {
+            // Delete Ticket
+            $response = $this->flightService->deleteTicket($model);
+            if (!$response['error']) {
+                Yii::$app->session->setFlash('success', $response['message']);
+            } else {
+                Yii::$app->session->setFlash('danger', $response['message']);
+                return $this->redirect(['view', 'uid' => $model->uid]);
+            }
+        }
 
         return $this->redirect(['index']);
     }

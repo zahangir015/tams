@@ -44,6 +44,30 @@ class SaleService
         return ['error' => false, 'message' => 'Services updated.'];
     }
 
+    public static function serviceDelete(array $services): array
+    {
+        foreach ($services as $serviceArray) {
+            if (empty($serviceArray['refModel']) || empty($serviceArray['query'])) {
+                return ['error' => true, 'message' => "refModel or query not found"];
+            }
+            $serviceObject = $serviceArray['refModel']::find()->where($serviceArray['query'])->one();
+
+            if (!$serviceObject) {
+                return ['error' => true, 'message' => "The requested data does not exist with reference service object: {$serviceArray['refModel']} and id : {$serviceArray['query']}"];
+            }
+
+            if (empty($serviceArray['data']['paymentStatus'])) {
+                $serviceArray['data']['paymentStatus'] = $serviceObject->paymentStatus;
+            }
+            $serviceObject->setAttributes($serviceArray['data']);
+            if (!$serviceObject->save()) {
+                return ['error' => true, 'message' => "Service update failed reference service object: {$serviceArray['refModel']} - " . Utilities::processErrorMessages($serviceObject->errors)];
+            }
+        }
+
+        return ['error' => false, 'message' => 'Services updated.'];
+    }
+
     public static function servicePaymentTimelineProcess(Invoice $invoice, array $serviceData)
     {
         // Customer service payment timeline
