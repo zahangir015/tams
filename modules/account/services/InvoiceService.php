@@ -87,7 +87,7 @@ class InvoiceService
                 'refModel' => Customer::class,
                 'subRefId' => $invoice->id,
                 'subRefModel' => $invoice::class,
-                'debit' => $invoice->paidAmount,
+                'debit' => $invoice->dueAmount,
                 'credit' => 0
             ];
             $ledgerRequestResponse = $this->ledgerService->store($ledgerRequestData);

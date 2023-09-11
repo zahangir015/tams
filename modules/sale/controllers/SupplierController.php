@@ -69,8 +69,8 @@ class SupplierController extends ParentController
                         'refModel' => Supplier::class,
                         'subRefId' => null,
                         'subRefModel' => null,
-                        'debit' => 0,
-                        'credit' => $model->balance
+                        'debit' => ($model->balance > 0) ? 0 : abs($model->balance),
+                        'credit' => ($model->balance > 0) ? abs($model->balance) : 0
                     ];
                     $ledgerRequestResponse = (new LedgerService)->store($ledgerRequestData);
                     if ($ledgerRequestResponse['error']) {
@@ -80,8 +80,8 @@ class SupplierController extends ParentController
                         return $this->redirect(['view', 'uid' => $model->uid]);
                     }
                 }
-                Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
             }
+            Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
         } else {
             $model->loadDefaultValues();
         }
@@ -131,7 +131,7 @@ class SupplierController extends ParentController
     {
         $model = $this->findModel($uid);
         $model->status = GlobalConstant::INACTIVE_STATUS;
-        if (!$model->save()){
+        if (!$model->save()) {
             Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
         }
 
