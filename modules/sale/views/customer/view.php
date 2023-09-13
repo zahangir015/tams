@@ -40,6 +40,13 @@ $this->params['breadcrumbs'][] = $this->title;
                         },
                         'format' => 'html',
                     ],
+                    'passportNumber',
+                    'issuedCountry',
+                    'dateOfBirth',
+                    'gender',
+                    'expireDate',
+                    'firstName',
+                    'lastName',
                     [
                         'attribute' => 'status',
                         'value' => function ($model) {

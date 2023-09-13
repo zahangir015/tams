@@ -20,7 +20,7 @@ class CustomerSearch extends Customer
     {
         return [
             [['id', 'creditModality', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
-            [['uid', 'name', 'company', 'customerCode', 'category', 'email', 'address', 'phone'], 'safe'],
+            [['uid', 'name', 'company', 'customerCode', 'category', 'email', 'address', 'phone', 'passportNumber'], 'safe'],
         ];
     }
 
@@ -76,6 +76,7 @@ class CustomerSearch extends Customer
             ->andFilterWhere(['like', 'name', $this->name])
             ->andFilterWhere(['like', 'company', $this->company])
             ->andFilterWhere(['like', 'customerCode', $this->customerCode])
+            ->andFilterWhere(['like', 'passportNumber', $this->passportNumber])
             ->andFilterWhere(['like', 'category', $this->category])
             ->andFilterWhere(['like', 'email', $this->email])
             ->andFilterWhere(['like', 'address', $this->address])
