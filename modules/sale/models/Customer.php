@@ -31,6 +31,13 @@ use yii\db\ActiveRecord;
  * @property string|null $address
  * @property string|null $phone
  * @property int|null $creditModality
+ * @property string|null $passportNumber
+ * @property string|null $issuedCountry
+ * @property string|null $dateOfBirth
+ * @property string|null $gender
+ * @property string|null $expireDate
+ * @property string|null $firstName
+ * @property string|null $lastName
  * @property int $status
  * @property int $createdBy
  * @property int $createdAt
@@ -59,11 +66,13 @@ class Customer extends ActiveRecord
             [['name', 'company', 'customerCode', 'category', 'email'], 'required'],
             [['category'], 'string'],
             [['balance'], 'number'],
+            [['dateOfBirth', 'expireDate'], 'safe'],
             [['creditModality', 'starCategoryId', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['name', 'company', 'email', 'address'], 'string', 'max' => 255],
             [['customerCode'], 'string', 'max' => 32],
-            [['phone'], 'string', 'max' => 50],
+            [['issuedCountry'], 'string', 'max' => 100],
+            [['phone', 'passportNumber', 'gender', 'firstName', 'lastName'], 'string', 'max' => 50],
             [['uid'], 'unique'],
         ];
     }

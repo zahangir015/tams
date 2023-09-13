@@ -1,6 +1,9 @@
 <?php
 
 use app\components\GlobalConstant;
+use app\components\WidgetHelper;
+use app\modules\hrm\components\HrmConstant;
+use kartik\date\DatePicker;
 use app\components\Utilities;
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
@@ -62,6 +65,34 @@ use yii\bootstrap4\ActiveForm;
                 ?>
                 <div class="col-md">
                     <?= $form->field($model, 'status')->dropdownList(GlobalConstant::DEFAULT_STATUS) ?>
+                </div>
+            </div>
+
+            <p class="lead">Passport Details</p>
+
+            <div class="row">
+                <div class="col-md">
+                    <?= $form->field($model, 'passportNumber')->textInput(['maxlength' => true]) ?>
+                </div>
+                <div class="col-md">
+                    <?= $form->field($model, 'issuedCountry')->textInput(['maxlength' => true]) ?>
+                </div>
+                <div class="col-md">
+                    <?= $form->field($model, 'dateOfBirth')->widget(DatePicker::class, WidgetHelper::getDateWidget('dateOfBirth', 'dateOfBirth')) ?>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md">
+                    <?= $form->field($model, 'gender')->dropdownList(HrmConstant::GENDER_STRING) ?>
+                </div>
+                <div class="col-md">
+                    <?= $form->field($model, 'expireDate')->widget(DatePicker::class, WidgetHelper::getDateWidget('expireDate', 'expireDate')) ?>
+                </div>
+                <div class="col-md">
+                    <?= $form->field($model, 'firstName')->textInput(['maxlength' => true]) ?>
+                </div>
+                <div class="col-md">
+                    <?= $form->field($model, 'firstName')->textInput(['maxlength' => true]) ?>
                 </div>
             </div>
             <div class="form-group">

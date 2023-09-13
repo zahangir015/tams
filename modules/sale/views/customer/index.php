@@ -24,6 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'name',
             'company',
             'customerCode',
+            'passportNumber',
             [
                 'class' => '\kartik\grid\DataColumn',
                 'attribute' => 'category',
