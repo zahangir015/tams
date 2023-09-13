@@ -4,6 +4,7 @@ use app\components\GlobalConstant;
 use app\components\WidgetHelper;
 use app\modules\hrm\components\HrmConstant;
 use kartik\date\DatePicker;
+use app\components\Utilities;
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
 
@@ -27,7 +28,7 @@ use yii\bootstrap4\ActiveForm;
                     <?= $form->field($model, 'company')->textInput(['maxlength' => true]) ?>
                 </div>
                 <div class="col-md">
-                    <?= $form->field($model, 'customerCode')->textInput(['maxlength' => true]) ?>
+                    <?= $form->field($model, 'customerCode')->textInput(['maxlength' => true, 'readOnly' => true,'value' => ($model->isNewRecord) ? Utilities::customerCodeGenerator() : $model->customerCode]) ?>
                 </div>
             </div>
             <div class="row">

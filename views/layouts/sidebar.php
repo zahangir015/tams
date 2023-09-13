@@ -69,7 +69,7 @@ use app\modules\admin\components\Helper;
                             ['label' => 'Cities', 'icon' => 'globe', 'url' => ['/city'], 'visible' => Helper::checkRoute('/city/')],
                             //['label' => 'Company', 'icon' => 'building', 'url' => ['/company'], 'visible' => Helper::checkRoute('/company/')],
                             ['label' => 'Company Profile', 'icon' => 'building', 'url' => ['/company/company-profile'], 'visible' => Helper::checkRoute('/company/view')],
-                            ['label' => 'Providers', 'icon' => 'paper-plane', 'url' => ['/sale/provider/index'], 'visible' => Helper::checkRoute('/sale/provider/')],
+                            ['label' => 'Providers/GDS', 'icon' => 'paper-plane', 'url' => ['/sale/provider/index'], 'visible' => Helper::checkRoute('/sale/provider/')],
                             [
                                 'label' => 'Supplier Settings',
                                 'icon' => 'truck',

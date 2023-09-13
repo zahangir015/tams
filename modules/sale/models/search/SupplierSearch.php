@@ -20,7 +20,7 @@ class SupplierSearch extends Supplier
     {
         return [
             [['id', 'type', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
-            [['uid', 'name', 'email', 'company', 'address', 'phone', 'categories'], 'safe'],
+            [['uid', 'name', 'email', 'company', 'address', 'phone', 'categories', 'supplierCode'], 'safe'],
             [['refundCharge', 'reissueCharge'], 'number'],
         ];
     }
@@ -66,6 +66,7 @@ class SupplierSearch extends Supplier
         $query->andFilterWhere([
             'id' => $this->id,
             'type' => $this->type,
+            'supplierCode' => $this->supplierCode,
             'refundCharge' => $this->refundCharge,
             'reissueCharge' => $this->refundCharge,
             'status' => $this->status,

@@ -108,14 +108,12 @@ $logo = 'http://mytrams.com/uploads/company/'.$company->logo;
         </div>
         <div style="clear: both"></div>
         <div style="background: #EFEFF4; box-sizing: border-box; padding: 10px; padding-bottom: 25px; text-align: left; width: 100%; color: #474749;line-height: 0.5; font-size: 15px; margin-top: 10px; text-align: center">
-            <h4>Contact:</h4>
-            <?= $company->address ?><br>
             <p>
-                <a href="mailto:<?= $company->email ?>"
-                   style="color:#2A8CFF;font-weight:500;line-height:0.6;text-align:left;text-decoration:none;"><?= $company->email ?></a>
+                Contact Us:
+                Address: <?= $company->address ?>
+                <a href="mailto:<?= $company->email ?>" style="color:#2A8CFF;font-weight:500;line-height:0.6;text-align:left;text-decoration:none;"><?= $company->email ?></a>
                 |
-                <a href="tel:<?= $company->phone ?>"
-                   style="color:#2A8CFF;font-weight:500;line-height:0.6;text-align:left;text-decoration:none;"><?= $company->phone ?></a>
+                <a href="tel:<?= $company->phone ?>" style="color:#2A8CFF;font-weight:500;line-height:0.6;text-align:left;text-decoration:none;"><?= $company->phone ?></a>
             </p>
         </div>
     </div>
