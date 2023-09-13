@@ -28,7 +28,7 @@ use yii\helpers\Url;
             ?>
             <div class="image float-left">
                 <img src="<?= Url::to('/uploads/company/' . $company->logo) ?>" class="elevation-2"
-                     alt="<?= $company->name ?>" width="235">
+                     alt="<?= $company->name ?>" width="235" height="75">
             </div>
             <?php
         }

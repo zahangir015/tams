@@ -16,7 +16,7 @@ use yii\web\JsExpression;
 
 class Utilities
 {
-    public static function uniqueCode($limit)
+    public static function uniqueCode($limit): string
     {
         return substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, $limit);
     }
@@ -968,6 +968,16 @@ class Utilities
     {
         $uploadOptions = self::get('uploadOptions');
         return $uploadOptions['maxFileSize'];
+    }
+
+    public static function supplierCodeGenerator(): string
+    {
+        return 'SC'. date('ymdhis') . rand(9, 999).Yii::$app->user->identity->agencyId;
+    }
+
+    public static function customerCodeGenerator(): string
+    {
+        return 'CUS'. date('ymdhis') . rand(9, 999).Yii::$app->user->identity->agencyId;
     }
 
 }

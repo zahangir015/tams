@@ -73,7 +73,6 @@ class InvoiceService
                 throw new Exception('Invoice creation failed - ' . Utilities::processErrorMessages($invoice->getErrors()));
             }
 
-            //AttachmentFile::uploadsById($invoice, 'invoiceFile');
             // Service Data process
             $serviceDataProcessResponse = self::serviceDataProcessForInvoice($invoice, $serviceData, $user);
             if ($serviceDataProcessResponse['error']) {

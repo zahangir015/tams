@@ -1,6 +1,7 @@
 <?php
 
 use app\components\GlobalConstant;
+use app\components\Utilities;
 use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\helpers\Json;
@@ -24,18 +25,18 @@ use yii\bootstrap4\ActiveForm;
                     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
                 </div>
                 <div class="col-md">
-                    <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
+                    <?= $form->field($model, 'company')->textInput(['maxlength' => true]) ?>
                 </div>
                 <div class="col-md">
-                    <?= $form->field($model, 'company')->textInput(['maxlength' => true]) ?>
+                    <?= $form->field($model, 'supplierCode')->textInput(['maxlength' => true, 'readOnly' => true, 'value' => ($model->isNewRecord) ? Utilities::supplierCodeGenerator() : $model->supplierCode]) ?>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md">
-                    <?= $form->field($model, 'type')->dropdownList(GlobalConstant::SUPPLIER_TYPE, ['maxlength' => true]) ?>
+                    <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
                 </div>
                 <div class="col-md">
-                    <?= $form->field($model, 'address')->textInput(['maxlength' => true]) ?>
+                    <?= $form->field($model, 'type')->dropdownList(GlobalConstant::SUPPLIER_TYPE, ['maxlength' => true]) ?>
                 </div>
                 <div class="col-md">
                     <?= $form->field($model, 'phone')->textInput(['maxlength' => true]) ?>
@@ -43,13 +44,13 @@ use yii\bootstrap4\ActiveForm;
             </div>
             <div class="row">
                 <div class="col-md">
+                    <?= $form->field($model, 'address')->textInput(['maxlength' => true]) ?>
+                </div>
+                <div class="col-md">
                     <?= $form->field($model, 'reissueCharge')->textInput() ?>
                 </div>
                 <div class="col-md">
                     <?= $form->field($model, 'refundCharge')->textInput() ?>
-                </div>
-                <div class="col-md">
-                    <?= $form->field($model, 'status')->dropdownList(GlobalConstant::DEFAULT_STATUS) ?>
                 </div>
             </div>
             <div class="row">
@@ -74,7 +75,9 @@ use yii\bootstrap4\ActiveForm;
                         ],
                     ])->label('Supplier Category'); ?>
                     <?php echo '<div class="hint-block">' . 'if not available create a new one first ' . Html::a(Yii::t('app', 'Add category'), ['supplier-category/create'], ['class' => 'small-box-footer', 'target' => '_blank']) . '</div>'; ?>
-
+                </div>
+                <div class="col-md">
+                    <?= $form->field($model, 'status')->dropdownList(GlobalConstant::DEFAULT_STATUS) ?>
                 </div>
             </div>
 

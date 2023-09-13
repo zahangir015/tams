@@ -56,40 +56,40 @@ class SupplierController extends ParentController
      */
     public function actionCreate(): Response|string
     {
-            $model = new Supplier();
-            if ($this->request->isPost) {
-                if ($model->load($this->request->post())) {
-                    $model->categories = Json::encode($model->categories);
-                    if ($model->save()) {
-                        // Supplier Ledger process
-                        $ledgerRequestData = [
-                            'title' => 'New Supplier Add',
-                            'reference' => 'New Supplier add',
-                            'refId' => $model->id,
-                            'refModel' => Supplier::class,
-                            'subRefId' => null,
-                            'subRefModel' => null,
-                            'debit' => ($model->balance > 0) ? 0 : abs($model->balance),
-                            'credit' => ($model->balance > 0) ? abs($model->balance) : 0
-                        ];
-                        $ledgerRequestResponse = (new LedgerService)->store($ledgerRequestData);
-                        if ($ledgerRequestResponse['error']) {
-                            Yii::$app->session->setFlash('danger', 'Supplier Ledger creation failed - ' . $ledgerRequestResponse['message']);
-                        } else {
-                            Yii::$app->session->setFlash('success', 'Supplier created successfully.');
-                            return $this->redirect(['view', 'uid' => $model->uid]);
-                        }
+        $model = new Supplier();
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post())) {
+                $model->categories = Json::encode($model->categories);
+                if ($model->save()) {
+                    // Supplier Ledger process
+                    $ledgerRequestData = [
+                        'title' => 'New Supplier Add',
+                        'reference' => 'New Supplier add',
+                        'refId' => $model->id,
+                        'refModel' => Supplier::class,
+                        'subRefId' => null,
+                        'subRefModel' => null,
+                        'debit' => ($model->balance > 0) ? 0 : abs($model->balance),
+                        'credit' => ($model->balance > 0) ? abs($model->balance) : 0
+                    ];
+                    $ledgerRequestResponse = (new LedgerService)->store($ledgerRequestData);
+                    if ($ledgerRequestResponse['error']) {
+                        Yii::$app->session->setFlash('danger', 'Supplier Ledger creation failed - ' . $ledgerRequestResponse['message']);
+                    } else {
+                        Yii::$app->session->setFlash('success', 'Supplier created successfully.');
+                        return $this->redirect(['view', 'uid' => $model->uid]);
                     }
-                    Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
                 }
-            } else {
-                $model->loadDefaultValues();
             }
+            Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
+        } else {
+            $model->loadDefaultValues();
+        }
 
-            return $this->render('create', [
-                'model' => $model,
-                'categories' => ArrayHelper::map(SupplierCategory::findAll(['status' => GlobalConstant::ACTIVE_STATUS]), 'name', 'name')
-            ]);
+        return $this->render('create', [
+            'model' => $model,
+            'categories' => ArrayHelper::map(SupplierCategory::findAll(['status' => GlobalConstant::ACTIVE_STATUS]), 'name', 'name')
+        ]);
 
     }
 
@@ -123,15 +123,21 @@ class SupplierController extends ParentController
     /**
      * Deletes an existing Supplier model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id ID
+     * @param string $uid UID
      * @return Response
      * @throws NotFoundHttpException if the model cannot be found
-     *public function actionDelete($id)
-     * {
-     * $this->findModel($id)->delete();
-     *
-     * return $this->redirect(['index']);
-     * }*/
+     **/
+    public function actionDelete(string $uid): Response
+    {
+        $model = $this->findModel($uid);
+        $model->status = GlobalConstant::INACTIVE_STATUS;
+        if (!$model->save()) {
+            Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
+        }
+
+        Yii::$app->session->setFlash('success', 'Successfully Deleted');
+        return $this->redirect(['index']);
+    }
 
     /**
      * Finds the Supplier model based on its primary key value.
@@ -149,7 +155,7 @@ class SupplierController extends ParentController
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
 
-    public function actionGetSuppliers($query = null)
+    public function actionGetSuppliers($query = null): array
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
         $suppliers = Supplier::query($query);

@@ -3,6 +3,7 @@
 namespace app\modules\sale\controllers;
 
 use app\components\GlobalConstant;
+use app\components\Utilities;
 use app\modules\account\services\LedgerService;
 use app\modules\sale\models\Customer;
 use app\modules\sale\models\search\CustomerSearch;
@@ -121,7 +122,11 @@ class CustomerController extends ParentController
     {
         $model = $this->findModel($uid);
         $model->status = GlobalConstant::INACTIVE_STATUS;
-        $model->save();
+
+        if (!$model->save()){
+            Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
+        }
+
         Yii::$app->session->setFlash('success', 'Successfully Deleted');
         return $this->redirect(['index']);
     }

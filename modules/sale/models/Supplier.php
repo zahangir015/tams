@@ -18,6 +18,7 @@ use yii\db\ActiveRecord;
  * @property int $id
  * @property string $uid
  * @property int $agencyId
+ * @property string $supplierCode
  * @property string $name
  * @property string $email
  * @property string $company
@@ -60,9 +61,11 @@ class Supplier extends ActiveRecord
             [['company'], 'string', 'max' => 150],
             [['categories'], 'safe'],
             [['address', 'phone'], 'string', 'max' => 255],
+            [['supplierCode'], 'string', 'max' => 32],
             [['uid'], 'unique'],
             [['name', 'agencyId'], 'unique', 'targetAttribute' => ['name', 'agencyId']],
             [['email', 'agencyId'], 'unique', 'targetAttribute' => ['email', 'agencyId']],
+            [['supplierCode', 'agencyId'], 'unique', 'targetAttribute' => ['supplierCode', 'agencyId']],
         ];
     }
 
@@ -74,6 +77,7 @@ class Supplier extends ActiveRecord
         return [
             'id' => Yii::t('app', 'ID'),
             'uid' => Yii::t('app', 'Uid'),
+            'supplierCode' => Yii::t('app', 'Code'),
             'name' => Yii::t('app', 'Name'),
             'email' => Yii::t('app', 'Email'),
             'company' => Yii::t('app', 'Company'),
