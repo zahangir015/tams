@@ -101,13 +101,14 @@ class CustomerController extends ParentController
     public function actionUpdate(string $uid): Response|string
     {
         $model = $this->findModel($uid);
-
+        $starCategories = ArrayHelper::map(StarCategory::find()->where(['status' => GlobalConstant::ACTIVE_STATUS])->all(), 'id', 'name');
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['view', 'uid' => $model->uid]);
         }
 
         return $this->render('update', [
             'model' => $model,
+            'starCategories' => $starCategories,
         ]);
     }
 

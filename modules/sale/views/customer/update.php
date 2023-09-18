@@ -15,5 +15,6 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 <div class="customer-update">
     <?= $this->render('_form', [
         'model' => $model,
+        'starCategories' => $starCategories
     ]) ?>
 </div>

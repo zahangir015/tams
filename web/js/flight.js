@@ -1,6 +1,6 @@
 let rowNum = 0;
 
-$('#count').text((rowNum+1));
+$('#count').text((rowNum + 1));
 
 function addTicket() {
     rowNum++;
@@ -13,7 +13,7 @@ function addTicket() {
         success: function (data) {
             $('.card-holder').append(data);
             $('.customerId').val($('.customerId').val());
-            $('#count').text((rowNum+1));
+            $('#count').text((rowNum + 1));
         },
         error: function (error) {
             console.log(error)
@@ -27,7 +27,7 @@ function remove(row) {
 
     rowNum--;
     $('#addButton').attr('data-row-number', rowNum);
-    $('#count').text((rowNum+1));
+    $('#count').text((rowNum + 1));
 }
 
 function titleUpdate(row) {
@@ -39,21 +39,20 @@ function titleUpdate(row) {
 
 function calculateQuoteAmount() {
     $('.quoteAmount').each(function (index) {
-        if ((index != 0)) {
-            let suffix = this.id.match(/\d+/);
-            const baseFare = parseFloat($('#baseFare' + suffix).val());
-            const tax = parseFloat($('#tax' + suffix).val());
-            const otherTax = parseFloat($('#otherTax' + suffix).val());
-            let discount = parseFloat($('#discount' + suffix).val());
-            const serviceCharge = parseFloat($('#serviceCharge' + suffix).val());
-            const discountType = $('#discountType' + suffix).val();
-            const ait = ((baseFare + tax) * govtTax);
+        let suffix = this.id.match(/\d+/);
+        const baseFare = parseFloat($('#baseFare' + suffix).val());
+        const tax = parseFloat($('#tax' + suffix).val());
+        const otherTax = parseFloat($('#otherTax' + suffix).val());
+        let discount = parseFloat($('#discount' + suffix).val());
+        const serviceCharge = parseFloat($('#serviceCharge' + suffix).val());
+        const discountType = $('#discountType' + suffix).val();
+        const govTax = $('#govTax' + suffix).val();
+        const ait = ((baseFare + tax) * govTax);
 
-            if (discountType === 'Percentage') {
-                discount = baseFare * (discount / 100);
-            }
-            $('#quoteAmount' + suffix).val((baseFare + tax + otherTax + serviceCharge + ait - discount));
+        if (discountType === 'Percentage') {
+            discount = baseFare * (discount / 100);
         }
+        $('#quoteAmount' + suffix).val((baseFare + tax + otherTax + serviceCharge + ait - discount));
     })
 }
 
