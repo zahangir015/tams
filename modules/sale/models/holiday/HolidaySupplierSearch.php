@@ -5,6 +5,7 @@ namespace app\modules\sale\models\holiday;
 use app\components\GlobalConstant;
 use app\modules\account\models\Bill;
 use app\modules\sale\models\Supplier;
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
@@ -51,7 +52,9 @@ class HolidaySupplierSearch extends HolidaySupplier
         $query = HolidaySupplier::find();
 
         // add conditions that should always apply here
-        $query->joinWith(['holiday', 'supplier', 'category', 'bill']);
+        $query->joinWith(['holiday', 'supplier'=> function ($query) {
+            $query->where([Supplier::tableName() . '.agencyId' => Yii::$app->user->identity->agencyId]);
+        }, 'category', 'bill']);
         $query->where([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS]);
 
         // do we have values? if so, add a filter to our query

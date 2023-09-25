@@ -5,6 +5,7 @@ namespace app\modules\sale\models\hotel;
 use app\components\GlobalConstant;
 use app\modules\account\models\Bill;
 use app\modules\sale\models\Supplier;
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
@@ -50,7 +51,9 @@ class HotelSupplierSearch extends HotelSupplier
         $query = HotelSupplier::find();
 
         // add conditions that should always apply here
-        $query->joinWith(['bill', 'supplier', 'hotel']);
+        $query->joinWith(['bill', 'supplier' => function ($query) {
+            $query->where([Supplier::tableName() . '.agencyId' => Yii::$app->user->identity->agencyId]);
+        }, 'hotel']);
         $query->where([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS]);
 
         // do we have values? if so, add a filter to our query
