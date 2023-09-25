@@ -92,7 +92,7 @@ use yii\bootstrap4\ActiveForm;
                     <?= $form->field($model, 'firstName')->textInput(['maxlength' => true]) ?>
                 </div>
                 <div class="col-md">
-                    <?= $form->field($model, 'firstName')->textInput(['maxlength' => true]) ?>
+                    <?= $form->field($model, 'lastName')->textInput(['maxlength' => true]) ?>
                 </div>
             </div>
             <div class="form-group">
