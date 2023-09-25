@@ -5,6 +5,7 @@ namespace app\modules\sale\models\visa;
 use app\models\Country;
 use app\modules\account\models\Bill;
 use app\modules\sale\models\Supplier;
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
@@ -17,10 +18,11 @@ class VisaSupplierSearch extends VisaSupplier
     public $supplier;
     public $visa;
     public $country;
+
     /**
      * {@inheritdoc}
      */
-    public function rules():array
+    public function rules(): array
     {
         return [
             [['id', 'motherVisaSupplierId', 'visaId', 'billId', 'countryId', 'supplierId', 'quantity', 'status', 'motherId'], 'integer'],
@@ -50,7 +52,9 @@ class VisaSupplierSearch extends VisaSupplier
         $query = VisaSupplier::find();
 
         // add conditions that should always apply here
-        $query->joinWith(['bill', 'supplier', 'country', 'visa']);
+        $query->joinWith(['bill', 'supplier' => function ($query) {
+            $query->where([Supplier::tableName() . '.agencyId' => Yii::$app->user->identity->agencyId]);
+        }, 'country', 'visa']);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
