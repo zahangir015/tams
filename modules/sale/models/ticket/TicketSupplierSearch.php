@@ -6,6 +6,7 @@ use app\components\GlobalConstant;
 use app\modules\account\models\Bill;
 use app\modules\sale\models\Airline;
 use app\modules\sale\models\Supplier;
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
@@ -52,7 +53,9 @@ class TicketSupplierSearch extends TicketSupplier
         $query = TicketSupplier::find();
 
         // add conditions that should always apply here
-        $query->joinWith(['bill', 'supplier', 'airline']);
+        $query->joinWith(['bill', 'airline', 'supplier' => function ($query) {
+            $query->where([Supplier::tableName() . '.agencyId' => Yii::$app->user->identity->agencyId]);
+        }]);
         $query->where([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS]);
 
         if (isset($params['TicketSupplierSearch'])) {
