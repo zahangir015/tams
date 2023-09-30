@@ -17,6 +17,7 @@ use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\Customer;
 use Exception;
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
@@ -306,9 +307,7 @@ class InvoiceController extends ParentController
         $fileName = 'invoice';
         pdfGenerator::makeInvoice([
             'invoice' => $this->invoiceRepository->findOne(['uid' => $uid], Invoice::class, [
-                'details' => function ($query) {
-                    $query->with(['service']);
-                },
+                'details',
                 'customer',
             ]),
             'company' => Company::findOne(['agencyId' => Yii::$app->user->identity->agencyId]),

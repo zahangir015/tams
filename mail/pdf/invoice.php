@@ -33,7 +33,7 @@ $logo = 'http://mytrams.com/uploads/company/'.$company->logo;
             <div style="width: 45%; float: left; position: relative; text-align: left; font-size: 15px;color: #000000;">
                 <p>
                     Date:<br>
-                    <strong><?= date('j F Y', strtotime($invoice->createdAt)) ?></strong><br>
+                    <strong><?= date('j F Y', strtotime($invoice->date)) ?></strong><br>
                     Payment Due Date:<br>
                     <strong><?= ($invoice->expectedPaymentDate) ? date('j F Y', strtotime($invoice->expectedPaymentDate)) : '' ?> </strong>
                 </p>
@@ -56,21 +56,22 @@ $logo = 'http://mytrams.com/uploads/company/'.$company->logo;
                     <tbody>
                     <?php
                     foreach ($invoice->details as $key => $invoiceDetail) {
-                    $supplierModel = strtolower($invoiceDetail->service->formName()) . 'Suppliers';
-                    if ($invoiceDetail->service->formName() == 'Ticket') {
-                        $serviceDetails = $invoiceDetail->service->route;
-                        $identificationNumber = $invoiceDetail->service->eTicket;
-                        $paxName = $invoiceDetail->service->paxName;
-                    } else {
-                        $serviceDetails = implode('.', array_column($invoiceDetail->service->$supplierModel, 'serviceDetails'));
-                        $identificationNumber = $invoiceDetail->service->identificationNumber;
-                        $paxName = $customer->name;
-                    }
+                        $service = $invoiceDetail->refModel::findOne(['id' => $invoiceDetail->refId]);
+                        if ($invoiceDetail->service->formName() == 'Ticket') {
+                            $serviceDetails = $service->route;
+                            $identificationNumber = $service->eTicket;
+                            $paxName = $service->paxName;
+                        } else {
+                            $supplierModel = strtolower($service->formName()) . 'Suppliers';
+                            $serviceDetails = implode('.', array_column($service->$supplierModel, 'serviceDetails'));
+                            $identificationNumber = $service->identificationNumber;
+                            $paxName = $invoice->customer->name;
+                        }
                     ?>
                     <tr>
-                        <td style="padding: .75rem;text-align: left;"><?= $invoiceDetail->service->formName() ?></td>
+                        <td style="padding: .75rem;text-align: left;"><?= $service->formName() ?></td>
                         <td style="padding: .75rem;text-align: left;"><?= $identificationNumber ?></td>
-                        <td style="padding: .75rem; text-align: left;"><?= $invoiceDetail->service->issueDate ?></td>
+                        <td style="padding: .75rem; text-align: left;"><?= $service->issueDate ?></td>
                         <td style="padding: .75rem; text-align: left;"><?= $paxName ?></td>
                         <td style="padding: .75rem; text-align: left;"><?= $serviceDetails ?></td>
                         <td style="padding: .75rem; text-align: right;"><?= number_format($invoiceDetail->paidAmount) ?></td>
