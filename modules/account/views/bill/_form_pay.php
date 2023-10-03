@@ -16,19 +16,13 @@ use yii\web\View;
 /* @var $model app\modules\account\models\Invoice */
 /* @var $form yii\bootstrap4\ActiveForm */
 
-$this->registerJs(
-    "var ajaxUrl = '" . Yii::$app->request->baseUrl . '/account/invoice/pending' . "';",
-    View::POS_HEAD,
-    'url'
-);
-
 $this->registerJsFile(
-    '@web/js/invoice.js',
+    '@web/js/bill.js',
     ['depends' => [JqueryAsset::class]]
 );
 ?>
 
-<div class="invoice-form">
+<div class="bill-form">
     <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
     <div class="row">
         <div class="col-md-7">
@@ -38,7 +32,7 @@ $this->registerJsFile(
                         <div class="col-sm invoice-col">
                             Details
                             <address>
-                                <b>Client:</b> <?= $model->customer->company ?><br>
+                                <b>Supplier:</b> <?= $model->supplier->company ?><br>
                                 <b>Due Date:</b> <?= date('l jS \of F Y', strtotime($model->expectedPaymentDate)) ?><br>
                                 <b>Created By:</b> <?= $model->createdBy ?><br>
                                 <b>Issue Date:</b> <?= $model->updatedBy ?><br>
@@ -48,7 +42,7 @@ $this->registerJsFile(
                     <div class="row">
                         <div class="col-12">
                             <div class="table-responsive border-bottom mb-9">
-                                <h4>Invoice Details</h4>
+                                <h4>Bill Details</h4>
                                 <table class="table">
                                     <thead>
                                     <tr>
@@ -56,23 +50,24 @@ $this->registerJsFile(
                                         <th>Identification#</th>
                                         <th>Issue</th>
                                         <th>Status</th>
-                                        <th>Quote</th>
-                                        <th>Received</th>
+                                        <th>Cost</th>
+                                        <th>Paid</th>
                                     </tr>
                                     </thead>
                                     <tbody id="t-body">
-                                    <?php foreach ($model->details as $invoiceDetail) {
-                                        if (!$invoiceDetail->service) {
+                                    <?php foreach ($model->details as $billDetail) {
+
+                                        if (!$billDetail->service) {
                                             continue;
                                         }
                                         ?>
                                         <tr>
-                                            <td><?= $invoiceDetail->service->formName() ?></td>
-                                            <td><?= $invoiceDetail->getIdentificationNumber($invoiceDetail->service) ?></td>
-                                            <td><?= $invoiceDetail->service->issueDate ?></td>
-                                            <td><?= $invoiceDetail->service->paymentStatus ?></td>
-                                            <td><?= $invoiceDetail->service->quoteAmount ?></td>
-                                            <td><?= $invoiceDetail->service->receivedAmount ?></td>
+                                            <td><?= $billDetail->service->formName() ?></td>
+                                            <td><?= $billDetail->getIdentificationNumber($billDetail->service) ?></td>
+                                            <td><?= $billDetail->service->issueDate ?></td>
+                                            <td><?= $billDetail->service->paymentStatus ?></td>
+                                            <td><?= $billDetail->service->costOfSale ?></td>
+                                            <td><?= $billDetail->service->paidAmount ?></td>
                                         </tr>
                                         <?php
                                     }
@@ -300,7 +295,7 @@ $this->registerJsFile(
                     <div class="row">
                         <div class="col-md">
                             <div id="files" style="background-color: #FFFFFF; padding: 10px;">
-                                <?= $form->field($model, 'invoiceFile[]')->widget(FileInput::class, [
+                                <?= $form->field($model, 'billFile[]')->widget(FileInput::class, [
                                     'options' => [
                                         'multiple' => true,
                                         'accept' => '*'

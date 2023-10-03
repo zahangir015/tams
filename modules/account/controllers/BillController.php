@@ -10,6 +10,7 @@ use app\modules\account\models\Transaction;
 use app\modules\account\repositories\BillRepository;
 use app\modules\account\services\BillService;
 use app\modules\account\services\RefundTransactionService;
+use app\modules\sale\models\Supplier;
 use Yii;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -108,9 +109,9 @@ class BillController extends ParentController
         }
 
         if (Yii::$app->request->isPost) {
-            $invoicePaymentResponse = $this->billService->payment($model, Yii::$app->request->post());
-            Yii::$app->session->setFlash($invoicePaymentResponse['error'] ? 'error' : 'success', $invoicePaymentResponse['message']);
-            if (!$invoicePaymentResponse['error']) {
+            $billPaymentResponse = $this->billService->payment($model, Yii::$app->request->post());
+            Yii::$app->session->setFlash($billPaymentResponse['error'] ? 'error' : 'success', $billPaymentResponse['message']);
+            if (!$billPaymentResponse['error']) {
                 return $this->render('view', [
                     'model' => $model,
                     'company' => Company::findOne(['agencyId' => Yii::$app->user->identity->agencyId]),
@@ -121,8 +122,8 @@ class BillController extends ParentController
         return $this->render('payment', [
             'model' => $model,
             'transaction' => new Transaction(),
-            'refundList' => $this->refundTransactionService->getRefundList(Customer::class, $model->customerId),
-            'bankList' => $this->invoiceService->getBankList()
+            'refundList' => $this->refundTransactionService->getRefundList(Supplier::class, $model->supplierId),
+            'bankList' => $this->billService->getBankList()
         ]);
     }
 
