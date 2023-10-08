@@ -118,10 +118,10 @@ class BillController extends ParentController
                 ]);
             }
         }
-
+        
         return $this->render('payment', [
             'model' => $model,
-            'transaction' => new Transaction(),
+            'transaction' => $model->transactions,
             'refundList' => $this->refundTransactionService->getRefundList(Supplier::class, $model->supplierId),
             'bankList' => $this->billService->getBankList()
         ]);

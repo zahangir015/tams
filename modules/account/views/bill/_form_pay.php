@@ -33,7 +33,7 @@ $this->registerJsFile(
                             Details
                             <address>
                                 <b>Supplier:</b> <?= $model->supplier->company ?><br>
-                                <b>Due Date:</b> <?= date('l jS \of F Y', strtotime($model->expectedPaymentDate)) ?><br>
+                                <b>Due Date:</b> <?= date('l jS \of F Y', strtotime($model->date)) ?><br>
                                 <b>Created By:</b> <?= $model->createdBy ?><br>
                                 <b>Issue Date:</b> <?= $model->updatedBy ?><br>
                             </address>
@@ -56,18 +56,18 @@ $this->registerJsFile(
                                     </thead>
                                     <tbody id="t-body">
                                     <?php foreach ($model->details as $billDetail) {
-
-                                        if (!$billDetail->service) {
+                                        $service = $billDetail->refModel::findOne(['id' => $billDetail->refId]);
+                                        if (!$service) {
                                             continue;
                                         }
                                         ?>
                                         <tr>
-                                            <td><?= $billDetail->service->formName() ?></td>
-                                            <td><?= $billDetail->getIdentificationNumber($billDetail->service) ?></td>
-                                            <td><?= $billDetail->service->issueDate ?></td>
-                                            <td><?= $billDetail->service->paymentStatus ?></td>
-                                            <td><?= $billDetail->service->costOfSale ?></td>
-                                            <td><?= $billDetail->service->paidAmount ?></td>
+                                            <td><?= $service->formName() ?></td>
+                                            <td><?= $billDetail->getIdentificationNumber($service) ?></td>
+                                            <td><?= $service->type ?></td>
+                                            <td><?= $service->issueDate ?></td>
+                                            <td><?= $service->costOfSale ?></td>
+                                            <td><?= $billDetail->paidAmount ?></td>
                                         </tr>
                                         <?php
                                     }
@@ -241,7 +241,7 @@ $this->registerJsFile(
                     <hr>
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($transaction, 'refundIds')->widget(Select2::classname(), [
+                            <?= $form->field($transaction, 'refundIds')->widget(Select2::class, [
                                 'theme' => Select2::THEME_BOOTSTRAP,
                                 'data' => $refundList,
                                 'options' => [
