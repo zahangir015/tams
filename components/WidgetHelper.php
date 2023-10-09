@@ -82,6 +82,22 @@ class WidgetHelper
         ];
     }
 
+    public static function select2Widget($data, $id, $isMultiple): array
+    {
+        return [
+            'theme' => Select2::THEME_DEFAULT,
+            'data' => $data,
+            'options' => [
+                'placeholder' => 'Select ...',
+                'multiple' => $isMultiple,
+                'id' => $id
+            ],
+            'pluginOptions' => [
+                'tags' => true,
+                'tokenSeparators' => [',', ' ']
+            ],
+        ];
+    }
     public static function fileInputWidget(): array
     {
         return [
@@ -105,22 +121,6 @@ class WidgetHelper
                 'initialize' => !$model->isNewRecord,
                 'placeholder' => 'Select...',
                 'url' => Url::to([$endPoint]),
-            ]
-        ];
-    }
-
-    public static function getDateWidgetWithOutActiveForm($name, $row, $id = null, $class = null): array
-    {
-        return [
-            'name' => "[$row]$name",
-            'id' => ($id ?? '') . $row,
-            'class' => $class ?? '',
-            'required' => true,
-            'value' => self::date('Y-m-d'),
-            'pluginOptions' => [
-                'autoclose' => true,
-                'format' => 'yyyy-mm-dd',
-
             ]
         ];
     }
@@ -161,7 +161,6 @@ class WidgetHelper
             ]
         ];
     }
-
 
     public static function getToolbar($create = false, $reset = true, $export = true, $toggleData = true, $filter = true): array
     {
