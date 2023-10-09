@@ -7,6 +7,7 @@ use yii\helpers\Url;
 use kartik\grid\ActionColumn;
 use kartik\grid\GridView;
 use yii\widgets\Pjax;
+
 /* @var $this yii\web\View */
 /* @var $searchModel app\modules\account\models\search\BillSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -21,14 +22,53 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'kartik\grid\SerialColumn'],
             [
-                'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, Bill $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'uid' => $model->uid]);
+                'class' => ActionColumn::class,
+                'vAlign' => 'middle',
+                'urlCreator' => function ($action, $model, $key, $index) {
+                    return Url::to([$action, 'uid' => $model->uid]);
                 },
                 'width' => '150px',
-                'template' => '{view} {edit} {delete}',
+                'template' => '{view} {payment} {download} {delete}',
                 'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
-                'buttons' => Utilities::getBasicActionColumnArray()
+                'buttons' => [
+                    'view' => function ($url, $model) {
+                        return Html::a('<i class="fa fa-info-circle"></i>', ['view', 'uid' => $model->uid], [
+                            'title' => 'view',
+                            'data-pjax' => '0',
+                            'class' => 'btn btn-primary btn-xs'
+                        ]);
+                    },
+                    'payment' => function ($url, $model, $key) {
+                        if ($model->dueAmount != 0) {
+                            return Html::a('<i class="fa fa-credit-card"></i>', ['pay', 'uid' => $model->uid],
+                                [
+                                    'title' => Yii::t('app', 'pay'),
+                                    'data-pjax' => '0',
+                                    'class' => 'btn btn-primary btn-xs'
+                                ]);
+                        } else {
+                            return false;
+                        }
+                    },
+                    'delete' => function ($url, $model, $key) {
+                        return Html::a('<i class="fa fa-trash-alt"></i>', ['delete', 'uid' => $model->uid], [
+                            'title' => 'delete',
+                            'data-pjax' => '0',
+                            'data' => [
+                                'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
+                                'method' => 'post',
+                            ],
+                            'class' => 'btn btn-danger btn-xs'
+                        ]);
+                    },
+                    'download' => function ($url, $model, $key) {
+                        return Html::a('<i class="fa fa-download"></i>', ['download', 'uid' => $model->uid], [
+                            'target' => "_blank",
+                            'title' => Yii::t('app', 'Download Invoice'),
+                            'class' => 'btn btn-warning btn-xs',
+                        ]);
+                    },
+                ],
             ],
             [
                 'attribute' => 'supplier',

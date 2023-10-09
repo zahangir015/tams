@@ -1,7 +1,6 @@
 <?php
 
 use app\components\GlobalConstant;
-use app\components\Utilities;
 use app\components\WidgetHelper;
 use app\models\Attachment;
 use kartik\date\DatePicker;
@@ -10,26 +9,20 @@ use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
 use yii\web\JqueryAsset;
-use yii\web\View;
 
 /* @var $this yii\web\View */
 /* @var $model app\modules\account\models\Invoice */
 /* @var $form yii\bootstrap4\ActiveForm */
 
-$this->registerJs(
-    "var ajaxUrl = '" . Yii::$app->request->baseUrl . '/account/invoice/pending' . "';",
-    View::POS_HEAD,
-    'url'
-);
-
 $this->registerJsFile(
-    '@web/js/invoice.js',
+    '@web/js/bill.js',
     ['depends' => [JqueryAsset::class]]
 );
 ?>
 
-<div class="invoice-form">
+<div class="bill-form">
     <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
+
     <div class="row">
         <div class="col-md-7">
             <div class="card">
@@ -38,8 +31,8 @@ $this->registerJsFile(
                         <div class="col-sm invoice-col">
                             Details
                             <address>
-                                <b>Client:</b> <?= $model->customer->company ?><br>
-                                <b>Due Date:</b> <?= date('l jS \of F Y', strtotime($model->expectedPaymentDate)) ?><br>
+                                <b>Supplier:</b> <?= $model->supplier->company ?><br>
+                                <b>Due Date:</b> <?= date('l jS \of F Y', strtotime($model->date)) ?><br>
                                 <b>Created By:</b> <?= $model->createdBy ?><br>
                                 <b>Issue Date:</b> <?= $model->updatedBy ?><br>
                             </address>
@@ -48,7 +41,7 @@ $this->registerJsFile(
                     <div class="row">
                         <div class="col-12">
                             <div class="table-responsive border-bottom mb-9">
-                                <h4>Invoice Details</h4>
+                                <h4>Bill Details</h4>
                                 <table class="table">
                                     <thead>
                                     <tr>
@@ -56,31 +49,32 @@ $this->registerJsFile(
                                         <th>Identification#</th>
                                         <th>Issue</th>
                                         <th>Status</th>
-                                        <th>Quote</th>
-                                        <th>Received</th>
+                                        <th>Cost</th>
+                                        <th>Paid</th>
                                     </tr>
                                     </thead>
                                     <tbody id="t-body">
-                                    <?php foreach ($model->details as $invoiceDetail) {
-                                        if (!$invoiceDetail->service) {
+                                    <?php foreach ($model->details as $billDetail) {
+                                        $service = $billDetail->refModel::findOne(['id' => $billDetail->refId]);
+                                        if (!$service) {
                                             continue;
                                         }
                                         ?>
                                         <tr>
-                                            <td><?= $invoiceDetail->service->formName() ?></td>
-                                            <td><?= $invoiceDetail->getIdentificationNumber($invoiceDetail->service) ?></td>
-                                            <td><?= $invoiceDetail->service->issueDate ?></td>
-                                            <td><?= $invoiceDetail->service->paymentStatus ?></td>
-                                            <td><?= $invoiceDetail->service->quoteAmount ?></td>
-                                            <td><?= $invoiceDetail->service->receivedAmount ?></td>
+                                            <td><?= $service->formName() ?></td>
+                                            <td><?= $billDetail->getIdentificationNumber($service) ?></td>
+                                            <td><?= $service->type ?></td>
+                                            <td><?= $service->issueDate ?></td>
+                                            <td><?= $service->costOfSale ?></td>
+                                            <td><?= $billDetail->paidAmount ?></td>
                                         </tr>
                                         <?php
-                                    }
-                                    ?>
+                                    } ?>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
+
                         <div class="col-12">
                             <div class="table-responsive">
                                 <table class="table">
@@ -125,7 +119,7 @@ $this->registerJsFile(
                                     </thead>
                                     <tbody id="t-body">
                                     <?php
-                                    foreach ($model->transaction as $key => $transaction) {
+                                    foreach ($model->transactions as $key => $transaction) {
                                         ?>
                                         <tr>
                                             <td><?= ($key + 1) ?></td>
@@ -239,51 +233,55 @@ $this->registerJsFile(
                 </div>
             </div>
         </div>
+
         <div class="col-md-5">
-            <div class="card">
+            <div class="card card-custom" id="kt_page_sticky_card">
                 <div class="card-body">
-                    <h4>Payment Details</h4>
+                    <h4>Payment details</h4>
                     <hr>
+                    <table class="table g-5 gs-0 mb-0 fw-bolder text-gray-700 mb-10">
+                        <tbody>
+                        <tr>
+                            <td>Currency:</td>
+                            <td>BDT</td>
+                        </tr>
+                        <tr>
+                            <td>Total Due:</td>
+                            <td id="totalPayable"></td>
+                        </tr>
+                        <tr>
+                            <td>Total Selected:</td>
+                            <td id="total"></td>
+                        </tr>
+                        </tbody>
+                    </table>
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($transaction, 'refundIds')->widget(Select2::classname(), [
-                                'theme' => Select2::THEME_BOOTSTRAP,
-                                'data' => $refundList,
-                                'options' => [
-                                    'placeholder' => 'Select Refund Service ...',
-                                    'multiple' => true,
-                                    'id' => 'refundId'
-                                ],
-                                'pluginOptions' => [
-                                    'tags' => true,
-                                    'tokenSeparators' => [',', ' ']
-                                ],
-                            ])->label('Refund Adjustments'); ?>
+                            <?= $form->field($model, 'billNumber')->textInput(['maxlength' => true, 'id' => 'billNumber', 'readOnly' => true, 'value' => ($model->isNewRecord) ? Utilities::billNumber() : $model->billNumber])->label('Bill Number') ?>
+                        </div>
+                        <div class="col-md">
+                            <?= $form->field($model, 'dueAmount')->textInput(['maxlength' => true, 'id' => 'dueAmount'])->label('Due') ?>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($transaction, 'bankId')->widget(Select2::class, [
-                                'theme' => Select2::THEME_DEFAULT,
-                                'data' => $bankList,
-                                'options' => [
-                                    'id' => 'bankId',
-                                    'class' => 'form-control',
-                                    'placeholder' => 'Select a bank ...',
-                                ],
-                                'pluginOptions' => [
-                                    'allowClear' => true
-                                ],
-                            ])->label('Bank');
-                            ?>
+                            <?= $form->field($transaction, 'bankId')->widget(Select2::class, WidgetHelper::select2Widget($bankList, 'bankId', false))->label('Bank'); ?>
                         </div>
                         <div class="col-md">
-                            <?= $form->field($transaction, 'reference')->textInput(['maxlength' => true])->label('Reference') ?>
+                            <?= $form->field($transaction, 'reference')->textInput(['maxlength' => true])->label('Company Transaction Reference') ?>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($transaction, 'paidAmount')->textInput(['value' => $model->dueAmount, 'max' => $model->dueAmount, 'min' => 1]) ?>
+                            <?= $form->field($transaction, 'paidAmount')->textInput(['value' => $model->dueAmount, 'max' => $model->dueAmount, 'min' => 1])->label('Paying Amount') ?>
+                        </div>
+                        <div class="col-md">
+                            <?= $form->field($model, 'discountedAmount')->textInput(['value' => 0, 'max' => $model->dueAmount, 'min' => 1]) ?>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md">
+                            <?= $form->field($transaction, 'refundAdjustmentAmount')->textInput(['value' => 0]) ?>
                         </div>
                         <div class="col-md">
                             <?= $form->field($transaction, 'paymentCharge')->textInput(['value' => 0]) ?>
@@ -300,7 +298,7 @@ $this->registerJsFile(
                     <div class="row">
                         <div class="col-md">
                             <div id="files" style="background-color: #FFFFFF; padding: 10px;">
-                                <?= $form->field($model, 'invoiceFile[]')->widget(FileInput::class, [
+                                <?= $form->field($model, 'billFile[]')->widget(FileInput::class, [
                                     'options' => [
                                         'multiple' => true,
                                         'accept' => '*'
@@ -322,7 +320,6 @@ $this->registerJsFile(
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
     <?php ActiveForm::end(); ?>

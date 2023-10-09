@@ -60,28 +60,29 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <th>Identification#</th>
                                     <th>Type</th>
                                     <th>Issue</th>
-                                    <th>Quote</th>
+                                    <th>Cost</th>
                                     <th>Paid</th>
                                     <th>Action</th>
                                 </tr>
                                 </thead>
                                 <tbody id="t-body">
                                 <?php foreach ($model->details as $billDetail) {
-                                    if (!$billDetail->service) {
+                                    $service = $billDetail->refModel::findOne(['id' => $billDetail->refId]);
+                                    if (!$service) {
                                         continue;
                                     }
                                     ?>
                                     <tr>
-                                        <td><?= $billDetail->service->formName() ?></td>
-                                        <td><?= $billDetail->getIdentificationNumber($billDetail->service) ?></td>
-                                        <td><?= $billDetail->service->type ?></td>
-                                        <td><?= $billDetail->service->issueDate ?></td>
-                                        <td><?= $billDetail->service->costOfSale ?></td>
-                                        <td><?= $billDetail->service->paidAmount ?></td>
+                                        <td><?= $service->formName() ?></td>
+                                        <td><?= $billDetail->getIdentificationNumber($service) ?></td>
+                                        <td><?= $service->type ?></td>
+                                        <td><?= $service->issueDate ?></td>
+                                        <td><?= $service->costOfSale ?></td>
+                                        <td><?= $billDetail->paidAmount ?></td>
                                         <td>
                                             <?php
                                             $url = '/sale/' . Utilities::getServiceName($billDetail->refModel) . '/view';
-                                            echo Html::a('<i class="fa fa-info-circle"></i>', [$url, 'uid' => $billDetail->service->uid],
+                                            echo Html::a('<i class="fa fa-info-circle"></i>', [$url, 'uid' => $service->uid],
                                                 [
                                                     'title' => Yii::t('app', 'View More'),
                                                     'target' => '_blank',

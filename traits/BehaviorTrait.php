@@ -102,12 +102,15 @@ trait BehaviorTrait
         if ($this->hasAttribute('updatedAt')) {
             $this->updatedAt = $this->updatedAt ? date(Yii::$app->params['dateTimeFormatInView'], $this->updatedAt) : null;
         }
-        if ($this->hasAttribute('createdBy')) {
-            $this->createdBy = ($this->createdBy && $this->creator) ? ucfirst($this->creator['username']) : null;
+        if(Yii::$app->controller->action->id == 'view' || Yii::$app->controller->action->id == 'detail'){
+            if ($this->hasAttribute('createdBy')) {
+                $this->createdBy = ($this->createdBy && $this->creator) ? ucfirst($this->creator['username']) : null;
+            }
+            if ($this->hasAttribute('updatedBy')) {
+                $this->updatedBy = ($this->updatedBy && $this->updater) ? ucfirst($this->updater['username']) : null;
+            }
         }
-        if ($this->hasAttribute('updatedBy')) {
-            $this->updatedBy = ($this->updatedBy && $this->updater) ? ucfirst($this->updater['username']) : null;
-        }
+
         if ($this->hasAttribute('uid')) {
             $this->uid = $this->uid ?: null;
         }
