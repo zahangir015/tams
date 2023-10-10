@@ -10,7 +10,7 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Bills'), 'url' => ['
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="bill-pay">
-    <?= $this->render('_form', [
+    <?= $this->render('_form_pay', [
         'model' => $model,
         'transaction' => $transaction,
         'refundList' => $refundList,

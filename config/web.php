@@ -116,11 +116,11 @@ $config = [
             'admin/user/request-password-reset',
             'country/get-countries',
             'city/get-city-by-country',
-            'gridview/export/download'
+            'gridview/export/download',
 //            'site/*',
 //            'admin/*',
 //            'gii/*',
-//            'debug/*',
+            'debug/*',
 //            'account/*',
 //            'company/*',
 //            'hrm/employee/*'

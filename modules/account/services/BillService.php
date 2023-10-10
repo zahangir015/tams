@@ -51,7 +51,7 @@ class BillService
             }
 
             // Bill data process
-            $totalDistributingAmount = ($requestData['Transaction']['paidAmount'] + $requestData['Transaction']['refundAdjustmentAmount'] + $bill->discountedAmount);
+            $totalDistributingAmount = ($requestData['Transaction']['paidAmount'] + $requestData['Transaction']['refundAdjustmentAmount'] + $requestData['Bill']['discountedAmount']);
             $bill->date = date('Y-m-d');
             $bill->paidAmount = $totalDistributingAmount;
             $bill->dueAmount = ($bill->dueAmount - $totalDistributingAmount);
@@ -95,8 +95,8 @@ class BillService
                 'refModel' => Supplier::class,
                 'subRefId' => $bill->id,
                 'subRefModel' => $bill::class,
-                'debit' => 0,
-                'credit' => $bill->paidAmount
+                'debit' => $bill->paidAmount,
+                'credit' => 0
             ];
             $ledgerRequestResponse = $this->ledgerService->store($ledgerRequestData);
             if ($ledgerRequestResponse['error']) {
@@ -326,7 +326,7 @@ class BillService
             }
 
             // If distribution amount is greater than dueAmount
-            $totalDistributingAmount = ($requestData['Transaction']['paidAmount'] + $requestData['Transaction']['refundAdjustmentAmount'] + $bill->discountedAmount);
+            $totalDistributingAmount = ($requestData['Transaction']['paidAmount'] + $requestData['Transaction']['refundAdjustmentAmount'] + $requestData['Bill']['discountedAmount']);
             if ($bill->dueAmount < $totalDistributingAmount) {
                 throw  new Exception('Invalid Request. This bill will be over paid.');
             }
@@ -358,8 +358,8 @@ class BillService
                 'refModel' => Supplier::class,
                 'subRefId' => $bill->id,
                 'subRefModel' => $bill::class,
-                'debit' => 0,
-                'credit' => $totalDistributingAmount
+                'debit' => $totalDistributingAmount,
+                'credit' => 0
             ];
             $supplierLedgerRequestResponse = $this->ledgerService->store($supplierLedgerRequestData);
             if ($supplierLedgerRequestResponse['error']) {
