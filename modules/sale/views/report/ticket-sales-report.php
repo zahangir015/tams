@@ -73,7 +73,6 @@ if (isset(Yii::$app->request->get()["reportType"])) {
 <?php if (in_array("CUSTOMER_CATEGORY", $getReportType)) { ?>
             <div class="table-responsive">
                 <?php
-                dd($customerCategoryWiseData);
                 $dataProvider = new ArrayDataProvider([
                     'allModels' => $customerCategoryWiseData,
                     'pagination' => [
