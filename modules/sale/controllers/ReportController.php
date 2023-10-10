@@ -60,11 +60,11 @@ class ReportController extends ParentController
                     'category' => $categoryData['customerCategory'],
                     'qty' => $categoryData['total'],
                     'totalSegments' => $categoryData['numberOfSegment'],
-                    'gross' => number_format($gross),
-                    'totalQuote' => number_format($categoryData['quoteAmount']),
-                    'totalReceived' => number_format($categoryData['receivedAmount']),
-                    'totalDue' => number_format($due),
-                    'netProfit' => number_format($categoryData['netProfit']),
+                    'gross' => $gross,
+                    'totalQuote' => $categoryData['quoteAmount'],
+                    'totalReceived' => $categoryData['receivedAmount'],
+                    'totalDue' => $due,
+                    'netProfit' => $categoryData['netProfit'],
                 ];
             }
         }
@@ -99,11 +99,11 @@ class ReportController extends ParentController
                     'category' => ServiceConstant::BOOKING_TYPE[$bookingTypeData['bookedOnline']],
                     'qty' => $bookingTypeData['total'],
                     'totalSegments' => $bookingTypeData['numberOfSegment'],
-                    'gross' => number_format($gross),
-                    'totalQuote' => number_format($bookingTypeData['quoteAmount']),
-                    'totalReceived' => number_format($bookingTypeData['receivedAmount']),
-                    'totalDue' => number_format($due),
-                    'netProfit' => number_format($bookingTypeData['netProfit']),
+                    'gross' => $gross,
+                    'totalQuote' => $bookingTypeData['quoteAmount'],
+                    'totalReceived' => $bookingTypeData['receivedAmount'],
+                    'totalDue' => $due,
+                    'netProfit' => $bookingTypeData['netProfit'],
                 ];
             }
 
@@ -139,11 +139,11 @@ class ReportController extends ParentController
                     'flightType' => ServiceConstant::FLIGHT_TYPE[$flightTypeData['flightType']],
                     'qty' => $flightTypeData['total'],
                     'totalSegments' => $flightTypeData['numberOfSegment'],
-                    'gross' => number_format($gross),
-                    'totalQuote' => number_format($flightTypeData['quoteAmount']),
-                    'totalReceived' => number_format($flightTypeData['receivedAmount']),
-                    'totalDue' => number_format($due),
-                    'netProfit' => number_format($flightTypeData['netProfit']),
+                    'gross' => $gross,
+                    'totalQuote' => $flightTypeData['quoteAmount'],
+                    'totalReceived' => $flightTypeData['receivedAmount'],
+                    'totalDue' => $due,
+                    'netProfit' => $flightTypeData['netProfit'],
                 ];
             }
         }
@@ -179,11 +179,11 @@ class ReportController extends ParentController
                     'provider' => ($providerData['provider']) ? $providerData['provider']['name'] : 'Not Set',
                     'qty' => $providerData['total'],
                     'totalSegments' => $providerData['numberOfSegment'],
-                    'gross' => number_format($gross),
-                    'totalQuote' => number_format($providerData['quoteAmount']),
-                    'totalReceived' => number_format($providerData['receivedAmount']),
-                    'totalDue' => number_format($due),
-                    'netProfit' => number_format($providerData['netProfit']),
+                    'gross' => $gross,
+                    'totalQuote' => $providerData['quoteAmount'],
+                    'totalReceived' => $providerData['receivedAmount'],
+                    'totalDue' => $due,
+                    'netProfit' => $providerData['netProfit'],
                 ];
             }
         }
@@ -221,11 +221,11 @@ class ReportController extends ParentController
                     'name' => $airlineData['name'] . '(' . $airlineData['code'] . ')',
                     'qty' => $airlineData['total'],
                     'totalSegments' => $airlineData['numberOfSegment'],
-                    'gross' => number_format($gross),
-                    'totalQuote' => number_format($airlineData['quoteAmount']),
-                    'totalReceived' => number_format($airlineData['receivedAmount']),
-                    'totalDue' => number_format($due),
-                    'netProfit' => number_format($airlineData['netProfit']),
+                    'gross' => $gross,
+                    'totalQuote' => $airlineData['quoteAmount'],
+                    'totalReceived' => $airlineData['receivedAmount'],
+                    'totalDue' => $due,
+                    'netProfit' => $airlineData['netProfit'],
                 ];
             }
         }
@@ -259,11 +259,11 @@ class ReportController extends ParentController
                     'route' => $routingData['route'],
                     'qty' => $routingData['total'],
                     'totalSegments' => $routingData['numberOfSegment'],
-                    'gross' => number_format($gross),
-                    'totalQuote' => number_format($routingData['quoteAmount']),
-                    'totalReceived' => number_format($routingData['receivedAmount']),
-                    'totalDue' => number_format($due),
-                    'netProfit' => number_format($routingData['netProfit']),
+                    'gross' => $gross,
+                    'totalQuote' => $routingData['quoteAmount'],
+                    'totalReceived' => $routingData['receivedAmount'],
+                    'totalDue' => $due,
+                    'netProfit' => $routingData['netProfit'],
                 ];
             }
         }
@@ -302,11 +302,11 @@ class ReportController extends ParentController
                     'name' => $supplierData['name'] . '(' . $supplierData['company'] . ')',
                     'qty' => $supplierData['total'],
                     'totalSegments' => $supplierData['numberOfSegment'],
-                    'gross' => number_format($gross),
-                    'totalQuote' => number_format($supplierData['quoteAmount']),
-                    'totalReceived' => number_format($supplierData['receivedAmount']),
-                    'totalDue' => number_format($due),
-                    'netProfit' => number_format($supplierData['netProfit']),
+                    'gross' => $gross,
+                    'totalQuote' => $supplierData['quoteAmount'],
+                    'totalReceived' => $supplierData['receivedAmount'],
+                    'totalDue' => $due,
+                    'netProfit' => $supplierData['netProfit'],
                 ];
             }
         }
@@ -343,11 +343,11 @@ class ReportController extends ParentController
                     'name' => $customerData['customer']['name'],
                     'qty' => $customerData['total'],
                     'totalSegments' => $customerData['numberOfSegment'],
-                    'gross' => number_format($gross),
-                    'totalQuote' => number_format($customerData['quoteAmount']),
-                    'totalReceived' => number_format($customerData['receivedAmount']),
-                    'totalDue' => number_format($due),
-                    'netProfit' => number_format($customerData['netProfit']),
+                    'gross' => $gross,
+                    'totalQuote' => $customerData['quoteAmount'],
+                    'totalReceived' => $customerData['receivedAmount'],
+                    'totalDue' => $due,
+                    'netProfit' => $customerData['netProfit'],
                 ];
             }
         }
@@ -384,11 +384,11 @@ class ReportController extends ParentController
                     'name' => $categoryBookingTypeData['customerCategory'] . ' ' . ServiceConstant::BOOKING_TYPE[$categoryBookingTypeData['bookedOnline']],
                     'qty' => $categoryBookingTypeData['total'],
                     'totalSegments' => $categoryBookingTypeData['numberOfSegment'],
-                    'gross' => number_format($gross),
-                    'totalQuote' => number_format($categoryBookingTypeData['quoteAmount']),
-                    'totalReceived' => number_format($categoryBookingTypeData['receivedAmount']),
-                    'totalDue' => number_format($due),
-                    'netProfit' => number_format($categoryBookingTypeData['netProfit']),
+                    'gross' => $gross,
+                    'totalQuote' => $categoryBookingTypeData['quoteAmount'],
+                    'totalReceived' => $categoryBookingTypeData['receivedAmount'],
+                    'totalDue' => $due,
+                    'netProfit' => $categoryBookingTypeData['netProfit'],
                 ];
             }
         }
@@ -445,10 +445,10 @@ class ReportController extends ParentController
                 $customerCategoryWiseData[] = [
                     'category' => $categoryData['customerCategory'],
                     'qty' => $categoryData['total'],
-                    'totalQuote' => number_format($categoryData['quoteAmount']),
-                    'totalReceived' => number_format($categoryData['receivedAmount']),
-                    'totalDue' => number_format(($categoryData['quoteAmount'] - $categoryData['receivedAmount'])),
-                    'netProfit' => number_format($categoryData['netProfit']),
+                    'totalQuote' => $categoryData['quoteAmount'],
+                    'totalReceived' => $categoryData['receivedAmount'],
+                    'totalDue' => ($categoryData['quoteAmount'] - $categoryData['receivedAmount']),
+                    'netProfit' => $categoryData['netProfit'],
                 ];
             }
         }
@@ -476,10 +476,10 @@ class ReportController extends ParentController
                 $bookingTypeWiseData[] = [
                     'bookingType' => ServiceConstant::BOOKING_TYPE[$bookingTypeData['isOnlineBooked']],
                     'qty' => $bookingTypeData['total'],
-                    'totalQuote' => number_format($bookingTypeData['quoteAmount']),
-                    'totalReceived' => number_format($bookingTypeData['receivedAmount']),
-                    'totalDue' => number_format(($bookingTypeData['quoteAmount'] - $bookingTypeData['receivedAmount'])),
-                    'netProfit' => number_format($bookingTypeData['netProfit']),
+                    'totalQuote' => $bookingTypeData['quoteAmount'],
+                    'totalReceived' => $bookingTypeData['receivedAmount'],
+                    'totalDue' => ($bookingTypeData['quoteAmount'] - $bookingTypeData['receivedAmount']),
+                    'netProfit' => $bookingTypeData['netProfit'],
                 ];
             }
         }
@@ -508,10 +508,10 @@ class ReportController extends ParentController
                 $customerCategoryBookingTypeWiseData[] = [
                     'name' => $categoryBookingTypeData['customerCategory'] . ' ' . ServiceConstant::BOOKING_TYPE[$categoryBookingTypeData['isOnlineBooked']],
                     'qty' => $categoryBookingTypeData['total'],
-                    'totalQuote' => number_format($categoryBookingTypeData['quoteAmount']),
-                    'totalReceived' => number_format($categoryBookingTypeData['receivedAmount']),
-                    'totalDue' => number_format(($categoryBookingTypeData['quoteAmount'] - $categoryBookingTypeData['receivedAmount'])),
-                    'netProfit' => number_format($categoryBookingTypeData['netProfit']),
+                    'totalQuote' => $categoryBookingTypeData['quoteAmount'],
+                    'totalReceived' => $categoryBookingTypeData['receivedAmount'],
+                    'totalDue' => ($categoryBookingTypeData['quoteAmount'] - $categoryBookingTypeData['receivedAmount']),
+                    'netProfit' => $categoryBookingTypeData['netProfit'],
                 ];
             }
         }
@@ -539,10 +539,10 @@ class ReportController extends ParentController
                 $routingWiseData[] = [
                     'route' => $routeData['route'],
                     'qty' => $routeData['total'],
-                    'totalQuote' => number_format($routeData['quoteAmount']),
-                    'totalReceived' => number_format($routeData['receivedAmount']),
-                    'totalDue' => number_format(($routeData['quoteAmount'] - $routeData['receivedAmount'])),
-                    'netProfit' => number_format($routeData['netProfit']),
+                    'totalQuote' => $routeData['quoteAmount'],
+                    'totalReceived' => $routeData['receivedAmount'],
+                    'totalDue' => ($routeData['quoteAmount'] - $routeData['receivedAmount']),
+                    'netProfit' => $routeData['netProfit'],
                 ];
             }
         }
@@ -572,10 +572,10 @@ class ReportController extends ParentController
                 $customerWiseData[] = [
                     'name' => $customerData['customer']['name'],
                     'qty' => $customerData['total'],
-                    'totalQuote' => number_format($customerData['quoteAmount']),
-                    'totalReceived' => number_format($customerData['receivedAmount']),
-                    'totalDue' => number_format(($customerData['quoteAmount'] - $customerData['receivedAmount'])),
-                    'netProfit' => number_format($customerData['netProfit']),
+                    'totalQuote' => $customerData['quoteAmount'],
+                    'totalReceived' => $customerData['receivedAmount'],
+                    'totalDue' => ($customerData['quoteAmount'] - $customerData['receivedAmount']),
+                    'netProfit' => $customerData['netProfit'],
                 ];
             }
         }
@@ -608,10 +608,10 @@ class ReportController extends ParentController
                 $supplierWiseData[] = [
                     'name' => $supplierData['name'],
                     'qty' => $supplierData['total'],
-                    'totalQuote' => number_format($supplierData['quoteAmount']),
-                    'totalReceived' => number_format($supplierData['receivedAmount']),
-                    'totalDue' => number_format(($supplierData['quoteAmount'] - $supplierData['receivedAmount'])),
-                    'netProfit' => number_format($supplierData['netProfit']),
+                    'totalQuote' => $supplierData['quoteAmount'],
+                    'totalReceived' => $supplierData['receivedAmount'],
+                    'totalDue' => ($supplierData['quoteAmount'] - $supplierData['receivedAmount']),
+                    'netProfit' => $supplierData['netProfit'],
                 ];
             }
         }
@@ -665,10 +665,10 @@ class ReportController extends ParentController
                 $customerCategoryWiseData[] = [
                     'category' => $categoryData['customerCategory'],
                     'qty' => $categoryData['total'],
-                    'totalQuote' => number_format($categoryData['quoteAmount']),
-                    'totalReceived' => number_format($categoryData['receivedAmount']),
-                    'totalDue' => number_format(($categoryData['quoteAmount'] - $categoryData['receivedAmount'])),
-                    'netProfit' => number_format($categoryData['netProfit']),
+                    'totalQuote' => $categoryData['quoteAmount'],
+                    'totalReceived' => $categoryData['receivedAmount'],
+                    'totalDue' => ($categoryData['quoteAmount'] - $categoryData['receivedAmount']),
+                    'netProfit' => $categoryData['netProfit'],
                 ];
             }
         }
@@ -696,10 +696,10 @@ class ReportController extends ParentController
                 $bookingTypeWiseData[] = [
                     'bookingType' => ServiceConstant::BOOKING_TYPE[$bookingTypeData['isOnlineBooked']],
                     'qty' => $bookingTypeData['total'],
-                    'totalQuote' => number_format($bookingTypeData['quoteAmount']),
-                    'totalReceived' => number_format($bookingTypeData['receivedAmount']),
-                    'totalDue' => number_format(($bookingTypeData['quoteAmount'] - $bookingTypeData['receivedAmount'])),
-                    'netProfit' => number_format($bookingTypeData['netProfit']),
+                    'totalQuote' => $bookingTypeData['quoteAmount'],
+                    'totalReceived' => $bookingTypeData['receivedAmount'],
+                    'totalDue' => ($bookingTypeData['quoteAmount'] - $bookingTypeData['receivedAmount']),
+                    'netProfit' => $bookingTypeData['netProfit'],
                 ];
             }
         }
@@ -728,10 +728,10 @@ class ReportController extends ParentController
                 $customerCategoryBookingTypeWiseData[] = [
                     'name' => $categoryBookingTypeData['customerCategory'] . ' ' . ServiceConstant::BOOKING_TYPE[$categoryBookingTypeData['isOnlineBooked']],
                     'qty' => $categoryBookingTypeData['total'],
-                    'totalQuote' => number_format($categoryBookingTypeData['quoteAmount']),
-                    'totalReceived' => number_format($categoryBookingTypeData['receivedAmount']),
-                    'totalDue' => number_format(($categoryBookingTypeData['quoteAmount'] - $categoryBookingTypeData['receivedAmount'])),
-                    'netProfit' => number_format($categoryBookingTypeData['netProfit']),
+                    'totalQuote' => $categoryBookingTypeData['quoteAmount'],
+                    'totalReceived' => $categoryBookingTypeData['receivedAmount'],
+                    'totalDue' => ($categoryBookingTypeData['quoteAmount'] - $categoryBookingTypeData['receivedAmount']),
+                    'netProfit' => $categoryBookingTypeData['netProfit'],
                 ];
             }
         }
@@ -759,10 +759,10 @@ class ReportController extends ParentController
                 $routingWiseData[] = [
                     'route' => $routeData['route'],
                     'qty' => $routeData['total'],
-                    'totalQuote' => number_format($routeData['quoteAmount']),
-                    'totalReceived' => number_format($routeData['receivedAmount']),
-                    'totalDue' => number_format(($routeData['quoteAmount'] - $routeData['receivedAmount'])),
-                    'netProfit' => number_format($routeData['netProfit']),
+                    'totalQuote' => $routeData['quoteAmount'],
+                    'totalReceived' => $routeData['receivedAmount'],
+                    'totalDue' => ($routeData['quoteAmount'] - $routeData['receivedAmount']),
+                    'netProfit' => $routeData['netProfit'],
                 ];
             }
         }
@@ -792,10 +792,10 @@ class ReportController extends ParentController
                 $customerWiseData[] = [
                     'name' => $customerData['customer']['name'],
                     'qty' => $customerData['total'],
-                    'totalQuote' => number_format($customerData['quoteAmount']),
-                    'totalReceived' => number_format($customerData['receivedAmount']),
-                    'totalDue' => number_format(($customerData['quoteAmount'] - $customerData['receivedAmount'])),
-                    'netProfit' => number_format($customerData['netProfit']),
+                    'totalQuote' => $customerData['quoteAmount'],
+                    'totalReceived' => $customerData['receivedAmount'],
+                    'totalDue' => ($customerData['quoteAmount'] - $customerData['receivedAmount']),
+                    'netProfit' => $customerData['netProfit'],
                 ];
             }
         }
@@ -828,10 +828,10 @@ class ReportController extends ParentController
                 $supplierWiseData[] = [
                     'name' => $supplierData['name'],
                     'qty' => $supplierData['total'],
-                    'totalQuote' => number_format($supplierData['quoteAmount']),
-                    'totalReceived' => number_format($supplierData['receivedAmount']),
-                    'totalDue' => number_format(($supplierData['quoteAmount'] - $supplierData['receivedAmount'])),
-                    'netProfit' => number_format($supplierData['netProfit']),
+                    'totalQuote' => $supplierData['quoteAmount'],
+                    'totalReceived' => $supplierData['receivedAmount'],
+                    'totalDue' => ($supplierData['quoteAmount'] - $supplierData['receivedAmount']),
+                    'netProfit' => $supplierData['netProfit'],
                 ];
             }
         }
@@ -884,10 +884,10 @@ class ReportController extends ParentController
                 $customerCategoryWiseData[] = [
                     'category' => $categoryData['customerCategory'],
                     'qty' => $categoryData['total'],
-                    'totalQuote' => number_format($categoryData['quoteAmount']),
-                    'totalReceived' => number_format($categoryData['receivedAmount']),
-                    'totalDue' => number_format(($categoryData['quoteAmount'] - $categoryData['receivedAmount'])),
-                    'netProfit' => number_format($categoryData['netProfit']),
+                    'totalQuote' => $categoryData['quoteAmount'],
+                    'totalReceived' => $categoryData['receivedAmount'],
+                    'totalDue' => ($categoryData['quoteAmount'] - $categoryData['receivedAmount']),
+                    'netProfit' => $categoryData['netProfit'],
                 ];
             }
         }
@@ -915,10 +915,10 @@ class ReportController extends ParentController
                 $bookingTypeWiseData[] = [
                     'bookingType' => ServiceConstant::BOOKING_TYPE[$bookingTypeData['isOnlineBooked']],
                     'qty' => $bookingTypeData['total'],
-                    'totalQuote' => number_format($bookingTypeData['quoteAmount']),
-                    'totalReceived' => number_format($bookingTypeData['receivedAmount']),
-                    'totalDue' => number_format(($bookingTypeData['quoteAmount'] - $bookingTypeData['receivedAmount'])),
-                    'netProfit' => number_format($bookingTypeData['netProfit']),
+                    'totalQuote' => $bookingTypeData['quoteAmount'],
+                    'totalReceived' => $bookingTypeData['receivedAmount'],
+                    'totalDue' => ($bookingTypeData['quoteAmount'] - $bookingTypeData['receivedAmount']),
+                    'netProfit' => $bookingTypeData['netProfit'],
                 ];
             }
         }
@@ -947,10 +947,10 @@ class ReportController extends ParentController
                 $customerCategoryBookingTypeWiseData[] = [
                     'name' => $categoryBookingTypeData['customerCategory'] . ' ' . ServiceConstant::BOOKING_TYPE[$categoryBookingTypeData['isOnlineBooked']],
                     'qty' => $categoryBookingTypeData['total'],
-                    'totalQuote' => number_format($categoryBookingTypeData['quoteAmount']),
-                    'totalReceived' => number_format($categoryBookingTypeData['receivedAmount']),
-                    'totalDue' => number_format(($categoryBookingTypeData['quoteAmount'] - $categoryBookingTypeData['receivedAmount'])),
-                    'netProfit' => number_format($categoryBookingTypeData['netProfit']),
+                    'totalQuote' => $categoryBookingTypeData['quoteAmount'],
+                    'totalReceived' => $categoryBookingTypeData['receivedAmount'],
+                    'totalDue' => ($categoryBookingTypeData['quoteAmount'] - $categoryBookingTypeData['receivedAmount']),
+                    'netProfit' => $categoryBookingTypeData['netProfit'],
                 ];
             }
         }
@@ -980,10 +980,10 @@ class ReportController extends ParentController
                 $countryWiseData[] = [
                     'country' => $countryData['name'].'('.$countryData['code'].')',
                     'qty' => $countryData['total'],
-                    'totalQuote' => number_format($countryData['quoteAmount']),
-                    'totalReceived' => number_format($countryData['receivedAmount']),
-                    'totalDue' => number_format(($countryData['quoteAmount'] - $countryData['receivedAmount'])),
-                    'netProfit' => number_format($countryData['netProfit']),
+                    'totalQuote' => $countryData['quoteAmount'],
+                    'totalReceived' => $countryData['receivedAmount'],
+                    'totalDue' => ($countryData['quoteAmount'] - $countryData['receivedAmount']),
+                    'netProfit' => $countryData['netProfit'],
                 ];
             }
         }
@@ -1014,10 +1014,10 @@ class ReportController extends ParentController
                 $customerWiseData[] = [
                     'name' => $customerData['name'],
                     'qty' => $customerData['total'],
-                    'totalQuote' => number_format($customerData['quoteAmount']),
-                    'totalReceived' => number_format($customerData['receivedAmount']),
-                    'totalDue' => number_format(($customerData['quoteAmount'] - $customerData['receivedAmount'])),
-                    'netProfit' => number_format($customerData['netProfit']),
+                    'totalQuote' => $customerData['quoteAmount'],
+                    'totalReceived' => $customerData['receivedAmount'],
+                    'totalDue' => ($customerData['quoteAmount'] - $customerData['receivedAmount']),
+                    'netProfit' => $customerData['netProfit'],
                 ];
             }
         }
@@ -1050,10 +1050,10 @@ class ReportController extends ParentController
                 $supplierWiseData[] = [
                     'name' => $supplierData['name'],
                     'qty' => $supplierData['total'],
-                    'totalQuote' => number_format($supplierData['quoteAmount']),
-                    'totalReceived' => number_format($supplierData['receivedAmount']),
-                    'totalDue' => number_format(($supplierData['quoteAmount'] - $supplierData['receivedAmount'])),
-                    'netProfit' => number_format($supplierData['netProfit']),
+                    'totalQuote' => $supplierData['quoteAmount'],
+                    'totalReceived' => $supplierData['receivedAmount'],
+                    'totalDue' => ($supplierData['quoteAmount'] - $supplierData['receivedAmount']),
+                    'netProfit' => $supplierData['netProfit'],
                 ];
             }
         }
@@ -1098,7 +1098,7 @@ class ReportController extends ParentController
             ->where(['<=', 'refundRequestDate', $end_date])
             ->orWhere(['IS', 'refundRequestDate', NULL])
             ->andWhere(['between', 'issueDate', $start_date, $end_date])
-            ->andWhere(['<>', 'type', GlobalConstant::TICKET_TYPE['Refund']])
+            ->andWhere(['<>', 'type', GlobalConstant::TICKET_TYPE_FOR_REFUND['Refund']])
             ->andWhere([Ticket::tableName().'.status' => GlobalConstant::ACTIVE_STATUS])
             ->groupBy(['type'])
             ->orderBy('total DESC')->asArray()->all();
@@ -1122,7 +1122,7 @@ class ReportController extends ParentController
                 new Expression('SUM(incentiveReceived) as incentiveReceived'),
                 'type'])
             ->where(['between', 'refundRequestDate', $start_date, $end_date])
-            ->andWhere(['type' => GlobalConstant::TICKET_TYPE['Refund']])
+            ->andWhere(['type' => GlobalConstant::TICKET_TYPE_FOR_REFUND['Refund']])
             ->orderBy('total DESC')
             ->asArray()->one();
 
@@ -1137,7 +1137,7 @@ class ReportController extends ParentController
             ->where(['<=', 'refundRequestDate', $end_date])
             ->orWhere(['IS', 'refundRequestDate', NULL])
             ->andWhere(['between', 'issueDate', $start_date, $end_date])
-            ->andWhere(['<>', 'type', GlobalConstant::TICKET_TYPE['Refund']])
+            ->andWhere(['<>', 'type', GlobalConstant::TICKET_TYPE_FOR_REFUND['Refund']])
             ->andWhere([Ticket::tableName().'.status' => GlobalConstant::ACTIVE_STATUS])
             ->groupBy(['type'])
             ->orderBy('total DESC')
@@ -1151,7 +1151,7 @@ class ReportController extends ParentController
                 new Expression('SUM(receivedAmount) as receivedAmount'),
                 new Expression('SUM(netProfit) as netProfit'), 'type'])
             ->where(['between', 'refundRequestDate', $start_date, $end_date])
-            ->andWhere(['type' => GlobalConstant::TICKET_TYPE['Refund']])
+            ->andWhere(['type' => GlobalConstant::TICKET_TYPE_FOR_REFUND['Refund']])
             ->orderBy('total DESC')
             ->asArray()->one();
 
@@ -1166,7 +1166,7 @@ class ReportController extends ParentController
             ->where(['<=', 'refundRequestDate', $end_date])
             ->orWhere(['IS', 'refundRequestDate', NULL])
             ->andWhere(['between', 'issueDate', $start_date, $end_date])
-            ->andWhere(['<>', 'type', GlobalConstant::TICKET_TYPE['Refund']])
+            ->andWhere(['<>', 'type', GlobalConstant::TICKET_TYPE_FOR_REFUND['Refund']])
             ->andWhere([Ticket::tableName().'.status' => GlobalConstant::ACTIVE_STATUS])
             ->groupBy(['type'])
             ->orderBy('total DESC')
@@ -1180,7 +1180,7 @@ class ReportController extends ParentController
                 new Expression('SUM(receivedAmount) as receivedAmount'),
                 new Expression('SUM(netProfit) as netProfit'), 'type'])
             ->where(['between', 'refundRequestDate', $start_date, $end_date])
-            ->andWhere(['type' => GlobalConstant::TICKET_TYPE['Refund']])
+            ->andWhere(['type' => GlobalConstant::TICKET_TYPE_FOR_REFUND['Refund']])
             ->orderBy('total DESC')
             ->asArray()->one();
 
@@ -1195,7 +1195,7 @@ class ReportController extends ParentController
             ->where(['<=', 'refundRequestDate', $end_date])
             ->orWhere(['IS', 'refundRequestDate', NULL])
             ->andWhere(['between', 'issueDate', $start_date, $end_date])
-            ->andWhere(['<>', 'type', GlobalConstant::TICKET_TYPE['Refund']])
+            ->andWhere(['<>', 'type', GlobalConstant::TICKET_TYPE_FOR_REFUND['Refund']])
             ->andWhere([Ticket::tableName().'.status' => GlobalConstant::ACTIVE_STATUS])
             ->groupBy(['type'])
             ->orderBy('total DESC')
@@ -1209,7 +1209,7 @@ class ReportController extends ParentController
                 new Expression('SUM(receivedAmount) as receivedAmount'),
                 new Expression('SUM(netProfit) as netProfit'), 'type'])
             ->where(['between', 'refundRequestDate', $start_date, $end_date])
-            ->andWhere(['type' => GlobalConstant::TICKET_TYPE['Refund']])
+            ->andWhere(['type' => GlobalConstant::TICKET_TYPE_FOR_REFUND['Refund']])
             ->orderBy('total DESC')
             ->asArray()->one();
 
@@ -1246,7 +1246,7 @@ class ReportController extends ParentController
             ->where(['<=', 'refundRequestDate', $monthly_end_date])
             ->orWhere(['IS', 'refundRequestDate', NULL])
             ->andWhere(['between', 'issueDate', $monthly_start_date, $monthly_end_date])
-            ->andWhere(['<>', 'type', GlobalConstant::TICKET_TYPE['Refund']])
+            ->andWhere(['<>', 'type', GlobalConstant::TICKET_TYPE_FOR_REFUND['Refund']])
             ->andWhere([Ticket::tableName().'.status' => GlobalConstant::ACTIVE_STATUS])
             ->groupBy(['type'])
             ->orderBy('total DESC')
@@ -1271,12 +1271,12 @@ class ReportController extends ParentController
                 new Expression('SUM(incentiveReceived) as incentiveReceived'),
                 'type'])
             ->where(['between', 'refundRequestDate', $monthly_start_date, $monthly_end_date])
-            ->andWhere(['type' => GlobalConstant::TICKET_TYPE['Refund']])
+            ->andWhere(['type' => GlobalConstant::TICKET_TYPE_FOR_REFUND['Refund']])
             ->orderBy('total DESC')
             ->asArray()->one();
 
         // Monthly Package Report Data
-        $monthlyPackageDataList = Package::find()
+        $monthlyPackageDataList = Holiday::find()
             ->select([
                 new Expression('COUNT(id) as total'),
                 new Expression('SUM(quoteAmount) as quoteAmount'),
@@ -1286,13 +1286,13 @@ class ReportController extends ParentController
             ->where(['<=', 'refundRequestDate', $monthly_end_date])
             ->orWhere(['IS', 'refundRequestDate', NULL])
             ->andWhere(['between', 'issueDate', $monthly_start_date, $monthly_end_date])
-            ->andWhere(['<>', 'type', GlobalConstant::TICKET_TYPE['Refund']])
+            ->andWhere(['<>', 'type', GlobalConstant::TICKET_TYPE_FOR_REFUND['Refund']])
             ->andWhere([Ticket::tableName().'.status' => GlobalConstant::ACTIVE_STATUS])
             ->groupBy(['type'])
             ->orderBy('total DESC')
             ->asArray()->all();
 
-        $monthlyPackageRefundDataList = Package::find()
+        $monthlyPackageRefundDataList = Holiday::find()
             ->select([
                 new Expression('COUNT(id) as total'),
                 new Expression('SUM(quoteAmount) as quoteAmount'),
@@ -1300,7 +1300,7 @@ class ReportController extends ParentController
                 new Expression('SUM(receivedAmount) as receivedAmount'),
                 new Expression('SUM(netProfit) as netProfit'), 'type'])
             ->where(['between', 'refundRequestDate', $monthly_start_date, $monthly_end_date])
-            ->andWhere(['type' => GlobalConstant::TICKET_TYPE['Refund']])
+            ->andWhere(['type' => GlobalConstant::TICKET_TYPE_FOR_REFUND['Refund']])
             ->orderBy('total DESC')
             ->asArray()->one();
 
@@ -1315,7 +1315,7 @@ class ReportController extends ParentController
             ->where(['<=', 'refundRequestDate', $monthly_end_date])
             ->orWhere(['IS', 'refundRequestDate', NULL])
             ->andWhere(['between', 'issueDate', $monthly_start_date, $monthly_end_date])
-            ->andWhere(['<>', 'type', GlobalConstant::TICKET_TYPE['Refund']])
+            ->andWhere(['<>', 'type', GlobalConstant::TICKET_TYPE_FOR_REFUND['Refund']])
             ->andWhere([Ticket::tableName().'.status' => GlobalConstant::ACTIVE_STATUS])
             ->groupBy(['type'])
             ->orderBy('total DESC')
@@ -1329,7 +1329,7 @@ class ReportController extends ParentController
                 new Expression('SUM(receivedAmount) as receivedAmount'),
                 new Expression('SUM(netProfit) as netProfit'), 'type'])
             ->where(['between', 'refundRequestDate', $monthly_start_date, $monthly_end_date])
-            ->andWhere(['type' => GlobalConstant::TICKET_TYPE['Refund']])
+            ->andWhere(['type' => GlobalConstant::TICKET_TYPE_FOR_REFUND['Refund']])
             ->orderBy('total DESC')
             ->asArray()->one();
 
@@ -1344,7 +1344,7 @@ class ReportController extends ParentController
             ->where(['<=', 'refundRequestDate', $monthly_end_date])
             ->orWhere(['IS', 'refundRequestDate', NULL])
             ->andWhere(['between', 'issueDate', $monthly_start_date, $monthly_end_date])
-            ->andWhere(['<>', 'type', GlobalConstant::TICKET_TYPE['Refund']])
+            ->andWhere(['<>', 'type', GlobalConstant::TICKET_TYPE_FOR_REFUND['Refund']])
             ->andWhere([Ticket::tableName().'.status' => GlobalConstant::ACTIVE_STATUS])
             ->groupBy(['type'])
             ->orderBy('total DESC')
@@ -1358,7 +1358,7 @@ class ReportController extends ParentController
                 new Expression('SUM(receivedAmount) as receivedAmount'),
                 new Expression('SUM(netProfit) as netProfit'), 'type'])
             ->where(['between', 'refundRequestDate', $monthly_start_date, $monthly_end_date])
-            ->andWhere(['type' => GlobalConstant::TICKET_TYPE['Refund']])
+            ->andWhere(['type' => GlobalConstant::TICKET_TYPE_FOR_REFUND['Refund']])
             ->orderBy('total DESC')
             ->asArray()->one();
 
@@ -1396,7 +1396,7 @@ class ReportController extends ParentController
             ->where(['<=', 'refundRequestDate', $previous_months_end_date])
             ->orWhere(['IS', 'refundRequestDate', NULL])
             ->andWhere(['between', 'issueDate', $previous_months_start_date, $previous_months_end_date])
-            ->andWhere(['<>', 'type', GlobalConstant::TICKET_TYPE['Refund']])
+            ->andWhere(['<>', 'type', GlobalConstant::TICKET_TYPE_FOR_REFUND['Refund']])
             ->andWhere([Ticket::tableName().'.status' => GlobalConstant::ACTIVE_STATUS])
             ->groupBy(['type'])
             ->orderBy('total DESC')
@@ -1421,7 +1421,7 @@ class ReportController extends ParentController
                 new Expression('SUM(incentiveReceived) as incentiveReceived'),
                 'type'])
             ->where(['between', 'refundRequestDate', $previous_months_start_date, $previous_months_end_date])
-            ->andWhere(['type' => GlobalConstant::TICKET_TYPE['Refund']])
+            ->andWhere(['type' => GlobalConstant::TICKET_TYPE_FOR_REFUND['Refund']])
             ->orderBy('total DESC')
             ->asArray()->one();
 
@@ -1436,7 +1436,7 @@ class ReportController extends ParentController
             ->where(['<=', 'refundRequestDate', $previous_months_end_date])
             ->orWhere(['IS', 'refundRequestDate', NULL])
             ->andWhere(['between', 'issueDate', $previous_months_start_date, $previous_months_end_date])
-            ->andWhere(['<>', 'type', GlobalConstant::TICKET_TYPE['Refund']])
+            ->andWhere(['<>', 'type', GlobalConstant::TICKET_TYPE_FOR_REFUND['Refund']])
             ->andWhere([Ticket::tableName().'.status' => GlobalConstant::ACTIVE_STATUS])
             ->groupBy(['type'])
             ->orderBy('total DESC')
@@ -1450,7 +1450,7 @@ class ReportController extends ParentController
                 new Expression('SUM(receivedAmount) as receivedAmount'),
                 new Expression('SUM(netProfit) as netProfit'), 'type'])
             ->where(['between', 'refundRequestDate', $previous_months_start_date, $previous_months_end_date])
-            ->andWhere(['type' => GlobalConstant::TICKET_TYPE['Refund']])
+            ->andWhere(['type' => GlobalConstant::TICKET_TYPE_FOR_REFUND['Refund']])
             ->orderBy('total DESC')
             ->asArray()->one();
 
@@ -1465,7 +1465,7 @@ class ReportController extends ParentController
             ->where(['<=', 'refundRequestDate', $previous_months_end_date])
             ->orWhere(['IS', 'refundRequestDate', NULL])
             ->andWhere(['between', 'issueDate', $previous_months_start_date, $previous_months_end_date])
-            ->andWhere(['<>', 'type', GlobalConstant::TICKET_TYPE['Refund']])
+            ->andWhere(['<>', 'type', GlobalConstant::TICKET_TYPE_FOR_REFUND['Refund']])
             ->andWhere([Ticket::tableName().'.status' => GlobalConstant::ACTIVE_STATUS])
             ->groupBy(['type'])
             ->orderBy('total DESC')
@@ -1479,7 +1479,7 @@ class ReportController extends ParentController
                 new Expression('SUM(receivedAmount) as receivedAmount'),
                 new Expression('SUM(netProfit) as netProfit'), 'type'])
             ->where(['between', 'refundRequestDate', $previous_months_start_date, $previous_months_end_date])
-            ->andWhere(['type' => GlobalConstant::TICKET_TYPE['Refund']])
+            ->andWhere(['type' => GlobalConstant::TICKET_TYPE_FOR_REFUND['Refund']])
             ->orderBy('total DESC')
             ->asArray()->one();
 
@@ -1494,7 +1494,7 @@ class ReportController extends ParentController
             ->where(['<=', 'refundRequestDate', $previous_months_end_date])
             ->orWhere(['IS', 'refundRequestDate', NULL])
             ->andWhere(['between', 'issueDate', $previous_months_start_date, $previous_months_end_date])
-            ->andWhere(['<>', 'type', GlobalConstant::TICKET_TYPE['Refund']])
+            ->andWhere(['<>', 'type', GlobalConstant::TICKET_TYPE_FOR_REFUND['Refund']])
             ->andWhere([Ticket::tableName().'.status' => GlobalConstant::ACTIVE_STATUS])
             ->groupBy(['type'])
             ->orderBy('total DESC')
@@ -1508,7 +1508,7 @@ class ReportController extends ParentController
                 new Expression('SUM(receivedAmount) as receivedAmount'),
                 new Expression('SUM(netProfit) as netProfit'), 'type'])
             ->where(['between', 'refundRequestDate', $previous_months_start_date, $previous_months_end_date])
-            ->andWhere(['type' => GlobalConstant::TICKET_TYPE['Refund']])
+            ->andWhere(['type' => GlobalConstant::TICKET_TYPE_FOR_REFUND['Refund']])
             ->orderBy('total DESC')
             ->asArray()->one();
 
