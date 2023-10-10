@@ -59,24 +59,27 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <th>Issue</th>
                                     <th>Quote</th>
                                     <th>Received</th>
+                                    <th>Due</th>
                                     <th>Payment Status</th>
                                     <th>Action</th>
                                 </tr>
                                 </thead>
                                 <tbody id="t-body">
                                 <?php foreach ($model->details as $invoiceDetail) {
-                                    if (!$invoiceDetail->service) {
+                                    $service = $invoiceDetail->refModel::findOne(['id' => $invoiceDetail->refId]);
+                                    if (!$service) {
                                         continue;
                                     }
                                     ?>
                                     <tr>
-                                        <td><?= $invoiceDetail->service->formName() ?></td>
-                                        <td><?= $invoiceDetail->getIdentificationNumber($invoiceDetail->service) ?></td>
-                                        <td><?= $invoiceDetail->service->type ?></td>
-                                        <td><?= $invoiceDetail->service->issueDate ?></td>
-                                        <td><?= $invoiceDetail->service->quoteAmount ?></td>
-                                        <td><?= $invoiceDetail->service->receivedAmount ?></td>
-                                        <td><?= $invoiceDetail->service->paymentStatus ?></td>
+                                        <td><?= $service->formName() ?></td>
+                                        <td><?= $invoiceDetail->getIdentificationNumber($service) ?></td>
+                                        <td><?= $service->type ?></td>
+                                        <td><?= $service->issueDate ?></td>
+                                        <td><?= $service->quoteAmount ?></td>
+                                        <td><?= $service->receivedAmount ?></td>
+                                        <td><?= $invoiceDetail->dueAmount ?></td>
+                                        <td><?= $service->paymentStatus ?></td>
                                         <td>
                                             <?php
                                             $url = '/sale/' . Utilities::getServiceName($invoiceDetail->refModel) . '/view';

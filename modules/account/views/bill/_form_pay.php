@@ -56,7 +56,6 @@ $this->registerJsFile(
                                     </thead>
                                     <tbody id="t-body">
                                     <?php foreach ($model->details as $billDetail) {
-
                                         if (!$billDetail->service) {
                                             continue;
                                         }
