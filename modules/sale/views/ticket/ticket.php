@@ -106,6 +106,9 @@ use yii\helpers\Url;
         </div>
         <div class="row">
             <div class="col-md">
+                <?= $form->field($model, "[$row]returnDate")->widget(DatePicker::class, WidgetHelper::getDatewidget('returnDate' . $row, 'returnDate'))->label('Return'); ?>
+            </div>
+            <div class="col-md">
                 <?= $form->field($model, "[$row]baseFare")->textInput(['id' => 'baseFare' . $row, 'type' => 'number', 'class' => 'form-control calculateQuote baseFare', 'value' => $model->isNewRecord ? 0 : $model->baseFare]) ?>
             </div>
             <div class="col-md">

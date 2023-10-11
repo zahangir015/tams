@@ -37,6 +37,8 @@ class m231010_174333_create_contra_entry_table extends Migration
      */
     public function safeDown()
     {
+        $this->dropIndex('id-contra-entry-identificationNumber', 'contra_entry');
+        $this->dropIndex('id-contra-entry-paymentDate','contra_entry');
         $this->dropTable('{{%contra_entry}}');
     }
 }

@@ -3,6 +3,7 @@
 namespace app\modules\account\models\search;
 
 use app\components\GlobalConstant;
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\account\models\ChartOfAccount;
