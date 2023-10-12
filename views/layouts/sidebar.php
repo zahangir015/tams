@@ -294,6 +294,7 @@ $items = [
         'icon' => 'file-invoice-dollar',
         'items' => [
             ['label' => 'Bank Accounts', 'icon' => 'building', 'url' => ['/account/bank-account'], 'visible' => Helper::checkRoute('/account/bank-account/')],
+            ['label' => 'Contra Entry', 'icon' => 'arrow', 'url' => ['/account/contra-entry'], 'visible' => Helper::checkRoute('/account/contra-entry/')],
             [
                 'label' => 'Invoice Management',
                 'icon' => 'file-invoice-dollar',

@@ -29,7 +29,7 @@ class TicketSearch extends Ticket
     {
         return [
             [['id', 'motherTicketId', 'airlineId', 'providerId', 'invoiceId', 'customerId', 'bookedOnline', 'flightType', 'codeShare', 'numberOfSegment', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
-            [['uid', 'customerCategory', 'paxName', 'paxType', 'eTicket', 'pnrCode', 'type', 'tripType', 'seatClass', 'reference', 'issueDate', 'departureDate', 'refundRequestDate', 'route', 'paymentStatus', 'baggage', 'customer', 'airline', 'provider', 'invoice', 'refundPolicy'], 'safe'],
+            [['uid', 'customerCategory', 'paxName', 'paxType', 'eTicket', 'pnrCode', 'type', 'tripType', 'seatClass', 'reference', 'issueDate', 'departureDate', 'refundRequestDate', 'route', 'paymentStatus', 'baggage', 'customer', 'airline', 'provider', 'invoice', 'refundPolicy', 'returnDate'], 'safe'],
             [['baseFare', 'tax', 'otherTax', 'commission', 'commissionReceived', 'incentive', 'incentiveReceived', 'govTax', 'serviceCharge', 'ait', 'quoteAmount', 'receivedAmount', 'costOfSale', 'netProfit'], 'number'],
         ];
     }
@@ -63,6 +63,10 @@ class TicketSearch extends Ticket
             if (!empty($params['TicketSearch']['departureDate']) && str_contains($params['TicketSearch']['departureDate'], '-')) {
                 list($start_date, $end_date) = explode(' - ', $params['TicketSearch']['departureDate']);
                 $query->andFilterWhere(['between', 'departureDate', date('Y-m-d', strtotime($start_date)), date('Y-m-d', strtotime($end_date))]);
+            }
+            if (!empty($params['TicketSearch']['returnDate']) && str_contains($params['TicketSearch']['returnDate'], '-')) {
+                list($start_date, $end_date) = explode(' - ', $params['TicketSearch']['returnDate']);
+                $query->andFilterWhere(['between', 'returnDate', date('Y-m-d', strtotime($start_date)), date('Y-m-d', strtotime($end_date))]);
             }
             if (!empty($params['TicketSearch']['refundRequestDate']) && str_contains($params['TicketSearch']['refundRequestDate'], '-')) {
                 list($start_date, $end_date) = explode(' - ', $params['TicketSearch']['refundRequestDate']);

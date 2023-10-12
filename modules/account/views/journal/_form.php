@@ -1,5 +1,6 @@
 <?php
 
+use app\modules\account\components\AccountConstant;
 use app\modules\account\components\ServiceConstant;
 use kartik\date\DatePicker;
 use kartik\depdrop\DepDrop;
@@ -49,7 +50,7 @@ $this->registerJsFile(
                             <?= $form->field($journalEntry, "[$itenary]accountId")->widget(Select2::class, Utilities::ajaxDropDown('accountId', '/account/chart-of-account/search', false, 'accountId' . $itenary, 'accountId'))->label(!$itenary ? 'Chart Of Account' : false) ?>
                         </div>
                         <div class="col-md">
-                            <?= $form->field($journalEntry, "[$itenary]refModel")->dropDownList(ServiceConstant::REF_MODEL, ['id' => 'refModel' . $itenary, 'class' => 'form-control refModel', 'prompt' => ''])->label(!$itenary ? 'Reference Type' : false); ?>
+                            <?= $form->field($journalEntry, "[$itenary]refModel")->dropDownList(AccountConstant::REF_MODEL, ['id' => 'refModel' . $itenary, 'class' => 'form-control refModel', 'prompt' => ''])->label(!$itenary ? 'Reference Type' : false); ?>
                         </div>
                         <div class="col-md">
                             <?= $form->field($journalEntry, "[$itenary]refId")->widget(DepDrop::class, Utilities::depDropConfigurationGenerate($journalEntry, 'refId' . $itenary, 'refModel' . $itenary, '/account/journal/get-reference'))->label(!$itenary ? 'Reference' : false) ?>
