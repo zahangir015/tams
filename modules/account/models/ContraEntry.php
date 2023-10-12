@@ -2,13 +2,17 @@
 
 namespace app\modules\account\models;
 
+use app\traits\BehaviorTrait;
 use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%contra_entry}}".
  *
  * @property int $id
  * @property string $uid
+ * @property int $agencyId
  * @property string $identificationNumber
  * @property int $bankFrom
  * @property int $bankTo
@@ -21,12 +25,14 @@ use Yii;
  * @property int $createdBy
  * @property int|null $updatedBy
  */
-class ContraEntry extends \yii\db\ActiveRecord
+class ContraEntry extends ActiveRecord
 {
+    use BehaviorTrait;
+
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%contra_entry}}';
     }
@@ -34,16 +40,17 @@ class ContraEntry extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            [['uid', 'identificationNumber', 'bankFrom', 'bankTo', 'paymentDate', 'createdAt', 'createdBy'], 'required'],
-            [['bankFrom', 'bankTo', 'status', 'createdAt', 'updatedAt', 'createdBy', 'updatedBy'], 'integer'],
+            [['identificationNumber', 'bankFrom', 'bankTo', 'paymentDate'], 'required'],
+            [['bankFrom', 'bankTo', 'status', 'createdAt', 'updatedAt', 'createdBy', 'updatedBy', 'agencyId'], 'integer'],
             [['amount'], 'number'],
             [['paymentDate'], 'safe'],
             [['uid'], 'string', 'max' => 36],
             [['identificationNumber', 'remarks'], 'string', 'max' => 255],
             [['uid'], 'unique'],
+            [['bankFrom', 'bankTo'], 'unique', 'attributes' => ['bankFrom', 'bankTo']],
             [['identificationNumber'], 'unique'],
         ];
     }
@@ -51,7 +58,7 @@ class ContraEntry extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),
@@ -68,5 +75,25 @@ class ContraEntry extends \yii\db\ActiveRecord
             'createdBy' => Yii::t('app', 'Created By'),
             'updatedBy' => Yii::t('app', 'Updated By'),
         ];
+    }
+
+    /**
+     * Gets query for [[BankAccount]].
+     *
+     * @return ActiveQuery
+     */
+    public function getTransferredFrom(): ActiveQuery
+    {
+        return $this->hasOne(BankAccount::class, ['id' => 'bankFrom']);
+    }
+
+    /**
+     * Gets query for [[BankAccount]].
+     *
+     * @return ActiveQuery
+     */
+    public function getTransferredTo(): ActiveQuery
+    {
+        return $this->hasOne(BankAccount::class, ['id' => 'bankTo']);
     }
 }

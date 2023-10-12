@@ -14,7 +14,7 @@ class ContraEntrySearch extends ContraEntry
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['id', 'bankFrom', 'bankTo', 'status', 'createdAt', 'updatedAt', 'createdBy', 'updatedBy'], 'integer'],
@@ -26,7 +26,7 @@ class ContraEntrySearch extends ContraEntry
     /**
      * {@inheritdoc}
      */
-    public function scenarios()
+    public function scenarios(): array
     {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
@@ -39,7 +39,7 @@ class ContraEntrySearch extends ContraEntry
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search(array $params): ActiveDataProvider
     {
         $query = ContraEntry::find();
 

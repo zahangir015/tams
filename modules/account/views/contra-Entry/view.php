@@ -1,23 +1,22 @@
 <?php
 
+use app\components\Utilities;
 use yii\helpers\Html;
+use yii\web\YiiAsset;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
 /** @var app\modules\account\models\ContraEntry $model */
 
-$this->title = $model->id;
+$this->title = $model->identificationNumber;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Contra Entries'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
-\yii\web\YiiAsset::register($this);
+YiiAsset::register($this);
 ?>
 <div class="contra-entry-view">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
     <p>
-        <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->id], [
+        <?= Html::a(Yii::t('app', 'Update'), ['update', 'uid' => $model->uid], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'uid' => $model->uid], [
             'class' => 'btn btn-danger',
             'data' => [
                 'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
@@ -25,24 +24,46 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ]) ?>
     </p>
-
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'id',
-            'uid',
-            'identificationNumber',
-            'bankFrom',
-            'bankTo',
-            'amount',
-            'paymentDate',
-            'remarks',
-            'status',
-            'createdAt',
-            'updatedAt',
-            'createdBy',
-            'updatedBy',
-        ],
-    ]) ?>
+    <div class="card">
+        <div class="card-header bg-gray-dark">
+            <?= Html::encode($this->title) ?>
+        </div>
+        <div class="card-body">
+            <?= DetailView::widget([
+                'model' => $model,
+                'attributes' => [
+                    'identificationNumber',
+                    [
+                        'attribute' => 'bankFrom',
+                        'value' => function ($model) {
+                            return $model->transferredFrom->name;
+                        }
+                    ],
+                    [
+                        'attribute' => 'bankFrom',
+                        'value' => function ($model) {
+                            return $model->transferredTo->name;
+                        }
+                    ],
+                    'amount',
+                    'paymentDate',
+                    'remarks',
+                    [
+                        'attribute' => 'status',
+                        'value' => function ($model) {
+                            $labelClass = Utilities::statusLabelClass($model->status);
+                            $labelText = ($model->status) ? 'Active' : 'Inactive';
+                            return '<span class="right badge ' . $labelClass . '">' . $labelText . '</span>';
+                        },
+                        'format' => 'html'
+                    ],
+                    'createdAt',
+                    'updatedAt',
+                    'createdBy',
+                    'updatedBy',
+                ],
+            ]) ?>
+        </div>
+    </div>
 
 </div>

@@ -37,7 +37,7 @@ trait BehaviorTrait
             }
 
             if ($this->isNewRecord && $this->hasAttribute('uid')) {
-                $this->uid = Uuid::uuid4();
+                $this->uid = Uuid::uuid4()->toString();
             }
 
             if ($this->isNewRecord && $this->hasAttribute('agencyId')) {
@@ -56,7 +56,7 @@ trait BehaviorTrait
         }
 
         if ($this->isNewRecord && $this->hasAttribute('uid')) {
-            $this->uid = Uuid::uuid4();
+            $this->uid = Uuid::uuid4()->toString();
         }
 
         if ($this->isNewRecord && $this->hasAttribute('agencyId')) {
