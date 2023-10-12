@@ -31,8 +31,20 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'identificationNumber',
                 'label' => 'Identification #'
             ],
-            'bankFrom',
-            'bankTo',
+            [
+                'attribute' => 'bankFrom',
+                'label' => 'Transferred From',
+                'value' => function($model){
+                    return $model->transferredFrom->name;
+                }
+            ],
+            [
+                'attribute' => 'bankTo',
+                'label' => 'Transferred From',
+                'value' => function($model){
+                    return $model->transferredTo->name;
+                }
+            ],
             'amount',
             'paymentDate',
             'remarks',
