@@ -2,11 +2,12 @@
 
 use app\components\GlobalConstant;
 use app\components\Utilities;
-use app\modules\sale\models\HotelCategory;
-use yii\helpers\Html;
-use yii\helpers\Url;
+use app\modules\sale\models\hotel\HotelCategory;
 use kartik\grid\ActionColumn;
 use kartik\grid\GridView;
+use yii\helpers\Html;
+use yii\helpers\Url;
+
 /** @var yii\web\View $this */
 /** @var app\modules\sale\models\search\HotelCategorySearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */

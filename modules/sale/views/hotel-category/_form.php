@@ -1,11 +1,11 @@
 <?php
 
 use app\components\GlobalConstant;
-use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
+use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var app\modules\sale\models\HotelCategory $model */
+/** @var \app\modules\sale\models\hotel\HotelCategory $model */
 /** @var yii\bootstrap4\ActiveForm $form */
 ?>
 

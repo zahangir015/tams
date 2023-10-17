@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
-/** @var app\modules\sale\models\HotelCategory $model */
+/** @var \app\modules\sale\models\hotel\HotelCategory $model */
 
 $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Hotel Categories'), 'url' => ['index']];
