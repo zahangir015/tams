@@ -2,12 +2,12 @@
 
 namespace app\modules\sale\models\search;
 
+use app\modules\sale\models\hotel\HotelCategory;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\sale\models\HotelCategory;
 
 /**
- * HotelCategorySearch represents the model behind the search form of `app\modules\sale\models\HotelCategory`.
+ * HotelCategorySearch represents the model behind the search form of `app\modules\sale\models\hotel\HotelCategory`.
  */
 class HotelCategorySearch extends HotelCategory
 {

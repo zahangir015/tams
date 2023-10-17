@@ -47,8 +47,7 @@ class ChartOfAccountSearch extends ChartOfAccount
 
         // add conditions that should always apply here
         $query->joinWith(['accountType', 'accountGroup'])
-            ->where([self::tableName().'.status' => GlobalConstant::ACTIVE_STATUS])
-            ->andWhere([self::tableName().'.agencyId' => Yii::$app->user->identity->agencyId]);
+            ->where([self::tableName().'.status' => GlobalConstant::ACTIVE_STATUS]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

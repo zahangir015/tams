@@ -81,7 +81,6 @@ class AccountType extends ActiveRecord
             ->select(['id', 'name', 'status'])
             ->where(['like', 'name', $query])
             ->andWhere([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
-            ->andWhere([self::tableName() . '.agencyId' => Yii::$app->user->identity->agencyId])
             ->all();
     }
 }

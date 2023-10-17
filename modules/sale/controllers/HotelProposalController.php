@@ -2,18 +2,17 @@
 
 namespace app\modules\sale\controllers;
 
-use app\modules\sale\models\HotelCategory;
+use app\controllers\ParentController;
+use app\modules\sale\models\hotel\HotelCategory;
 use app\modules\sale\models\HotelProposal;
 use app\modules\sale\models\RoomDetail;
 use app\modules\sale\models\RoomType;
 use app\modules\sale\models\search\HotelProposalSearch;
-use app\controllers\ParentController;
 use app\modules\sale\services\ProposalService;
 use Yii;
 use yii\bootstrap4\ActiveForm;
 use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use yii\web\Response;
 
 /**

@@ -2,6 +2,7 @@
 
 namespace app\modules\sale\services;
 
+use app\components\Constant;
 use app\components\GlobalConstant;
 use app\components\Utilities;
 use app\modules\account\services\InvoiceService;
@@ -9,7 +10,6 @@ use app\modules\account\services\LedgerService;
 use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\Customer;
 use app\modules\sale\models\hotel\Hotel;
-use app\modules\sale\models\hotel\HotelCategory;
 use app\modules\sale\models\hotel\HotelRefund;
 use app\modules\sale\models\hotel\HotelSupplier;
 use app\modules\sale\models\Supplier;

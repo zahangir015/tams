@@ -4,12 +4,11 @@ namespace app\modules\sale\controllers;
 
 use app\components\GlobalConstant;
 use app\components\Utilities;
-use app\modules\sale\models\HotelCategory;
-use app\modules\sale\models\search\HotelCategorySearch;
 use app\controllers\ParentController;
+use app\modules\sale\models\hotel\HotelCategory;
+use app\modules\sale\models\search\HotelCategorySearch;
 use Yii;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use yii\web\Response;
 
 /**

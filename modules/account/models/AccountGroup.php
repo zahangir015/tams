@@ -41,13 +41,13 @@ class AccountGroup extends ActiveRecord
     public function rules(): array
     {
         return [
-            [['accountTypeId', 'name', 'code', 'status'], 'required'],
+            [['accountTypeId', 'name', 'code'], 'required'],
             [['accountTypeId', 'status', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'], 'integer'],
             [['uid'], 'string', 'max' => 36],
             [['name'], 'string', 'max' => 175],
             [['code'], 'string', 'max' => 10],
-            [['uid', 'agencyId'], 'unique'],
-            [['code', 'agencyId'], 'unique', 'targetAttribute' => ['code', 'agencyId']],
+            [['uid'], 'unique'],
+            //[['code', 'agencyId'], 'unique', 'targetAttribute' => ['code', 'agencyId']],
         ];
     }
 
@@ -92,7 +92,10 @@ class AccountGroup extends ActiveRecord
 
     public static function getGroupList(array $queryArray): array
     {
-        $groupList = self::find()->where($queryArray)->andWhere(['agencyId' => Yii::$app->user->identity->agencyId])->asArray()->all();
+        $groupList = self::find()
+            ->where($queryArray)
+            //->andWhere(['agencyId' => Yii::$app->user->identity->agencyId])
+            ->asArray()->all();
         $groupDataArray = [];
         foreach ($groupList as $value) {
             $groupDataArray[] = ['id' => $value['id'], 'name' => $value['name'].' | '.$value['code']];

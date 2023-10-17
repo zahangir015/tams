@@ -1,7 +1,8 @@
 <?php
 
-namespace app\modules\sale\models;
+namespace app\modules\sale\models\hotel;
 
+use app\modules\sale\models\HotelProposal;
 use app\traits\BehaviorTrait;
 use Yii;
 use yii\db\ActiveQuery;

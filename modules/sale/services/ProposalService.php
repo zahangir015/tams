@@ -2,22 +2,15 @@
 
 namespace app\modules\sale\services;
 
-use app\components\GlobalConstant;
 use app\components\Utilities;
-use app\modules\sale\components\ServiceConstant;
-use app\modules\sale\models\Customer;
 use app\modules\sale\models\FlightProposal;
 use app\modules\sale\models\FlightProposalItinerary;
-use app\modules\sale\models\hotel\Hotel;
-use app\modules\sale\models\HotelCategory;
 use app\modules\sale\models\HotelProposal;
 use app\modules\sale\models\RoomDetail;
-use app\modules\sale\repositories\HotelRepository;
 use app\modules\sale\repositories\ProposalRepository;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\db\Exception;
-use yii\helpers\ArrayHelper;
 
 class ProposalService
 {

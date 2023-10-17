@@ -52,6 +52,7 @@ use yii\db\ActiveRecord;
 class Hotel extends ActiveRecord
 {
     use BehaviorTrait;
+
     /**
      * {@inheritdoc}
      */
