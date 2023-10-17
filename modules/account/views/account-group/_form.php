@@ -4,11 +4,11 @@ use app\components\GlobalConstant;
 use app\components\Utilities;
 use kartik\select2\Select2;
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+use yii\bootstrap4\ActiveForm;
 
 /** @var yii\web\View $this */
 /** @var app\modules\account\models\AccountGroup $model */
-/** @var yii\widgets\ActiveForm $form */
+/** @var yii\bootstrap4\ActiveForm $form */
 ?>
 
 <div class="account-group-form">
