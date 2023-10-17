@@ -72,9 +72,6 @@ use yii\helpers\Url;
         </div>
         <div class="row">
             <div class="col-md">
-                <?= $form->field($model, "[$row]providerId")->widget(Select2::class, Utilities::ajaxDropDown('providerId', '/sale/provider/get-providers', false, 'providerId' . $row, 'providerId', (!$model->isNewRecord && $model->provider) ? [$model->provider->id => $model->provider->name] : []))->label('Select GDS'); ?>
-            </div>
-            <div class="col-md">
                 <?= $form->field($model, "[$row]pnrCode")->textInput(['maxlength' => true, 'class' => 'pnrCode form-control', 'id' => 'pnrCode' . $row])->label('PNR Code') ?>
             </div>
             <div class="col-md">
@@ -86,6 +83,9 @@ use yii\helpers\Url;
             <div class="col-md">
                 <?= $form->field($model, "[$row]motherTicketId")->widget(Select2::class, Utilities::ajaxDropDown('motherTicketId', 'get-mother-ticket', true, 'motherTicketId' . $row, 'motherTicket', (!$model->isNewRecord && $model->motherTicket) ? [$model->motherTicket => $model->motherTicket->eTicket . ' | ' . $model->motherTicket->pnrCode] : [], true))->label('Parent') ?>
             </div>
+            <div class="col-md">
+                <?= $form->field($model, "[$row]route")->textInput(['maxlength' => true, 'id' => 'route' . $row, 'class' => 'form-control route']) ?>
+            </div>
         </div>
         <div class="row">
             <div class="col-md">
@@ -95,13 +95,13 @@ use yii\helpers\Url;
                 <?= $form->field($model, "[$row]paxType")->dropDownList(GlobalConstant::PAX_TYPE, ['id' => 'paxType' . $row, 'class' => 'form-control paxType' . $row]) ?>
             </div>
             <div class="col-md">
-                <?= $form->field($model, "[$row]route")->textInput(['maxlength' => true, 'id' => 'route' . $row, 'class' => 'form-control route']) ?>
-            </div>
-            <div class="col-md">
                 <?= $form->field($model, "[$row]issueDate")->widget(DatePicker::class, WidgetHelper::getDatewidget('issueDate' . $row, 'issueDate', false, true))->label('Issue'); ?>
             </div>
             <div class="col-md">
                 <?= $form->field($model, "[$row]departureDate")->widget(DatePicker::class, WidgetHelper::getDatewidget('departureDate' . $row, 'departureDate'))->label('Departure'); ?>
+            </div>
+            <div class="col-md">
+                <?= $form->field($model, "[$row]returnDate")->widget(DatePicker::class, WidgetHelper::getDatewidget('returnDate' . $row, 'returnDate'))->label('Return'); ?>
             </div>
         </div>
         <div class="row">
@@ -148,6 +148,9 @@ use yii\helpers\Url;
             </div>
         </div>
         <div class="row">
+            <div class="col-md">
+                <?= $form->field($model, "[$row]providerId")->widget(Select2::class, Utilities::ajaxDropDown('providerId', '/sale/provider/get-providers', false, 'providerId' . $row, 'providerId', (!$model->isNewRecord && $model->provider) ? [$model->provider->id => $model->provider->name] : []))->label('Select GDS'); ?>
+            </div>
             <div class="col-md">
                 <?= $form->field($model, "[$row]bookedOnline")->dropDownList(GlobalConstant::BOOKING_TYPE, ['value' => 0, 'class' => 'form-control bookedOnline']) ?>
             </div>

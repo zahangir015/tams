@@ -39,6 +39,7 @@ use yii\db\ActiveRecord;
  * @property string|null $reference
  * @property string $issueDate
  * @property string|null $departureDate
+ * @property string|null $returnDate
  * @property string|null $refundRequestDate
  * @property string|null $route
  * @property int|null $numberOfSegment
@@ -65,7 +66,6 @@ use yii\db\ActiveRecord;
  * @property int $createdAt
  * @property int|null $updatedBy
  * @property int|null $updatedAt
- *
  * @property Airline $airline
  * @property Customer $customer
  * @property Invoice $invoice
@@ -97,7 +97,7 @@ class Ticket extends ActiveRecord
             [['motherTicketId', 'airlineId', 'providerId', 'invoiceId', 'customerId', 'bookedOnline', 'flightType', 'codeShare', 'numberOfSegment', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['eTicket', 'airlineId', 'type'], 'unique', 'targetAttribute' => ['eTicket', 'airlineId', 'type'], 'on' => 'create'],
             [['type', 'tripType', 'paymentStatus'], 'string'],
-            [['issueDate', 'departureDate', 'refundRequestDate'], 'safe'],
+            [['issueDate', 'departureDate', 'refundRequestDate', 'returnDate'], 'safe'],
             [['baseFare', 'tax', 'otherTax', 'commission', 'commissionReceived', 'incentive', 'incentiveReceived', 'govTax', 'serviceCharge', 'ait', 'quoteAmount', 'receivedAmount', 'costOfSale', 'netProfit', 'discount', 'referenceCommission'], 'number'],
             [['uid'], 'string', 'max' => 36],
             [['customerCategory'], 'string', 'max' => 10],

@@ -2,26 +2,24 @@
 
 namespace app\modules\account\models\search;
 
-use app\components\GlobalConstant;
-use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\account\models\ChartOfAccount;
+use app\modules\account\models\ContraEntry;
 
 /**
- * ChartOfAccountSearch represents the model behind the search form of `app\modules\account\models\ChartOfAccount`.
+ * ContraEntrySearch represents the model behind the search form of `app\modules\account\models\ContraEntry`.
  */
-class ChartOfAccountSearch extends ChartOfAccount
+class ContraEntrySearch extends ContraEntry
 {
-
     /**
      * {@inheritdoc}
      */
     public function rules(): array
     {
         return [
-            [['id', 'accountTypeId', 'accountGroupId', 'status', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy', 'agencyId'], 'integer'],
-            [['uid', 'code', 'name', 'description', 'reportType'], 'safe'],
+            [['id', 'bankFrom', 'bankTo', 'status', 'createdAt', 'updatedAt', 'createdBy', 'updatedBy'], 'integer'],
+            [['uid', 'identificationNumber', 'paymentDate', 'remarks'], 'safe'],
+            [['amount'], 'number'],
         ];
     }
 
@@ -43,15 +41,12 @@ class ChartOfAccountSearch extends ChartOfAccount
      */
     public function search(array $params): ActiveDataProvider
     {
-        $query = ChartOfAccount::find();
+        $query = ContraEntry::find();
 
         // add conditions that should always apply here
-        $query->joinWith(['accountType', 'accountGroup'])
-            ->where([self::tableName().'.status' => GlobalConstant::ACTIVE_STATUS]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'sort' => ['defaultOrder' => ['id' => SORT_ASC]]
         ]);
 
         $this->load($params);
@@ -65,19 +60,20 @@ class ChartOfAccountSearch extends ChartOfAccount
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'accountTypeId' => $this->accountTypeId,
-            'accountGroupId' => $this->accountGroupId,
+            'bankFrom' => $this->bankFrom,
+            'bankTo' => $this->bankTo,
+            'amount' => $this->amount,
+            'paymentDate' => $this->paymentDate,
             'status' => $this->status,
             'createdAt' => $this->createdAt,
-            'createdBy' => $this->createdBy,
             'updatedAt' => $this->updatedAt,
+            'createdBy' => $this->createdBy,
             'updatedBy' => $this->updatedBy,
         ]);
 
-        $query->andFilterWhere(['like', 'code', $this->code])
-            ->andFilterWhere(['like', 'name', $this->name])
-            ->andFilterWhere(['like', 'description', $this->description])
-            ->andFilterWhere(['like', 'reportType', $this->reportType]);
+        $query->andFilterWhere(['like', 'uid', $this->uid])
+            ->andFilterWhere(['like', 'identificationNumber', $this->identificationNumber])
+            ->andFilterWhere(['like', 'remarks', $this->remarks]);
 
         return $dataProvider;
     }

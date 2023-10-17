@@ -4,6 +4,7 @@ namespace app\traits;
 
 use app\models\History;
 use app\modules\admin\models\User;
+use Ramsey\Uuid\Uuid;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
@@ -31,12 +32,12 @@ trait BehaviorTrait
         if (isset(Yii::$app->controller->action) && (Yii::$app->controller->action->id != "index")) {
             if ($this->isNewRecord && $this->hasAttribute('createdBy')) {
                 $this->createdBy = Yii::$app->user->id ?? 1;
-            } elseif(!$this->isNewRecord && $this->hasAttribute('updatedBy')) {
+            } elseif (!$this->isNewRecord && $this->hasAttribute('updatedBy')) {
                 $this->updatedBy = Yii::$app->user->id ?? 1;
             }
 
             if ($this->isNewRecord && $this->hasAttribute('uid')) {
-                $this->uid = Yii::$app->db->createCommand('select UUID()')->queryScalar();
+                $this->uid = Uuid::uuid4()->toString();
             }
 
             if ($this->isNewRecord && $this->hasAttribute('agencyId')) {
@@ -50,12 +51,12 @@ trait BehaviorTrait
     {
         if ($this->isNewRecord && $this->hasAttribute('createdBy')) {
             $this->createdBy = Yii::$app->user->id ?? 1;
-        } elseif(!$this->isNewRecord && $this->hasAttribute('updatedBy')) {
+        } elseif (!$this->isNewRecord && $this->hasAttribute('updatedBy')) {
             $this->updatedBy = Yii::$app->user->id ?? 1;
         }
 
-        if ($this->isNewRecord && $this->hasAttribute('updatedBy')) {
-            $this->uid = Yii::$app->db->createCommand('select UUID()')->queryScalar();
+        if ($this->isNewRecord && $this->hasAttribute('uid')) {
+            $this->uid = Uuid::uuid4()->toString();
         }
 
         if ($this->isNewRecord && $this->hasAttribute('agencyId')) {
@@ -102,7 +103,7 @@ trait BehaviorTrait
         if ($this->hasAttribute('updatedAt')) {
             $this->updatedAt = $this->updatedAt ? date(Yii::$app->params['dateTimeFormatInView'], $this->updatedAt) : null;
         }
-        if(Yii::$app->controller->action->id == 'view' || Yii::$app->controller->action->id == 'detail'){
+        if (Yii::$app->controller->action->id == 'view' || Yii::$app->controller->action->id == 'detail') {
             if ($this->hasAttribute('createdBy')) {
                 $this->createdBy = ($this->createdBy && $this->creator) ? ucfirst($this->creator['username']) : null;
             }

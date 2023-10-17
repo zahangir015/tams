@@ -259,17 +259,6 @@ class Utilities
         return $datetime->format($format);
     }
 
-    public static function transactionIdGenerate(): string
-    {
-        return Company::findOne(['agencyId' => Yii::$app->user->identity->agencyId])->shortName . '_TR_' . self::date('Ymd_his') . rand(11, 99) . ((php_sapi_name() != "cli") ? Yii::$app->user->id : 1);
-    }
-
-    public static function ExpenseNumberGenerate(): string
-    {
-        return Company::findOne(['agencyId' => Yii::$app->user->identity->agencyId])->shortName . 'EXP' . self::date('Ymdhis') . rand(11, 99) . ((php_sapi_name() != "cli") ? Yii::$app->user->id : 1);
-    }
-
-
     public static function validateFile($file, $type = 'file'): array
     {
         if (!$file || !file_exists($file->tempName)) {
@@ -485,17 +474,6 @@ class Utilities
             'yii\bootstrap4\BootstrapAsset' => false,
             'yii\web\JqueryAsset' => false
         ];
-    }
-
-    public static function groupMap($data, string $groupByColumn): array
-    {
-        $result = [];
-        foreach ($data as $element) {
-            if ($groupByColumn !== null) {
-                $result[$element[$groupByColumn]][] = $element;
-            }
-        }
-        return $result;
     }
 
     public static function dateFormat($disabled = false, $required = false, $format = 'Y-m-d', $value = null, $disableDatesAfterToday = false): array
@@ -978,6 +956,11 @@ class Utilities
     public static function customerCodeGenerator(): string
     {
         return 'CUS'. date('ymdhis') . rand(9, 999).Yii::$app->user->identity->agencyId;
+    }
+
+    public static function contraIdentificationNumber(): string
+    {
+        return 'CNT' . date('ymdhis') . rand(9, 999);
     }
 
 }
