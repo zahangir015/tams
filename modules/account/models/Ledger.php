@@ -103,8 +103,10 @@ class Ledger extends ActiveRecord
             return $model->billNumber;
         } elseif (str_contains($subRefModel, 'Expense')) {
             return $model->identificationNumber;
-        } else {
+        }elseif (str_contains($subRefModel, 'Journal')) {
             return $model->journalNumber;
+        } else {
+            return $model->identificationNumber;
         }
 
     }

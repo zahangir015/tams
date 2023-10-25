@@ -313,4 +313,20 @@ class InvoiceController extends ParentController
             'company' => Company::findOne(['agencyId' => Yii::$app->user->identity->agencyId]),
         ], $fileName);
     }
+
+    public function actionMoneyReceipt(string $uid): void
+    {
+        $fileName = 'money-receipt';
+
+        $transaction = $this->invoiceRepository->findOne(['uid' => $uid], Transaction::class, [], [], true);
+        $data = [
+            'transaction' => $transaction,
+            'invoice' => $this->invoiceRepository->findOne(['id' => $transaction['refId']], Invoice::class, [
+                'details',
+                'customer',
+            ], [], true),
+            'company' => Company::find()->where(['agencyId' => Yii::$app->user->identity->agencyId])->asArray()->one(),
+        ];
+        pdfGenerator::makeMoneyReceipt($data, $fileName);
+    }
 }
