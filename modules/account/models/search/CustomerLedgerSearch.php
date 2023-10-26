@@ -50,7 +50,7 @@ class CustomerLedgerSearch extends Ledger
     {
         $query = Ledger::find();
         // add conditions that should always apply here
-        $query->with([])->where([self::tableName().'.status' => GlobalConstant::ACTIVE_STATUS])
+        $query->where([self::tableName().'.status' => GlobalConstant::ACTIVE_STATUS])
             ->andWhere([self::tableName().'.agencyId' => Yii::$app->user->identity->agencyId])
             ->andWhere([self::tableName().'.refModel' => Customer::class]);
 
