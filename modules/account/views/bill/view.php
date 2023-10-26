@@ -81,16 +81,6 @@ $this->params['breadcrumbs'][] = $this->title;
                                         <td><?= $service->costOfSale ?></td>
                                         <td><?= $service->paidAmount ?></td>
                                         <td><?= $billDetail->dueAmount ?></td>
-                                        <td>
-                                            <?php
-                                            $url = '/sale/' . Utilities::getServiceName($billDetail->refModel) . '/view';
-                                            echo Html::a('<i class="fa fa-info-circle"></i>', [$url, 'uid' => $service->uid],
-                                                [
-                                                    'title' => Yii::t('app', 'View More'),
-                                                    'target' => '_blank',
-                                                    'class' => 'btn btn-primary btn-xs',
-                                                ]) ?>
-                                        </td>
                                     </tr>
                                     <?php
                                 }
@@ -116,7 +106,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <th>Payment Mode</th>
                                     <th>Payment Date</th>
                                     <th>Payment Charge</th>
-                                    <th>Action</th>
+                                    <th>Remarks</th>
                                 </tr>
                                 </thead>
                                 <tbody id="t-body">
@@ -129,14 +119,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                         <td><?= $transaction->paymentMode ?></td>
                                         <td><?= $transaction->paymentDate ?></td>
                                         <td><?= $transaction->paymentCharge ?></td>
-                                        <td><?= Html::a('<i class="fa fa-money-bill-alt"></i>',
-                                                ['money-receipt', 'uid' => $transaction->uid],
-                                                [
-                                                    'title' => Yii::t('app', 'View Money Receipt'),
-                                                    'class' => 'btn btn-primary btn-xs',
-                                                    'target' => '_blank'
-                                                ]) ?>
-                                        </td>
+                                        <td><?= $transaction->remarks ?></td>
                                     </tr>
                                     <?php
                                 }

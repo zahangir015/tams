@@ -51,16 +51,16 @@
         },
         {
             "name": "aws/aws-crt-php",
-            "version": "v1.2.2",
+            "version": "v1.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/awslabs/aws-crt-php.git",
-                "reference": "2f1dc7b7eda080498be96a4a6d683a41583030e9"
+                "reference": "5545a4fa310aec39f54279fdacebcce33b3ff382"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/awslabs/aws-crt-php/zipball/2f1dc7b7eda080498be96a4a6d683a41583030e9",
-                "reference": "2f1dc7b7eda080498be96a4a6d683a41583030e9",
+                "url": "https://api.github.com/repos/awslabs/aws-crt-php/zipball/5545a4fa310aec39f54279fdacebcce33b3ff382",
+                "reference": "5545a4fa310aec39f54279fdacebcce33b3ff382",
                 "shasum": ""
             },
             "require": {
@@ -99,26 +99,26 @@
             ],
             "support": {
                 "issues": "https://github.com/awslabs/aws-crt-php/issues",
-                "source": "https://github.com/awslabs/aws-crt-php/tree/v1.2.2"
+                "source": "https://github.com/awslabs/aws-crt-php/tree/v1.2.3"
             },
-            "time": "2023-07-20T16:49:55+00:00"
+            "time": "2023-10-16T20:10:06+00:00"
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.283.2",
+            "version": "3.283.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "6616677d76e39af28138512740199d38a461859f"
+                "reference": "348b68edcc83062c329cf7540c4c92d061d27d9c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/6616677d76e39af28138512740199d38a461859f",
-                "reference": "6616677d76e39af28138512740199d38a461859f",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/348b68edcc83062c329cf7540c4c92d061d27d9c",
+                "reference": "348b68edcc83062c329cf7540c4c92d061d27d9c",
                 "shasum": ""
             },
             "require": {
-                "aws/aws-crt-php": "^1.0.4",
+                "aws/aws-crt-php": "^1.2.3",
                 "ext-json": "*",
                 "ext-pcre": "*",
                 "ext-simplexml": "*",
@@ -194,9 +194,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.283.2"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.283.11"
             },
-            "time": "2023-10-06T18:09:54+00:00"
+            "time": "2023-10-24T18:10:38+00:00"
         },
         {
             "name": "bower-asset/bootstrap",
@@ -221,16 +221,16 @@
         },
         {
             "name": "bower-asset/inputmask",
-            "version": "3.3.11",
+            "version": "5.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/RobinHerbots/Inputmask.git",
-                "reference": "5e670ad62f50c738388d4dcec78d2888505ad77b"
+                "reference": "e0f39e0c93569c6b494c3a57edef2c59313a6b64"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/RobinHerbots/Inputmask/zipball/5e670ad62f50c738388d4dcec78d2888505ad77b",
-                "reference": "5e670ad62f50c738388d4dcec78d2888505ad77b"
+                "url": "https://api.github.com/repos/RobinHerbots/Inputmask/zipball/e0f39e0c93569c6b494c3a57edef2c59313a6b64",
+                "reference": "e0f39e0c93569c6b494c3a57edef2c59313a6b64"
             },
             "require": {
                 "bower-asset/jquery": ">=1.7"
@@ -260,16 +260,16 @@
         },
         {
             "name": "bower-asset/punycode",
-            "version": "v1.3.2",
+            "version": "v2.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mathiasbynens/punycode.js.git",
-                "reference": "38c8d3131a82567bfef18da09f7f4db68c84f8a3"
+                "reference": "46d412120e2feb868876769a9847790ba278c882"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mathiasbynens/punycode.js/zipball/38c8d3131a82567bfef18da09f7f4db68c84f8a3",
-                "reference": "38c8d3131a82567bfef18da09f7f4db68c84f8a3"
+                "url": "https://api.github.com/repos/mathiasbynens/punycode.js/zipball/46d412120e2feb868876769a9847790ba278c882",
+                "reference": "46d412120e2feb868876769a9847790ba278c882"
             },
             "type": "bower-asset"
         },
@@ -1272,16 +1272,16 @@
         },
         {
             "name": "hail812/yii2-adminlte3",
-            "version": "v1.1.8",
+            "version": "v1.1.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hail812/yii2-adminlte3.git",
-                "reference": "df2c9892a2856e3070374ce9856494033d5e5694"
+                "reference": "bcdec8f5e2f9caf7f3a34fad8cdfdd5dbc3a9c31"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hail812/yii2-adminlte3/zipball/df2c9892a2856e3070374ce9856494033d5e5694",
-                "reference": "df2c9892a2856e3070374ce9856494033d5e5694",
+                "url": "https://api.github.com/repos/hail812/yii2-adminlte3/zipball/bcdec8f5e2f9caf7f3a34fad8cdfdd5dbc3a9c31",
+                "reference": "bcdec8f5e2f9caf7f3a34fad8cdfdd5dbc3a9c31",
                 "shasum": ""
             },
             "require": {
@@ -1315,9 +1315,9 @@
             ],
             "support": {
                 "issues": "https://github.com/hail812/yii2-adminlte3/issues",
-                "source": "https://github.com/hail812/yii2-adminlte3/tree/v1.1.8"
+                "source": "https://github.com/hail812/yii2-adminlte3/tree/v1.1.9"
             },
-            "time": "2022-04-16T06:46:23+00:00"
+            "time": "2023-10-23T05:58:30+00:00"
         },
         {
             "name": "himiklab/yii2-recaptcha-widget",
@@ -4542,22 +4542,22 @@
         },
         {
             "name": "yiisoft/yii2",
-            "version": "2.0.49.1",
+            "version": "2.0.49.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/yii2-framework.git",
-                "reference": "f3d608c338860699d9e12238835e212048f49aa1"
+                "reference": "7d38bf7584acbe838a8d08e40e949b6393162441"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-framework/zipball/f3d608c338860699d9e12238835e212048f49aa1",
-                "reference": "f3d608c338860699d9e12238835e212048f49aa1",
+                "url": "https://api.github.com/repos/yiisoft/yii2-framework/zipball/7d38bf7584acbe838a8d08e40e949b6393162441",
+                "reference": "7d38bf7584acbe838a8d08e40e949b6393162441",
                 "shasum": ""
             },
             "require": {
-                "bower-asset/inputmask": "~3.2.2 | ~3.3.5",
+                "bower-asset/inputmask": "~3.2.2 | ~3.3.5 | ~5.0.8 ",
                 "bower-asset/jquery": "3.7.*@stable | 3.6.*@stable | 3.5.*@stable | 3.4.*@stable | 3.3.*@stable | 3.2.*@stable | 3.1.*@stable | 2.2.*@stable | 2.1.*@stable | 1.11.*@stable | 1.12.*@stable",
-                "bower-asset/punycode": "1.3.*",
+                "bower-asset/punycode": "1.3.* | 2.2.*",
                 "bower-asset/yii2-pjax": "~2.0.1",
                 "cebe/markdown": "~1.0.0 | ~1.1.0 | ~1.2.0",
                 "ext-ctype": "*",
@@ -4660,7 +4660,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-08-29T13:36:45+00:00"
+            "time": "2023-10-12T15:46:26+00:00"
         },
         {
             "name": "yiisoft/yii2-bootstrap",

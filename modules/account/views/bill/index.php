@@ -28,7 +28,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     return Url::to([$action, 'uid' => $model->uid]);
                 },
                 'width' => '150px',
-                'template' => '{view} {payment} {download} {delete}',
+                'template' => '{view} {payment}',
                 'viewOptions' => ['role' => 'modal-remote', 'title' => 'View', 'data-toggle' => 'tooltip'],
                 'buttons' => [
                     'view' => function ($url, $model) {

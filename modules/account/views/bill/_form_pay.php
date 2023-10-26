@@ -297,6 +297,11 @@ $this->registerJsFile(
                     </div>
                     <div class="row">
                         <div class="col-md">
+                            <?= $form->field($transaction, 'remarks')->textInput()->label('Supplier Bank Detail'); ?>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md">
                             <div id="files" style="background-color: #FFFFFF; padding: 10px;">
                                 <?= $form->field($model, 'billFile[]')->widget(FileInput::class, [
                                     'options' => [
