@@ -24,6 +24,7 @@ use yii\db\ActiveRecord;
  * @property float $paymentCharge
  * @property string $paymentDate
  * @property string|null $paymentMode
+ * @property string|null $remarks
  * @property int|null $status
  * @property int $createdBy
  * @property int $createdAt
@@ -61,7 +62,7 @@ class Transaction extends ActiveRecord
             [['uid'], 'string', 'max' => 36],
             [['transactionNumber'], 'string', 'max' => 64],
             [['refModel', 'subRefModel'], 'string', 'max' => 150],
-            [['reference'], 'string', 'max' => 255],
+            [['reference', 'remarks'], 'string', 'max' => 255],
             [['uid'], 'unique'],
             [['bankId'], 'exist', 'skipOnError' => true, 'targetClass' => BankAccount::className(), 'targetAttribute' => ['bankId' => 'id']],
         ];

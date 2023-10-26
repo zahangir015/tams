@@ -302,7 +302,7 @@ class BillService
             $updatableServices[] = [
                 'refModel' => $service['refModel'],
                 'query' => ['id' => $service['refId']],
-                'data' => ['billId' => $bill->id]
+                'data' => ['billId' => $bill->id, 'paidAmount' => $service['paidAmount']]
             ];
         }
 
