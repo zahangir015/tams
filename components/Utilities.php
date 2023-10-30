@@ -963,4 +963,9 @@ class Utilities
         return 'CNT' . date('ymdhis') . rand(9, 999);
     }
 
+    public static function advancePaymentIdentificationNumberGenerator(): string
+    {
+        return 'ADV' . date('ymdhis') . rand(9, 999);
+    }
+
 }
