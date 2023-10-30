@@ -163,6 +163,9 @@ $this->registerJsFile(
                     </div>
                     <div class="row">
                         <div class="col-md">
+                            <?= $form->field($ticketRefund, 'refundedAmount')->textInput(['type' => 'number', 'readOnly' => true, 'value' => 0]) ?>
+                        </div>
+                        <div class="col-md">
                             <?= $form->field($ticketRefund, 'refundMedium')->dropdownList(ServiceConstant::REFUND_MEDIUM, ['prompt' => 'Select refund medium...']) ?>
                         </div>
                         <div class="col-md">

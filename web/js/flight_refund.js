@@ -13,7 +13,6 @@ $(function () {
         var serviceCharge = parseFloat($('#ticketrefund-servicecharge').val());
         var costOfSale = parseFloat($('#ticket-costofsale').val());
         quoteAmount = costOfSale + serviceCharge;
-        console.log(quoteAmount)
         $('#ticket-quoteamount').val(quoteAmount);
     });
 
@@ -30,6 +29,7 @@ $(function () {
             success: function (cost) {
                 var airlineCharge = parseFloat($('#ticketrefund-airlinerefundcharge').val());
                 var supplierCharge = parseFloat($('#ticketrefund-supplierrefundcharge').val());
+                var received = parseFloat($('#ticket-receivedamount').val());
                 var costOfSale = parseFloat(cost)
                 costOfSale += parseFloat(airlineCharge + supplierCharge)
                 $('#ticket-costofsale').val(costOfSale);
@@ -37,6 +37,7 @@ $(function () {
                 var serviceCharge = parseFloat($('#ticketrefund-servicecharge').val());
                 quoteAmount = parseFloat(costOfSale + serviceCharge);
                 $('#ticket-quoteamount').val(quoteAmount);
+                $('#ticketrefund-refundedamount').val((quoteAmount - received));
             },
             error: function (error) {
                 console.log(error)

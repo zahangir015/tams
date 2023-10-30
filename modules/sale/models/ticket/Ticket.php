@@ -62,6 +62,7 @@ use yii\db\ActiveRecord;
  * @property string|null $baggage
  * @property double|null $referenceCommission
  * @property int $status
+ * @property string $flightStatus
  * @property int $createdBy
  * @property int $createdAt
  * @property int|null $updatedBy
@@ -103,7 +104,7 @@ class Ticket extends ActiveRecord
             [['customerCategory'], 'string', 'max' => 10],
             [['paxName'], 'string', 'max' => 120],
             [['paxType'], 'string', 'max' => 1],
-            [['eTicket', 'pnrCode'], 'string', 'max' => 50],
+            [['eTicket', 'pnrCode', 'flightStatus'], 'string', 'max' => 50],
             [['seatClass', 'reference', 'route', 'baggage', 'refundPolicy'], 'string', 'max' => 255],
             [['uid'], 'unique'],
             [['airlineId'], 'exist', 'skipOnError' => true, 'targetClass' => Airline::class, 'targetAttribute' => ['airlineId' => 'id']],
@@ -133,7 +134,7 @@ class Ticket extends ActiveRecord
             'pnrCode' => Yii::t('app', 'Pnr Code'),
             'type' => Yii::t('app', 'Type'),
             'tripType' => Yii::t('app', 'Trip Type'),
-            'bookedOnline' => Yii::t('app', 'Booked Online'),
+            'bookedOnline' => Yii::t('app', 'Source Of Sale'),
             'flightType' => Yii::t('app', 'Flight Type'),
             'seatClass' => Yii::t('app', 'Seat Class'),
             'codeShare' => Yii::t('app', 'Code Share'),
