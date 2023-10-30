@@ -1,23 +1,19 @@
 <?php
 
-use app\components\Utilities;
 use app\components\WidgetHelper;
-use app\modules\account\components\AccountConstant;
 use app\modules\account\models\Ledger;
 use kartik\daterange\DateRangePicker;
 use yii\helpers\Html;
 use yii\helpers\Url;
-use kartik\grid\ActionColumn;
 use kartik\grid\GridView;
+/** @var yii\web\View $this */
+/** @var app\modules\account\models\search\AdvancePaymentSearch $searchModel */
+/** @var yii\data\ActiveDataProvider $dataProvider */
 
-/* @var $this yii\web\View */
-/* @var $searchModel app\modules\account\models\LedgerSearch */
-/* @var $dataProvider yii\data\ActiveDataProvider */
-
-$this->title = Yii::t('app', 'Customer Ledgers');
+$this->title = Yii::t('app', 'Customer Advance Payments');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="ledger-index">
+<div class="advance-payment-index">
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
@@ -43,7 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 ]
             ],
-            'title',
+            'identificationNumber',
             [
                 'attribute' => 'date',
                 'label' => 'Date',
@@ -63,35 +59,33 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => function ($model) {
                     return Ledger::getReferenceName($model->refId, $model->refModel);
                 },
-                'filter' => kartik\select2\Select2::widget(WidgetHelper::ajaxSelect2Widget('CustomerLedgerSearch[refId]', '/sale/customer/get-customers', false, 'refId', 'refId'))
+                'filter' => kartik\select2\Select2::widget(WidgetHelper::ajaxSelect2Widget('AdvancePaymentSearch[refId]', '/sale/customer/get-customers', false, 'refId', 'refId'))
             ],
+            'bankId',
+            'paidAmount',
+            'remarks:ntext',
             [
-                'attribute' => 'reference',
-            ],
-            [
-                'attribute' => 'debit',
+                'attribute' => 'paidAmount',
                 'format' => ['decimal', 2],
                 'pageSummary' => true,
                 'pageSummaryFunc' => GridView::F_SUM,
             ],
             [
-                'attribute' => 'credit',
+                'attribute' => 'processedAmount',
                 'format' => ['decimal', 2],
                 'pageSummary' => true,
                 'pageSummaryFunc' => GridView::F_SUM,
             ],
-            [
-                'attribute' => 'balance',
-                'format' => ['decimal', 2],
-                'pageSummary' => true,
-                'pageSummaryFunc' => GridView::F_SUM,
-            ],
-            'createdBy',
+
         ],
         'toolbar' => [
             [
                 'content' =>
-                    Html::a('<i class="fas fa-redo"></i>', ['/account/ledger/customer-ledger'], [
+                    Html::a('<i class="fas fa-plus"></i>', ['/account/advance-payment/create'], [
+                        'title' => Yii::t('app', 'Add Advance Payment'),
+                        'class' => 'btn btn-success'
+                    ]) . ' ' .
+                    Html::a('<i class="fas fa-redo"></i>', ['/account/advance-payment/index'], [
                         'class' => 'btn btn-primary',
                         'title' => Yii::t('app', 'Reset Grid')
                     ]),

@@ -295,6 +295,16 @@ $items = [
         'items' => [
             ['label' => 'Bank Accounts', 'icon' => 'building', 'url' => ['/account/bank-account'], 'visible' => Helper::checkRoute('/account/bank-account/')],
             ['label' => 'Contra Entry', 'icon' => 'arrow-right', 'url' => ['/account/contra-entry'], 'visible' => Helper::checkRoute('/account/contra-entry/')],
+            ['label' => 'Advance Payment', 'icon' => 'dollar-sign', 'url' => ['/account/advance-payment'], 'visible' => Helper::checkRoute('/account/advance-payment/')],
+            [
+                'label' => 'Advance Management',
+                'icon' => 'file-invoice-dollar',
+                'items' => [
+                    ['label' => 'Add Advance Pay', 'icon' => 'plus-circle', 'url' => ['/account/advance-payment/create'], 'visible' => Helper::checkRoute('/account/advance-payment/create')],
+                    ['label' => 'Customer Payments', 'icon' => 'list', 'url' => ['/account/advance-payment/index'], 'visible' => Helper::checkRoute('/account/advance-payment/')],
+                    ['label' => 'Supplier Payments', 'icon' => 'list', 'url' => ['/account/advance-payment/supplier-advance-payment'], 'visible' => Helper::checkRoute('/account/advance-payment/')],
+                ]
+            ],
             [
                 'label' => 'Invoice Management',
                 'icon' => 'file-invoice-dollar',

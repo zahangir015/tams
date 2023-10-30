@@ -39,6 +39,11 @@ final class AccountConstant
         BankAccount::class => 'Bank',
     ];
 
+    const WITHOUT_BANK_REF_MODEL = [
+        Customer::class => 'Customer',
+        Supplier::class => 'Supplier',
+    ];
+
     const SUB_REF_MODEL = [
         Invoice::class => 'Invoice',
         Bill::class => 'Bill',
