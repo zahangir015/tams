@@ -181,7 +181,7 @@ class TicketController extends ParentController
     public function actionRefund(string $uid): Response|string
     {
         $motherTicket = $this->flightService->findTicket($uid, Ticket::class, ['airline', 'provider', 'customer', 'ticketSupplier']);
-        $totalReceivedAmount = 0;
+        $totalReceivedAmount = $motherTicket->receivedAmount;
         if (($motherTicket->type == ServiceConstant::TYPE['Refund']) || ($motherTicket->type == ServiceConstant::TYPE['Refund Requested'])) {
             Yii::$app->session->setFlash('error', 'Refund and Refund Requested Ticket can not be refunded.');
             return $this->redirect(Yii::$app->request->referrer);
@@ -190,6 +190,7 @@ class TicketController extends ParentController
                 Yii::$app->session->setFlash('error', 'This New ticket has a child ticket.');
                 return $this->redirect(Yii::$app->request->referrer);
             }
+            $totalReceivedAmount = $motherTicket->receivedAmount;
         } elseif ($motherTicket->type == ServiceConstant::TYPE['Reissue']) {
             if (!$motherTicket->motherTicketId) {
                 Yii::$app->session->setFlash('error', 'Parent Ticket not found');
@@ -331,5 +332,19 @@ class TicketController extends ParentController
             ->andWhere([Ticket::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
             ->andWhere([Ticket::tableName() . '.agencyId' => Yii::$app->user->identity->agencyId])
             ->one();
+    }
+
+    public function actionUpdateFlightStatus()
+    {
+        if (isset($_POST['hasEditable'])) {
+            $model = Ticket::findOne(['id' => $_POST['editableKey']]); // your model can be loaded here
+            $model->flightStatus = $_POST['Ticket'][$_POST['editableIndex']]['flightStatus'];
+            if (!$model->save()) {
+                return json_encode($model->getErrors());
+            }
+            return json_encode($_POST);
+        }
+
+        return json_encode($_POST);
     }
 }

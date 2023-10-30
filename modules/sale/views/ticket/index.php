@@ -3,6 +3,7 @@
 use app\components\GlobalConstant;
 use app\modules\sale\components\ServiceConstant;
 use kartik\daterange\DateRangePicker;
+use kartik\editable\Editable;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use kartik\grid\GridView;
@@ -157,6 +158,30 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
                 'filter' => ServiceConstant::FLIGHT_TYPE
             ],
+            /*[
+                'class' => 'kartik\grid\EditableColumn',
+                'attribute' => 'flightStatus',
+                'readonly' => function ($model, $key, $index, $widget) {
+                    return false; // do not allow editing of inactive records
+                },
+                'editableOptions' => function ($model, $key, $index) {
+                    return [
+                        'header' => 'Flight Status',
+                        'inputType' => \kartik\editable\Editable::INPUT_DROPDOWN_LIST,
+                        //'data' => ServiceConstant::FLIGHT_STATUS,
+                        'options' => [
+                            'id' => $index . '_' . $model->id,
+                        ],
+                        'formOptions' => [
+                            'id' => 'flightStatus_' . $model->id,
+                            'action' => ['/sale/ticket/update-flight-status']
+                        ]
+                    ];
+                },
+                'hAlign' => 'right',
+                'vAlign' => 'middle',
+                'width' => '7%',
+            ],*/
             [
                 'attribute' => 'seatClass',
                 'value' => function($model){

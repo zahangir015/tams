@@ -48,6 +48,7 @@ final class ServiceConstant
     const BOOKING_TYPE = ['Offline', 'Online'];
     const FLIGHT_TYPE = ['Domestic', 'International', 'SOTO'];
     const PAYMENT_STATUS = ['Due' => 'Due', 'Partially Paid' => 'Partially Paid', 'Full Paid' => 'Full Paid'];
+    const FLIGHT_STATUS = ['Issued' => 'Issued', 'Cancelled' => 'Cancelled', 'flown' => 'flown', 'No Show' => 'No Show', 'Deportee' => 'Deportee'];
     const REFUND_TYPE = ['NO SHOW' => 'NO SHOW', 'NOT NO SHOW' => 'NOT NO SHOW', 'TAX REFUND' => 'TAX REFUND', 'HALF PORTION REFUND' => 'HALF PORTION REFUND', 'FULL REFUND' => 'FULL REFUND', 'VOID' => 'VOID', 'HALF PORTION TAX REFUND' => 'HALF PORTION TAX REFUND'];
     const REFUND_STATUS = ['Refund Submitted' => 'Refund Submitted','Refund Received' => 'Refund Received','Refund Paid' => 'Refund Paid','Refund Adjusted' => 'Refund Adjusted'];
     const REFUND_MEDIUM = ['GDS' => 'GDS', 'BSP' => 'BSP', 'SUPPLIER' => 'SUPPLIER'];
