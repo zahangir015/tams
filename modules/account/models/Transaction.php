@@ -38,6 +38,7 @@ class Transaction extends ActiveRecord
     use BehaviorTrait;
 
     public $refundIds;
+    public $advancePayments;
 
     /**
      * {@inheritdoc}

@@ -12,13 +12,13 @@ use app\modules\sale\models\ticket\Ticket;
 use app\modules\sale\models\visa\Visa;
 use Yii;
 use yii\db\Expression;
+use yii\web\Controller;
 
-class AccountReportController
+class AccountReportController extends Controller
 {
 
     public function actionProfitLoss($dateRange = '')
     {
-
         if (!is_null($dateRange) && strpos($dateRange, '-') !== false) {
             list($start_date, $end_date) = explode(' - ', $dateRange);
             $date = date('jS \of F', strtotime($start_date)) . ' to ' . date('jS \of F', strtotime($end_date));
@@ -49,14 +49,14 @@ class AccountReportController
             ->orderBy('total DESC')
             ->asArray()->one();
         $salesData['Flight'] = [
-            'category' => $flightData['customerCategory'],
             'qty' => $flightData['total'],
             'totalSegments' => $flightData['numberOfSegment'],
             'gross' => ($flightData['baseFare'] + $flightData['tax'] + $flightData['otherTax']),
             'totalQuote' => $flightData['quoteAmount'],
+            'totalCost' => $flightData['costOfSale'],
             'totalReceived' => $flightData['receivedAmount'],
             'totalDue' => ($flightData['quoteAmount'] - $flightData['receivedAmount']),
-            'netProfit' => $flightData['netProfit'],
+            'totalNetProfit' => $flightData['netProfit'],
         ];
 
         // Holiday Data
@@ -77,12 +77,12 @@ class AccountReportController
             ->asArray()->one();
 
         $salesData['Holiday'] = [
-            'category' => $holidayData['customerCategory'],
             'qty' => $holidayData['total'],
             'totalQuote' => $holidayData['quoteAmount'],
             'totalReceived' => $holidayData['receivedAmount'],
+            'totalCost' => $holidayData['costOfSale'],
             'totalDue' => ($holidayData['quoteAmount'] - $holidayData['receivedAmount']),
-            'netProfit' => $holidayData['netProfit'],
+            'totalNetProfit' => $holidayData['netProfit'],
         ];
         // Hotel Data
         $hotelData = Hotel::find()
@@ -92,7 +92,6 @@ class AccountReportController
                 new Expression('SUM(hotel.quoteAmount) as quoteAmount'),
                 new Expression('SUM(hotel.receivedAmount) as receivedAmount'),
                 new Expression('SUM(hotel.netProfit) as netProfit'),
-                'customerCategory'
             ])
             ->where(['<=', Hotel::tableName() . '.refundRequestDate', $end_date])
             ->orWhere(['IS', Hotel::tableName() . '.refundRequestDate', NULL])
@@ -103,12 +102,12 @@ class AccountReportController
             ->asArray()->one();
 
         $salesData['Hotel'] = [
-            'category' => $hotelData['customerCategory'],
             'qty' => $hotelData['total'],
             'totalQuote' => $hotelData['quoteAmount'],
             'totalReceived' => $hotelData['receivedAmount'],
+            'totalCost' => $holidayData['costOfSale'],
             'totalDue' => ($hotelData['quoteAmount'] - $hotelData['receivedAmount']),
-            'netProfit' => $hotelData['netProfit'],
+            'totalNetProfit' => $hotelData['netProfit'],
         ];
         // Visa Data
         $visaData = Visa::find()
@@ -128,450 +127,45 @@ class AccountReportController
             ->asArray()->one();
 
         $salesData['Visa'] = [
-            'category' => $visaData['customerCategory'],
             'qty' => $visaData['total'],
             'totalQuote' => $visaData['quoteAmount'],
             'totalReceived' => $visaData['receivedAmount'],
+            'totalCost' => $holidayData['costOfSale'],
             'totalDue' => ($visaData['quoteAmount'] - $visaData['receivedAmount']),
-            'netProfit' => $visaData['netProfit'],
+            'totalNetProfit' => $visaData['netProfit'],
         ];
 
         $expenseData = [];
         $expenseSum = [];
 
         $expenses = Expense::find()
+            ->with(['category', 'subCategory'])
             ->select([
                 new Expression('COUNT(id) as total'),
-                new Expression('SUM(amount) as amount'),
-                new Expression('SUM(paidAmount) as paidAmount'),
-                new Expression('SUM(dueAmount) as dueAmount'),
+                new Expression('SUM(totalCost) as totalCost'),
+                new Expression('SUM(totalPaid) as totalPaid'),
+                new Expression('SUM(totalCost - totalPaid) as dueAmount'),
                 'categoryId',
-                'date(dateOfTransaction) AS dateOfTransaction'])
-            ->where(['dateOfTransaction' => date('Y-m-d')])
-            ->groupBy(['catId'])
+                'subCategoryId'])
+            ->where(['between', 'accruingMonth', $start_date, $end_date])
+            ->groupBy(['categoryId', 'subCategoryId'])
             ->orderBy('total DESC')
             ->all();
 
         if ($expenses) {
-            $expenseSum[date('Y-m-d')] = 0;
+            $expenseSum = 0;
             foreach ($expenses as $key => $expense) {
-                $expenseSum[date('Y-m-d')] = $expenseSum[date('Y-m-d')] + $expense->amount;
-                $category = ExpenseCategory::findOne(['id' => $expense->categoryId])->title;
-                $expenseData[$category]['sum'] = $expense;
-                $subCategories = Expense::find()
-                    ->select([
-                        new Expression('COUNT(id) as total'),
-                        new Expression('SUM(amount) as amount'),
-                        new Expression('SUM(paidAmount) as paidAmount'),
-                        new Expression('SUM(dueAmount) as dueAmount'), 'subCatId', 'dateOfTransaction'])
-                    ->where(['date(dateOfTransaction)' => date('Y-m-d')])
-                    ->andWhere(['catId' => $expense->catId])
-                    ->groupBy(['subCatId'])
-                    ->orderBy('total DESC')
-                    ->all();
-                foreach ($subCategories as $subCategory) {
-                    $subcat = ExpenseSubCategory::findOne(['id' => $subCategory->subCategoryId])->title;
-                    $expenseData[$category][$subcat][date('Y-m')] = $subCategory;
+                $expenseSum += $expense->totalCost;
+                if (isset($expenseData[$expense->category->name])) {
+                    $expenseData[$expense->category->name]['sum'] += $expense->totalCost;
+                } else {
+                    $expenseData[$expense->category->name]['sum'] = $expense->totalCost;
                 }
             }
         }
 
-
-        $monthWiseData = [];
-
-
-        if (!is_null($dateRange) && strpos($dateRange, '-') !== false) {
-            list($start_date, $end_date) = explode(' - ', $dateRange);
-            $date1 = DateTime::createFromFormat('Y-m-d', $start_date);
-            $date2 = DateTime::createFromFormat('Y-m-d', $end_date);
-            $diff = $date1->diff($date2)->m;
-            if ($diff >= 1) {
-                $start = (new DateTime($start_date))->modify('first day of this month');
-                $end = (new DateTime($end_date))->modify('first day of next month');
-                $interval = DateInterval::createFromDateString('1 month');
-                $period = new DatePeriod($start, $interval, $end);
-
-                foreach ($period as $dt) {
-                    $refundedTickets = Tickets::find()
-                        ->select([
-                            new Expression('COUNT(id) as total'),
-                            new Expression('SUM(quoteAmount) as quoteAmount'),
-                            new Expression('SUM(actualQuoteAmount) as actualQuoteAmount'),
-                            new Expression('SUM(payToAgent) as payToAgent'),
-                            new Expression('SUM(actualPayToAgent) as actualPayToAgent'),
-                            new Expression('SUM(receivedAmount) as receivedAmount'),
-                            new Expression('SUM(serviceCharge) as serviceCharge'),
-                            'ticketNo',
-                        ])
-                        ->where(['between', 'refundRequestDate', $dt->format("Y-m-d"), $dt->format("Y-m-t")])
-                        ->andWhere(['type' => Tickets::TYPE['Refund']])
-                        ->groupBy(['ticketNo'])
-                        ->all();
-                    $voidTickets = Tickets::find()
-                        ->select([
-                            new Expression('COUNT(id) as total'),
-                            new Expression('SUM(quoteAmount) as quoteAmount'),
-                            new Expression('SUM(actualQuoteAmount) as actualQuoteAmount'),
-                            new Expression('SUM(payToAgent) as payToAgent'),
-                            new Expression('SUM(actualPayToAgent) as actualPayToAgent'),
-                            new Expression('SUM(receivedAmount) as receivedAmount'),
-                            new Expression('SUM(serviceCharge) as serviceCharge'),
-                            'ticketNo',
-                        ])
-                        ->where(['between', 'refundRequestDate', $dt->format("Y-m-d"), $dt->format("Y-m-t")])
-                        ->andWhere(['type' => Tickets::TYPE['Refund']])
-                        ->andWhere(['refundStatus' => Tickets::REFUND_STATUS['VOID']])
-                        ->one();
-                    $ticketNumbers = ArrayHelper::map($refundedTickets, 'ticketNo', 'quoteAmount');
-                    $monthWiseData[$dt->format("Y-m")]['ticket'] = Tickets::find()
-                        ->select([
-                            new Expression('COUNT(id) as total'),
-                            new Expression('SUM(segment) as segment'),
-                            new Expression('SUM(quoteAmount) as quoteAmount'),
-                            new Expression('SUM(payToAgent) as payToAgent'),
-                            new Expression('SUM(receivedAmount) as receivedAmount'),
-                            new Expression('SUM(payToAgent-paidAmount) as payableToAgent'),
-                            new Expression('SUM(baseFare) as baseFare'),
-                            new Expression('SUM(tax) as tax'),
-                            new Expression('SUM(otherTax) as otherTax'),
-                            new Expression('SUM(serviceCharge) as serviceCharge'),
-                            new Expression('SUM(commissionReceived) as commissionReceived'),
-                            new Expression('SUM(incentiveReceived) as incentiveReceived')
-                        ])
-                        ->where(['between', 'issueDate', $dt->format("Y-m-d"), $dt->format("Y-m-t")])
-                        ->andWhere(['NOT IN', 'ticketNo', array_keys($ticketNumbers)])
-                        ->andWhere(['<>', 'type', Tickets::TYPE['Refund']])
-                        ->andWhere(['<>', 'paymentStatus', Tickets::PAYMENT_STATUS['Refund Adjustment']])
-                        ->orderBy('total DESC')->one();
-                    $monthWiseData[$dt->format("Y-m")]['ticket']->refundData['quoteAmount'] = (array_sum(ArrayHelper::map($refundedTickets, 'ticketNo', 'quoteAmount')) - $voidTickets->quoteAmount);
-                    $monthWiseData[$dt->format("Y-m")]['ticket']->refundData['payToAgent'] = (array_sum(ArrayHelper::map($refundedTickets, 'ticketNo', 'payToAgent')) - $voidTickets->payToAgent);
-                    $monthWiseData[$dt->format("Y-m")]['ticket']->refundData['actualQuoteAmount'] = (array_sum(ArrayHelper::map($refundedTickets, 'ticketNo', 'actualQuoteAmount')) - $voidTickets->actualQuoteAmount);
-                    $monthWiseData[$dt->format("Y-m")]['ticket']->refundData['actualPayToAgent'] = (array_sum(ArrayHelper::map($refundedTickets, 'ticketNo', 'actualPayToAgent')) - $voidTickets->actualPayToAgent);
-                    $monthWiseData[$dt->format("Y-m")]['ticket']->refundData['serviceCharge'] = (array_sum(ArrayHelper::map($refundedTickets, 'ticketNo', 'serviceCharge')) - $voidTickets->serviceCharge);
-                    $monthWiseData[$dt->format("Y-m")]['ticket']->refundData['total'] = (array_sum(ArrayHelper::map($refundedTickets, 'ticketNo', 'total')) - $voidTickets->total);
-
-                    $monthWiseData[$dt->format("Y-m")]['Package'] = Packages::find()
-                        ->select([
-                            new Expression('COUNT(id) as total'),
-                            new Expression('SUM(totalCostOfSale) as totalCostOfSale'),
-                            new Expression('SUM(quoteAmount) as quoteAmount'),
-                            new Expression('SUM(receivedAmount) as receivedAmount'),
-                            new Expression('SUM(quoteAmount-receivedAmount) as sum'),
-                            new Expression('SUM(netProfit) as netProfit')])
-                        ->where(['between', 'issueDate', $dt->format("Y-m-d"), $dt->format("Y-m-t")])
-                        ->one();
-
-                    $monthWiseData[$dt->format("Y-m")]['Hotel'] = Hotel::find()
-                        ->select([
-                            new Expression('COUNT(id) as total'),
-                            new Expression('SUM(totalCostOfSale) as totalCostOfSale'),
-                            new Expression('SUM(quoteAmount) as quoteAmount'),
-                            new Expression('SUM(receivedAmount) as receivedAmount'),
-                            new Expression('SUM(quoteAmount-receivedAmount) as sum'),
-                            new Expression('SUM(netProfit) as netProfit')])
-                        ->where(['between', 'issueDate', $dt->format("Y-m-d"), $dt->format("Y-m-t")])
-                        ->one();
-
-                    $monthWiseData[$dt->format("Y-m")]['visa'] = Visas::find()
-                        ->select([
-                            new Expression('SUM(totalQty) as total'),
-                            new Expression('SUM(totalCostOfSale) as totalCostOfSale'),
-                            new Expression('SUM(quoteAmount) as quoteAmount'),
-                            new Expression('SUM(receivedAmount) as receivedAmount'),
-                            new Expression('SUM(netProfit) as netProfit')])
-                        ->where(['between', 'visas.issueDate', $dt->format("Y-m-d"), $dt->format("Y-m-t")])->one();
-
-                    $expenses = Expense::find()
-                        ->select([
-                            new Expression('COUNT(id) as total'),
-                            new Expression('SUM(amount) as amount'),
-                            new Expression('SUM(paidAmount) as paidAmount'),
-                            new Expression('SUM(dueAmount) as dueAmount'), 'catId', 'date(dateOfTransaction) AS dateOfTransaction'])
-                        ->where(['between', 'dateOfTransaction', $dt->format("Y-m-d"), $dt->format("Y-m-t")])->groupBy(['catId'])
-                        ->orderBy('total DESC')
-                        ->all();
-                    if ($expenses) {
-                        $expenseSum[$dt->format("Y-m")] = 0;
-                        foreach ($expenses as $key => $expense) {
-                            $expenseSum[$dt->format("Y-m")] = $expenseSum[$dt->format("Y-m")] + $expense->amount;
-                        }
-
-                        foreach ($expenses as $key => $expense) {
-                            $category = ExpenditureCat::findOne(['id' => $expense->catId])->title;
-                            $expenseData[$category]['sum'] = $expense;
-                            $subCategories = Expense::find()
-                                ->select([
-                                    new Expression('COUNT(id) as total'),
-                                    new Expression('SUM(amount) as amount'),
-                                    new Expression('SUM(paidAmount) as paidAmount'),
-                                    new Expression('SUM(dueAmount) as dueAmount'), 'subCatId', 'dateOfTransaction'])
-                                ->where(['between', 'date(dateOfTransaction)', $dt->format("Y-m-d"), $dt->format("Y-m-t")])
-                                ->andWhere(['catId' => $expense->catId])
-                                ->groupBy(['subCatId'])
-                                ->orderBy('total DESC')
-                                ->all();
-                            foreach ($subCategories as $subCategory) {
-                                $subcat = ExpenditureSubCat::findOne(['id' => $subCategory->subCatId])->title;
-                                $expenseData[$category][$subcat][$dt->format("Y-m")] = $subCategory;
-                            }
-                        }
-                    }
-                }
-            } else {
-
-                $refundedTickets = Tickets::find()
-                    ->select([
-                        new Expression('COUNT(id) as total'),
-                        new Expression('SUM(quoteAmount) as quoteAmount'),
-                        new Expression('SUM(actualQuoteAmount) as actualQuoteAmount'),
-                        new Expression('SUM(payToAgent) as payToAgent'),
-                        new Expression('SUM(actualPayToAgent) as actualPayToAgent'),
-                        new Expression('SUM(receivedAmount) as receivedAmount'),
-                        new Expression('SUM(serviceCharge) as serviceCharge'),
-                        'ticketNo',
-                    ])
-                    ->where(['between', 'refundRequestDate', $start_date, $end_date])
-                    ->andWhere(['type' => Tickets::TYPE['Refund']])
-                    ->groupBy(['ticketNo'])
-                    ->all();
-                $voidTickets = Tickets::find()
-                    ->select([
-                        new Expression('COUNT(id) as total'),
-                        new Expression('SUM(quoteAmount) as quoteAmount'),
-                        new Expression('SUM(actualQuoteAmount) as actualQuoteAmount'),
-                        new Expression('SUM(payToAgent) as payToAgent'),
-                        new Expression('SUM(actualPayToAgent) as actualPayToAgent'),
-                        new Expression('SUM(receivedAmount) as receivedAmount'),
-                        new Expression('SUM(serviceCharge) as serviceCharge'),
-                        'ticketNo',
-                    ])
-                    ->where(['between', 'refundRequestDate', $start_date, $end_date])
-                    ->andWhere(['type' => Tickets::TYPE['Refund']])
-                    ->andWhere(['refundStatus' => Tickets::REFUND_STATUS['VOID']])
-                    ->one();
-                $ticketNumbers = ArrayHelper::map($refundedTickets, 'ticketNo', 'quoteAmount');
-                $monthWiseData[date('Y-m', strtotime($start_date))]['ticket'] = Tickets::find()
-                    ->select([
-                        new Expression('COUNT(id) as total'),
-                        new Expression('SUM(segment) as segment'),
-                        new Expression('SUM(quoteAmount) as quoteAmount'),
-                        new Expression('SUM(payToAgent) as payToAgent'),
-                        new Expression('SUM(receivedAmount) as receivedAmount'),
-                        new Expression('SUM(payToAgent-paidAmount) as payableToAgent'),
-                        new Expression('SUM(baseFare) as baseFare'),
-                        new Expression('SUM(tax) as tax'),
-                        new Expression('SUM(otherTax) as otherTax'),
-                        new Expression('SUM(serviceCharge) as serviceCharge'),
-                        new Expression('SUM(commissionReceived) as commissionReceived'),
-                        new Expression('SUM(incentiveReceived) as incentiveReceived')
-                    ])
-                    ->where(['between', 'issueDate', $start_date, $end_date])
-                    ->andWhere(['NOT IN', 'ticketNo', array_keys($ticketNumbers)])
-                    ->andWhere(['<>', 'type', Tickets::TYPE['Refund']])
-                    ->andWhere(['<>', 'paymentStatus', Tickets::PAYMENT_STATUS['Refund Adjustment']])
-                    ->orderBy('total DESC')->one();
-                $monthWiseData[date('Y-m', strtotime($start_date))]['ticket']->refundData['quoteAmount'] = (array_sum(ArrayHelper::map($refundedTickets, 'ticketNo', 'quoteAmount')) - $voidTickets->quoteAmount);
-                $monthWiseData[date('Y-m', strtotime($start_date))]['ticket']->refundData['payToAgent'] = (array_sum(ArrayHelper::map($refundedTickets, 'ticketNo', 'payToAgent')) - $voidTickets->payToAgent);
-                $monthWiseData[date('Y-m', strtotime($start_date))]['ticket']->refundData['actualQuoteAmount'] = (array_sum(ArrayHelper::map($refundedTickets, 'ticketNo', 'actualQuoteAmount')) - $voidTickets->actualQuoteAmount);
-                $monthWiseData[date('Y-m', strtotime($start_date))]['ticket']->refundData['actualPayToAgent'] = (array_sum(ArrayHelper::map($refundedTickets, 'ticketNo', 'actualPayToAgent')) - $voidTickets->actualPayToAgent);
-                $monthWiseData[date('Y-m', strtotime($start_date))]['ticket']->refundData['serviceCharge'] = (array_sum(ArrayHelper::map($refundedTickets, 'ticketNo', 'serviceCharge')) - $voidTickets->serviceCharge);
-                $monthWiseData[date('Y-m', strtotime($start_date))]['ticket']->refundData['total'] = (array_sum(ArrayHelper::map($refundedTickets, 'ticketNo', 'total')) - $voidTickets->total);
-
-                $monthWiseData[date('Y-m', strtotime($start_date))]['Package'] = Packages::find()
-                    ->select([
-                        new Expression('COUNT(id) as total'),
-                        new Expression('SUM(totalCostOfSale) as totalCostOfSale'),
-                        new Expression('SUM(quoteAmount) as quoteAmount'),
-                        new Expression('SUM(receivedAmount) as receivedAmount'),
-                        new Expression('SUM(quoteAmount-receivedAmount) as sum'),
-                        new Expression('SUM(netProfit) as netProfit')])
-                    ->where(['between', 'issueDate', $start_date, $end_date])->one();
-
-                $monthWiseData[date('Y-m', strtotime($start_date))]['Hotel'] = Hotel::find()
-                    ->select([
-                        new Expression('COUNT(id) as total'),
-                        new Expression('SUM(totalCostOfSale) as totalCostOfSale'),
-                        new Expression('SUM(quoteAmount) as quoteAmount'),
-                        new Expression('SUM(receivedAmount) as receivedAmount'),
-                        new Expression('SUM(quoteAmount-receivedAmount) as sum'),
-                        new Expression('SUM(netProfit) as netProfit')])
-                    ->where(['between', 'issueDate', $start_date, $end_date])
-                    ->one();
-
-                $monthWiseData[date('Y-m', strtotime($start_date))]['visa'] = Visas::find()
-                    ->select([
-                        new Expression('SUM(totalQty) as total'),
-                        new Expression('SUM(totalCostOfSale) as totalCostOfSale'),
-                        new Expression('SUM(quoteAmount) as quoteAmount'),
-                        new Expression('SUM(receivedAmount) as receivedAmount'),
-                        new Expression('SUM(netProfit) as netProfit')])
-                    ->where(['between', 'visas.issueDate', $start_date, $end_date])->one();
-
-                $expenses = Expense::find()
-                    ->select([
-                        new Expression('COUNT(id) as total'),
-                        new Expression('SUM(amount) as amount'),
-                        new Expression('SUM(paidAmount) as paidAmount'),
-                        new Expression('SUM(dueAmount) as dueAmount'), 'catId', 'date(dateOfTransaction) AS dateOfTransaction'])
-                    ->where(['between', 'dateOfTransaction', $start_date, $end_date])
-                    ->groupBy(['catId'])
-                    ->orderBy('total DESC')
-                    ->all();
-
-                if ($expenses) {
-                    $expenseSum[date('Y-m', strtotime($start_date))] = 0;
-                    foreach ($expenses as $key => $expense) {
-                        $expenseSum[date('Y-m', strtotime($start_date))] = $expenseSum[date('Y-m', strtotime($start_date))] + $expense->amount;
-                    }
-                    foreach ($expenses as $key => $expense) {
-                        $category = ExpenditureCat::findOne(['id' => $expense->catId])->title;
-                        $expenseData[$category]['sum'] = $expense;
-                        $subCategories = Expense::find()
-                            ->select([
-                                new Expression('COUNT(id) as total'),
-                                new Expression('SUM(amount) as amount'),
-                                new Expression('SUM(paidAmount) as paidAmount'),
-                                new Expression('SUM(dueAmount) as dueAmount'), 'subCatId', 'dateOfTransaction'])
-                            ->where(['between', 'date(dateOfTransaction)', $start_date, $end_date])
-                            ->andWhere(['catId' => $expense->catId])
-                            ->groupBy(['subCatId'])
-                            ->orderBy('total DESC')
-                            ->all();
-                        foreach ($subCategories as $subCategory) {
-                            $subcat = ExpenditureSubCat::findOne(['id' => $subCategory->subCatId])->title;
-                            $expenseData[$category][$subcat][date('Y-m', strtotime($start_date))] = $subCategory;
-                        }
-                    }
-                }
-            }
-        } else {
-
-            $refundedTickets = Tickets::find()
-                ->select([
-                    new Expression('COUNT(id) as total'),
-                    new Expression('SUM(quoteAmount) as quoteAmount'),
-                    new Expression('SUM(payToAgent) as payToAgent'),
-                    new Expression('SUM(receivedAmount) as receivedAmount'),
-                    new Expression('SUM(serviceCharge) as serviceCharge'),
-                    'ticketNo',
-                ])
-                ->where(['issueDate' => date('Y-m-d')])
-                ->andWhere(['type' => Tickets::TYPE['Refund']])
-                ->groupBy(['ticketNo'])
-                ->all();
-
-            $voidTickets = Tickets::find()
-                ->select([
-                    new Expression('COUNT(id) as total'),
-                    new Expression('SUM(quoteAmount) as quoteAmount'),
-                    new Expression('SUM(actualQuoteAmount) as actualQuoteAmount'),
-                    new Expression('SUM(payToAgent) as payToAgent'),
-                    new Expression('SUM(actualPayToAgent) as actualPayToAgent'),
-                    new Expression('SUM(receivedAmount) as receivedAmount'),
-                    new Expression('SUM(serviceCharge) as serviceCharge'),
-                    'ticketNo',
-                ])
-                ->where(['issueDate' => date('Y-m-d')])
-                ->andWhere(['type' => Tickets::TYPE['Refund']])
-                ->andWhere(['refundStatus' => Tickets::REFUND_STATUS['VOID']])
-                ->one();
-
-            $ticketNumbers = ArrayHelper::map($refundedTickets, 'ticketNo', 'quoteAmount');
-
-            $monthWiseData[date('Y-m')]['ticket'] = Tickets::find()
-                ->select([
-                    new Expression('COUNT(id) as total'),
-                    new Expression('SUM(segment) as segment'),
-                    new Expression('SUM(quoteAmount) as quoteAmount'),
-                    new Expression('SUM(payToAgent) as payToAgent'),
-                    new Expression('SUM(receivedAmount) as receivedAmount'),
-                    new Expression('SUM(payToAgent-paidAmount) as payableToAgent'),
-                    new Expression('SUM(baseFare) as baseFare'),
-                    new Expression('SUM(tax) as tax'),
-                    new Expression('SUM(otherTax) as otherTax'),
-                    new Expression('SUM(serviceCharge) as serviceCharge'),
-                    new Expression('SUM(commissionReceived) as commissionReceived'),
-                    new Expression('SUM(incentiveReceived) as incentiveReceived'),
-                    new Expression('SUM(netProfit) as netProfit')])
-                ->where(['issueDate' => date('Y-m-d')])
-                ->andWhere(['<>', 'type', Tickets::TYPE['Refund']])
-                ->andWhere(['NOT IN', 'ticketNo', array_keys($ticketNumbers)])
-                ->andWhere(['<>', 'paymentStatus', Tickets::PAYMENT_STATUS['Refund Adjustment']])
-                ->one();
-            $monthWiseData[date('Y-m')]['ticket']->refundData['quoteAmount'] = (array_sum(ArrayHelper::map($refundedTickets, 'ticketNo', 'quoteAmount')) - $voidTickets->quoteAmount);
-            $monthWiseData[date('Y-m')]['ticket']->refundData['payToAgent'] = (array_sum(ArrayHelper::map($refundedTickets, 'ticketNo', 'payToAgent')) - $voidTickets->payToAgent);
-            $monthWiseData[date('Y-m')]['ticket']->refundData['actualQuoteAmount'] = (array_sum(ArrayHelper::map($refundedTickets, 'ticketNo', 'actualQuoteAmount')) - $voidTickets->actualQuoteAmount);
-            $monthWiseData[date('Y-m')]['ticket']->refundData['actualPayToAgent'] = (array_sum(ArrayHelper::map($refundedTickets, 'ticketNo', 'actualPayToAgent')) - $voidTickets->actualPayToAgent);
-            $monthWiseData[date('Y-m')]['ticket']->refundData['serviceCharge'] = (array_sum(ArrayHelper::map($refundedTickets, 'ticketNo', 'serviceCharge')) - $voidTickets->serviceCharge);
-            $monthWiseData[date('Y-m')]['ticket']->refundData['total'] = (array_sum(ArrayHelper::map($refundedTickets, 'ticketNo', 'total')) - $voidTickets->total);
-
-            $monthWiseData[date('Y-m')]['Package'] = Packages::find()
-                ->select([
-                    new Expression('COUNT(id) as total'),
-                    new Expression('SUM(totalCostOfSale) as totalCostOfSale'),
-                    new Expression('SUM(quoteAmount) as quoteAmount'),
-                    new Expression('SUM(receivedAmount) as receivedAmount'),
-                    new Expression('SUM(quoteAmount-receivedAmount) as sum'),
-                    new Expression('SUM(netProfit) as netProfit')])
-                ->where(['issueDate' => date('Y-m-d')])
-                ->one();
-            $monthWiseData[date('Y-m')]['Hotel'] = Hotel::find()
-                ->select([
-                    new Expression('COUNT(id) as total'),
-                    new Expression('SUM(totalCostOfSale) as totalCostOfSale'),
-                    new Expression('SUM(quoteAmount) as quoteAmount'),
-                    new Expression('SUM(receivedAmount) as receivedAmount'),
-                    new Expression('SUM(quoteAmount-receivedAmount) as sum'),
-                    new Expression('SUM(netProfit) as netProfit')])
-                ->where(['issueDate' => date('Y-m-d')])
-                ->one();
-            $monthWiseData[date('Y-m')]['visa'] = Visas::find()
-                ->select([
-                    new Expression('SUM(totalQty) as total'),
-                    new Expression('SUM(totalCostOfSale) as totalCostOfSale'),
-                    new Expression('SUM(quoteAmount) as quoteAmount'),
-                    new Expression('SUM(receivedAmount) as receivedAmount'),
-                    new Expression('SUM(netProfit) as netProfit')])
-                ->where(['issueDate' => date('Y-m-d')])->one();
-
-            $expenses = Expense::find()
-                ->select([
-                    new Expression('COUNT(id) as total'),
-                    new Expression('SUM(amount) as amount'),
-                    new Expression('SUM(paidAmount) as paidAmount'),
-                    new Expression('SUM(dueAmount) as dueAmount'), 'catId', 'date(dateOfTransaction) AS dateOfTransaction'])
-                ->where(['dateOfTransaction' => date('Y-m-d')])
-                ->groupBy(['catId'])
-                ->orderBy('total DESC')
-                ->all();
-
-            if ($expenses) {
-                $expenseSum[date('Y-m-d')] = 0;
-                foreach ($expenses as $key => $expense) {
-                    $expenseSum[date('Y-m-d')] = $expenseSum[date('Y-m-d')] + $expense->amount;
-                    $category = ExpenditureCat::findOne(['id' => $expense->catId])->title;
-                    $expenseData[$category]['sum'] = $expense;
-                    $subCategories = Expense::find()
-                        ->select([
-                            new Expression('COUNT(id) as total'),
-                            new Expression('SUM(amount) as amount'),
-                            new Expression('SUM(paidAmount) as paidAmount'),
-                            new Expression('SUM(dueAmount) as dueAmount'), 'subCatId', 'dateOfTransaction'])
-                        ->where(['date(dateOfTransaction)' => date('Y-m-d')])
-                        ->andWhere(['catId' => $expense->catId])
-                        ->groupBy(['subCatId'])
-                        ->orderBy('total DESC')
-                        ->all();
-                    foreach ($subCategories as $subCategory) {
-                        $subcat = ExpenditureSubCat::findOne(['id' => $subCategory->subCatId])->title;
-                        $expenseData[$category][$subcat][date('Y-m')] = $subCategory;
-                    }
-                }
-            }
-        }
-
-        return $this->render('pl', [
-            'data' => $monthWiseData,
+        return $this->render('profit_loss', [
+            'data' => $salesData,
             'expenseData' => $expenseData,
             'expenseSum' => $expenseSum
         ]);

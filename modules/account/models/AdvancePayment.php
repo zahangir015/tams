@@ -28,6 +28,7 @@ use yii\db\ActiveRecord;
 class AdvancePayment extends ActiveRecord
 {
     use BehaviorTrait;
+    public $name;
 
     /**
      * {@inheritdoc}

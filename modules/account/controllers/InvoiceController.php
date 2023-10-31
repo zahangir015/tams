@@ -159,7 +159,8 @@ class InvoiceController extends ParentController
             'model' => $model,
             'transaction' => new Transaction(),
             'refundList' => $this->refundTransactionService->getRefundList(Customer::class, $model->customerId),
-            'bankList' => $this->invoiceService->getBankList()
+            'bankList' => $this->invoiceService->getBankList(),
+            'advancePayments' => $this->invoiceService->getAdvancePayments(Customer::class, $model->customerId)
         ]);
     }
 

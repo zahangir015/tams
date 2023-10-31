@@ -250,7 +250,7 @@ $this->registerJsFile(
                     <div class="row">
                         <div class="col-md">
                             <?= $form->field($transaction, 'refundIds')->widget(Select2::classname(), [
-                                'theme' => Select2::THEME_BOOTSTRAP,
+                                'theme' => Select2::THEME_DEFAULT,
                                 'data' => $refundList,
                                 'options' => [
                                     'placeholder' => 'Select Refund Service ...',
@@ -263,6 +263,23 @@ $this->registerJsFile(
                                 ],
                             ])->label('Refund Adjustments'); ?>
                         </div>
+
+                        <div class="col-md">
+                            <?= $form->field($transaction, 'advancePayments')->widget(Select2::classname(), [
+                                'theme' => Select2::THEME_DEFAULT,
+                                'data' => $advancePayments,
+                                'options' => [
+                                    'placeholder' => 'Select Advance Payments ...',
+                                    'multiple' => true,
+                                    'id' => 'advancePayment'
+                                ],
+                                'pluginOptions' => [
+                                    'tags' => true,
+                                    'tokenSeparators' => [',', ' ']
+                                ],
+                            ])->label('Advance Payments'); ?>
+                        </div>
+
                     </div>
                     <div class="row">
                         <div class="col-md">

@@ -17,6 +17,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Pay');
         'model' => $model,
         'transaction' => $transaction,
         'refundList' => $refundList,
-        'bankList' => $bankList
+        'bankList' => $bankList,
+        'advancePayments' => $advancePayments
     ]) ?>
 </div>
