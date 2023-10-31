@@ -4,6 +4,8 @@ namespace app\modules\account\services;
 
 use app\components\GlobalConstant;
 use app\components\Utilities;
+use app\modules\account\components\AccountConstant;
+use app\modules\account\models\AdvancePayment;
 use app\modules\account\models\BankAccount;
 use app\modules\account\models\Invoice;
 use app\modules\account\models\InvoiceDetail;
@@ -432,19 +434,59 @@ class InvoiceService
                 throw  new Exception('You are not allowed to perform this action. This invoice will be over paid.');
             }
 
-            $customer = $invoice->customer;
-            // Process Transaction Data
-            $transactionStatementStoreResponse = $this->transactionService->store($invoice, $customer, $requestData);
-            if ($transactionStatementStoreResponse['error']) {
-                throw new Exception('Transaction Statement Data process failed - ' . $transactionStatementStoreResponse['message']);
-            }
-            $transaction = $transactionStatementStoreResponse['data'];
+            if ($requestData['Transaction']['paymentMode'] !== AccountConstant::PAYMENT_MODE['Advance Adjustment']) {
+                // Process Transaction Data
+                $transactionStatementStoreResponse = $this->transactionService->store($invoice, $invoice->customer, $requestData);
+                if ($transactionStatementStoreResponse['error']) {
+                    throw new Exception('Transaction Statement Data process failed - ' . $transactionStatementStoreResponse['message']);
+                }
+                $transaction = $transactionStatementStoreResponse['data'];
 
-            $distributionAmount = $transaction->paidAmount;
+                // Customer Ledger process
+                $customerLedgerRequestData = [
+                    'title' => 'Payment received',
+                    'reference' => 'Invoice Number - ' . $invoice->invoiceNumber,
+                    'refId' => $invoice->customerId,
+                    'refModel' => Customer::class,
+                    'subRefId' => $invoice->id,
+                    'subRefModel' => $invoice::class,
+                    'debit' => 0,
+                    'credit' => $transaction->paidAmount
+                ];
+                $customerLedgerRequestResponse = $this->ledgerService->store($customerLedgerRequestData);
+                if ($customerLedgerRequestResponse['error']) {
+                    throw new Exception('Customer Ledger creation failed - ' . $customerLedgerRequestResponse['message']);
+                }
+
+                // Bank Ledger process
+                $bankLedgerRequestData = [
+                    'title' => 'Service Payment received',
+                    'reference' => 'Invoice Number - ' . $invoice->invoiceNumber,
+                    'refId' => $transaction->bankId,
+                    'refModel' => BankAccount::class,
+                    'subRefId' => $invoice->id,
+                    'subRefModel' => $invoice::class,
+                    'debit' => $transaction->paidAmount,
+                    'credit' => 0
+                ];
+                $bankLedgerRequestResponse = $this->ledgerService->store($bankLedgerRequestData);
+                if ($bankLedgerRequestResponse['error']) {
+                    throw new Exception('Bank Ledger creation failed - ' . $bankLedgerRequestResponse['message']);
+                }
+            }
+
+
+            $distributionAmount = $requestData['Transaction']['paidAmount'];
             $invoice->dueAmount -= $distributionAmount;
             $invoice->paidAmount += $distributionAmount;
             if (!$invoice->save()) {
                 throw new Exception('Invoice update failed for payment - ' . Utilities::processErrorMessages($invoice->getErrors()));
+            }
+
+            // Paid Amount Distribution to Services
+            $amountDistributionResponse = self::distributePaidAmountToServices($invoice, $distributionAmount);
+            if ($amountDistributionResponse['error']) {
+                throw new Exception($amountDistributionResponse['message']);
             }
 
             // Refund status update
@@ -464,6 +506,21 @@ class InvoiceService
                 }
             }
 
+            if (($requestData['Transaction']['paymentMode'] == AccountConstant::PAYMENT_MODE['Advance Adjustment']) && isset($requestData['Transaction']['advancePayments'])) {
+                $advancePayments = AdvancePayment::find()->where(['id' => $requestData['Transaction']['advancePayments']])->all();
+                if (empty($advancePayments)) {
+                    throw new Exception('Advance Adjustment Failed.');
+                }
+
+                foreach ($advancePayments as $key => $advancePayment) {
+                    $advancePayment->processedAmount += $distributionAmount;
+                    $advancePayment->status = (($advancePayment->paidAmount - $advancePayment->processedAmount) == 0) ? 3 : 2;
+                    if (!$advancePayment->save()) {
+                        throw new Exception('Advance Payments updated' . Utilities::processErrorMessages($advancePayment->getErrors()));
+                    }
+                }
+            }
+
             //AttachmentFile::uploadsById($invoice, 'invoiceFile');
             // Amount distributions
             /*$invoiceDetails = InvoiceDetail::find()->select(['refId', 'refModel'])->where(['invoiceId' => $invoice->id])->all();
@@ -474,42 +531,9 @@ class InvoiceService
             if (!count($invoiceDetails)) {
                 throw new Exception('No invoice details found');
             }*/
-            $amountDistributionResponse = self::distributePaidAmountToServices($invoice, $distributionAmount);
-            if ($amountDistributionResponse['error']) {
-                throw new Exception($amountDistributionResponse['message']);
-            }
 
-            // Customer Ledger process
-            $customerLedgerRequestData = [
-                'title' => 'Payment received',
-                'reference' => 'Invoice Number - ' . $invoice->invoiceNumber,
-                'refId' => $invoice->customerId,
-                'refModel' => Customer::class,
-                'subRefId' => $invoice->id,
-                'subRefModel' => $invoice::class,
-                'debit' => 0,
-                'credit' => $distributionAmount
-            ];
-            $customerLedgerRequestResponse = $this->ledgerService->store($customerLedgerRequestData);
-            if ($customerLedgerRequestResponse['error']) {
-                throw new Exception('Customer Ledger creation failed - ' . $customerLedgerRequestResponse['message']);
-            }
 
-            // Bank Ledger process
-            $bankLedgerRequestData = [
-                'title' => 'Service Payment received',
-                'reference' => 'Invoice Number - ' . $invoice->invoiceNumber,
-                'refId' => $transaction->bankId,
-                'refModel' => BankAccount::class,
-                'subRefId' => $invoice->id,
-                'subRefModel' => $invoice::class,
-                'debit' => $distributionAmount,
-                'credit' => 0
-            ];
-            $bankLedgerRequestResponse = $this->ledgerService->store($bankLedgerRequestData);
-            if ($bankLedgerRequestResponse['error']) {
-                throw new Exception('Bank Ledger creation failed - ' . $bankLedgerRequestResponse['message']);
-            }
+
 
             $dbTransaction->commit();
             return ['error' => false, 'message' => 'Invoice paid successfully.'];
@@ -674,6 +698,25 @@ class InvoiceService
         }
 
         return ['error' => false, 'message' => "Invoice due updated successfully", 'data' => $invoice];
+    }
+
+    public function getAdvancePayments($refModel, $refId): array
+    {
+        $advancePayments = AdvancePayment::find()
+            ->select([
+                'id',
+                'refId',
+                'refModel',
+                'concat(identificationNumber," | ",paidAmount) as name',
+                'identificationNumber',
+                'paidAmount',
+            ])
+            ->where(['like', 'refModel', $refModel])
+            ->andWhere(['refId' => $refId])
+            ->andWhere(['!=', 'status', 3])
+            ->all();
+
+        return ArrayHelper::map($advancePayments, 'id', 'name');
     }
 
 }

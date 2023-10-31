@@ -92,7 +92,12 @@ $(function () {
 
     $('#refundId').on('change', function () {
         let adjustmentAmount = calculateAdjustmentAmount();
-        $('#transaction-amount, #groupinvoice-amount').val(adjustmentAmount);
+        $('#transaction-paidamount').val(adjustmentAmount);
+    });
+
+    $('#advancePayment').on('change', function () {
+        let adjustmentAmount = calculateAdvanceAdjustmentAmount();
+        $('#transaction-paidamount').val(adjustmentAmount);
     });
 
 
@@ -114,6 +119,17 @@ $(function () {
         let amounts = $("#refundId :selected").map(function (i, el) {
             return $(el).text().split(" | ")[1];
         }).get();
+        for (let i = 0; i < amounts.length; i++) {
+            adjustmentAmount += parseFloat(amounts[i]);
+        }
+        return adjustmentAmount;
+    }
+    function calculateAdvanceAdjustmentAmount() {
+        let adjustmentAmount = 0;
+        let amounts = $("#advancePayment :selected").map(function (i, el) {
+            return $(el).text().split(" | ")[1];
+        }).get();
+        console.log(amounts);
         for (let i = 0; i < amounts.length; i++) {
             adjustmentAmount += parseFloat(amounts[i]);
         }
