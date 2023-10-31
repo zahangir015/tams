@@ -53,9 +53,10 @@ class AccountReportController extends Controller
             'totalSegments' => $flightData['numberOfSegment'],
             'gross' => ($flightData['baseFare'] + $flightData['tax'] + $flightData['otherTax']),
             'totalQuote' => $flightData['quoteAmount'],
+            'totalCost' => $flightData['costOfSale'],
             'totalReceived' => $flightData['receivedAmount'],
             'totalDue' => ($flightData['quoteAmount'] - $flightData['receivedAmount']),
-            'netProfit' => $flightData['netProfit'],
+            'totalNetProfit' => $flightData['netProfit'],
         ];
 
         // Holiday Data
@@ -79,8 +80,9 @@ class AccountReportController extends Controller
             'qty' => $holidayData['total'],
             'totalQuote' => $holidayData['quoteAmount'],
             'totalReceived' => $holidayData['receivedAmount'],
+            'totalCost' => $holidayData['costOfSale'],
             'totalDue' => ($holidayData['quoteAmount'] - $holidayData['receivedAmount']),
-            'netProfit' => $holidayData['netProfit'],
+            'totalNetProfit' => $holidayData['netProfit'],
         ];
         // Hotel Data
         $hotelData = Hotel::find()
@@ -103,8 +105,9 @@ class AccountReportController extends Controller
             'qty' => $hotelData['total'],
             'totalQuote' => $hotelData['quoteAmount'],
             'totalReceived' => $hotelData['receivedAmount'],
+            'totalCost' => $holidayData['costOfSale'],
             'totalDue' => ($hotelData['quoteAmount'] - $hotelData['receivedAmount']),
-            'netProfit' => $hotelData['netProfit'],
+            'totalNetProfit' => $hotelData['netProfit'],
         ];
         // Visa Data
         $visaData = Visa::find()
@@ -127,8 +130,9 @@ class AccountReportController extends Controller
             'qty' => $visaData['total'],
             'totalQuote' => $visaData['quoteAmount'],
             'totalReceived' => $visaData['receivedAmount'],
+            'totalCost' => $holidayData['costOfSale'],
             'totalDue' => ($visaData['quoteAmount'] - $visaData['receivedAmount']),
-            'netProfit' => $visaData['netProfit'],
+            'totalNetProfit' => $visaData['netProfit'],
         ];
 
         $expenseData = [];
@@ -151,15 +155,17 @@ class AccountReportController extends Controller
         if ($expenses) {
             $expenseSum = 0;
             foreach ($expenses as $key => $expense) {
-                $expenseSum +=  $expense->totalCost;
-
-                $expenseData[$expense->category->name]['sum'] = $expense;
-                    $expenseData[$expense->category->name][$expense->subCategory->name][date('Y-m')] = $subCategory;
+                $expenseSum += $expense->totalCost;
+                if (isset($expenseData[$expense->category->name])) {
+                    $expenseData[$expense->category->name]['sum'] += $expense->totalCost;
+                } else {
+                    $expenseData[$expense->category->name]['sum'] = $expense->totalCost;
+                }
             }
         }
 
-        return $this->render('pl', [
-            'data' => $monthWiseData,
+        return $this->render('profit_loss', [
+            'data' => $salesData,
             'expenseData' => $expenseData,
             'expenseSum' => $expenseSum
         ]);
