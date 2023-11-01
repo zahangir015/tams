@@ -55,100 +55,54 @@ $grandIncomeExp = [];
     <table class="table table-bordered">
         <tr>
             <th>PARTICULARS</th>
-            <th>GROSS MARGINAL VALUE</th>
-            <th>COST</th>
             <th>NET REVENUE</th>
         </tr>
         <tr style="background-color: lightgrey">
             <th>Flight Net Revenue</th>
-            <th><?= number_format($data['Flight']['gross']) ?></th>
-            <th><?= number_format($data['Flight']['totalCost']) ?></th>
             <th><?= number_format($data['Flight']['totalNetProfit']) ?></th>
         </tr>
         <tr style="background-color: lightgrey">
-            <td colspan="3">VISA</td>
-            <th><?= number_format($data['Visa']['totalQuote']) ?></th>
-            <th><?= number_format($data['Visa']['totalCost']) ?></th>
+            <td>Visa Net Revenue</td>
             <th><?= number_format($data['Visa']['totalNetProfit']) ?></th>
         </tr>
         <tr style="background-color: lightgrey">
-            <td colspan="3">Holiday</td>
-            <th><?= number_format($data['Holiday']['totalQuote']) ?></th>
-            <th><?= number_format($data['Holiday']['totalCost']) ?></th>
+            <td>Holiday Net Revenue</td>
             <th><?= number_format($data['Holiday']['totalNetProfit']) ?></th>
         </tr>
         <tr style="background-color: lightgrey">
-            <td colspan="3">HOTEL</td>
-            <th><?= number_format($data['Hotel']['totalQuote']) ?></th>
-            <th><?= number_format($data['Hotel']['totalCost']) ?></th>
+            <td>HOTEL Net Revenue</td>
             <th><?= number_format($data['Hotel']['totalNetProfit']) ?></th>
         </tr>
         <tr style="background-color: lightgrey">
-            <th colspan="3">TOTAL</th>
-            <th><?= number_format(($data['Hotel']['totalQuote'] + $data['Holiday']['totalQuote'] + $data['Visa']['totalQuote'] + $data['Flight']['gross'])) ?></th>
-            <th><?= number_format(($data['Hotel']['totalCost'] + $data['Holiday']['totalCost'] + $data['Visa']['totalCost'] + $data['Flight']['totalCost'])) ?></th>
+            <th colspan="3">TOTAL Revenue</th>
             <th><?= number_format(($data['Hotel']['totalNetProfit'] + $data['Holiday']['totalNetProfit'] + $data['Visa']['totalNetProfit'] + $data['Flight']['totalNetProfit'])) ?></th>
         </tr>
         <?php
-        $months = array_keys($data);
         $grandExp = $categoryExp = [];
-        foreach ($expenseData as $cat => $items) {
+        foreach ($expenseData as $category => $subcategory) {
             ?>
             <tr style="background-color: lightgrey">
-                <th colspan="3"><?= $cat ?></th>
-                <?php
-                $totalExpense = 0;
-                foreach ($months as $month) {
-                    echo "<td>".number_format($items['sum']->amount, 2)."</td>";
-                    $totalExpense += $items['sum']->amount;
-                }
-                ?>
-                <th><?= number_format($totalExpense, 2) ?></th>
+                <th><?= $category ?></th>
+                <th><?= number_format($categoryExpenseSum[$category]['sum'], 2) ?></th>
             </tr>
             <?php
-            foreach ($items as $subCat => $singleItem) {
-                if ($subCat !== 'sum') {
-                    ?>
-                    <tr>
-                        <td colspan="3"><?= $subCat ?></td>
-                        <?php
-                        $subCatSum = 0;
-                        foreach ($months as $month) {
-                            $subCatSum += $singleItem[$month]->amount;
-                            echo "<td>" . number_format($singleItem[$month]->amount, 2) . "</td>";
-                        }
-                        ?>
-                        <th><?= number_format($subCatSum, 2) ?></th>
-                    </tr>
-                    <?php
-                }
+            foreach ($subcategory as $key => $expense) {
+                ?>
+                <tr>
+                    <td><?= $expense->subCategory->name ?></td>
+                    <td><?= number_format($expense->totalCost, 2) ?></td>
+                </tr>
+                <?php
             }
         }
         ?>
         <tr>
-            <th colspan="3">NET PROFIT</th>
-            <?php
-            $grandEbitda = $grossRevSum = 0;
-            foreach ($data as $key => $value) {
-                $ait = ((double)$value['ticket']->baseFare + (double)$value['ticket']->tax + (double)$value['ticket']->otherTax) * 0.003;
-                $costSum = ((double)$value['ticket']->baseFare + (double)$value['ticket']->tax + (double)$value['ticket']->otherTax + $value['ticket']->serviceCharge + $ait);
-                $netCostSum = ($costSum - $value['ticket']->commissionReceived - $value['ticket']->incentiveReceived);
-
-                $grossSum = ((double)$value['ticket']->baseFare + (double)$value['ticket']->tax + (double)$value['ticket']->otherTax + ($value['ticket']->refundData['quoteAmount'] - $value['ticket']->refundData['payToAgent']));
-                $netRevenueSum = ($grossSum - $netCostSum);
-                $discount = ($grossSum - $value['ticket']->quoteAmount);
-                $ticketRevenueSum = ($netRevenueSum - $discount);
-                $visaNetProfitSum = ((double)$value['visa']->quoteAmount - (double)$value['visa']->totalCostOfSale);
-                $packageNetProfitSum = ((double)$value['Package']['quoteAmount'] - (double)$value['Package']['totalCostOfSale']);
-                $hotelNetProfitSum = ((double)$value['Hotel']['quoteAmount'] - (double)$value['Hotel']['totalCostOfSale']);
-                $revSum = ($ticketRevenueSum + $visaNetProfitSum + $packageNetProfitSum + $hotelNetProfitSum);
-
-                $expense = isset($expenseSum[$key]) ? $expenseSum[$key] : 0;
-                echo "<th>" . number_format(($revSum - $expense), 2) . "</th>";
-                $grandEbitda += ($revSum - $expense);
-            }
-            ?>
-            <th><?= number_format($grandEbitda, 2) ?></th>
+            <th>Total Expense</th>
+            <td><?= number_format($expenseSum, 2) ?></td>
+        </tr>
+        <tr>
+            <th colspan="3">NET Revenue</th>
+            <th><?= number_format((($data['Hotel']['totalNetProfit'] + $data['Holiday']['totalNetProfit'] + $data['Visa']['totalNetProfit'] + $data['Flight']['totalNetProfit']) - $expenseSum), 2) ?></th>
         </tr>
     </table>
 </section>
