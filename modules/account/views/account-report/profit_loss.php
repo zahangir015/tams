@@ -59,23 +59,23 @@ $grandIncomeExp = [];
         </tr>
         <tr style="background-color: lightgrey">
             <th>Flight Net Revenue</th>
-            <th><?= number_format($data['Flight']['totalNetProfit']) ?></th>
+            <th><?= $data['Flight']['totalNetProfit'] ?></th>
         </tr>
         <tr style="background-color: lightgrey">
             <td>Visa Net Revenue</td>
-            <th><?= number_format($data['Visa']['totalNetProfit']) ?></th>
+            <th><?= $data['Visa']['totalNetProfit'] ?></th>
         </tr>
         <tr style="background-color: lightgrey">
             <td>Holiday Net Revenue</td>
-            <th><?= number_format($data['Holiday']['totalNetProfit']) ?></th>
+            <th><?= $data['Holiday']['totalNetProfit'] ?></th>
         </tr>
         <tr style="background-color: lightgrey">
             <td>HOTEL Net Revenue</td>
-            <th><?= number_format($data['Hotel']['totalNetProfit']) ?></th>
+            <th><?= $data['Hotel']['totalNetProfit'] ?></th>
         </tr>
         <tr style="background-color: lightgrey">
-            <th colspan="3">TOTAL Revenue</th>
-            <th><?= number_format(($data['Hotel']['totalNetProfit'] + $data['Holiday']['totalNetProfit'] + $data['Visa']['totalNetProfit'] + $data['Flight']['totalNetProfit'])) ?></th>
+            <th>TOTAL SALES REVENUE</th>
+            <th><?= ($data['Hotel']['totalNetProfit'] + $data['Holiday']['totalNetProfit'] + $data['Visa']['totalNetProfit'] + $data['Flight']['totalNetProfit']) ?></th>
         </tr>
         <?php
         $grandExp = $categoryExp = [];
@@ -83,26 +83,26 @@ $grandIncomeExp = [];
             ?>
             <tr style="background-color: lightgrey">
                 <th><?= $category ?></th>
-                <th><?= number_format($categoryExpenseSum[$category]['sum'], 2) ?></th>
+                <th><?= $categoryExpenseSum[$category]['sum'] ?></th>
             </tr>
             <?php
             foreach ($subcategory as $key => $expense) {
                 ?>
                 <tr>
                     <td><?= $expense->subCategory->name ?></td>
-                    <td><?= number_format($expense->totalCost, 2) ?></td>
+                    <td><?= $expense->totalCost ?></td>
                 </tr>
                 <?php
             }
         }
         ?>
         <tr>
-            <th>Total Expense</th>
-            <td><?= number_format($expenseSum, 2) ?></td>
+            <th>Total EXPENSE</th>
+            <td><?= $expenseSum ?></td>
         </tr>
         <tr>
-            <th colspan="3">NET Revenue</th>
-            <th><?= number_format((($data['Hotel']['totalNetProfit'] + $data['Holiday']['totalNetProfit'] + $data['Visa']['totalNetProfit'] + $data['Flight']['totalNetProfit']) - $expenseSum), 2) ?></th>
+            <th>TOTAL REVENUE</th>
+            <th><?= (($data['Hotel']['totalNetProfit'] + $data['Holiday']['totalNetProfit'] + $data['Visa']['totalNetProfit'] + $data['Flight']['totalNetProfit']) - $expenseSum) ?></th>
         </tr>
     </table>
 </section>
