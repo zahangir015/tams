@@ -49,14 +49,14 @@ class AccountReportController extends Controller
             ->orderBy('total DESC')
             ->asArray()->one();
         $salesData['Flight'] = [
-            'qty' => $flightData['total'],
-            'totalSegments' => $flightData['numberOfSegment'],
-            'gross' => ($flightData['baseFare'] + $flightData['tax'] + $flightData['otherTax']),
-            'totalQuote' => $flightData['quoteAmount'],
-            'totalCost' => $flightData['costOfSale'],
-            'totalReceived' => $flightData['receivedAmount'],
-            'totalDue' => ($flightData['quoteAmount'] - $flightData['receivedAmount']),
-            'totalNetProfit' => $flightData['netProfit'],
+            'qty' => $flightData['total'] ?? 0,
+            'totalSegments' => $flightData['numberOfSegment'] ?? 0,
+            'gross' => ($flightData['baseFare'] + $flightData['tax'] + $flightData['otherTax']) ?? 0,
+            'totalQuote' => $flightData['quoteAmount'] ?? 0,
+            'totalCost' => $flightData['costOfSale'] ?? 0,
+            'totalReceived' => $flightData['receivedAmount'] ?? 0,
+            'totalDue' => ($flightData['quoteAmount'] - $flightData['receivedAmount']) ?? 0,
+            'totalNetProfit' => $flightData['netProfit'] ?? 0,
         ];
 
         // Holiday Data
@@ -77,12 +77,12 @@ class AccountReportController extends Controller
             ->asArray()->one();
 
         $salesData['Holiday'] = [
-            'qty' => $holidayData['total'],
-            'totalQuote' => $holidayData['quoteAmount'],
-            'totalReceived' => $holidayData['receivedAmount'],
-            'totalCost' => $holidayData['costOfSale'],
-            'totalDue' => ($holidayData['quoteAmount'] - $holidayData['receivedAmount']),
-            'totalNetProfit' => $holidayData['netProfit'],
+            'qty' => $holidayData['total'] ?? 0,
+            'totalQuote' => $holidayData['quoteAmount'] ?? 0,
+            'totalReceived' => $holidayData['receivedAmount'] ?? 0,
+            'totalCost' => $holidayData['costOfSale'] ?? 0,
+            'totalDue' => ($holidayData['quoteAmount'] - $holidayData['receivedAmount']) ?? 0,
+            'totalNetProfit' => $holidayData['netProfit'] ?? 0,
         ];
         // Hotel Data
         $hotelData = Hotel::find()
@@ -102,12 +102,12 @@ class AccountReportController extends Controller
             ->asArray()->one();
 
         $salesData['Hotel'] = [
-            'qty' => $hotelData['total'],
-            'totalQuote' => $hotelData['quoteAmount'],
-            'totalReceived' => $hotelData['receivedAmount'],
-            'totalCost' => $holidayData['costOfSale'],
-            'totalDue' => ($hotelData['quoteAmount'] - $hotelData['receivedAmount']),
-            'totalNetProfit' => $hotelData['netProfit'],
+            'qty' => $hotelData['total'] ?? 0,
+            'totalQuote' => $hotelData['quoteAmount'] ?? 0,
+            'totalReceived' => $hotelData['receivedAmount'] ?? 0,
+            'totalCost' => $holidayData['costOfSale'] ?? 0,
+            'totalDue' => ($hotelData['quoteAmount'] - $hotelData['receivedAmount']) ?? 0,
+            'totalNetProfit' => $hotelData['netProfit'] ?? 0,
         ];
         // Visa Data
         $visaData = Visa::find()
@@ -127,16 +127,17 @@ class AccountReportController extends Controller
             ->asArray()->one();
 
         $salesData['Visa'] = [
-            'qty' => $visaData['total'],
-            'totalQuote' => $visaData['quoteAmount'],
-            'totalReceived' => $visaData['receivedAmount'],
-            'totalCost' => $holidayData['costOfSale'],
-            'totalDue' => ($visaData['quoteAmount'] - $visaData['receivedAmount']),
-            'totalNetProfit' => $visaData['netProfit'],
+            'qty' => $visaData['total'] ?? 0,
+            'totalQuote' => $visaData['quoteAmount'] ?? 0,
+            'totalReceived' => $visaData['receivedAmount'] ?? 0,
+            'totalCost' => $holidayData['costOfSale'] ?? 0,
+            'totalDue' => ($visaData['quoteAmount'] - $visaData['receivedAmount']) ?? 0,
+            'totalNetProfit' => $visaData['netProfit'] ?? 0,
         ];
 
         $expenseData = [];
-
+        $expenseSum = 0;
+        $categoryExpenseSum = [];
         $expenses = Expense::find()
             ->with(['category', 'subCategory'])
             ->select([
@@ -152,9 +153,6 @@ class AccountReportController extends Controller
             ->all();
 
         if ($expenses) {
-            $expenseSum = 0;
-            $categoryExpenseSum = [];
-
             foreach ($expenses as $key => $expense) {
                 $expenseSum += $expense->totalCost;
                 $expenseData[$expense->category->name][] = $expense;
