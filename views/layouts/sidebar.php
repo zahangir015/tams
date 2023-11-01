@@ -349,6 +349,13 @@ $items = [
                     ['label' => 'Expenses', 'icon' => 'list', 'url' => ['/account/expense/index'], 'visible' => Helper::checkRoute('/account/expense/')],
                 ]
             ],
+            [
+                'label' => 'Reports',
+                'icon' => 'file-invoice-dollar',
+                'items' => [
+                    ['label' => 'Profit Loss', 'icon' => 'list', 'url' => ['/account/account-report/profit-loss'], 'visible' => Helper::checkRoute('/account/account-report/profit-loss')],
+                ]
+            ],
         ],
         'options' => [
             'class' => 'nav-item has-treeview bg-green mb-2 rounded',
