@@ -65,10 +65,10 @@ use yii\bootstrap4\Html;
                 <?= $form->field($visaSupplier, "[$row]issueDate")->widget(DatePicker::class, WidgetHelper::getDateWidget('issueDate' . $row, 'issueDate' . $row, false, true)); ?>
             </div>
             <div class="col-md">
-                <?= $form->field($visaSupplier, "[$row]type")->textInput(['readOnly' => 'readOnly', 'value' => ServiceConstant::ALL_SERVICE_TYPE['New']]) ?>
+                <?= $form->field($visaSupplier, "[$row]type")->textInput(['readOnly' => 'readOnly', 'value' => ServiceConstant::ALL_SERVICE_TYPE['New'], 'required' => true]) ?>
             </div>
             <div class="col-md">
-                <?= $form->field($visaSupplier, "[$row]paxName")->textInput(['maxlength' => true]); ?>
+                <?= $form->field($visaSupplier, "[$row]paxName")->textInput(['maxlength' => true, 'required' => true]); ?>
             </div>
         </div>
         <div class="row">

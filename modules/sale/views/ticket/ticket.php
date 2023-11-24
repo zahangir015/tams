@@ -38,7 +38,7 @@ use yii\helpers\Url;
     <div class="card-body">
         <div class="row">
             <div class="col-md">
-                <?= $form->field($ticketSupplier, "[$row]supplierId")->widget(Select2::class, Utilities::ajaxDropDown('supplierId', '/sale/supplier/get-suppliers', true, 'supplierId' . $row, 'supplier', ($model->isNewRecord) ? [] : [$ticketSupplier->supplierId => $ticketSupplier->supplier->name . ' | ' . $ticketSupplier->supplier->company], $model->isNewRecord ? false : true))->label('Supplier') ?>
+                <?= $form->field($ticketSupplier, "[$row]supplierId")->widget(Select2::class, WidgetHelper::select2Widget($supplierDataArray, 'supplierId'.$row, false, 'supplier'))->label('Supplier') ?>
                 <small id="passwordHelpBlock" class="form-text text-muted">
                     Add Supplier if not available. <?=  Html::a('Create Supplier', '/sale/supplier/create', ['target' => '_blank'])?>
                 </small>
@@ -46,11 +46,11 @@ use yii\helpers\Url;
             <div class="col-md">
                 <?= $form->field($model, "[$row]airlineId")->widget(DepDrop::class, [
                     'data' => $model->isNewRecord ? [] : [$model->airlineId => $model->airline->name . '(' . $model->airline->code . ')'],
-                    'options' => ['placeholder' => 'Select Airline...', 'id' => 'airlineId' . $row, 'class' => 'airlineId'],
+                    'options' => ['placeholder' => 'Select Airline...', 'id' => 'airlineId' . $row, 'class' => 'airline', 'required' => true],
                     'type' => DepDrop::TYPE_SELECT2,
                     'select2Options' => ['pluginOptions' => ['allowClear' => true], 'theme' => Select2::THEME_DEFAULT],
                     'pluginOptions' => [
-                        'depends' => ['supplierId' . $row],
+                        'depends' => ['supplierId' . $row, 'supplierId0'],
                         'initialize' => !$model->isNewRecord,
                         'url' => Url::to(['/sale/airline/get-airline-by-supplier']),
                         'loadingText' => 'Loading airline ...',
@@ -72,10 +72,10 @@ use yii\helpers\Url;
         </div>
         <div class="row">
             <div class="col-md">
-                <?= $form->field($model, "[$row]pnrCode")->textInput(['maxlength' => true, 'class' => 'pnrCode form-control', 'id' => 'pnrCode' . $row])->label('PNR Code') ?>
+                <?= $form->field($model, "[$row]pnrCode")->textInput(['maxlength' => true, 'class' => 'pnrCode form-control', 'id' => 'pnrCode' . $row, 'required' => true])->label('PNR Code') ?>
             </div>
             <div class="col-md">
-                <?= $form->field($model, "[$row]eTicket")->textInput(['maxlength' => true, 'class' => 'eTicket form-control', 'id' => 'eTicket' . $row]) ?>
+                <?= $form->field($model, "[$row]eTicket")->textInput(['maxlength' => true, 'class' => 'eTicket form-control', 'id' => 'eTicket' . $row, 'required' => true]) ?>
             </div>
             <div class="col-md">
                 <?= $form->field($model, "[$row]type")->dropDownList(ServiceConstant::TICKET_TYPE_FOR_CREATE, ['disabled' => !$model->isNewRecord ? 'disabled' : false, 'class' => 'form-control type', 'id' => 'type' . $row]) ?>
@@ -84,12 +84,12 @@ use yii\helpers\Url;
                 <?= $form->field($model, "[$row]motherTicketId")->widget(Select2::class, Utilities::ajaxDropDown('motherTicketId', 'get-mother-ticket', true, 'motherTicketId' . $row, 'motherTicket', (!$model->isNewRecord && $model->motherTicket) ? [$model->motherTicket => $model->motherTicket->eTicket . ' | ' . $model->motherTicket->pnrCode] : [], true))->label('Parent') ?>
             </div>
             <div class="col-md">
-                <?= $form->field($model, "[$row]route")->textInput(['maxlength' => true, 'id' => 'route' . $row, 'class' => 'form-control route']) ?>
+                <?= $form->field($model, "[$row]route")->textInput(['maxlength' => true, 'id' => 'route' . $row, 'class' => 'form-control route', 'required' => true]) ?>
             </div>
         </div>
         <div class="row">
             <div class="col-md">
-                <?= $form->field($model, "[$row]paxName")->textInput(['id' => 'paxName' . $row, 'maxlength' => true]) ?>
+                <?= $form->field($model, "[$row]paxName")->textInput(['id' => 'paxName' . $row, 'maxlength' => true, 'required' => true]) ?>
             </div>
             <div class="col-md">
                 <?= $form->field($model, "[$row]paxType")->dropDownList(GlobalConstant::PAX_TYPE, ['id' => 'paxType' . $row, 'class' => 'form-control paxType' . $row]) ?>
@@ -163,7 +163,7 @@ use yii\helpers\Url;
             <div class="col-md">
                 <?= $form->field($model, "[$row]reference")->textInput(['maxlength' => true, 'class' => 'form-control reference']) ?>
             </div>
-            <?= $form->field($model, "[$row]customerId")->hiddenInput(['id' => 'customerId' . $row, 'class' => 'customerId'])->label(false) ?>
+            <?= $form->field($model, "[$row]customerId")->hiddenInput(['id' => 'customerId' . $row, 'class' => 'customerId', 'required' => true])->label(false) ?>
             <?= $form->field($ticketSupplier, "[$row]status")->hiddenInput(['id' => 'status' . $row, 'class' => 'status', 'value' => GlobalConstant::ACTIVE_STATUS])->label(false) ?>
             <?= $form->field($ticketSupplier, "[$row]paidAmount")->hiddenInput(['id' => 'paidAmount' . $row, 'class' => 'paidAmount', 'value' => 0])->label(false) ?>
         </div>

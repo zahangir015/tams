@@ -60,14 +60,14 @@ class WidgetHelper
                 'id' => ($id) ?? $name,
                 'class' => ($class) ?? $name,
                 'required' => $required,
-                'disabled' => $disabled ? 'readonly' : false
+                'disabled' => $disabled ? 'readonly' : false,
             ],
             'theme' => Select2::THEME_DEFAULT,
             //'size' => Select2::MEDIUM,
             'data' => $data,
             'maintainOrder' => true,
             'pluginOptions' => [
-                //'tags' => true,
+                'initialize' => true,
                 'allowClear' => true,
                 'minimumInputLength' => 2,
                 'language' => [
@@ -82,7 +82,7 @@ class WidgetHelper
         ];
     }
 
-    public static function select2Widget($data, $id, $isMultiple): array
+    public static function select2Widget($data, $id, $isMultiple, $class): array
     {
         return [
             'theme' => Select2::THEME_DEFAULT,
@@ -90,7 +90,8 @@ class WidgetHelper
             'options' => [
                 'placeholder' => 'Select ...',
                 'multiple' => $isMultiple,
-                'id' => $id
+                'id' => $id,
+                'class' => $class ?? ''
             ],
             'pluginOptions' => [
                 'tags' => true,

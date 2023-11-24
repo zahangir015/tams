@@ -1,6 +1,7 @@
 <?php
 
 use app\components\Utilities;
+use app\components\WidgetHelper;
 use kartik\date\DatePicker;
 use kartik\daterange\DateRangePicker;
 use kartik\file\FileInput;
@@ -39,7 +40,7 @@ $this->registerJsFile(
                             <label class="control-label" for="dateRange">Issue Date</label>
                             <?= $form->field($model, 'dateRange', [
                                 'options' => ['class' => 'drp-container mb-2']
-                            ])->widget(DateRangePicker::class, \app\components\WidgetHelper::getDateRangeWidget())->label(false) ?>
+                            ])->widget(DateRangePicker::class, WidgetHelper::getDateRangeWidget())->label(false) ?>
                         </div>
                     </div>
                     <div class="separator separator-dashed my-10"></div>
@@ -100,12 +101,12 @@ $this->registerJsFile(
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($model, 'date')->widget(DatePicker::class, Utilities::getDatewidget('date', 'date', false)) ?>
+                            <?= $form->field($model, 'date')->widget(DatePicker::class, WidgetHelper::getDateWidget('date', 'date', false)) ?>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($model, 'expectedPaymentDate')->widget(DatePicker::class, Utilities::getDatewidget('expectedPaymentDate', 'expectedPaymentDate', false)) ?>
+                            <?= $form->field($model, 'expectedPaymentDate')->widget(DatePicker::class, WidgetHelper::getDatewidget('expectedPaymentDate', 'expectedPaymentDate', false)) ?>
                         </div>
                     </div>
 

@@ -11,6 +11,7 @@ use app\traits\BehaviorTrait;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "{{%supplier}}".
@@ -37,7 +38,9 @@ use yii\db\ActiveRecord;
 class Supplier extends ActiveRecord
 {
     use BehaviorTrait;
+
     public $balance;
+
     /**
      * {@inheritdoc}
      */
@@ -135,15 +138,30 @@ class Supplier extends ActiveRecord
         return $this->hasMany(HolidaySupplier::class, ['supplierId' => 'id']);
     }
 
-    public static function query($query): array
+    public static function query(): array
     {
-        return self::find()
-            ->select(['id', 'name', 'company', 'email'])
-            ->where(['like', 'name', $query])
-            ->orWhere(['like', 'company', $query])
-            ->orWhere(['like', 'email', $query])
-            ->andWhere([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
-            ->andWhere([self::tableName() . '.agencyId' => Yii::$app->user->identity->agencyId])
-            ->all();
+        // try retrieving $data from cache
+        $cache = Yii::$app->cache;
+        $key = 'supplier';
+        $data = $cache->get($key);
+        if ($data === false) {
+            // $data is not found in cache, calculate it from scratch
+            $suppliers = self::find()
+                ->select(['id', 'name', 'company', 'email'])
+                /*->where(['like', 'name', $query])
+                ->orWhere(['like', 'company', $query])
+                ->orWhere(['like', 'email', $query])*/
+                ->where([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
+                ->andWhere([self::tableName() . '.agencyId' => Yii::$app->user->identity->agencyId])
+                ->all();
+            $data = ArrayHelper::map($suppliers, 'id', function ($supplier) {
+                return $supplier->name . ' | ' . $supplier->company;
+            });
+
+            // store $data in cache so that it can be retrieved next time
+            $cache->set($key, $data);
+        }
+
+        return $data;
     }
 }

@@ -14,6 +14,7 @@ function addTicket() {
             $('.card-holder').append(data);
             $('.customerId').val($('.customerId').val());
             $('#count').text((rowNum + 1));
+            $
         },
         error: function (error) {
             console.log(error)
@@ -60,11 +61,30 @@ $('#customerId').on('change', function (e) {
     $('.customerId').val($(this).val());
 });
 
-$('#supplierId').on('change', function (e) {
-    $('.supplierId').val($(this).val());
+$('#supplierId0').on('select2:select', function () {
+    $('.supplier').val($(this).val()).trigger('change.select2');
 });
 
-$(document).on('change paste keyup', "#airlineId0", function (e) {
+$(document).on('change', "#airlineId0", function (e) {
+    $.ajax({
+        url: airlineUrl,
+        type: 'get',
+        data: {airlineId: $(this).val()},
+        dataType: 'json',
+        success: function (data) {
+            if (data) {
+                $('.commission').val(data.commission / 100);
+                $('.incentive').val(data.incentive / 100);
+                $('.govTax').val(data.govTax);
+                //$('.airline').val($(this).val()).trigger('change');
+                $(document).set
+                $('#airline1').removeClass('select2-offscreen').val($(this).val()).trigger('change.select2');
+            }
+        }
+    });
+});
+
+$(document).on('change', ".airline", function (e) {
     var suffix = this.id.match(/\d+/);
     $.ajax({
         url: airlineUrl,
@@ -73,12 +93,9 @@ $(document).on('change paste keyup', "#airlineId0", function (e) {
         dataType: 'json',
         success: function (data) {
             if (data) {
-                $('.commission').val(data.commission);
-                $('.incentive').val(data.incentive);
-                $('.govTax').val(data.govTax);
-                //$('.airline').val($(this).val()).trigger('change');
-                $("#airlineId1").append('<option value="' + $(this).val() + '">' + data.name + '(' + data.code + ')</option>')
-                $("#airlineId1").val($(this).val()).trigger("change");
+                $('#commission' + suffix).val(data.commission / 100);
+                $('#incentive' + suffix).val(data.incentive / 100);
+                $('#govTax' + suffix).val(data.govTax);
             }
         }
     });
@@ -148,10 +165,6 @@ $('#eTicket0').on("change paste keyup", function () {
     });
 });
 
-$('#airline0').on("change paste keyup", function () {
-    $('.airline').val($(this).val()).trigger('change');
-});
-
 $('#baseFare0').on("change paste keyup", function () {
     $('.baseFare').val($(this).val());
     calculateQuoteAmount();
@@ -197,7 +210,7 @@ $('#bookedOnline0').on("change paste keyup", function () {
     $('.bookedOnline').val($(this).val());
 });
 $('#route0').on("change paste keyup", function () {
-    $('.routing').val($(this).val());
+    $('.route').val($(this).val());
 });
 
 $('#providerId0').on("change paste keyup", function () {

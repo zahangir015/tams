@@ -59,7 +59,7 @@ class Visa extends ActiveRecord
     public function rules(): array
     {
         return [
-            [['identificationNumber', 'customerId', 'customerCategory', 'issueDate', 'totalQuantity', 'quoteAmount', 'costOfSale', 'netProfit'], 'required'],
+            [['identificationNumber', 'customerId', 'customerCategory', 'issueDate', 'totalQuantity', 'quoteAmount', 'costOfSale', 'netProfit', 'type'], 'required'],
             [['motherId', 'invoiceId', 'customerId', 'totalQuantity', 'processStatus', 'isOnlineBooked', 'status', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt', 'agencyId'], 'integer'],
             [['type', 'paymentStatus'], 'string'],
             [['issueDate', 'refundRequestDate'], 'safe'],

@@ -179,8 +179,8 @@ class FlightService
                 $quoteAmount = $line[8];
                 $data['Ticket'][$key] = [
                     'airlineId' => $airline->id,
-                    'commission' => $airline->commission,
-                    'incentive' => $airline->incentive,
+                    'commission' => $airline->commission/100,
+                    'incentive' => $airline->incentive/100,
                     'govTax' => $airline->govTax,
                     'type' => GlobalConstant::TICKET_TYPE_FOR_CREATE['New'],
                     'numberOfSegment' => $line[10],
@@ -570,7 +570,7 @@ class FlightService
 
     public static function calculateAIT(float $baseFare, float $tax, mixed $govtTax): float
     {
-        return (((double)$baseFare + (double)$tax) * (double)$govtTax);
+        return (((double)$baseFare + (double)$tax) * (float)$govtTax);
     }
 
     protected static function tripTypeIdentifier($route): string
@@ -595,27 +595,27 @@ class FlightService
 
     private static function calculateCommissionReceived($baseFare, $commission): float
     {
-        return ($baseFare * $commission);
+        return ((double)$baseFare * (float)$commission);
     }
 
     private static function calculateIncentiveReceived($baseFare, $commission, $incentive): float
     {
-        return (($baseFare - ($baseFare * $commission)) * ($incentive));
+        return (((double)$baseFare - ((double)$baseFare * (float)$commission)) * (float)$incentive);
     }
 
     private static function calculateNetProfit($quoteAmount, $tax, $baseFare, $serviceCharge, $ait, $commissionReceived, $incentiveReceived)
     {
-        return ($quoteAmount - ($tax + $ait + (($baseFare - $commissionReceived) - $incentiveReceived)));
+        return ((double)$quoteAmount - ((double)$tax + (float)$ait + (((double)$baseFare - $commissionReceived) - $incentiveReceived)));
     }
 
     private static function calculateCostOfSale($tax, $ait, $baseFare, $commissionReceived, $incentiveReceived)
     {
-        return ($tax + $ait + (($baseFare - $commissionReceived) - $incentiveReceived));
+        return ($tax + $ait + (((double)$baseFare - $commissionReceived) - $incentiveReceived));
     }
 
     public static function calculateQuoteAmount($baseFare, $tax, $ait, $requestData): float
     {
-        $quoteAmount = $baseFare + $tax;
+        $quoteAmount = (double)$baseFare + $tax;
         // Ticket Discount calculation
         $discount = 0;
         // If there is any convenienceFee
@@ -636,8 +636,8 @@ class FlightService
     public function ajaxCostCalculation($baseFare, $tax, $airlineId)
     {
         $airline = Airline::findOne(['id' => (int)$airlineId]);
-        $commissionReceived = self::calculateCommissionReceived($baseFare, $airline->commission);
-        $incentiveReceived = self::calculateIncentiveReceived($baseFare, $airline->commission, $airline->incentive);
+        $commissionReceived = self::calculateCommissionReceived($baseFare, $airline->commission/100);
+        $incentiveReceived = self::calculateIncentiveReceived($baseFare, $airline->commission/100, $airline->incentive/100);
         $ait = self::calculateAIT($baseFare, $tax, $airline->govTax);
 
         return self::calculateCostOfSale($tax, $ait, $baseFare, $commissionReceived, $incentiveReceived);
