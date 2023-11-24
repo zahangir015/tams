@@ -21,6 +21,21 @@ $config = [
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
+        /*'cache' => [
+            'class' => 'yii\caching\MemCache',
+            'servers' => [
+                [
+                    'host' => 'server1',
+                    'port' => 11211,
+                    'weight' => 100,
+                ],
+                [
+                    'host' => 'server2',
+                    'port' => 11211,
+                    'weight' => 50,
+                ],
+            ],
+        ],*/
         'user' => [
             'identityClass' => 'app\modules\admin\models\User',
             'loginUrl' => ['admin/user/login'],

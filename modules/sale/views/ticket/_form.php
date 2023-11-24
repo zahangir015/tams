@@ -2,6 +2,8 @@
 
 use app\components\GlobalConstant;
 use app\components\Utilities;
+use app\components\WidgetHelper;
+use app\modules\sale\models\Supplier;
 use app\modules\sale\models\ticket\TicketSupplier;
 use kartik\date\DatePicker;
 use kartik\select2\Select2;
@@ -51,7 +53,7 @@ $this->registerJsFile(
                 <div class="row pb-10">
                     <div class="col-md">
                         Select Customer
-                        <?= Select2::widget(Utilities::ajaxDropDown('customerId', '/sale/customer/get-customers', true)); ?>
+                        <?= Select2::widget(WidgetHelper::ajaxSelect2Widget('customerId', '/sale/customer/get-customers', true)); ?>
                         <small id="passwordHelpBlock" class="form-text text-muted">
                             Add Customer if not available. <?=  Html::a('Create Customer', '/sale/customer/create', ['target' => '_blank'])?>
                         </small>
@@ -127,7 +129,7 @@ $this->registerJsFile(
         </div>
     <?php endif; ?>
     <div class="card-holder">
-        <?= $this->render('ticket', ['row' => 0, 'model' => $model, 'ticketSupplier' => $model->ticketSupplier ?? new TicketSupplier(), 'form' => $form]); ?>
+        <?= $this->render('ticket', ['row' => 0, 'model' => $model, 'ticketSupplier' => $model->ticketSupplier ?? new TicketSupplier(), 'supplierDataArray' => Supplier::query(), 'form' => $form]); ?>
     </div>
     <?php ActiveForm::end(); ?>
 </div>

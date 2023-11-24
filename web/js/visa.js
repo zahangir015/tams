@@ -59,10 +59,8 @@ function calculateQuoteAmount() {
             totalQuantity += quantity;
         }
     });
-    console.log(totalQuoteAmount);
-    console.log(totalQuantity);
     $('#visa-quoteamount').val(totalQuoteAmount);
-    $('#visa-quantity').val(totalQuantity);
+    $('#visa-totalquantity').val(totalQuantity);
     calculateNetProfit();
 }
 

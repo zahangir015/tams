@@ -7,6 +7,7 @@ use app\models\History;
 use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\Airline;
 use app\modules\sale\models\holiday\Holiday;
+use app\modules\sale\models\Supplier;
 use app\modules\sale\models\ticket\RefundTicketSearch;
 use app\modules\sale\models\ticket\Ticket;
 use app\modules\sale\models\ticket\TicketSearch;
@@ -315,6 +316,7 @@ class TicketController extends ParentController
             'model' => $model,
             'row' => $row,
             'ticketSupplier' => $ticketSupplier,
+            'supplierDataArray' => Supplier::query(),
             'form' => ActiveForm::begin(['class' => 'form'])
         ]);
     }
