@@ -65,6 +65,10 @@ $('#supplierId0').on('select2:select', function () {
     $('.supplier').val($(this).val()).trigger('change.select2');
 });
 
+$('#providerId0').on('select2:select', function () {
+    $('.provider').val($(this).val()).trigger('change.select2');
+});
+
 $(document).on('change', "#airlineId0", function (e) {
     $.ajax({
         url: airlineUrl,
@@ -77,7 +81,6 @@ $(document).on('change', "#airlineId0", function (e) {
                 $('.incentive').val(data.incentive / 100);
                 $('.govTax').val(data.govTax);
                 //$('.airline').val($(this).val()).trigger('change');
-                $(document).set
                 $('#airline1').removeClass('select2-offscreen').val($(this).val()).trigger('change.select2');
             }
         }
@@ -129,20 +132,19 @@ $(document).on('change', ".type", function (e) {
     }
 });
 
-$(document).on("change paste keyup", ".calculateQuote", function (e) {
+/*$(document).on("change paste keyup", ".calculateQuote", function (e) {
     const suffix = this.id.match(/\d+/);
     const baseFare = parseFloat($('#baseFare' + suffix).val());
     const tax = parseFloat($('#tax' + suffix).val());
     const otherTax = parseFloat($('#otherTax' + suffix).val());
-    let discount = parseFloat($('#discount' + suffix).val());
     const serviceCharge = parseFloat($('#serviceCharge' + suffix).val());
     const discountType = $('#discountType' + suffix).val();
-
+    let discount = parseFloat($('#discount' + suffix).val());
     if (discountType === 'Percentage') {
         discount = baseFare * (discount / 100);
     }
     $('#quoteAmount' + suffix).val((baseFare + tax + otherTax + serviceCharge - discount));
-});
+});*/
 
 $('#eTicket0').on("change paste keyup", function () {
     var number;
@@ -211,10 +213,6 @@ $('#bookedOnline0').on("change paste keyup", function () {
 });
 $('#route0').on("change paste keyup", function () {
     $('.route').val($(this).val());
-});
-
-$('#providerId0').on("change paste keyup", function () {
-    $('.providerId').val($(this).val());
 });
 
 $('#type0').on("change paste keyup", function () {

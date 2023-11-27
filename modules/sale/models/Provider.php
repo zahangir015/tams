@@ -6,6 +6,7 @@ use app\components\GlobalConstant;
 use app\traits\BehaviorTrait;
 use Yii;
 use yii\db\ActiveRecord;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "{{%provider}}".
@@ -67,14 +68,29 @@ class Provider extends ActiveRecord
         ];
     }
 
-    public static function query($query): array
+    public static function query(): array
     {
-        return self::find()
-            ->select(['id', 'name', 'code'])
-            ->where(['like', 'name', $query])
-            ->orWhere(['like', 'code', $query])
-            ->andWhere([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
-            ->andWhere([self::tableName() . '.agencyId' => Yii::$app->user->identity->agencyId])
-            ->all();
+        // try retrieving $data from cache
+        $cache = Yii::$app->cache;
+        $key = 'provider'.Yii::$app->user->identity->agencyId;
+        $data = $cache->get($key);
+
+        if ($data === false) {
+            // $data is not found in cache, calculate it from scratch
+            $providers = self::find()
+                ->select(['id', 'name', 'code'])
+                ->where([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
+                ->andWhere([self::tableName() . '.agencyId' => Yii::$app->user->identity->agencyId])
+                ->all();
+
+            $data = ArrayHelper::map($providers, 'id', function ($provider) {
+                return $provider->name . ' (' . $provider->code.')';
+            });
+
+            // store $data in cache so that it can be retrieved next time
+            $cache->set($key, $data);
+        }
+
+        return $data;
     }
 }

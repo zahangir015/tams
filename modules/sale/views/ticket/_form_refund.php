@@ -141,6 +141,9 @@ $this->registerJsFile(
                     </div>
                     <div class="row">
                         <div class="col-md">
+                            <?= $form->field($ticketRefund, 'airlineRefundCharge')->textInput(['type' => 'number', 'value' => $ticketRefund->airlineRefundCharge ?? $model->airline->serviceCharge, 'min' => 0, 'class' => 'quotePart form-control']) ?>
+                        </div>
+                        <div class="col-md">
                             <?= $form->field($ticketRefund, 'serviceCharge')->textInput(['type' => 'number', 'value' => $ticketRefund->isNewRecord ? 0 : $ticketRefund->serviceCharge, 'min' => 0, 'class' => 'quotePart serviceCharge form-control']) ?>
                         </div>
                         <div class="col-md">

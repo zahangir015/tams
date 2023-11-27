@@ -3,6 +3,7 @@
 use app\components\GlobalConstant;
 use app\components\Utilities;
 use app\components\WidgetHelper;
+use app\modules\sale\models\Provider;
 use app\modules\sale\models\Supplier;
 use app\modules\sale\models\ticket\TicketSupplier;
 use kartik\date\DatePicker;
@@ -129,7 +130,7 @@ $this->registerJsFile(
         </div>
     <?php endif; ?>
     <div class="card-holder">
-        <?= $this->render('ticket', ['row' => 0, 'model' => $model, 'ticketSupplier' => $model->ticketSupplier ?? new TicketSupplier(), 'supplierDataArray' => Supplier::query(), 'form' => $form]); ?>
+        <?= $this->render('ticket', ['row' => 0, 'model' => $model, 'ticketSupplier' => $model->ticketSupplier ?? new TicketSupplier(), 'supplierDataArray' => Supplier::query(), 'providerDataArray' => Provider::query(), 'form' => $form]); ?>
     </div>
     <?php ActiveForm::end(); ?>
 </div>

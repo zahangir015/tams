@@ -142,7 +142,7 @@ class Supplier extends ActiveRecord
     {
         // try retrieving $data from cache
         $cache = Yii::$app->cache;
-        $key = 'supplier';
+        $key = 'supplier'.Yii::$app->user->identity->agencyId;
         $data = $cache->get($key);
         if ($data === false) {
             // $data is not found in cache, calculate it from scratch

@@ -38,9 +38,10 @@ use yii\helpers\Url;
     <div class="card-body">
         <div class="row">
             <div class="col-md">
-                <?= $form->field($ticketSupplier, "[$row]supplierId")->widget(Select2::class, WidgetHelper::select2Widget($supplierDataArray, 'supplierId'.$row, false, 'supplier'))->label('Supplier') ?>
+                <?= $form->field($ticketSupplier, "[$row]supplierId")->widget(Select2::class, WidgetHelper::select2Widget($supplierDataArray, 'supplierId' . $row, false, 'supplier'))->label('Supplier') ?>
                 <small id="passwordHelpBlock" class="form-text text-muted">
-                    Add Supplier if not available. <?=  Html::a('Create Supplier', '/sale/supplier/create', ['target' => '_blank'])?>
+                    Add Supplier if not
+                    available. <?= Html::a('Create Supplier', '/sale/supplier/create', ['target' => '_blank']) ?>
                 </small>
             </div>
             <div class="col-md">
@@ -57,7 +58,8 @@ use yii\helpers\Url;
                     ],
                 ])->label('Airline'); ?>
                 <small id="passwordHelpBlock" class="form-text text-muted">
-                    Add Airline if not available. <?=  Html::a('Create Airline', '/sale/airline/create', ['target' => '_blank'])?>
+                    Add Airline if not
+                    available. <?= Html::a('Create Airline', '/sale/airline/create', ['target' => '_blank']) ?>
                 </small>
             </div>
             <div class="col-md">
@@ -149,7 +151,7 @@ use yii\helpers\Url;
         </div>
         <div class="row">
             <div class="col-md">
-                <?= $form->field($model, "[$row]providerId")->widget(Select2::class, Utilities::ajaxDropDown('providerId', '/sale/provider/get-providers', false, 'providerId' . $row, 'providerId', (!$model->isNewRecord && $model->provider) ? [$model->provider->id => $model->provider->name] : []))->label('Select GDS'); ?>
+                <?= $form->field($model, "[$row]providerId")->widget(Select2::class, WidgetHelper::select2Widget($providerDataArray, 'providerId' . $row, false, 'provider'))->label('GDS') ?>
             </div>
             <div class="col-md">
                 <?= $form->field($model, "[$row]bookedOnline")->dropDownList(GlobalConstant::BOOKING_TYPE, ['value' => 0, 'class' => 'form-control bookedOnline']) ?>
