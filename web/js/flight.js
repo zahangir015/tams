@@ -44,15 +44,16 @@ function calculateQuoteAmount() {
         const baseFare = parseFloat($('#baseFare' + suffix).val());
         const tax = parseFloat($('#tax' + suffix).val());
         const otherTax = parseFloat($('#otherTax' + suffix).val());
-        let discount = parseFloat($('#discount' + suffix).val());
         const serviceCharge = parseFloat($('#serviceCharge' + suffix).val());
         const discountType = $('#discountType' + suffix).val();
         const govTax = $('#govTax' + suffix).val();
         const ait = ((baseFare + tax) * govTax);
 
+        let discount = parseFloat($('#discount' + suffix).val());
         if (discountType === 'Percentage') {
             discount = baseFare * (discount / 100);
         }
+
         $('#quoteAmount' + suffix).val((baseFare + tax + otherTax + serviceCharge + ait - discount));
     })
 }
@@ -132,19 +133,23 @@ $(document).on('change', ".type", function (e) {
     }
 });
 
-/*$(document).on("change paste keyup", ".calculateQuote", function (e) {
-    const suffix = this.id.match(/\d+/);
+$(document).on("change paste keyup", ".calculateQuote", function (e) {
+    let suffix = this.id.match(/\d+/);
     const baseFare = parseFloat($('#baseFare' + suffix).val());
     const tax = parseFloat($('#tax' + suffix).val());
     const otherTax = parseFloat($('#otherTax' + suffix).val());
     const serviceCharge = parseFloat($('#serviceCharge' + suffix).val());
     const discountType = $('#discountType' + suffix).val();
+    const govTax = $('#govTax' + suffix).val();
+    const ait = ((baseFare + tax) * govTax);
+
     let discount = parseFloat($('#discount' + suffix).val());
     if (discountType === 'Percentage') {
         discount = baseFare * (discount / 100);
     }
-    $('#quoteAmount' + suffix).val((baseFare + tax + otherTax + serviceCharge - discount));
-});*/
+
+    $('#quoteAmount' + suffix).val((baseFare + tax + otherTax + serviceCharge + ait - discount));
+});
 
 $('#eTicket0').on("change paste keyup", function () {
     var number;
