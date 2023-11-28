@@ -1,0 +1,103 @@
+:root {
+  --bg-color: #e7f1fb;
+  --bg-receivable: rgba(60, 154, 120, 0.3);
+  --bg-payable: rgba(205, 68, 55, 0.3);
+}
+
+.common-bg {
+  background-color: var(--bg-color);
+}
+
+/* Sales summary */
+.label-box {
+  height: 15px;
+  width: 15px;
+  border-radius: 3px;
+}
+
+/* todays sales, receivable and payable section  */
+.todays-sales-container {
+  min-height: 250px;
+}
+.todays-sales .number {
+  font-size: 30px;
+  font-weight: bold;
+}
+.icon-block {
+  height: 30px;
+  width: 30px;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.receivable {
+  background-color: var(--bg-receivable);
+  min-height: 250px;
+}
+.payable {
+  background-color: var(--bg-payable);
+  min-height: 250px;
+}
+
+/* profit loss supplier  */
+.profit-loss-supplier {
+  min-height: 210px;
+}
+.supplier,
+.leave-stat-bg {
+  background-color: rgb(245, 248, 250, 0.8);
+}
+.supplier-divider {
+  height: 1px;
+  border-radius: 100%;
+}
+
+/* Attendence and leave statistics  */
+.attendence-leave {
+  min-height: 320px;
+}
+.entry-time {
+  background-image: url("../uploads/images/entry-time-bg.svg");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+.exit-time {
+  background-image: url("../uploads/images/exit-time-bg.svg");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+.short-work {
+  background-image: url("../uploads/images/short-work-bg.svg");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+.late-in {
+  background-image: url("../uploads/images/late-in-bg.svg");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+.attendence-icon {
+  height: 35px;
+  width: 35px;
+  border-radius: 100%;
+}
+.bottom-bar {
+  width: 100px;
+  height: 8px;
+  border-radius: 50px 50px 0 0;
+  margin: 0 auto;
+}
+.leave-icon-position {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+/* top sales, supplier */
+.top-sales-supplier {
+  min-height: 330px;
+}
