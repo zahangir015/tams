@@ -21,9 +21,14 @@ class DashboardAsset extends AssetBundle
     public $baseUrl = '@web';
     public $css = [
         'css/site.css',
+        'css/dashboard.css',
     ];
     public $js = [
-        'js/chartjs/chart.js'
+        'js/chart/chart.js',
+        'js/chart/salesChart.js',
+        'js/chart/salesDueChart.js',
+        'js/chart/salesSourceChart.js',
+        'js/chart/supplierChart.js',
     ];
     public $depends = [
         'yii\web\YiiAsset',
