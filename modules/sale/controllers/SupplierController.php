@@ -80,6 +80,11 @@ class SupplierController extends ParentController
                         return $this->redirect(['view', 'uid' => $model->uid]);
                     }
                 }
+                // Cache data update
+                $cache = Yii::$app->cache;
+                $key = 'supplier'.Yii::$app->user->identity->agencyId;
+                $cache->delete($key);
+                Supplier::query();
             }
             Yii::$app->session->setFlash('danger', Utilities::processErrorMessages($model->getErrors()));
         } else {
@@ -100,13 +105,19 @@ class SupplierController extends ParentController
      * @return string|Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate(string $uid)
+    public function actionUpdate(string $uid): Response|string
     {
         $model = $this->findModel($uid);
 
         if ($model->load($this->request->post())) {
             $model->categories = Json::encode($model->categories);
             if ($model->save()) {
+                // Cache data update
+                $cache = Yii::$app->cache;
+                $key = 'supplier'.Yii::$app->user->identity->agencyId;
+                $cache->delete($key);
+                Supplier::query();
+
                 Yii::$app->session->setFlash('success', 'Supplier created successfully.');
                 return $this->redirect(['view', 'uid' => $model->uid]);
             }

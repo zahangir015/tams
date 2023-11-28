@@ -5,6 +5,7 @@ namespace app\modules\sale\controllers;
 use app\modules\sale\models\Provider;
 use app\modules\sale\models\search\ProviderSearch;
 use app\controllers\ParentController;
+use app\modules\sale\models\Supplier;
 use Yii;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -55,6 +56,11 @@ class ProviderController extends ParentController
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
+                // Cache data update
+                $cache = Yii::$app->cache;
+                $key = 'provider'.Yii::$app->user->identity->agencyId;
+                $cache->delete($key);
+                Supplier::query();
                 return $this->redirect(['view', 'uid' => $model->uid]);
             }
         } else {
@@ -78,6 +84,12 @@ class ProviderController extends ParentController
         $model = $this->findModel($uid);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+            // Cache data update
+            $cache = Yii::$app->cache;
+            $key = 'provider'.Yii::$app->user->identity->agencyId;
+            $cache->delete($key);
+            Supplier::query();
+
             return $this->redirect(['view', 'uid' => $model->uid]);
         }
 

@@ -7,6 +7,7 @@ use app\models\History;
 use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\models\Airline;
 use app\modules\sale\models\holiday\Holiday;
+use app\modules\sale\models\Provider;
 use app\modules\sale\models\Supplier;
 use app\modules\sale\models\ticket\RefundTicketSearch;
 use app\modules\sale\models\ticket\Ticket;
@@ -123,7 +124,6 @@ class TicketController extends ParentController
     {
         $model = new Ticket();
         $ticketSupplier = new TicketSupplier();
-
         if ($this->request->isPost) {
             // Store ticket data
             $storeResponse = $this->flightService->storeTicket(Yii::$app->request->post());
@@ -317,6 +317,7 @@ class TicketController extends ParentController
             'row' => $row,
             'ticketSupplier' => $ticketSupplier,
             'supplierDataArray' => Supplier::query(),
+            'providerDataArray' => Provider::query(),
             'form' => ActiveForm::begin(['class' => 'form'])
         ]);
     }
