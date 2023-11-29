@@ -208,7 +208,8 @@ class SaleService
         die();*/
         $dateRangeArray = [
             'currentDayData' => date('Y-m-d') . ' - ' . date('Y-m-d'),
-            'currentMonthData' => date('Y-m-01') . ' - ' . date('Y-m-t')
+            'currentMonthData' => date('Y-m-01') . ' - ' . date('Y-m-t'),
+            'previousMonthData' => date('Y-m-d',strtotime('first day of last month')) . ' - ' . date('Y-m-d',strtotime('last day of last month')),
         ];
 
         foreach ($dateRangeArray as $key => $dateRange) {
@@ -302,6 +303,12 @@ class SaleService
                 'hotel' => $hotelSalesData['currentMonthData'],
                 'holiday' => $holidaySalesData['currentMonthData'],
                 'visa' => $visaSalesData['currentMonthData'],
+            ],
+            'previousMonthSales' => [
+                'ticket' => $ticketSalesData['previousMonthData'],
+                'hotel' => $hotelSalesData['previousMonthData'],
+                'holiday' => $holidaySalesData['previousMonthData'],
+                'visa' => $visaSalesData['previousMonthData'],
             ],
         ];
 

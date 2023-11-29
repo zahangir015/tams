@@ -73,14 +73,21 @@ class SiteController extends Controller
             $totalReceived = array_sum(array_column($saleData['currentDaySales'], 'receivedAmount'));
             $totalPaid = array_sum(array_column($saleData['currentDaySales'], 'paidAmount'));
             $totalCost = array_sum(array_column($saleData['currentDaySales'], 'costOfSale'));
-            $totalNerProfit = array_sum(array_column($saleData['currentDaySales'], 'netProfit'));
+            $totalNetProfit = array_sum(array_column($saleData['currentDaySales'], 'netProfit'));
 
             $totalMonthlyQuantity = array_sum(array_column($saleData['currentMonthSales'], 'total'));
             $totalMonthlyQuote = array_sum(array_column($saleData['currentMonthSales'], 'quoteAmount'));
             $totalMonthlyReceived = array_sum(array_column($saleData['currentMonthSales'], 'receivedAmount'));
             $totalMonthlyPaid = array_sum(array_column($saleData['currentMonthSales'], 'paidAmount'));
             $totalMonthlyCost = array_sum(array_column($saleData['currentMonthSales'], 'costOfSale'));
-            $totalMonthlyNerProfit = array_sum(array_column($saleData['currentMonthSales'], 'netProfit'));
+            $totalMonthlyNetProfit = array_sum(array_column($saleData['currentMonthSales'], 'netProfit'));
+
+            $totalPreviousMonthlyQuantity = array_sum(array_column($saleData['previousMonthSales'], 'total'));
+            $totalPreviousMonthlyQuote = array_sum(array_column($saleData['previousMonthSales'], 'quoteAmount'));
+            $totalPreviousMonthlyReceived = array_sum(array_column($saleData['previousMonthSales'], 'receivedAmount'));
+            $totalPreviousMonthlyPaid = array_sum(array_column($saleData['previousMonthSales'], 'paidAmount'));
+            $totalPreviousMonthlyCost = array_sum(array_column($saleData['previousMonthSales'], 'costOfSale'));
+            $totalPreviousMonthlyNetProfit = array_sum(array_column($saleData['previousMonthSales'], 'netProfit'));
 
             $dataArray = [
                 'saleData' => $saleData,
@@ -89,14 +96,22 @@ class SiteController extends Controller
                 'totalReceived' => $totalReceived,
                 'totalPaid' => $totalPaid,
                 'totalCost' => $totalCost,
-                'totalNetProfit' => $totalNerProfit,
+                'totalNetProfit' => $totalNetProfit,
 
                 'totalMonthlyQuantity' => $totalMonthlyQuantity,
                 'totalMonthlyQuote' => $totalMonthlyQuote,
                 'totalMonthlyReceived' => $totalMonthlyReceived,
                 'totalMonthlyPaid' => $totalMonthlyPaid,
                 'totalMonthlyCost' => $totalMonthlyCost,
-                'totalMonthlyNetProfit' => $totalMonthlyNerProfit,
+                'totalMonthlyNetProfit' => $totalMonthlyNetProfit,
+
+                'totalPreviousMonthlyQuantity' => $totalPreviousMonthlyQuantity,
+                'totalPreviousMonthlyQuote' => $totalPreviousMonthlyQuote,
+                'totalPreviousMonthlyReceived' => $totalPreviousMonthlyReceived,
+                'totalPreviousMonthlyPaid' => $totalPreviousMonthlyPaid,
+                'totalPreviousMonthlyCost' => $totalPreviousMonthlyCost,
+                'totalPreviousMonthlyNetProfit' => $totalPreviousMonthlyNetProfit,
+
 
                 'ticketPercentage' => ($totalQuote) ? ($saleData['currentDaySales']['ticket']['quoteAmount'] * 100) / $totalQuote : 0,
                 'hotelPercentage' => ($totalQuote) ? ($saleData['currentDaySales']['hotel']['quoteAmount'] * 100) / $totalQuote : 0,
@@ -114,8 +129,6 @@ class SiteController extends Controller
                 'monthlyReceivable' => number_format(ceil($totalMonthlyQuote - $totalMonthlyReceived)),
                 'monthlyPayable' => number_format(ceil($totalMonthlyCost - $totalMonthlyPaid)),
             ];
-
-
         }
 
         if (Helper::checkRoute('/site/attendance-report')) {

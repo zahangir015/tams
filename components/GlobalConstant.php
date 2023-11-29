@@ -82,6 +82,17 @@ final class GlobalConstant
         'CUSTOMER' => 'CUSTOMER',
     ];
 
+    const BG_COLOR_CLASS = [
+        'success',
+        'warning',
+        'danger',
+        'primary',
+        'gray',
+        'light-blue',
+        'light-green',
+        'light-red'
+    ];
+
     const HOLIDAY_REPORT_TYPE = [
         'CUSTOMER_CATEGORY' => 'CUSTOMER CATEGORY',
         'CUSTOMER_CATEGORY_BOOKING_TYPE' => 'CUSTOMER_CATEGORY_BOOKING_TYPE',
@@ -108,17 +119,6 @@ final class GlobalConstant
         'AIRLINES' => 'AIRLINES',
         'SUPPLIER' => 'SUPPLIER',
         'CUSTOMER' => 'CUSTOMER',
-    ];
-
-    const BG_COLOR_CLASS = [
-        'bg-primary',
-        'bg-success',
-        'bg-warning',
-        'bg-danger',
-        'bg-gray',
-        'bg-light-blue',
-        'bg-light-green',
-        'bg-light-red'
     ];
 
 
