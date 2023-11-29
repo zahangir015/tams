@@ -24,7 +24,7 @@ class DashboardAsset extends AssetBundle
         'css/dashboard.css',
     ];
     public $js = [
-        'js/chart/chart.js',
+        'https://cdn.jsdelivr.net/npm/chart.js',
         'js/chart/salesChart.js',
         'js/chart/salesDueChart.js',
         'js/chart/salesSourceChart.js',
