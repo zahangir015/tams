@@ -208,13 +208,59 @@ class SaleService
         $lastDayOfLastMonth = date('Y-m-d',strtotime('last day of last month'));
         echo $firstDayOfLastMonth.' '.$lastDayOfLastMonth ;
         die();*/
-        /*$dateRangeArray = [
+
+        $monthlyServiceSale = self::monthlySales();
+
+        $dateRangeArray = [
             'currentDayData' => date('Y-m-d') . ' - ' . date('Y-m-d'),
             'currentMonthData' => date('Y-m-01') . ' - ' . date('Y-m-t'),
             'previousMonthData' => date('Y-m-d', strtotime('first day of last month')) . ' - ' . date('Y-m-d', strtotime('last day of last month')),
         ];
 
-        foreach ($dateRangeArray as $key => $dateRange) {
+
+        $saleData = [
+            'currentDaySales' => [
+                'ticket' => $monthlyServiceSale['ticketSalesData'][date('Y-m-d')],
+                'hotel' => $monthlyServiceSale['hotelSalesData'][date('Y-m-d')],
+                'holiday' => $monthlyServiceSale['holidaySalesData'][date('Y-m-d')],
+                'visa' => $monthlyServiceSale['visaSalesData'][date('Y-m-d')],
+            ],
+            'currentMonthSales' => [
+                'ticket' => $monthlyServiceSale['ticketSalesData'][date('Y-m')],
+                'hotel' => $monthlyServiceSale['hotelSalesData'][date('Y-m')],
+                'holiday' => $monthlyServiceSale['holidaySalesData'][date('Y-m')],
+                'visa' => $monthlyServiceSale['visaSalesData'][date('Y-m')],
+            ],
+            'previousMonthSales' => [
+                'ticket' => $monthlyServiceSale['ticketSalesData'][date('Y-m', strtotime('-1 month'))],
+                'hotel' => $monthlyServiceSale['hotelSalesData'][date('Y-m', strtotime('-1 month'))],
+                'holiday' => $monthlyServiceSale['holidaySalesData'][date('Y-m', strtotime('-1 month'))],
+                'visa' => $monthlyServiceSale['visaSalesData'][date('Y-m', strtotime('-1 month'))],
+            ],
+        ];
+
+        $totalQuantity = array_sum(array_column($saleData['currentDaySales'], 'total'));
+        $totalQuote = array_sum(array_column($saleData['currentDaySales'], 'quoteAmount'));
+        $totalReceived = array_sum(array_column($saleData['currentDaySales'], 'receivedAmount'));
+        $totalPaid = array_sum(array_column($saleData['currentDaySales'], 'paidAmount'));
+        $totalCost = array_sum(array_column($saleData['currentDaySales'], 'costOfSale'));
+        $totalNetProfit = array_sum(array_column($saleData['currentDaySales'], 'netProfit'));
+
+        $totalMonthlyQuantity = array_sum(array_column($saleData['currentMonthSales'], 'total'));
+        $totalMonthlyQuote = array_sum(array_column($saleData['currentMonthSales'], 'quoteAmount'));
+        $totalMonthlyReceived = array_sum(array_column($saleData['currentMonthSales'], 'receivedAmount'));
+        $totalMonthlyPaid = array_sum(array_column($saleData['currentMonthSales'], 'paidAmount'));
+        $totalMonthlyCost = array_sum(array_column($saleData['currentMonthSales'], 'costOfSale'));
+        $totalMonthlyNetProfit = array_sum(array_column($saleData['currentMonthSales'], 'netProfit'));
+
+        $totalPreviousMonthlyQuantity = array_sum(array_column($saleData['previousMonthSales'], 'total'));
+        $totalPreviousMonthlyQuote = array_sum(array_column($saleData['previousMonthSales'], 'quoteAmount'));
+        $totalPreviousMonthlyReceived = array_sum(array_column($saleData['previousMonthSales'], 'receivedAmount'));
+        $totalPreviousMonthlyPaid = array_sum(array_column($saleData['previousMonthSales'], 'paidAmount'));
+        $totalPreviousMonthlyCost = array_sum(array_column($saleData['previousMonthSales'], 'costOfSale'));
+        $totalPreviousMonthlyNetProfit = array_sum(array_column($saleData['previousMonthSales'], 'netProfit'));
+
+        /*foreach ($dateRangeArray as $key => $dateRange) {
             list($start_date, $end_date) = explode(' - ', $dateRange);
             $date = date('jS \of F', strtotime($start_date)) . ' to ' . date('jS \of F', strtotime($end_date));
 
@@ -291,82 +337,11 @@ class SaleService
                 ->one();
         }*/
 
-        list($start_date, $end_date) = explode(' - ', $dateRangeArray['currentMonthData']);
-        $supplierTicketSalesData = TicketSupplier::find()
-            ->joinWith(['supplier', 'ticket'])
-            ->select([
-                new Expression('SUM(ticket_supplier.costOfSale) as costOfSale'),
-                new Expression('SUM(ticket_supplier.paidAmount) as paidAmount'),
-                'ticket_supplier.supplierId',
-                'supplier.company'
-            ])
-            ->where(['<=', 'ticket_supplier.refundRequestDate', $end_date])
-            ->orWhere(['IS', 'ticket_supplier.refundRequestDate', NULL])
-            ->andWhere(['between', 'ticket_supplier.issueDate', '2023-11-01', '2023-11-30'])
-            ->andWhere(['ticket.agencyId' => Yii::$app->user->identity->agencyId])
-            ->groupBy('ticket_supplier.supplierId')
-            ->orderBy('costOfSale DESC')
-            ->limit(4)
-            ->asArray()
-            ->all();
+        $topSupplierTicketSalesData = self::supplierSales($dateRangeArray);
 
-        $topSupplierTicketSalesData = ArrayHelper::map($supplierTicketSalesData, 'company', function ($supplierTicketSalesData) {
-            return [
-                'costOfSale' => $supplierTicketSalesData['costOfSale'],
-                'paidAmount' => $supplierTicketSalesData['paidAmount'],
-                'supplierId' => $supplierTicketSalesData['supplierId'],
-            ];
-        });
+        $topSaleSourceTicketSalesData = self::sourceSale($dateRangeArray);
 
-        $supplierArray = array_column($topSupplierTicketSalesData, 'supplierId');
-        $otherSupplierTicketSalesData = TicketSupplier::find()
-            ->joinWith(['supplier', 'ticket'])
-            ->select([
-                new Expression('SUM(ticket_supplier.costOfSale) as costOfSale'),
-                new Expression('SUM(ticket_supplier.paidAmount) as paidAmount'),
-            ])
-            ->where(['<=', 'ticket_supplier.refundRequestDate', $end_date])
-            ->orWhere(['IS', 'ticket_supplier.refundRequestDate', NULL])
-            ->andWhere(['between', 'ticket_supplier.issueDate', '2023-11-01', '2023-11-30'])
-            ->andWhere(['ticket.agencyId' => Yii::$app->user->identity->agencyId])
-            ->andWhere(['NOT IN', 'ticket_supplier.supplierId', $supplierArray])
-            ->orderBy('costOfSale DESC')
-            ->asArray()
-            ->one();
-
-        $topSupplierTicketSalesData['Others'] = [
-            'costOfSale' => ($otherSupplierTicketSalesData['costOfSale']) ?: 0,
-            'paidAmount' => ($otherSupplierTicketSalesData['paidAmount']) ?: 0,
-        ];
-
-        /*if (!empty(array_filter($otherSupplierTicketSalesData))) {
-            $topSupplierTicketSalesData['Others'] = [
-                'costOfSale' => $otherSupplierTicketSalesData['costOfSale'],
-                'paidAmount' => $otherSupplierTicketSalesData['paidAmount'],
-            ];
-        }*/
-
-        $topSaleSourceTicketSalesData = Ticket::find()
-            ->joinWith(['ticketSupplier'])
-            ->select([
-                new Expression('COUNT(ticket.id) as total'),
-                new Expression('SUM(ticket.quoteAmount) as quoteAmount'),
-                new Expression('SUM(ticket.receivedAmount) as receivedAmount'),
-                new Expression('SUM(ticket_supplier.paidAmount) as paidAmount'),
-                new Expression('SUM(ticket.costOfSale) as costOfSale'),
-                new Expression('SUM(ticket.netProfit) as netProfit'),
-                'bookedOnline'
-            ])
-            ->where(['<=', 'ticket.refundRequestDate', $end_date])
-            ->orWhere(['IS', 'ticket.refundRequestDate', NULL])
-            ->andWhere(['between', 'ticket.issueDate', '2023-11-01', '2023-11-30'])
-            ->andWhere(['ticket.agencyId' => Yii::$app->user->identity->agencyId])
-            ->groupBy(['bookedOnline'])
-            ->orderBy('total DESC')
-            ->asArray()
-            ->all();
-
-        $saleData = [
+        /*$saleData = [
             'date' => $date,
             'currentDaySales' => [
                 'ticket' => $ticketSalesData['currentDayData'],
@@ -407,7 +382,7 @@ class SaleService
         $totalPreviousMonthlyReceived = array_sum(array_column($saleData['previousMonthSales'], 'receivedAmount'));
         $totalPreviousMonthlyPaid = array_sum(array_column($saleData['previousMonthSales'], 'paidAmount'));
         $totalPreviousMonthlyCost = array_sum(array_column($saleData['previousMonthSales'], 'costOfSale'));
-        $totalPreviousMonthlyNetProfit = array_sum(array_column($saleData['previousMonthSales'], 'netProfit'));
+        $totalPreviousMonthlyNetProfit = array_sum(array_column($saleData['previousMonthSales'], 'netProfit'));*/
 
         return [
             'saleData' => $saleData,
@@ -455,13 +430,19 @@ class SaleService
 
     }
 
-    public static function monthlySales()
+    public static function monthlySales(): array
     {
-        $startingMonth = strtotime(date('Y-m'));
+        $startingMonth = strtotime(date('Y-01'));
         $end = strtotime(date('Y-m-d'));
+        $count = 0;
         while ($startingMonth < $end) {
-            $month = date('Y-m', $startingMonth);
-            list($start_date, $end_date) = [date("$month-01"), date('Y-m-t', strtotime(date("$month-01")))];
+            if ($count) {
+                $month = date('Y-m', $startingMonth);
+                list($start_date, $end_date) = [date("$month-01"), date('Y-m-t', strtotime(date("$month-01")))];
+            } else {
+                $month = date('Y-m-d');
+                list($start_date, $end_date) = [date("Y-m-d"), date("Y-m-d")];
+            }
 
             $ticketSalesData[$month] = Ticket::find()
                 ->joinWith(['ticketSupplier'])
@@ -535,8 +516,104 @@ class SaleService
                 ->asArray()
                 ->one();
 
-            $startingMonth = strtotime($month . ' + 1 month');
+            if ($count) {
+                $startingMonth = strtotime($month . ' + 1 month');
+            } else {
+                $count++;
+            }
         }
+
+        return [
+            'ticketSalesData' => $ticketSalesData,
+            'holidaySalesData' => $holidaySalesData,
+            'hotelSalesData' => $hotelSalesData,
+            'visaSalesData' => $visaSalesData,
+        ];
+    }
+
+    public static function supplierSales($dateRangeArray): array
+    {
+        list($start_date, $end_date) = explode(' - ', $dateRangeArray['currentMonthData']);
+        $supplierTicketSalesData = TicketSupplier::find()
+            ->joinWith(['supplier', 'ticket'])
+            ->select([
+                new Expression('SUM(ticket_supplier.costOfSale) as costOfSale'),
+                new Expression('SUM(ticket_supplier.paidAmount) as paidAmount'),
+                'ticket_supplier.supplierId',
+                'supplier.company'
+            ])
+            ->where(['<=', 'ticket_supplier.refundRequestDate', $end_date])
+            ->orWhere(['IS', 'ticket_supplier.refundRequestDate', NULL])
+            ->andWhere(['between', 'ticket_supplier.issueDate', $start_date, $end_date])
+            ->andWhere(['ticket.agencyId' => Yii::$app->user->identity->agencyId])
+            ->groupBy('ticket_supplier.supplierId')
+            ->orderBy('costOfSale DESC')
+            ->limit(4)
+            ->asArray()
+            ->all();
+
+        $topSupplierTicketSalesData = ArrayHelper::map($supplierTicketSalesData, 'company', function ($supplierTicketSalesData) {
+            return [
+                'costOfSale' => $supplierTicketSalesData['costOfSale'],
+                'paidAmount' => $supplierTicketSalesData['paidAmount'],
+                'supplierId' => $supplierTicketSalesData['supplierId'],
+            ];
+        });
+
+        $supplierArray = array_column($topSupplierTicketSalesData, 'supplierId');
+        $otherSupplierTicketSalesData = TicketSupplier::find()
+            ->joinWith(['supplier', 'ticket'])
+            ->select([
+                new Expression('SUM(ticket_supplier.costOfSale) as costOfSale'),
+                new Expression('SUM(ticket_supplier.paidAmount) as paidAmount'),
+            ])
+            ->where(['<=', 'ticket_supplier.refundRequestDate', $end_date])
+            ->orWhere(['IS', 'ticket_supplier.refundRequestDate', NULL])
+            ->andWhere(['between', 'ticket_supplier.issueDate', $start_date, $end_date])
+            ->andWhere(['ticket.agencyId' => Yii::$app->user->identity->agencyId])
+            ->andWhere(['NOT IN', 'ticket_supplier.supplierId', $supplierArray])
+            ->orderBy('costOfSale DESC')
+            ->asArray()
+            ->one();
+
+        $topSupplierTicketSalesData['Others'] = [
+            'costOfSale' => ($otherSupplierTicketSalesData['costOfSale']) ?: 0,
+            'paidAmount' => ($otherSupplierTicketSalesData['paidAmount']) ?: 0,
+        ];
+
+
+        /*if (!empty(array_filter($otherSupplierTicketSalesData))) {
+            $topSupplierTicketSalesData['Others'] = [
+                'costOfSale' => $otherSupplierTicketSalesData['costOfSale'],
+                'paidAmount' => $otherSupplierTicketSalesData['paidAmount'],
+            ];
+        }*/
+
+        return $topSupplierTicketSalesData;
+    }
+
+    public static function sourceSale($dateRangeArray): array
+    {
+        list($start_date, $end_date) = explode(' - ', $dateRangeArray['currentMonthData']);
+        return Ticket::find()
+            ->joinWith(['ticketSupplier'])
+            ->select([
+                new Expression('COUNT(ticket.id) as total'),
+                new Expression('SUM(ticket.quoteAmount) as quoteAmount'),
+                new Expression('SUM(ticket.receivedAmount) as receivedAmount'),
+                new Expression('SUM(ticket_supplier.paidAmount) as paidAmount'),
+                new Expression('SUM(ticket.costOfSale) as costOfSale'),
+                new Expression('SUM(ticket.netProfit) as netProfit'),
+                'bookedOnline'
+            ])
+            ->where(['<=', 'ticket.refundRequestDate', $end_date])
+            ->orWhere(['IS', 'ticket.refundRequestDate', NULL])
+            ->andWhere(['between', 'ticket.issueDate', $start_date, $end_date])
+            ->andWhere(['ticket.agencyId' => Yii::$app->user->identity->agencyId])
+            ->groupBy(['bookedOnline'])
+            ->orderBy('total DESC')
+            ->asArray()
+            ->all();
     }
 
     public static function chartReport()

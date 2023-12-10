@@ -1,5 +1,5 @@
 $.ajax({
-    url: sales,
+    url: serviceSales,
     type: 'get',
     dataType: 'json',
     success: function (data) {

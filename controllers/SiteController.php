@@ -87,7 +87,28 @@ class SiteController extends Controller
     public function actionServiceSales()
     {
         if (Helper::checkRoute('/site/sales-report')) {
-            $dataArray = SaleService::dashboardReport();
+            $monthlyServiceSale = SaleService::monthlySales();
+
+            $saleData = [
+                'currentDaySales' => [
+                    'ticket' => $monthlyServiceSale['ticketSalesData'][date('Y-m-d')],
+                    'hotel' => $monthlyServiceSale['hotelSalesData'][date('Y-m-d')],
+                    'holiday' => $monthlyServiceSale['holidaySalesData'][date('Y-m-d')],
+                    'visa' => $monthlyServiceSale['visaSalesData'][date('Y-m-d')],
+                ],
+                'currentMonthSales' => [
+                    'ticket' => $monthlyServiceSale['ticketSalesData'][date('Y-m')],
+                    'hotel' => $monthlyServiceSale['hotelSalesData'][date('Y-m')],
+                    'holiday' => $monthlyServiceSale['holidaySalesData'][date('Y-m')],
+                    'visa' => $monthlyServiceSale['visaSalesData'][date('Y-m')],
+                ],
+                'previousMonthSales' => [
+                    'ticket' => $monthlyServiceSale['ticketSalesData'][date('Y-m', strtotime('-1 month'))],
+                    'hotel' => $monthlyServiceSale['hotelSalesData'][date('Y-m', strtotime('-1 month'))],
+                    'holiday' => $monthlyServiceSale['holidaySalesData'][date('Y-m', strtotime('-1 month'))],
+                    'visa' => $monthlyServiceSale['visaSalesData'][date('Y-m', strtotime('-1 month'))],
+                ],
+            ];
         }
     }
 
