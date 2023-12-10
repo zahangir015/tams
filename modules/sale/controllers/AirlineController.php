@@ -7,6 +7,7 @@ use app\modules\sale\models\Airline;
 use app\modules\sale\models\AirlineHistory;
 use app\modules\sale\models\search\AirlineSearch;
 use app\controllers\ParentController;
+use app\modules\sale\models\Supplier;
 use Exception;
 use Yii;
 use yii\db\ActiveRecord;
@@ -66,6 +67,7 @@ class AirlineController extends ParentController
 
         return $this->render('create', [
             'model' => $model,
+            'supplierDataArray' => Supplier::query()
         ]);
     }
 

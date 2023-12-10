@@ -169,11 +169,6 @@ class SupplierController extends ParentController
     public function actionGetSuppliers($query = null): array
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
-        $suppliers = Supplier::query($query);
-        $data = [];
-        foreach ($suppliers as $supplier) {
-            $data[] = ['id' => $supplier->id, 'text' => $supplier->name . ' | ' . $supplier->company];
-        }
-        return ['results' => $data];
+        return ['results' => Supplier::ajaxQuery($query)];
     }
 }

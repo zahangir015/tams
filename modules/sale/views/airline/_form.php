@@ -2,6 +2,7 @@
 
 use app\components\GlobalConstant;
 use app\components\Utilities;
+use app\components\WidgetHelper;
 use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
@@ -21,7 +22,7 @@ use yii\bootstrap4\ActiveForm;
             <?php $form = ActiveForm::begin(); ?>
             <div class="row">
                 <div class="col-md">
-                    <?= $form->field($model, 'supplierId')->widget(Select2::classname(), Utilities::ajaxDropDown('supplierId', '/sale/supplier/get-suppliers',  true, 'supplierId', 'supplierId', ($model->isNewRecord) ? [] : [$model->supplierId => $model->supplier->name . ' | ' . $model->supplier->company]))->label('Supplier') ?>
+                    <?= $form->field($model, 'supplierId')->widget(Select2::class, WidgetHelper::select2Widget($supplierDataArray, 'supplierId', false, 'supplier'))->label('Supplier') ?>
                 </div>
                 <div class="col-md">
                     <?= $form->field($model, 'code')->textInput(['maxlength' => true]) ?>

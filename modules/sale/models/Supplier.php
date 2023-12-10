@@ -164,4 +164,20 @@ class Supplier extends ActiveRecord
 
         return $data;
     }
+
+    public static function ajaxQuery(mixed $query): array
+    {
+        $suppliers = self::find()
+            ->select(['id', 'name', 'company', 'email'])
+            ->where(['like', 'name', $query])
+            ->orWhere(['like', 'company', $query])
+            ->orWhere(['like', 'email', $query])
+            ->where([self::tableName() . '.status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere([self::tableName() . '.agencyId' => Yii::$app->user->identity->agencyId])
+            ->all();
+
+        return ArrayHelper::map($suppliers, 'id', function ($supplier) {
+            return $supplier->name . ' | ' . $supplier->company;
+        });
+    }
 }

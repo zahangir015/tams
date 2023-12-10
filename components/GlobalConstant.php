@@ -93,6 +93,8 @@ final class GlobalConstant
         'light-red'
     ];
 
+    const CHART_COLOR_CODE = ["#337ABE", "#3F9777", "#CC4236", "#E1A917"];
+
     const HOLIDAY_REPORT_TYPE = [
         'CUSTOMER_CATEGORY' => 'CUSTOMER CATEGORY',
         'CUSTOMER_CATEGORY_BOOKING_TYPE' => 'CUSTOMER_CATEGORY_BOOKING_TYPE',
