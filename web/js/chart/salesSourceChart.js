@@ -9,12 +9,12 @@ $.ajax({
     new Chart(salesSourceChart, {
       type: "doughnut",
       data: {
-        labels: data.saleSource.labels, //["New Clients", "Existing Clients", "Online Clients"],
+        labels: data.labels, //["New Clients", "Existing Clients", "Online Clients"],
         datasets: [
           {
             label: "",
-            data: data.saleSource.percentage, //[40, 40, 20]
-            backgroundColor: data.saleSource.colorCodes, //["#337ABE", "#3F9777", "#CC4236"],
+            data: data.percentage, //[40, 40, 20]
+            backgroundColor: data.colorCodes, //["#337ABE", "#3F9777", "#CC4236"],
             hoverOffset: 4,
           },
         ],

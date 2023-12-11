@@ -8,11 +8,11 @@ $.ajax({
         new Chart(supplierChart, {
             type: "doughnut",
             data: {
-                labels: ["Esla Holidays", "Chologhuri", "Take Off", "Khun Habibi"],
+                labels: data.labels,
                 datasets: [
                     {
                         label: "",
-                        data: [40, 30, 20, 10],
+                        data: data.percentage,
                         backgroundColor: ["#337ABE", "#3F9777", "#CC4236", "#E1A917"],
                         hoverOffset: 4,
                     },

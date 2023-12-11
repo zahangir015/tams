@@ -1,6 +1,7 @@
 <?php
 
 use app\components\GlobalConstant;
+use app\modules\sale\components\ServiceConstant;
 use yii\helpers\Url;
 use yii\web\JqueryAsset;
 use yii\web\View;
@@ -224,16 +225,16 @@ $this->registerJsFile(
                 <div class="row no-gutters align-items-center">
                     <div class="col-6">
                     <?php
-                    $totalCost = array_sum(array_column($topSaleSourceTicketSalesData, 'costOfSale'));
+                    $totalQuote = array_sum(array_column($topSaleSourceTicketSalesData, 'quoteAmount'));
                     $totalSource = count($topSaleSourceTicketSalesData);
                     foreach ($topSaleSourceTicketSalesData as $key => $singleSource) {
-                        $percentage = ($totalCost) ? ($singleSource['costOfSale'] * 100) / $totalCost : 0
+                        $percentage = ($totalQuote) ? ($singleSource['quoteAmount'] * 100) / $totalQuote : 0
                         ?>
                         <div>
                             <h5 class="text-success mb-0"><?= $percentage.'%' ?></h5>
                             <div class="d-flex align-items-center mr-2">
-                                <div class="label-box bg-<?= GlobalConstant::BG_COLOR_CLASS[$key] ?>"></div>
-                                <p class="mb-0 text-dark ml-1"><?= \app\modules\sale\components\ServiceConstant::BOOKING_TYPE[$singleSource['bookedOnline']] ?></p>
+                                <div class="label-box" style="background-color: <?= GlobalConstant::CHART_COLOR_CODE[$key] ?>"></div>
+                                <p class="mb-0 text-dark ml-1"><?= ServiceConstant::BOOKING_TYPE[$singleSource['bookedOnline']] ?></p>
                             </div>
                         </div>
                         <?php
@@ -273,28 +274,28 @@ $this->registerJsFile(
                     <div>
                         <h5 class="text-success mb-0"><?= $ticketPercentage . '%' ?></h5>
                         <div class="d-flex align-items-center mr-2">
-                            <div class="label-box bg-success"></div>
+                            <div class="label-box" style="background-color: <?= GlobalConstant::CHART_COLOR_CODE[1] ?>"></div>
                             <p class="mb-0 text-dark ml-1">Air Ticket</p>
                         </div>
                     </div>
                     <div class="mt-3">
                         <h5 class="text-danger mb-0"><?= $hotelPercentage . '%' ?></h5>
                         <div class="d-flex align-items-center mr-2">
-                            <div class="label-box bg-danger"></div>
+                            <div class="label-box" style="background-color: <?= GlobalConstant::CHART_COLOR_CODE[0] ?>"></div>
                             <p class="mb-0 text-dark ml-1">Hotel</p>
                         </div>
                     </div>
                     <div class="mt-3">
                         <h5 class="text-warning mb-0"><?= $visaPercentage . '%' ?></h5>
                         <div class="d-flex align-items-center mr-2">
-                            <div class="label-box bg-warning"></div>
+                            <div class="label-box" style="background-color: <?= GlobalConstant::CHART_COLOR_CODE[2] ?>"></div>
                             <p class="mb-0 text-dark ml-1">Visa</p>
                         </div>
                     </div>
                     <div class="mt-3">
                         <h5 class="text-primary mb-0"><?= $holidayPercentage . '%' ?></h5>
                         <div class="d-flex align-items-center mr-2">
-                            <div class="label-box bg-primary"></div>
+                            <div class="label-box" style="background-color: <?= GlobalConstant::CHART_COLOR_CODE[3] ?>"></div>
                             <p class="mb-0 text-dark ml-1">Holiday</p>
                         </div>
                     </div>
@@ -314,14 +315,25 @@ $this->registerJsFile(
             <h5 class="text-center text-dark mb-3">Top Suppliers</h5>
             <div class="row no-gutters align-items-center">
                 <div class="col-6">
-                    <div>
-                        <h5 class="text-success mb-0">40%</h5>
-                        <div class="d-flex align-items-center mr-2">
-                            <div class="label-box bg-success"></div>
-                            <p class="mb-0 text-dark ml-1">Chologhuri</p>
+                    <?php
+                    $totalCost = array_sum(array_column($topSupplierTicketSalesData, 'costOfSale'));
+                    $colorCode = 0;
+                    foreach ($topSupplierTicketSalesData as $key => $singleSupplier) {
+                        $percentage = ($totalCost) ? ($singleSupplier['costOfSale'] * 100) / $totalCost : 0
+                        ?>
+                        <div class="mt-3">
+                            <h5 class="text-success mb-0"><?= $percentage.'%' ?></h5>
+                            <div class="d-flex align-items-center mr-2">
+                                <div class="label-box" style="background-color: <?= GlobalConstant::CHART_COLOR_CODE[$colorCode] ?>"></div>
+                                <p class="mb-0 text-dark ml-1"><?= $key ?></p>
+                            </div>
                         </div>
-                    </div>
-                    <div class="mt-3">
+                        <?php
+                        $colorCode++;
+                    }
+                    ?>
+
+                    <!--<div class="mt-3">
                         <h5 class="text-danger mb-0">30%</h5>
                         <div class="d-flex align-items-center mr-2">
                             <div class="label-box bg-danger"></div>
@@ -341,7 +353,7 @@ $this->registerJsFile(
                             <div class="label-box bg-primary"></div>
                             <p class="mb-0 text-dark ml-1">Esla Holidays</p>
                         </div>
-                    </div>
+                    </div>-->
                 </div>
                 <div class="col-6">
                     <div class="p-2">

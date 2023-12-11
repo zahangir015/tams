@@ -3,6 +3,7 @@ $.ajax({
     type: 'get',
     dataType: 'json',
     success: function (data) {
+        console.log(data)
         const salesChart = document.getElementById("salesChart").getContext("2d");
         new Chart(salesChart, {
             type: "doughnut",
@@ -11,7 +12,7 @@ $.ajax({
                 datasets: [
                     {
                         label: "",
-                        data: [40, 30, 20, 10],
+                        data: data,
                         backgroundColor: ["#337ABE", "#3F9777", "#CC4236", "#E1A917"],
                         hoverOffset: 4,
                     },

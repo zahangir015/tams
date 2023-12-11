@@ -220,22 +220,22 @@ class SaleService
 
         $saleData = [
             'currentDaySales' => [
-                'ticket' => $monthlyServiceSale['ticketSalesData'][date('Y-m-d')],
-                'hotel' => $monthlyServiceSale['hotelSalesData'][date('Y-m-d')],
-                'holiday' => $monthlyServiceSale['holidaySalesData'][date('Y-m-d')],
-                'visa' => $monthlyServiceSale['visaSalesData'][date('Y-m-d')],
+                'ticket' => $monthlyServiceSale[date('Y-m-d')]['ticket'],
+                'hotel' => $monthlyServiceSale[date('Y-m-d')]['hotel'],
+                'holiday' => $monthlyServiceSale[date('Y-m-d')]['holiday'],
+                'visa' => $monthlyServiceSale[date('Y-m-d')]['visa'],
             ],
             'currentMonthSales' => [
-                'ticket' => $monthlyServiceSale['ticketSalesData'][date('Y-m')],
-                'hotel' => $monthlyServiceSale['hotelSalesData'][date('Y-m')],
-                'holiday' => $monthlyServiceSale['holidaySalesData'][date('Y-m')],
-                'visa' => $monthlyServiceSale['visaSalesData'][date('Y-m')],
+                'ticket' => $monthlyServiceSale[date('Y-m')]['ticket'],
+                'hotel' => $monthlyServiceSale[date('Y-m')]['hotel'],
+                'holiday' => $monthlyServiceSale[date('Y-m')]['holiday'],
+                'visa' => $monthlyServiceSale[date('Y-m')]['visa'],
             ],
             'previousMonthSales' => [
-                'ticket' => $monthlyServiceSale['ticketSalesData'][date('Y-m', strtotime('-1 month'))],
-                'hotel' => $monthlyServiceSale['hotelSalesData'][date('Y-m', strtotime('-1 month'))],
-                'holiday' => $monthlyServiceSale['holidaySalesData'][date('Y-m', strtotime('-1 month'))],
-                'visa' => $monthlyServiceSale['visaSalesData'][date('Y-m', strtotime('-1 month'))],
+                'ticket' => $monthlyServiceSale[date('Y-m', strtotime('-1 month'))]['ticket'],
+                'hotel' => $monthlyServiceSale[date('Y-m', strtotime('-1 month'))]['hotel'],
+                'holiday' => $monthlyServiceSale[date('Y-m', strtotime('-1 month'))]['holiday'],
+                'visa' => $monthlyServiceSale[date('Y-m', strtotime('-1 month'))]['visa'],
             ],
         ];
 
@@ -341,49 +341,6 @@ class SaleService
 
         $topSaleSourceTicketSalesData = self::sourceSale($dateRangeArray);
 
-        /*$saleData = [
-            'date' => $date,
-            'currentDaySales' => [
-                'ticket' => $ticketSalesData['currentDayData'],
-                'hotel' => $hotelSalesData['currentDayData'],
-                'holiday' => $holidaySalesData['currentDayData'],
-                'visa' => $visaSalesData['currentDayData'],
-            ],
-            'currentMonthSales' => [
-                'ticket' => $ticketSalesData['currentMonthData'],
-                'hotel' => $hotelSalesData['currentMonthData'],
-                'holiday' => $holidaySalesData['currentMonthData'],
-                'visa' => $visaSalesData['currentMonthData'],
-            ],
-            'previousMonthSales' => [
-                'ticket' => $ticketSalesData['previousMonthData'],
-                'hotel' => $hotelSalesData['previousMonthData'],
-                'holiday' => $holidaySalesData['previousMonthData'],
-                'visa' => $visaSalesData['previousMonthData'],
-            ],
-        ];
-
-        $totalQuantity = array_sum(array_column($saleData['currentDaySales'], 'total'));
-        $totalQuote = array_sum(array_column($saleData['currentDaySales'], 'quoteAmount'));
-        $totalReceived = array_sum(array_column($saleData['currentDaySales'], 'receivedAmount'));
-        $totalPaid = array_sum(array_column($saleData['currentDaySales'], 'paidAmount'));
-        $totalCost = array_sum(array_column($saleData['currentDaySales'], 'costOfSale'));
-        $totalNetProfit = array_sum(array_column($saleData['currentDaySales'], 'netProfit'));
-
-        $totalMonthlyQuantity = array_sum(array_column($saleData['currentMonthSales'], 'total'));
-        $totalMonthlyQuote = array_sum(array_column($saleData['currentMonthSales'], 'quoteAmount'));
-        $totalMonthlyReceived = array_sum(array_column($saleData['currentMonthSales'], 'receivedAmount'));
-        $totalMonthlyPaid = array_sum(array_column($saleData['currentMonthSales'], 'paidAmount'));
-        $totalMonthlyCost = array_sum(array_column($saleData['currentMonthSales'], 'costOfSale'));
-        $totalMonthlyNetProfit = array_sum(array_column($saleData['currentMonthSales'], 'netProfit'));
-
-        $totalPreviousMonthlyQuantity = array_sum(array_column($saleData['previousMonthSales'], 'total'));
-        $totalPreviousMonthlyQuote = array_sum(array_column($saleData['previousMonthSales'], 'quoteAmount'));
-        $totalPreviousMonthlyReceived = array_sum(array_column($saleData['previousMonthSales'], 'receivedAmount'));
-        $totalPreviousMonthlyPaid = array_sum(array_column($saleData['previousMonthSales'], 'paidAmount'));
-        $totalPreviousMonthlyCost = array_sum(array_column($saleData['previousMonthSales'], 'costOfSale'));
-        $totalPreviousMonthlyNetProfit = array_sum(array_column($saleData['previousMonthSales'], 'netProfit'));*/
-
         return [
             'saleData' => $saleData,
             'totalQuantity' => $totalQuantity,
@@ -435,6 +392,7 @@ class SaleService
         $startingMonth = strtotime(date('Y-01'));
         $end = strtotime(date('Y-m-d'));
         $count = 0;
+        $data = [];
         while ($startingMonth < $end) {
             if ($count) {
                 $month = date('Y-m', $startingMonth);
@@ -444,7 +402,7 @@ class SaleService
                 list($start_date, $end_date) = [date("Y-m-d"), date("Y-m-d")];
             }
 
-            $ticketSalesData[$month] = Ticket::find()
+            $data[$month]['ticket'] = Ticket::find()
                 ->joinWith(['ticketSupplier'])
                 ->select([
                     new Expression('COUNT(ticket.id) as total'),
@@ -462,7 +420,7 @@ class SaleService
                 ->asArray()
                 ->one();
 
-            $holidaySalesData[$month] = Holiday::find()
+            $data[$month]['holiday'] = Holiday::find()
                 ->joinWith(['holidaySuppliers'])
                 ->select([
                     new Expression('COUNT(holiday.id) as total'),
@@ -480,7 +438,7 @@ class SaleService
                 ->asArray()
                 ->one();
 
-            $hotelSalesData[$month] = Hotel::find()
+            $data[$month]['hotel'] = Hotel::find()
                 ->joinWith(['hotelSuppliers'])
                 ->select([
                     new Expression('COUNT(hotel.id) as total'),
@@ -498,7 +456,7 @@ class SaleService
                 ->asArray()
                 ->one();
 
-            $visaSalesData[$month] = Visa::find()
+            $data[$month]['visa'] = Visa::find()
                 ->joinWith(['visaSuppliers'])
                 ->select([
                     new Expression('COUNT(visa.id) as total'),
@@ -523,17 +481,17 @@ class SaleService
             }
         }
 
-        return [
-            'ticketSalesData' => $ticketSalesData,
-            'holidaySalesData' => $holidaySalesData,
-            'hotelSalesData' => $hotelSalesData,
-            'visaSalesData' => $visaSalesData,
-        ];
+        return $data;
     }
 
-    public static function supplierSales($dateRangeArray): array
+    public static function supplierSales($dateRangeArray = []): array
     {
-        list($start_date, $end_date) = explode(' - ', $dateRangeArray['currentMonthData']);
+        if (empty($dateRangeArray)) {
+            list($start_date, $end_date) = explode(' - ', date('Y-m-01') . ' - ' . date('Y-m-t'));
+        } else {
+            list($start_date, $end_date) = explode(' - ', $dateRangeArray['currentMonthData']);
+        }
+
         $supplierTicketSalesData = TicketSupplier::find()
             ->joinWith(['supplier', 'ticket'])
             ->select([
@@ -580,8 +538,6 @@ class SaleService
             'costOfSale' => ($otherSupplierTicketSalesData['costOfSale']) ?: 0,
             'paidAmount' => ($otherSupplierTicketSalesData['paidAmount']) ?: 0,
         ];
-
-
         /*if (!empty(array_filter($otherSupplierTicketSalesData))) {
             $topSupplierTicketSalesData['Others'] = [
                 'costOfSale' => $otherSupplierTicketSalesData['costOfSale'],
@@ -592,16 +548,19 @@ class SaleService
         return $topSupplierTicketSalesData;
     }
 
-    public static function sourceSale($dateRangeArray): array
+    public static function sourceSale($dateRangeArray = []): array
     {
-        list($start_date, $end_date) = explode(' - ', $dateRangeArray['currentMonthData']);
+        if (empty($dateRangeArray)) {
+            list($start_date, $end_date) = explode(' - ', date('Y-m-01') . ' - ' . date('Y-m-t'));
+        } else {
+            list($start_date, $end_date) = explode(' - ', $dateRangeArray['currentMonthData']);
+        }
+
         return Ticket::find()
-            ->joinWith(['ticketSupplier'])
             ->select([
                 new Expression('COUNT(ticket.id) as total'),
                 new Expression('SUM(ticket.quoteAmount) as quoteAmount'),
                 new Expression('SUM(ticket.receivedAmount) as receivedAmount'),
-                new Expression('SUM(ticket_supplier.paidAmount) as paidAmount'),
                 new Expression('SUM(ticket.costOfSale) as costOfSale'),
                 new Expression('SUM(ticket.netProfit) as netProfit'),
                 'bookedOnline'

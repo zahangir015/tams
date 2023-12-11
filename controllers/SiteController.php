@@ -2,8 +2,10 @@
 
 namespace app\controllers;
 
+use app\components\GlobalConstant;
 use app\modules\admin\components\Helper;
 use app\modules\hrm\services\AttendanceService;
+use app\modules\sale\components\ServiceConstant;
 use app\modules\sale\services\SaleService;
 use Yii;
 use yii\filters\AccessControl;
@@ -77,52 +79,77 @@ class SiteController extends Controller
         return $this->render('index', $dataArray);
     }
 
-    public function actionSourceSales()
+    public function actionSourceSale()
     {
+        Yii::$app->response->format = Response::FORMAT_JSON;
         if (Helper::checkRoute('/site/sales-report')) {
-            $dataArray = SaleService::dashboardReport();
+            $topSaleSourceTicketSalesData = SaleService::sourceSale();
+            $data = [];
+            $totalQuote = array_sum(array_column($topSaleSourceTicketSalesData, 'quoteAmount'));
+            $totalSource = count($topSaleSourceTicketSalesData);
+            foreach ($topSaleSourceTicketSalesData as $key => $singleSource) {
+                $data['labels'][] = ServiceConstant::BOOKING_TYPE[$singleSource['bookedOnline']];
+                $data['percentage'][] = ($totalQuote) ? ($singleSource['quoteAmount'] * 100) / $totalQuote : 0;
+                $data['colorCodes'][] = GlobalConstant::CHART_COLOR_CODE[$key];
+            }
+
+            return $data;
         }
     }
 
     public function actionServiceSales()
     {
+        Yii::$app->response->format = Response::FORMAT_JSON;
         if (Helper::checkRoute('/site/sales-report')) {
             $monthlyServiceSale = SaleService::monthlySales();
-
-            $saleData = [
-                'currentDaySales' => [
-                    'ticket' => $monthlyServiceSale['ticketSalesData'][date('Y-m-d')],
-                    'hotel' => $monthlyServiceSale['hotelSalesData'][date('Y-m-d')],
-                    'holiday' => $monthlyServiceSale['holidaySalesData'][date('Y-m-d')],
-                    'visa' => $monthlyServiceSale['visaSalesData'][date('Y-m-d')],
-                ],
-                'currentMonthSales' => [
-                    'ticket' => $monthlyServiceSale['ticketSalesData'][date('Y-m')],
-                    'hotel' => $monthlyServiceSale['hotelSalesData'][date('Y-m')],
-                    'holiday' => $monthlyServiceSale['holidaySalesData'][date('Y-m')],
-                    'visa' => $monthlyServiceSale['visaSalesData'][date('Y-m')],
-                ],
-                'previousMonthSales' => [
-                    'ticket' => $monthlyServiceSale['ticketSalesData'][date('Y-m', strtotime('-1 month'))],
-                    'hotel' => $monthlyServiceSale['hotelSalesData'][date('Y-m', strtotime('-1 month'))],
-                    'holiday' => $monthlyServiceSale['holidaySalesData'][date('Y-m', strtotime('-1 month'))],
-                    'visa' => $monthlyServiceSale['visaSalesData'][date('Y-m', strtotime('-1 month'))],
-                ],
+            $currentMonthSales = [
+                'ticket' => $monthlyServiceSale[date('Y-m')]['ticket'],
+                'hotel' => $monthlyServiceSale[date('Y-m')]['hotel'],
+                'holiday' => $monthlyServiceSale[date('Y-m')]['holiday'],
+                'visa' => $monthlyServiceSale[date('Y-m')]['visa'],
             ];
+
+            $totalMonthlyQuote = array_sum(array_column($currentMonthSales, 'quoteAmount'));
+            $monthlyHolidayPercentage = ($totalMonthlyQuote) ? ($currentMonthSales['holiday']['quoteAmount'] * 100) / $totalMonthlyQuote : 0;
+            $monthlyTicketPercentage = ($totalMonthlyQuote) ? ($currentMonthSales['ticket']['quoteAmount'] * 100) / $totalMonthlyQuote : 0;
+            $monthlyHotelPercentage = ($totalMonthlyQuote) ? ($currentMonthSales['hotel']['quoteAmount'] * 100) / $totalMonthlyQuote : 0;
+            $monthlyVisaPercentage = ($totalMonthlyQuote) ? ($currentMonthSales['visa']['quoteAmount'] * 100) / $totalMonthlyQuote : 0;
+
+            return [$monthlyHolidayPercentage, $monthlyTicketPercentage, $monthlyHotelPercentage, $monthlyVisaPercentage];
         }
     }
 
     public function actionSalesDue()
     {
+        Yii::$app->response->format = Response::FORMAT_JSON;
         if (Helper::checkRoute('/site/sales-report')) {
-            $dataArray = SaleService::dashboardReport();
+            $monthlyServiceSale = SaleService::monthlySales();
+            unset($monthlyServiceSale[date('Y-m-d')]);
+            $data = [];
+            foreach ($monthlyServiceSale as $key => $saleData){
+                $data['sales'][] = array_sum(array_column($saleData, 'quoteAmount'));
+                $data['due'][] = array_sum(array_column($saleData, 'quoteAmount')) - array_sum(array_column($saleData, 'receivedAmount'));
+                $data['profitLoss'][] = array_sum(array_column($saleData, 'netProfit'));
+            }
+            return $data;
         }
     }
 
     public function actionSupplierSales()
     {
+        Yii::$app->response->format = Response::FORMAT_JSON;
         if (Helper::checkRoute('/site/sales-report')) {
-            $dataArray = SaleService::dashboardReport();
+            $topSupplierTicketSalesData = SaleService::supplierSales();
+            $totalCost = array_sum(array_column($topSupplierTicketSalesData, 'costOfSale'));
+            $data = [];
+            $colorCode = 0;
+            foreach ($topSupplierTicketSalesData as $key => $datum){
+                $data['labels'][] = $key;
+                $data['percentage'][] = ($totalCost) ? ($datum['costOfSale'] * 100) / $totalCost : 0;
+                $data['colorCodes'][] = GlobalConstant::CHART_COLOR_CODE[$colorCode];
+                $colorCode++;
+            }
+            return $data;
         }
     }
 
