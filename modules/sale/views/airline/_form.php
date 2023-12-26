@@ -22,7 +22,7 @@ use yii\bootstrap4\ActiveForm;
             <?php $form = ActiveForm::begin(); ?>
             <div class="row">
                 <div class="col-md">
-                    <?= $form->field($model, 'supplierId')->widget(Select2::class, WidgetHelper::select2Widget($supplierDataArray, 'supplierId', false, 'supplier'))->label('Supplier') ?>
+                    <?= $form->field($model, 'supplierId')->widget(Select2::class, WidgetHelper::ajaxSelect2Widget('supplierId','/sale/supplier/get-suppliers', true,'supplierId', 'supplierId', $model->isNewRecord ? [] : [$model->supplierId => $model->supplier->name.' | '.$model->supplier->company]))->label('Supplier') ?>
                 </div>
                 <div class="col-md">
                     <?= $form->field($model, 'code')->textInput(['maxlength' => true]) ?>
@@ -39,7 +39,7 @@ use yii\bootstrap4\ActiveForm;
                     <?= $form->field($model, 'incentive')->textInput() ?>
                 </div>
                 <div class="col-md">
-                    <?= $form->field($model, 'govTax')->textInput() ?>
+                    <?= $form->field($model, 'govTax')->textInput()->label('AIT') ?>
                 </div>
             </div>
             <div class="row">

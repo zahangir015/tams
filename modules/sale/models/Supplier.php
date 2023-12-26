@@ -176,8 +176,10 @@ class Supplier extends ActiveRecord
             ->andWhere([self::tableName() . '.agencyId' => Yii::$app->user->identity->agencyId])
             ->all();
 
-        return ArrayHelper::map($suppliers, 'id', function ($supplier) {
-            return $supplier->name . ' | ' . $supplier->company;
-        });
+        $data = [];
+        foreach ($suppliers as $supplier) {
+            $data[] = ['id' => $supplier->id, 'text' => $supplier->name . ' | ' . $supplier->company];
+        }
+        return $data;
     }
 }

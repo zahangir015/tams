@@ -116,7 +116,7 @@ $this->registerJsFile(
                                 'pluginOptions' => [
                                     'allowClear' => true
                                 ],
-                            ])->label('Bank');
+                            ])->label('From Bank');
                             ?>
                         </div>
                         <div class="col-md">
