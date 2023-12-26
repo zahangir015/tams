@@ -210,6 +210,10 @@ $('#departureDate0').on("change paste keyup", function () {
     $('.departureDate').val($(this).val());
 });
 
+$('#returnDate0').on("change paste keyup", function () {
+    $('.returnDate').val($(this).val());
+});
+
 $('#paxType0').on("change paste keyup", function () {
     $('.paxType').val($(this).val());
 });

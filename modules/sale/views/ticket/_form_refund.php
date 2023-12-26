@@ -118,10 +118,10 @@ $this->registerJsFile(
                     </div>
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($model, 'baseFare')->textInput(['value' => 0, 'class' => 'quotePart form-control']) ?>
+                            <?= $form->field($model, 'baseFare')->textInput(['value' => 0, 'class' => 'quotePart form-control'])->label('Used Base Fare') ?>
                         </div>
                         <div class="col-md">
-                            <?= $form->field($model, 'tax')->textInput(['value' => 0, 'class' => 'quotePart form-control']) ?>
+                            <?= $form->field($model, 'tax')->textInput(['value' => 0, 'class' => 'quotePart form-control'])->label('Used Tax') ?>
                         </div>
                         <div class="col-md">
                             <?= $form->field($model, 'otherTax')->textInput(['value' => 0, 'class' => 'quotePart form-control']) ?>
