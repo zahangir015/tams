@@ -5,6 +5,7 @@ namespace app\modules\hrm\repositories;
 use app\components\GlobalConstant;
 use app\modules\hrm\models\Employee;
 use app\repository\ParentRepository;
+use Yii;
 
 class EmployeeRepository extends ParentRepository
 {
@@ -17,6 +18,7 @@ class EmployeeRepository extends ParentRepository
             ->orWhere(['like', 'officialId', $query])
             ->orWhere(['like', 'OfficialEmail', $query])
             ->andWhere(['status' => GlobalConstant::ACTIVE_STATUS])
+            ->andWhere(['agencyId' => Yii::$app->user->identity->agencyId])
             ->all();
     }
 }
