@@ -7,6 +7,7 @@ use kartik\date\DatePicker;
 use kartik\daterange\DateRangePicker;
 use kartik\select2\Select2;
 use yii\bootstrap4\Html;
+use yii\helpers\ArrayHelper;
 
 /* @var $this yii\web\View */
 /* @var $form yii\widgets\ActiveForm */
@@ -39,7 +40,8 @@ use yii\bootstrap4\Html;
             <div class="col-md">
                 <?= $form->field($visaSupplier, "[$row]supplierId")->widget(Select2::class, Utilities::ajaxDropDown('supplierId', '/sale/supplier/get-suppliers', true, 'supplierId' . $row, 'supplier'))->label('Supplier') ?>
                 <small id="passwordHelpBlock" class="form-text text-muted">
-                    Add Supplier if not available. <?=  Html::a('Create Supplier', '/sale/supplier/create', ['target' => '_blank'])?>
+                    Add Supplier if not
+                    available. <?= Html::a('Create Supplier', '/sale/supplier/create', ['target' => '_blank']) ?>
                 </small>
             </div>
             <div class="col-md">
@@ -68,7 +70,21 @@ use yii\bootstrap4\Html;
                 <?= $form->field($visaSupplier, "[$row]type")->textInput(['readOnly' => 'readOnly', 'value' => ServiceConstant::ALL_SERVICE_TYPE['New'], 'required' => true]) ?>
             </div>
             <div class="col-md">
-                <?= $form->field($visaSupplier, "[$row]paxName")->textInput(['maxlength' => true, 'required' => true]); ?>
+                <?= $form->field($visaSupplier, "[$row]paxName")->widget(Select2::class, [
+                    'theme' => Select2::THEME_BOOTSTRAP,
+                    'data' => isset($paxNames) ?: [],
+                    'options' => [
+                        'placeholder' => 'Select Category ...',
+                        'multiple' => true,
+                        'value' => isset($paxNames) ?: [],
+                        'required' => true
+                    ],
+                    'pluginOptions' => [
+                        'tags' => true,
+                        'tokenSeparators' => [',', ' '],
+                        'maximumInputLength' => 30
+                    ],
+                ]); ?>
             </div>
         </div>
         <div class="row">

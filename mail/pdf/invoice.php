@@ -1,5 +1,6 @@
 <?php
 
+use app\modules\sale\components\ServiceConstant;
 use yii\helpers\Url;
 
 $logo = 'http://mytrams.com/uploads/company/'.$company->logo;
@@ -26,7 +27,7 @@ $logo = 'http://mytrams.com/uploads/company/'.$company->logo;
             <div style="width: 50%; float: left; position: relative; text-align: left; font-size: 15px;color: #000000;">
                 <p>
                     <span>Customer Details</span><br>
-                    <strong><?= $invoice->customer->name ?></strong><br>
+                    <strong><?= $invoice->customer->category == ServiceConstant::CUSTOMER_CATEGORY['B2C'] ? $invoice->customer->name : $invoice->customer->company ?></strong><br>
                     <strong><?= $invoice->customer->address ?></strong>
                 </p>
             </div>

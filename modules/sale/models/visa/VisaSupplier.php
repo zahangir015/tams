@@ -57,11 +57,11 @@ class VisaSupplier extends ActiveRecord
         return [
             [['uid', 'visaId', 'countryId', 'supplierId', 'supplierRef', 'paxName', 'issueDate', 'type', 'quantity', 'unitPrice', 'costOfSale'], 'required'],
             [['motherVisaSupplierId', 'visaId', 'billId', 'countryId', 'supplierId', 'quantity', 'status'], 'integer'],
-            [['issueDate', 'refundRequestDate'], 'safe'],
+            [['paxName', 'issueDate', 'refundRequestDate'], 'safe'],
             [['type', 'paymentStatus'], 'string'],
             [['unitPrice', 'costOfSale', 'securityDeposit', 'paidAmount'], 'number'],
             [['uid'], 'string', 'max' => 36],
-            [['supplierRef', 'paxName', 'serviceDetails'], 'string', 'max' => 255],
+            [['supplierRef', 'serviceDetails'], 'string', 'max' => 255],
             [['uid'], 'unique'],
             [['billId'], 'exist', 'skipOnError' => true, 'targetClass' => Bill::class, 'targetAttribute' => ['billId' => 'id']],
             [['supplierId'], 'exist', 'skipOnError' => true, 'targetClass' => Supplier::class, 'targetAttribute' => ['supplierId' => 'id']],

@@ -70,5 +70,9 @@ final class ServiceConstant
 
     const SEAT_CLASS = ['Economy Class' => 'Economy Class', 'Premium Economy Class' => 'Premium Economy Class', 'Business Class' => 'Business Class', 'First Class' => 'First Class'];
     const REFUND_POLICY = ['Refundable & Changeable' => 'Refundable & Changeable', 'Non-Refundable & Non Changeable' => 'Non-Refundable & Non Changeable', 'Non-refundable but Changeable' => 'Non-refundable but Changeable'];
-
+    const CUSTOMER_CATEGORY = [
+        'B2C' => 'B2C',
+        'B2B' => 'B2B',
+        'B2E' => 'B2E',
+    ];
 }

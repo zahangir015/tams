@@ -9,6 +9,7 @@ use app\modules\sale\models\visa\VisaRefund;
 use app\modules\sale\models\visa\VisaSupplier;
 use app\modules\sale\models\visa\VisaSearch;
 use app\controllers\ParentController;
+use app\modules\sale\repositories\VisaRepository;
 use app\modules\sale\services\VisaService;
 use app\modules\sale\models\visa\VisaSupplierSearch;
 use Yii;
@@ -23,10 +24,12 @@ use yii\web\Response;
 class VisaController extends ParentController
 {
     public VisaService $visaService;
+    public VisaRepository $visaRepository;
 
     public function __construct($uid, $module, $config = [])
     {
         $this->visaService = new VisaService();
+        $this->visaRepository = new VisaRepository();
         parent::__construct($uid, $module, $config);
     }
 
@@ -85,7 +88,7 @@ class VisaController extends ParentController
      */
     public function actionView(string $uid): string
     {
-        $model = $this->visaService->findVisa($uid, ['visaSuppliers', 'customer']);
+        $model = $this->visaRepository->findOne(['uid' => $uid], Visa::class,['visaSuppliers', 'customer']);
         return $this->render('view', [
             'model' => $model,
             'histories' => History::find()->where(['tableName' => Visa::tableName(), 'tableId' => $model->id])->orderBy(['id' => SORT_DESC])->all()
@@ -104,8 +107,9 @@ class VisaController extends ParentController
         if ($this->request->isPost) {
             $requestData = Yii::$app->request->post();
             $response = $this->visaService->storeVisa($requestData);
-            if ($response) {
-                return $this->redirect('index');
+            Yii::$app->session->setFlash($response['error'] ? 'danger' : 'success', $response['message']);
+            if (!$response['error']) {
+                return $this->redirect(['view', 'uid' => $response['data']->uid]);
             }
         } else {
             $model->loadDefaultValues();
@@ -126,10 +130,11 @@ class VisaController extends ParentController
     public function actionRefund(string $uid): Response|string
     {
         $model = new Visa();
-        $motherVisa = $this->visaService->findVisa($uid, ['visaSuppliers', 'invoice', 'customer']);
+        $motherVisa = $this->visaRepository->findOne(['uid' => $uid], Visa::class, ['visaSuppliers', 'invoice', 'customer']);
         if ($this->request->isPost) {
             $requestData = Yii::$app->request->post();
             $response = $this->visaService->refundVisa($requestData, $motherVisa);
+            Yii::$app->session->setFlash($response['error'] ? 'danger' : 'success', $response['message']);
             if ($response) {
                 return $this->redirect('index');
             }
@@ -152,12 +157,13 @@ class VisaController extends ParentController
      */
     public function actionUpdate(string $uid): Response|string
     {
-        $model = $this->visaService->findVisa($uid, ['visaSuppliers', 'customer', 'invoice']);
+        $model = $this->visaRepository->findOne(['uid' => $uid], Visa::class, ['visaSuppliers', 'customer', 'invoice']);
 
         if ($this->request->isPost) {
             // Update Visa
-            $model = $this->visaService->updateVisa(Yii::$app->request->post(), $model);
-            if ($model) {
+            $response = $this->visaService->updateVisa(Yii::$app->request->post(), $model);
+            Yii::$app->session->setFlash($response['error'] ? 'danger' : 'success', $response['message']);
+            if (!$response['error']) {
                 return $this->redirect(['view', 'uid' => $model->uid]);
             }
         }
