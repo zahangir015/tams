@@ -220,22 +220,22 @@ class SaleService
 
         $saleData = [
             'currentDaySales' => [
-                'ticket' => $monthlyServiceSale[date('Y-m-d')]['ticket'],
-                'hotel' => $monthlyServiceSale[date('Y-m-d')]['hotel'],
-                'holiday' => $monthlyServiceSale[date('Y-m-d')]['holiday'],
-                'visa' => $monthlyServiceSale[date('Y-m-d')]['visa'],
+                'ticket' => isset($monthlyServiceSale[date('Y-m-d')]) ? $monthlyServiceSale[date('Y-m-d')]['ticket'] : [],
+                'hotel' => isset($monthlyServiceSale[date('Y-m-d')]) ? $monthlyServiceSale[date('Y-m-d')]['hotel'] : [],
+                'holiday' => isset($monthlyServiceSale[date('Y-m-d')]) ? $monthlyServiceSale[date('Y-m-d')]['holiday'] : [],
+                'visa' => isset($monthlyServiceSale[date('Y-m-d')]) ? $monthlyServiceSale[date('Y-m-d')]['visa'] : [],
             ],
             'currentMonthSales' => [
-                'ticket' => $monthlyServiceSale[date('Y-m')]['ticket'],
-                'hotel' => $monthlyServiceSale[date('Y-m')]['hotel'],
-                'holiday' => $monthlyServiceSale[date('Y-m')]['holiday'],
-                'visa' => $monthlyServiceSale[date('Y-m')]['visa'],
+                'ticket' => isset($monthlyServiceSale[date('Y-m')]) ? $monthlyServiceSale[date('Y-m')]['ticket'] : [],
+                'hotel' => isset($monthlyServiceSale[date('Y-m')]) ? $monthlyServiceSale[date('Y-m')]['hotel'] : [],
+                'holiday' => isset($monthlyServiceSale[date('Y-m')]) ? $monthlyServiceSale[date('Y-m')]['holiday'] : [],
+                'visa' => isset($monthlyServiceSale[date('Y-m')]) ? $monthlyServiceSale[date('Y-m')]['visa'] : [],
             ],
             'previousMonthSales' => [
-                'ticket' => $monthlyServiceSale[date('Y-m', strtotime('-1 month'))]['ticket'],
-                'hotel' => $monthlyServiceSale[date('Y-m', strtotime('-1 month'))]['hotel'],
-                'holiday' => $monthlyServiceSale[date('Y-m', strtotime('-1 month'))]['holiday'],
-                'visa' => $monthlyServiceSale[date('Y-m', strtotime('-1 month'))]['visa'],
+                'ticket' => isset($monthlyServiceSale[date('Y-m', strtotime('-1 month'))]) ? $monthlyServiceSale[date('Y-m', strtotime('-1 month'))]['ticket'] : [],
+                'hotel' => isset($monthlyServiceSale[date('Y-m', strtotime('-1 month'))]) ? $monthlyServiceSale[date('Y-m', strtotime('-1 month'))]['hotel'] : [],
+                'holiday' => isset($monthlyServiceSale[date('Y-m', strtotime('-1 month'))]) ? $monthlyServiceSale[date('Y-m', strtotime('-1 month'))]['holiday'] : [],
+                'visa' => isset($monthlyServiceSale[date('Y-m', strtotime('-1 month'))]) ? $monthlyServiceSale[date('Y-m', strtotime('-1 month'))]['visa'] : [],
             ],
         ];
 

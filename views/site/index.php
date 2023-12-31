@@ -56,11 +56,9 @@ $this->registerJsFile(
                 <div class="row no-gutters">
                     <div class="col-6 p-1">
                         <div class="todays-sales border border-success rounded py-1 px-2 position-relative">
-                            <p class="text-dark mb-0"><span
-                                        class="text-success number"><?= $saleData['currentDaySales']['ticket']['total'] ?></span>
-                                Flights</p>
-                            <p class="text-success mb-1 font-weight-bold"><?= $saleData['currentDaySales']['ticket']['quoteAmount'] ?: 0 ?>
-                                TK</p>
+                            <p class="text-dark mb-0">
+                                <span class="text-success number"><?= $saleData['currentDaySales']['ticket']['total'] ?? 0 ?></span> Flights</p>
+                            <p class="text-success mb-1 font-weight-bold"><?= $saleData['currentDaySales']['ticket']['quoteAmount'] ?? 0 ?> TK</p>
                             <div class="bg-success rounded p-1 icon-block d-flex align-items-center">
                                 <img class="w-100" src="<?= Url::to('/uploads/images/flights.svg') ?>" alt=""/>
                             </div>
@@ -69,9 +67,9 @@ $this->registerJsFile(
                     <div class="col-6 p-1">
                         <div class="todays-sales border border-danger rounded py-1 px-2 position-relative">
                             <p class="text-dark mb-0"><span
-                                        class="text-danger number"><?= $saleData['currentDaySales']['holiday']['total'] ?></span>
+                                        class="text-danger number"><?= $saleData['currentDaySales']['holiday']['total'] ?? 0 ?></span>
                                 Holidays</p>
-                            <p class="text-danger mb-1 font-weight-bold"><?= $saleData['currentDaySales']['holiday']['quoteAmount'] ?: 0 ?>
+                            <p class="text-danger mb-1 font-weight-bold"><?= $saleData['currentDaySales']['holiday']['quoteAmount'] ?? 0 ?>
                                 TK</p>
                             <div class="bg-danger rounded p-1 icon-block d-flex align-items-center">
                                 <img class="w-100" src="<?= Url::to('/uploads/images/holidays.svg') ?>" alt=""/>
@@ -81,9 +79,9 @@ $this->registerJsFile(
                     <div class="col-6 p-1">
                         <div class="todays-sales border border-warning rounded py-1 px-2 position-relative">
                             <p class="text-dark mb-0"><span
-                                        class="text-warning number"><?= $saleData['currentDaySales']['hotel']['total'] ?></span>
+                                        class="text-warning number"><?= $saleData['currentDaySales']['hotel']['total'] ?? 0 ?></span>
                                 Hotels</p>
-                            <p class="text-warning mb-1 font-weight-bold"><?= $saleData['currentDaySales']['hotel']['quoteAmount'] ?: 0 ?>
+                            <p class="text-warning mb-1 font-weight-bold"><?= $saleData['currentDaySales']['hotel']['quoteAmount'] ?? 0 ?>
                                 TK</p>
                             <div class="bg-warning rounded p-1 icon-block d-flex align-items-center">
                                 <img class="w-100" src="<?= Url::to('/uploads/images/hotels.svg') ?>" alt=""/>
@@ -93,9 +91,9 @@ $this->registerJsFile(
                     <div class="col-6 p-1">
                         <div class="todays-sales border border-info rounded py-1 px-2 position-relative">
                             <p class="text-dark mb-0"><span
-                                        class="text-info number"><?= $saleData['currentDaySales']['visa']['total'] ?></span>
+                                        class="text-info number"><?= $saleData['currentDaySales']['visa']['total'] ?? 0 ?></span>
                                 Visas</p>
-                            <p class="text-info mb-1 font-weight-bold"><?= $saleData['currentDaySales']['visa']['quoteAmount'] ?: 0 ?>
+                            <p class="text-info mb-1 font-weight-bold"><?= $saleData['currentDaySales']['visa']['quoteAmount'] ?? 0 ?>
                                 TK</p>
                             <div class="bg-info rounded p-1 icon-block d-flex align-items-center">
                                 <img class="w-100" src="<?= Url::to('/uploads/images/visa.svg') ?>" alt=""/>

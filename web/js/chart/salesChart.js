@@ -28,7 +28,7 @@ $.ajax({
         })
     },
     error: function (e) {
-        console.log(e);
-        alert('Error happened!');
+        console.log(e.getMessage());
+        alert('Error happened sales report!');
     }
 });
