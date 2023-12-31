@@ -6,7 +6,7 @@ use yii\helpers\Url;
 
 ?>
 <!-- Navbar -->
-<nav class="main-header navbar navbar-expand navbar-dark bg-gradient-green font-weight-bold">
+<nav class="main-header navbar navbar-expand navbar-dark bg-light-blue font-weight-bold">
     <!-- Left navbar links -->
     <ul class="navbar-nav mr-auto">
         <li class="nav-item">
