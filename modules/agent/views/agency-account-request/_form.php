@@ -9,41 +9,39 @@ use yii\widgets\ActiveForm;
 ?>
 
 <div class="agency-account-request-form">
+    <div class="card">
+        <div class="card-header bg-gray-dark">
+            <?= Html::encode($this->title) ?>
+        </div>
+        <div class="card-body">
+            <?php $form = ActiveForm::begin(); ?>
 
-    <?php $form = ActiveForm::begin(); ?>
+            <div class="row">
+                <div class="col-md"><?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?></div>
 
-    <?= $form->field($model, 'uid')->textInput(['maxlength' => true]) ?>
+                <div class="col-md"><?= $form->field($model, 'designation')->textInput(['maxlength' => true]) ?></div>
 
-    <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+                <div class="col-md"><?= $form->field($model, 'company')->textInput(['maxlength' => true]) ?></div>
+            </div>
+            <div class="row">
+                <div class="col-md"><?= $form->field($model, 'countryId')->textInput() ?></div>
 
-    <?= $form->field($model, 'designation')->textInput(['maxlength' => true]) ?>
+                <div class="col-md"><?= $form->field($model, 'cityId')->textInput() ?></div>
+            </div>
+            <div class="row">
+                <div class="col-md"><?= $form->field($model, 'address')->textInput(['maxlength' => true]) ?></div>
 
-    <?= $form->field($model, 'company')->textInput(['maxlength' => true]) ?>
+                <div class="col-md"><?= $form->field($model, 'phone')->textInput(['maxlength' => true]) ?></div>
 
-    <?= $form->field($model, 'address')->textInput(['maxlength' => true]) ?>
+                <div class="col-md"><?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?></div>
+            </div>
 
-    <?= $form->field($model, 'countryId')->textInput() ?>
+            <div class="form-group">
+                <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
+            </div>
 
-    <?= $form->field($model, 'cityId')->textInput() ?>
-
-    <?= $form->field($model, 'phone')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'status')->textInput() ?>
-
-    <?= $form->field($model, 'createdBy')->textInput() ?>
-
-    <?= $form->field($model, 'createdAt')->textInput() ?>
-
-    <?= $form->field($model, 'updatedBy')->textInput() ?>
-
-    <?= $form->field($model, 'updatedAt')->textInput() ?>
-
-    <div class="form-group">
-        <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
+            <?php ActiveForm::end(); ?>
+        </div>
     </div>
-
-    <?php ActiveForm::end(); ?>
 
 </div>
