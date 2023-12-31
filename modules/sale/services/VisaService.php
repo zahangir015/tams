@@ -16,6 +16,7 @@ use app\modules\sale\repositories\VisaRepository;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\db\Exception;
+use yii\helpers\Json;
 
 class VisaService
 {
@@ -56,6 +57,7 @@ class VisaService
                 $visaSupplier = new VisaSupplier();
                 $visaSupplier->load(['VisaSupplier' => $singleSupplierArray]);
                 $visaSupplier->visaId = $visa->id;
+                $visaSupplier->paxName = Json::encode($singleSupplierArray['paxName']);
                 $visaSupplier = $this->visaRepository->store($visaSupplier);
                 if ($visaSupplier->hasErrors()) {
                     throw new Exception('Visa Supplier creation failed - ' . Utilities::processErrorMessages($visaSupplier->getErrors()));
@@ -192,7 +194,7 @@ class VisaService
     }
 
     public
-    function updateVisa(array $requestData, Visa $visa): array
+    function updateVisa(array $requestData, ActiveRecord $visa): array
     {
         $dbTransaction = Yii::$app->db->beginTransaction();
         try {
@@ -204,7 +206,7 @@ class VisaService
             $oldQuoteAmount = $visa->quoteAmount;
 
             // Update Visa
-            if ($visa->load($requestData)) {
+            if (!$visa->load($requestData)) {
                 throw new Exception('Visa data loading failed - ' . Utilities::processErrorMessages($visa->getErrors()));
             }
             $visa->netProfit = self::calculateNetProfit($visa->quoteAmount, $visa->costOfSale);
@@ -257,6 +259,7 @@ class VisaService
             }
             $visaSupplier->load(['VisaSupplier' => $supplier]);
             $visaSupplier->type = $supplier['type'] ?? ServiceConstant::TYPE['New'];
+            $visaSupplier->paxName = Json::encode($supplier['paxName']);
             $visaSupplier = $this->visaRepository->store($visaSupplier);
             if ($visaSupplier->hasErrors()) {
                 return ['error' => true, 'message' => 'Visa Supplier update failed - ' . Utilities::processErrorMessages($visaSupplier->getErrors())];

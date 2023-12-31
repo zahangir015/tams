@@ -103,10 +103,10 @@ class SiteController extends Controller
         if (Helper::checkRoute('/site/sales-report')) {
             $monthlyServiceSale = SaleService::monthlySales();
             $currentMonthSales = [
-                'ticket' => $monthlyServiceSale[date('Y-m')]['ticket'],
-                'hotel' => $monthlyServiceSale[date('Y-m')]['hotel'],
-                'holiday' => $monthlyServiceSale[date('Y-m')]['holiday'],
-                'visa' => $monthlyServiceSale[date('Y-m')]['visa'],
+                'ticket' => isset($monthlyServiceSale[date('Y-m')]) ? $monthlyServiceSale[date('Y-m')]['ticket'] : [],
+                'hotel' => isset($monthlyServiceSale[date('Y-m')]) ? $monthlyServiceSale[date('Y-m')]['hotel'] : [],
+                'holiday' => isset($monthlyServiceSale[date('Y-m')]) ? $monthlyServiceSale[date('Y-m')]['holiday'] : [],
+                'visa' => isset($monthlyServiceSale[date('Y-m')]) ? $monthlyServiceSale[date('Y-m')]['visa'] : [],
             ];
 
             $totalMonthlyQuote = array_sum(array_column($currentMonthSales, 'quoteAmount'));

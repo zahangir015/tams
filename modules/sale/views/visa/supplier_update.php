@@ -7,6 +7,7 @@ use kartik\date\DatePicker;
 use kartik\daterange\DateRangePicker;
 use kartik\select2\Select2;
 use yii\bootstrap4\Html;
+use yii\helpers\Json;
 
 /* @var $this yii\web\View */
 /* @var $form yii\widgets\ActiveForm */
@@ -50,7 +51,21 @@ use yii\bootstrap4\Html;
                 <?= $form->field($visaSupplier, "[$row]type")->textInput(['readOnly' => 'readOnly', 'value' => ServiceConstant::ALL_SERVICE_TYPE['New']]) ?>
             </div>
             <div class="col-md">
-                <?= $form->field($visaSupplier, "[$row]paxName")->textInput(['maxlength' => true]); ?>
+                <?= $form->field($visaSupplier, "[$row]paxName")->widget(Select2::class, [
+                    'theme' => Select2::THEME_BOOTSTRAP,
+                    'data' => Json::decode($visaSupplier->paxName),
+                    'options' => [
+                        'placeholder' => 'Select Category ...',
+                        'multiple' => true,
+                        'value' => array_keys(Json::decode($visaSupplier->paxName)),
+                        'required' => true
+                    ],
+                    'pluginOptions' => [
+                        'tags' => true,
+                        'tokenSeparators' => [',', ' '],
+                        'maximumInputLength' => 30
+                    ],
+                ]); ?>
             </div>
         </div>
         <div class="row">

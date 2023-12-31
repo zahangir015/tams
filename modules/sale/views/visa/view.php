@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+use yii\helpers\Json;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
@@ -85,6 +86,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             <tr>
                                 <th>Supplier Name</th>
                                 <th>Supplier Reference</th>
+                                <th>Pax Name</th>
                                 <th>Quantity</th>
                                 <th>Price</th>
                                 <th>Cost of Sale</th>
@@ -99,6 +101,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 <tr>
                                     <td><?= $single->supplier->company ?></td>
                                     <td><?= $single->supplierRef ?></td>
+                                    <td><?= implode(',', Json::decode($single->paxName)) ?></td>
                                     <td><?= $single->quantity ?></td>
                                     <td>BDT <?= number_format($single->unitPrice) ?></td>
                                     <td>BDT <?= number_format($single->costOfSale) ?></td>
