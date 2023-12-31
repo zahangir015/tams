@@ -35,7 +35,10 @@ $this->params['breadcrumbs'][] = $this->title;
                     'name',
                     'commission',
                     'incentive',
-                    'govTax',
+                    [
+                        'attribute' => 'govTax',
+                        'level' => 'AIT',
+                    ],
                     'serviceCharge',
                     [
                         'attribute' => 'status',

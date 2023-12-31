@@ -265,7 +265,7 @@ $this->registerJsFile(
                     </div>
                     <div class="row">
                         <div class="col-md">
-                            <?= $form->field($transaction, 'bankId')->widget(Select2::class, WidgetHelper::select2Widget($bankList, 'bankId', false))->label('Bank'); ?>
+                            <?= $form->field($transaction, 'bankId')->widget(Select2::class, WidgetHelper::select2Widget($bankList, 'bankId', false))->label('From Bank'); ?>
                         </div>
                         <div class="col-md">
                             <?= $form->field($transaction, 'reference')->textInput(['maxlength' => true])->label('Company Transaction Reference') ?>

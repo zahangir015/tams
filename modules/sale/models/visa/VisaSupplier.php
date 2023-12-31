@@ -90,7 +90,7 @@ class VisaSupplier extends ActiveRecord
             'serviceDetails' => Yii::t('app', 'Service Details'),
             'quantity' => Yii::t('app', 'Quantity'),
             'unitPrice' => Yii::t('app', 'Unit Price'),
-            'costOfSale' => Yii::t('app', 'Cost Of Sale'),
+            'costOfSale' => Yii::t('app', 'Total cost of sale'),
             'securityDeposit' => Yii::t('app', 'Security Deposit'),
             'paidAmount' => Yii::t('app', 'Paid Amount'),
             'paymentStatus' => Yii::t('app', 'Payment Status'),

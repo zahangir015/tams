@@ -74,7 +74,7 @@ class Airline extends ActiveRecord
             'name' => Yii::t('app', 'Name'),
             'commission' => Yii::t('app', 'Commission'),
             'incentive' => Yii::t('app', 'Incentive'),
-            'govTax' => Yii::t('app', 'Gov Tax'),
+            'govTax' => Yii::t('app', 'AIT'),
             'serviceCharge' => Yii::t('app', 'Service Charge'),
             'status' => Yii::t('app', 'Status'),
             'createdBy' => Yii::t('app', 'Created By'),
