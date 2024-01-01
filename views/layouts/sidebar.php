@@ -27,7 +27,7 @@ $items = [
             ],
         ],
         'options' => [
-            'class' => 'nav-item has-treeview bg-light-blue mb-2 rounded',
+            'class' => 'nav-item has-treeview bg-gradient-green mb-2 rounded',
         ],
         'linkOptions' => ['class' => 'nav-link text-white'],
     ],
@@ -45,7 +45,7 @@ $items = [
             ],
         ],
         'options' => [
-            'class' => 'nav-item has-treeview bg-light-blue mb-2 rounded',
+            'class' => 'nav-item has-treeview bg-gradient-green mb-2 rounded',
         ],
         'linkOptions' => ['class' => 'nav-link text-white'],
     ],
@@ -88,7 +88,7 @@ $items = [
             ],
         ],
         'options' => [
-            'class' => 'nav-item has-treeview bg-light-blue mb-2 rounded',
+            'class' => 'nav-item has-treeview bg-gradient-green mb-2 rounded',
         ],
         'linkOptions' => ['class' => 'nav-link text-white'],
         'visible' => Helper::checkRoute('/country/') || Helper::checkRoute('/city/') || Helper::checkRoute('/company/') || Helper::checkRoute('/company/view')
@@ -112,7 +112,7 @@ $items = [
             ],
         ],
         'options' => [
-            'class' => 'nav-item has-treeview bg-light-blue mb-2 rounded',
+            'class' => 'nav-item has-treeview bg-gradient-green mb-2 rounded',
         ],
         'linkOptions' => ['class' => 'nav-link text-white'],
         'visible' => Helper::checkRoute('/admin/')
@@ -218,7 +218,7 @@ $items = [
             ],
         ],
         'options' => [
-            'class' => 'nav-item has-treeview bg-light-blue mb-2 rounded',
+            'class' => 'nav-item has-treeview bg-gradient-green mb-2 rounded',
         ],
         'linkOptions' => ['class' => 'nav-link text-white'],
     ],
@@ -285,7 +285,7 @@ $items = [
             ],
         ],
         'options' => [
-            'class' => 'nav-item has-treeview bg-light-blue mb-2 rounded',
+            'class' => 'nav-item has-treeview bg-gradient-green mb-2 rounded',
         ],
         'linkOptions' => ['class' => 'nav-link text-white'],
     ],
@@ -358,7 +358,7 @@ $items = [
             ],
         ],
         'options' => [
-            'class' => 'nav-item has-treeview bg-light-blue mb-2 rounded',
+            'class' => 'nav-item has-treeview bg-gradient-green mb-2 rounded',
         ],
         'linkOptions' => ['class' => 'nav-link text-white'],
     ],
