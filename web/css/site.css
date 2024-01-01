@@ -88,11 +88,18 @@ a.desc:after {
 }
 
 .bg-light-blue {
-    background-color: #337abe;
+    background-color: #337abe !important;
+    border-color: #337abe !important;
+    color: white !important;
 }
 .bg-light-yellow {
     background-color: #DAAD59FF;
 }
 .bg-light-red {
     background-color: #DA6859FF;
+}
+.wrapper>.navbar-dark {
+    background-color: #337abe !important;
+    border-color: #337abe !important;
+    color: white !important;
 }
