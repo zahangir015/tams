@@ -5,15 +5,24 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 
 ?>
+<style>
+    .wc{
+        color: white;
+    }
+    
+    .wc:hover{
+        color: white;
+    }
+</style>
 <!-- Navbar -->
-<nav class="main-header navbar navbar-expand navbar-dark bg-gradient-green font-weight-bold">
+<nav class="main-header navbar navbar-expand font-weight-bold" style="background-color: #337abe;">
     <!-- Left navbar links -->
     <ul class="navbar-nav mr-auto">
         <li class="nav-item">
-            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+            <a class="nav-link wc" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
-            <a href="<?= Url::home() ?>" class="nav-link">Home</a>
+            <a href="<?= Url::home() ?>" class="nav-link wc">Home</a>
         </li>
     </ul>
 
@@ -62,7 +71,7 @@ use yii\helpers\Url;
             </div>
         </li>-->
         <li class="nav-item">
-            <a class="nav-link" data-widget="fullscreen" href="#" role="button">
+            <a class="nav-link wc" data-widget="fullscreen" href="#" role="button">
                 <i class="fas fa-expand-arrows-alt"></i>
             </a>
         </li>
@@ -83,9 +92,7 @@ use yii\helpers\Url;
                 </a>
                 <div class="dropdown-divider"></div>
                 <?= Html::a('<i class="fas fa-sign-out-alt"></i> Logout', ['/admin/user/logout'], ['data-method' => 'post', 'class' => 'dropdown-item']) ?>
-
             </div>
-
         </li>
     </ul>
 </nav>
