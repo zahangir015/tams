@@ -1,3 +1,13 @@
+<style>
+    .nav-sidebar .nav-item>.nav-link{
+        color: white;
+        background-color: #337abe;
+    }
+
+    .nav-sidebar .nav-item>.nav-link:hover{
+        color: white;
+    }
+</style>
 <?php
 
 use hail812\adminlte\widgets\Menu;
@@ -11,6 +21,7 @@ $items = [
             [
                 'label' => 'Plan Management',
                 'iconStyle' => 'far',
+                'iconColor' => 'white',
                 'items' => [
                     ['label' => 'Plan List', 'iconStyle' => 'far', 'icon' => 'dot-circle', 'url' => ['/agent/plan/index'], 'visible' => Helper::checkRoute('/agent/plan/index')],
                     ['label' => 'Plan Add', 'iconStyle' => 'far', 'icon' => 'dot-circle', 'url' => ['/agent/plan/create'], 'visible' => Helper::checkRoute('/agent/plan/create')],
@@ -27,7 +38,7 @@ $items = [
             ],
         ],
         'options' => [
-            'class' => 'nav-item has-treeview bg-gradient-green mb-2 rounded',
+            'class' => 'nav-item has-treeview mb-2 rounded'
         ],
         'linkOptions' => ['class' => 'nav-link text-white'],
     ],
@@ -45,7 +56,7 @@ $items = [
             ],
         ],
         'options' => [
-            'class' => 'nav-item has-treeview bg-gradient-green mb-2 rounded',
+            'class' => 'nav-item has-treeview mb-2 rounded',
         ],
         'linkOptions' => ['class' => 'nav-link text-white'],
     ],
@@ -88,7 +99,7 @@ $items = [
             ],
         ],
         'options' => [
-            'class' => 'nav-item has-treeview bg-gradient-green mb-2 rounded',
+            'class' => 'nav-item has-treeview mb-2 rounded',
         ],
         'linkOptions' => ['class' => 'nav-link text-white'],
         'visible' => Helper::checkRoute('/country/') || Helper::checkRoute('/city/') || Helper::checkRoute('/company/') || Helper::checkRoute('/company/view')
@@ -112,7 +123,7 @@ $items = [
             ],
         ],
         'options' => [
-            'class' => 'nav-item has-treeview bg-gradient-green mb-2 rounded',
+            'class' => 'nav-item has-treeview mb-2 rounded',
         ],
         'linkOptions' => ['class' => 'nav-link text-white'],
         'visible' => Helper::checkRoute('/admin/')
@@ -218,7 +229,7 @@ $items = [
             ],
         ],
         'options' => [
-            'class' => 'nav-item has-treeview bg-gradient-green mb-2 rounded',
+            'class' => 'nav-item has-treeview mb-2 rounded',
         ],
         'linkOptions' => ['class' => 'nav-link text-white'],
     ],
@@ -285,7 +296,7 @@ $items = [
             ],
         ],
         'options' => [
-            'class' => 'nav-item has-treeview bg-gradient-green mb-2 rounded',
+            'class' => 'nav-item has-treeview mb-2 rounded',
         ],
         'linkOptions' => ['class' => 'nav-link text-white'],
     ],
@@ -358,7 +369,7 @@ $items = [
             ],
         ],
         'options' => [
-            'class' => 'nav-item has-treeview bg-gradient-green mb-2 rounded',
+            'class' => 'nav-item has-treeview mb-2 rounded',
         ],
         'linkOptions' => ['class' => 'nav-link text-white'],
     ],
@@ -391,16 +402,16 @@ $items = [
     ['label' => 'Informational', 'iconStyle' => 'far', 'iconClassAdded' => 'text-info'],*/
 ];
 ?>
-<aside class="main-sidebar sidebar-dark-success elevation-4">
+<aside class="main-sidebar elevation-4" style="background-color: #337abe;">
     <a href="<?= Url::home() ?>" class="h-100 p-2 text-center">
-        <img src="<?= Url::to('/uploads/logo.svg') ?>" alt="MY TRAMS" class="brand-image elevation-3"
+        <img src="<?= Url::to('/uploads/logo.svg') ?>" alt="MY TRAMS" class="brand-image elevation-3 text-white mt-1 ml-3"
              style="opacity: .8">
-        <!--<span class="brand-text font-weight-light">TRAMS</span>-->
+        <!-- <span class="brand-text font-weight-light">TRAMS</span> -->
     </a>
     <div class="sidebar">
         <nav class="mt-2">
             <?= Menu::widget([
-                'activeCssClass' => 'bg-green-active',
+                //'activeCssClass' => 'bg-green-active',
                 'items' => $items
             ]); ?>
         </nav>
