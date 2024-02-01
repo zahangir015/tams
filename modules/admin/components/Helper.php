@@ -105,7 +105,7 @@ class Helper
     public static function checkRoute($route, $params = [], $user = null)
     {
         $cache = Configs::cache();
-        if($cache)
+        if($cache && $user===null)
         {
             return true;
         }
