@@ -102,19 +102,17 @@ class Helper
      * @param integer|User $user
      * @return boolean
      */
-    public static function checkRoute($route, $params = [], $user = null)
+    public static function checkRoute($route, $params = [], $user = null): bool
     {
         $config = Configs::instance();
         $r = static::normalizeRoute($route, $config->advanced);
         if ($config->onlyRegisteredRoute && !isset(static::getRegisteredRoutes()[$r])) {
             return true;
         }
-
         if ($user === null) {
             $user = Yii::$app->getUser();
         }
         $userId = $user instanceof User ? $user->getId() : $user;
-
         if ($config->strict) {
             if ($user->can($r, $params)) {
                 return true;

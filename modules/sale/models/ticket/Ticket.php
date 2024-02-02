@@ -124,14 +124,14 @@ class Ticket extends ActiveRecord
             'uid' => Yii::t('app', 'Uid'),
             'motherTicketId' => Yii::t('app', 'Mother Ticket ID'),
             'airlineId' => Yii::t('app', 'Airline ID'),
-            'providerId' => Yii::t('app', 'Provider ID'),
-            'invoiceId' => Yii::t('app', 'Invoice ID'),
-            'customerId' => Yii::t('app', 'Customer ID'),
+            'providerId' => Yii::t('app', 'Provider'),
+            'invoiceId' => Yii::t('app', 'Invoice'),
+            'customerId' => Yii::t('app', 'Customer'),
             'customerCategory' => Yii::t('app', 'Customer Category'),
             'paxName' => Yii::t('app', 'Pax Name'),
             'paxType' => Yii::t('app', 'Pax Type'),
-            'eTicket' => Yii::t('app', 'E Ticket'),
-            'pnrCode' => Yii::t('app', 'Pnr Code'),
+            'eTicket' => Yii::t('app', 'ETicket'),
+            'pnrCode' => Yii::t('app', 'Pnr'),
             'type' => Yii::t('app', 'Type'),
             'tripType' => Yii::t('app', 'Trip Type'),
             'bookedOnline' => Yii::t('app', 'Source Of Sale'),
@@ -140,8 +140,8 @@ class Ticket extends ActiveRecord
             'codeShare' => Yii::t('app', 'Code Share'),
             'reference' => Yii::t('app', 'Reference'),
             'issueDate' => Yii::t('app', 'Issue Date'),
-            'departureDate' => Yii::t('app', 'Departure Date'),
-            'refundRequestDate' => Yii::t('app', 'Refund Request Date'),
+            'departureDate' => Yii::t('app', 'Departure'),
+            'refundRequestDate' => Yii::t('app', 'Refund Request'),
             'route' => Yii::t('app', 'Route'),
             'numberOfSegment' => Yii::t('app', 'Number Of Segment'),
             'baseFare' => Yii::t('app', 'Base Fare'),
@@ -155,10 +155,10 @@ class Ticket extends ActiveRecord
             'serviceCharge' => Yii::t('app', 'Service Charge'),
             'ait' => Yii::t('app', 'Ait'),
             'discount' => Yii::t('app', 'Discount'),
-            'quoteAmount' => Yii::t('app', 'Quote Amount'),
-            'receivedAmount' => Yii::t('app', 'Received Amount'),
+            'quoteAmount' => Yii::t('app', 'Quote'),
+            'receivedAmount' => Yii::t('app', 'Received'),
             'paymentStatus' => Yii::t('app', 'Payment Status'),
-            'costOfSale' => Yii::t('app', 'Cost Of Sale'),
+            'costOfSale' => Yii::t('app', 'Cost'),
             'netProfit' => Yii::t('app', 'Net Profit'),
             'baggage' => Yii::t('app', 'Baggage'),
             'status' => Yii::t('app', 'Status'),
@@ -176,7 +176,7 @@ class Ticket extends ActiveRecord
      */
     public function getAirline(): ActiveQuery
     {
-        return $this->hasOne(Airline::class, ['id' => 'airlineId']);
+        return $this->hasOne(Airline::class, ['id' => 'airlineId'])->cache();
     }
 
     /**
@@ -186,7 +186,7 @@ class Ticket extends ActiveRecord
      */
     public function getCustomer(): ActiveQuery
     {
-        return $this->hasOne(Customer::class, ['id' => 'customerId']);
+        return $this->hasOne(Customer::class, ['id' => 'customerId'])->cache();
     }
 
     /**
@@ -196,7 +196,7 @@ class Ticket extends ActiveRecord
      */
     public function getInvoice(): ActiveQuery
     {
-        return $this->hasOne(Invoice::class, ['id' => 'invoiceId']);
+        return $this->hasOne(Invoice::class, ['id' => 'invoiceId'])->cache();
     }
 
     /**
@@ -206,7 +206,7 @@ class Ticket extends ActiveRecord
      */
     public function getProvider(): ActiveQuery
     {
-        return $this->hasOne(Provider::class, ['id' => 'providerId']);
+        return $this->hasOne(Provider::class, ['id' => 'providerId'])->cache();
     }
 
     /**
