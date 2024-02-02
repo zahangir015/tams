@@ -21,6 +21,10 @@ $config = [
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
+        /*'assetManager' => [
+            'linkAssets' => true,
+            'appendTimestamp' => true,
+        ],*/
         /*'cache' => [
             'class' => 'yii\caching\MemCache',
             'servers' => [
@@ -43,6 +47,7 @@ $config = [
         ],
         'authManager' => [
             'class' => 'yii\rbac\DbManager', // or use 'yii\rbac\DbManager'
+            'cache' => 'cache',
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
