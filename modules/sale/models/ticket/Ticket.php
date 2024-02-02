@@ -76,7 +76,7 @@ use yii\db\ActiveRecord;
  */
 class Ticket extends ActiveRecord
 {
-    //use BehaviorTrait;
+    use BehaviorTrait;
 
     public $csv;
     public $total;
