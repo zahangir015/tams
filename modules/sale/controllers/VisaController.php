@@ -109,7 +109,7 @@ class VisaController extends ParentController
             $response = $this->visaService->storeVisa($requestData);
             Yii::$app->session->setFlash($response['error'] ? 'danger' : 'success', $response['message']);
             if (!$response['error']) {
-                return $this->redirect(['view', 'uid' => $response['data']->uid]);
+                return $this->redirect(['view', 'uid' => $response['model']->uid]);
             }
         } else {
             $model->loadDefaultValues();
