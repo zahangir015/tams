@@ -12,9 +12,9 @@ use app\modules\admin\models\User;
  */
 class Login extends Model
 {
-    public $username;
+    public $email;
     public $password;
-    public $rememberMe = true;
+    public $rememberMe = false;
     public $reCaptcha;
     
     private $_user = false;
@@ -25,13 +25,13 @@ class Login extends Model
     public function rules()
     {
         return [
-            // username and password are both required
-            [['username', 'password'], 'required'],
+            // email and password are both required
+            [['email', 'password'], 'required'],
             // rememberMe must be a boolean value
-            ['rememberMe', 'boolean'],
+            //['rememberMe', 'boolean'],
             // password is validated by validatePassword()
+            ['email','email'],
             ['password', 'validatePassword'],
-
             /*[['reCaptcha'], ReCaptchaValidator2::className(),
                 'secret' => getenv('RECAPTCHASECRET'),
                 'uncheckedMessage' => 'Please confirm that you are not a bot.',
@@ -54,7 +54,7 @@ class Login extends Model
         if (!$this->hasErrors()) {
             $user = $this->getUser();
             if (!$user || !$user->validatePassword($this->password)) {
-                $this->addError($attribute, 'Incorrect username or password.');
+                $this->addError($attribute, 'Incorrect email or password.');
             }
         }
     }
@@ -82,7 +82,7 @@ class Login extends Model
     {
         if ($this->_user === false) {
             $class = Yii::$app->getUser()->identityClass ? : 'app\modules\admin\models\User';
-            $this->_user = $class::findByUsername($this->username);
+            $this->_user = $class::findByUserEmail($this->email);
         }
 
         return $this->_user;
