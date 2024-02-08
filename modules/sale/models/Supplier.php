@@ -141,10 +141,10 @@ class Supplier extends ActiveRecord
     public static function query(): array
     {
         // try retrieving $data from cache
-        $cache = Yii::$app->cache;
+        /*$cache = Yii::$app->cache;
         $key = 'supplier'.Yii::$app->user->identity->agencyId;
-        $data = $cache->get($key);
-        if ($data === false) {
+        $data = $cache->get($key);dd($data);
+        if ($data === false) {*/
             // $data is not found in cache, calculate it from scratch
             $suppliers = self::find()
                 ->select(['id', 'name', 'company', 'email'])
@@ -158,9 +158,9 @@ class Supplier extends ActiveRecord
                 return $supplier->name . ' | ' . $supplier->company;
             });
 
-            // store $data in cache so that it can be retrieved next time
+            /*// store $data in cache so that it can be retrieved next time
             $cache->set($key, $data);
-        }
+        }*/
 
         return $data;
     }
