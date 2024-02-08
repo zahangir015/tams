@@ -43,7 +43,7 @@ $this->registerJsFile(
                 <p class="mb-0 text-dark ml-1">Loss</p>
             </div>
         </div>
-        <h4 class="text-dark text-center font-weight-normal mt-2">Sales Summary 2023</h4>
+        <h4 class="text-dark text-center font-weight-normal mt-2">Sales Summary 2024</h4>
         <canvas height="100px" id="salesDueChart"></canvas>
     </div>
     <!-- Profit, loss, sales, due chart End -->
