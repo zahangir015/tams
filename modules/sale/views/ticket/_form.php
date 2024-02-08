@@ -130,7 +130,7 @@ $this->registerJsFile(
         </div>
     <?php endif; ?>
     <div class="card-holder">
-        <?= $this->render('ticket', ['row' => 0, 'model' => $model, 'ticketSupplier' => $model->ticketSupplier ?? new TicketSupplier(), 'supplierDataArray' => Supplier::query(), 'providerDataArray' => Provider::query(), 'form' => $form]); ?>
+        <?= $this->render('ticket', ['row' => 0, 'model' => $model, 'ticketSupplier' => $model->ticketSupplier ?? new TicketSupplier(), 'supplierDataArray' => $supplierDataArray, 'providerDataArray' => Provider::query(), 'form' => $form]); ?>
     </div>
     <?php ActiveForm::end(); ?>
 </div>

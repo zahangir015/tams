@@ -650,4 +650,9 @@ class FlightService
         // Todo Ticket status inactive
         // Todo Ticket Supplier status inactive
     }
+
+    public function findAll(array $queryArray, string $model)
+    {
+        return $this->flightRepository->findAll($queryArray, $model);
+    }
 }

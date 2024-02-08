@@ -20,6 +20,7 @@ use app\modules\sale\services\FlightService;
 use Yii;
 use yii\bootstrap4\ActiveForm;
 use yii\db\ActiveRecord;
+use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\web\UploadedFile;
@@ -137,6 +138,7 @@ class TicketController extends ParentController
         return $this->render('create', [
             'model' => $model,
             'ticketSupplier' => $ticketSupplier,
+            'supplierDataArray' => Supplier::query()
         ]);
     }
 
