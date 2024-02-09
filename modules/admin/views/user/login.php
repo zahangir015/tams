@@ -26,7 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'inputTemplate' => '<div class="input-group-prepend" style="background-color: #D6EADF;  border-top-left-radius: 5px; border-bottom-left-radius: 5px;"><div class="input-group-text" style="border: none;"><span class="fas fa-envelope" style="color: #337abe;"></span></div></div>{input}',
             'template' => '{beginWrapper}{input}{error}{endWrapper}',
             'wrapperOptions' => ['class' => 'input-group mb-3']
-        ])->label(false)->textInput(['placeholder' => $model->getAttributeLabel('email'), 'style' => 'background-color: #D6EADF; border: none; border-top-right-radius: 5px; border-bottom-right-radius: 5px;']) ?>
+        ])->label(false)->textInput(['placeholder' => $model->getAttributeLabel('username'), 'style' => 'background-color: #D6EADF; border: none; border-top-right-radius: 5px; border-bottom-right-radius: 5px;']) ?>
 
         <?= $form->field($model, 'password', [
             'options' => ['class' => 'form-group has-feedback'],
