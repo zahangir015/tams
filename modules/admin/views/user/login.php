@@ -21,7 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <h4 class="font-weight-bold" style="color: #337abe; margin-left: auto; margin-right: auto">Welcome to MY TRAMS</h4>
         </div>
 
-        <?= $form->field($model, 'email', [
+        <?= $form->field($model, 'username', [
             'options' => ['class' => 'form-group has-feedback'],
             'inputTemplate' => '<div class="input-group-prepend" style="background-color: #D6EADF;  border-top-left-radius: 5px; border-bottom-left-radius: 5px;"><div class="input-group-text" style="border: none;"><span class="fas fa-envelope" style="color: #337abe;"></span></div></div>{input}',
             'template' => '{beginWrapper}{input}{error}{endWrapper}',
