@@ -21,7 +21,6 @@ $items = [
             [
                 'label' => 'Plan Management',
                 'iconStyle' => 'far',
-                'iconColor' => 'white',
                 'items' => [
                     ['label' => 'Plan List', 'iconStyle' => 'far', 'icon' => 'dot-circle', 'url' => ['/agent/plan/index'], 'visible' => Helper::checkRoute('/agent/plan/index')],
                     ['label' => 'Plan Add', 'iconStyle' => 'far', 'icon' => 'dot-circle', 'url' => ['/agent/plan/create'], 'visible' => Helper::checkRoute('/agent/plan/create')],
@@ -373,12 +372,39 @@ $items = [
         ],
         'linkOptions' => ['class' => 'nav-link text-white'],
     ],
+    /*['label' => 'Yii2 PROVIDED', 'header' => true],
+    ['label' => 'Login', 'url' => ['site/login'], 'icon' => 'sign-in-alt', 'visible' => Yii::$app->user->isGuest],
+    ['label' => 'Gii', 'icon' => 'file-code', 'url' => ['/gii'], 'target' => '_blank'],
+    ['label' => 'Debug', 'icon' => 'bug', 'url' => ['/debug'], 'target' => '_blank'],
+    ['label' => 'MULTI LEVEL EXAMPLE', 'header' => true],
+    ['label' => 'Level1'],
+    [
+        'label' => 'Level1',
+        'items' => [
+            ['label' => 'Level2', 'iconStyle' => 'far'],
+            [
+                'label' => 'Level2',
+                'iconStyle' => 'far',
+                'items' => [
+                    ['label' => 'Level3', 'iconStyle' => 'far', 'icon' => 'dot-circle'],
+                    ['label' => 'Level3', 'iconStyle' => 'far', 'icon' => 'dot-circle'],
+                    ['label' => 'Level3', 'iconStyle' => 'far', 'icon' => 'dot-circle']
+                ]
+            ],
+            ['label' => 'Level2', 'iconStyle' => 'far']
+        ]
+    ],
+    ['label' => 'Level1'],
+    ['label' => 'LABELS', 'header' => true],
+    ['label' => 'Important', 'iconStyle' => 'far', 'iconClassAdded' => 'text-danger'],
+    ['label' => 'Warning', 'iconClass' => 'nav-icon far fa-circle text-warning'],
+    ['label' => 'Informational', 'iconStyle' => 'far', 'iconClassAdded' => 'text-info'],*/
 ];
 ?>
 <aside class="main-sidebar elevation-4" style="background-color: #337abe;">
     <a href="<?= Url::home() ?>" class="h-100 p-2 text-center">
         <img src="<?= Url::to('/uploads/logo.svg') ?>" alt="MY TRAMS" class="brand-image elevation-3 text-white mt-1 ml-3"
-             style="opacity: .8">
+             style="opacity: .8;">
         <!-- <span class="brand-text font-weight-light">TRAMS</span> -->
     </a>
     <div class="sidebar">

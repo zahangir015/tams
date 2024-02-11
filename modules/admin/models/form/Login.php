@@ -14,7 +14,7 @@ class Login extends Model
 {
     public $username;
     public $password;
-    public $rememberMe = true;
+    public $rememberMe = false;
     public $reCaptcha;
     
     private $_user = false;
@@ -25,13 +25,12 @@ class Login extends Model
     public function rules()
     {
         return [
-            // username and password are both required
+            // email and password are both required
             [['username', 'password'], 'required'],
             // rememberMe must be a boolean value
-            ['rememberMe', 'boolean'],
+            //['rememberMe', 'boolean'],
             // password is validated by validatePassword()
             ['password', 'validatePassword'],
-
             /*[['reCaptcha'], ReCaptchaValidator2::className(),
                 'secret' => getenv('RECAPTCHASECRET'),
                 'uncheckedMessage' => 'Please confirm that you are not a bot.',
