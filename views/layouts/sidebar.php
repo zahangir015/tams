@@ -688,6 +688,21 @@ $items = [
                         sidebarMenu[j].classList.remove("menu-open");
                     }
                     sidebarMenu[j].children[1].style.display = "none";
+                    for(let k=0;k<sidebarMenu[j].children[1].children.length;k++)
+                    {
+                        if(sidebarMenu[j].children[1].children[k].classList.contains("has-treeview"))
+                        {
+                            if(sidebarMenu[j].children[1].children[k].classList.contains("menu-is-opening"))
+                            {
+                                sidebarMenu[j].children[1].children[k].classList.remove("menu-is-opening");
+                            }
+                            if(sidebarMenu[j].children[1].children[k].classList.contains("menu-open"))
+                            {
+                                sidebarMenu[j].children[1].children[k].classList.remove("menu-open");
+                            }
+                            sidebarMenu[j].children[1].children[k].children[1].style.display = "none";
+                        }
+                    }
                 }
             }
             for(let j=0;j<sidebarMenu[i].children[1].children.length;j++)
