@@ -409,10 +409,325 @@ $items = [
     </a>
     <div class="sidebar">
         <nav class="mt-2">
-            <?= Menu::widget([
+            <!-- <= Menu::widget([
                 //'activeCssClass' => 'bg-green-active',
                 'items' => $items
-            ]); ?>
+            ]); ?> -->
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+<li class="nav-item has-treeview mb-2 rounded nav-items"><a class="nav-link " href="#" ><i class="nav-icon fas fa-sitemap"></i> <p>Agency Management <i class="right fas fa-angle-left"></i> </p></a>
+<ul class='nav nav-treeview'>
+<li class="nav-item has-treeview"><a class="nav-link " href="#" ><i class="nav-icon far fa-circle"></i> <p>Plan Management <i class="right fas fa-angle-left"></i> </p></a>
+<ul class='nav nav-treeview'>
+<li class="nav-item"><a class="nav-link " href="/agent/plan/index" ><i class="nav-icon far fa-dot-circle"></i> <p>Plan List  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/agent/plan/create" ><i class="nav-icon far fa-dot-circle"></i> <p>Plan Add  </p></a></li>
+</ul>
+</li>
+<li class="nav-item has-treeview"><a class="nav-link " href="#" ><i class="nav-icon far fa-circle"></i> <p>Agency Management <i class="right fas fa-angle-left"></i> </p></a>
+<ul class='nav nav-treeview'>
+<li class="nav-item"><a class="nav-link " href="/agent/agency/index" ><i class="nav-icon far fa-dot-circle"></i> <p>Agency List  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/agent/agency/create" ><i class="nav-icon far fa-dot-circle"></i> <p>Agency Add  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/agent/agency-account-request/index" ><i class="nav-icon far fa-dot-circle"></i> <p>Agency Request  </p></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="nav-item has-treeview mb-2 rounded nav-items"><a class="nav-link " href="#" ><i class="nav-icon fas fa-handshake"></i> <p>Support Management <i class="right fas fa-angle-left"></i> </p></a>
+<ul class='nav nav-treeview'>
+<li class="nav-item has-treeview"><a class="nav-link " href="#" ><i class="nav-icon far fa-circle"></i> <p>Inquiry Management <i class="right fas fa-angle-left"></i> </p></a>
+<ul class='nav nav-treeview'>
+<li class="nav-item"><a class="nav-link " href="/support/inquiry/index" ><i class="nav-icon far fa-dot-circle"></i> <p>Inquiry List  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/support/inquiry/create" ><i class="nav-icon far fa-dot-circle"></i> <p>Inquiry Add  </p></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="nav-item has-treeview mb-2 rounded nav-items"><a class="nav-link " href="#" ><i class="nav-icon fas fa-cogs"></i> <p>General Settings <i class="right fas fa-angle-left"></i> </p></a>
+<ul class='nav nav-treeview'>
+<li class="nav-item"><a class="nav-link " href="/country" ><i class="nav-icon fas fa-globe"></i> <p>Countries  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/city" ><i class="nav-icon fas fa-globe"></i> <p>Cities  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/company/company-profile" ><i class="nav-icon fas fa-building"></i> <p>Company Profile  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/sale/provider/index" ><i class="nav-icon fas fa-paper-plane"></i> <p>Providers/GDS  </p></a></li>
+<li class="nav-item has-treeview"><a class="nav-link " href="#" ><i class="nav-icon fas fa-truck"></i> <p>Supplier Settings <i class="right fas fa-angle-left"></i> </p></a>
+<ul class='nav nav-treeview'>
+<li class="nav-item"><a class="nav-link " href="/sale/supplier-category/create" ><i class="nav-icon fas fa-plus"></i> <p>Supplier Category Add  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/sale/supplier-category/index" ><i class="nav-icon fas fa-list-alt"></i> <p>Category List  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/sale/supplier/create" ><i class="nav-icon fas fa-plus"></i> <p>Supplier Add  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/sale/supplier/index" ><i class="nav-icon fas fa-truck"></i> <p>Supplier List  </p></a></li>
+</ul>
+</li>
+<li class="nav-item has-treeview"><a class="nav-link " href="#" ><i class="nav-icon fas fa-paper-plane"></i> <p>Airline Settings <i class="right fas fa-angle-left"></i> </p></a>
+<ul class='nav nav-treeview'>
+<li class="nav-item"><a class="nav-link " href="/sale/airline/create" ><i class="nav-icon fas fa-paper-plane"></i> <p>Airline Add  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/sale/airline/index" ><i class="nav-icon fas fa-paper-plane"></i> <p>Airline List  </p></a></li>
+</ul>
+</li>
+<li class="nav-item has-treeview"><a class="nav-link " href="#" ><i class="nav-icon fas fa-users"></i> <p>Customer Settings <i class="right fas fa-angle-left"></i> </p></a>
+<ul class='nav nav-treeview'>
+<li class="nav-item"><a class="nav-link " href="/sale/star-category/create" ><i class="nav-icon fas fa-star"></i> <p>Star Category Add  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/sale/star-category/index" ><i class="nav-icon fas fa-list-alt"></i> <p>Star Categories  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/sale/customer/create" ><i class="nav-icon fas fa-user-plus"></i> <p>Customer Add  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/sale/customer/index" ><i class="nav-icon fas fa-list"></i> <p>Customer List  </p></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="nav-item has-treeview mb-2 rounded nav-items"><a class="nav-link " href="#" ><i class="nav-icon fas fa-users-cog"></i> <p>Authorization <i class="right fas fa-angle-left"></i> </p></a>
+<ul class='nav nav-treeview'>
+<li class="nav-item"><a class="nav-link " href="/admin/role" ><i class="nav-icon fas fa-user-tie"></i> <p>Roles  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/admin/rule" ><i class="nav-icon fas fa-truck"></i> <p>Rules  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/admin/route" ><i class="nav-icon fas fa-list-alt"></i> <p>Routes  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/admin/permission" ><i class="nav-icon fas fa-key"></i> <p>Permission  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/admin/assignment" ><i class="nav-icon fas fa-check-double"></i> <p>Assignment  </p></a></li>
+<li class="nav-item has-treeview"><a class="nav-link " href="#" ><i class="nav-icon fas fa-users-cog"></i> <p>User Management <i class="right fas fa-angle-left"></i> </p></a>
+<ul class='nav nav-treeview'>
+<li class="nav-item"><a class="nav-link " href="/admin/user/index" ><i class="nav-icon fas fa-users"></i> <p>Users  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/admin/user/create" ><i class="nav-icon fas fa-user-plus"></i> <p>Create User  </p></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="nav-item has-treeview mb-2 rounded nav-items"><a class="nav-link " href="#" ><i class="nav-icon fas fa-users"></i> <p>HRM <i class="right fas fa-angle-left"></i> </p></a>
+<ul class='nav nav-treeview'>
+<li class="nav-item has-treeview"><a class="nav-link " href="#" ><i class="nav-icon fas fa-sitemap"></i> <p>Branch Settings <i class="right fas fa-angle-left"></i> </p></a>
+<ul class='nav nav-treeview'>
+<li class="nav-item"><a class="nav-link " href="/hrm/branch/create" ><i class="nav-icon fas fa-plus"></i> <p>Branch Add  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/hrm/branch/index" ><i class="nav-icon fas fa-list"></i> <p>Branch List  </p></a></li>
+</ul>
+</li>
+<li class="nav-item has-treeview"><a class="nav-link " href="#" ><i class="nav-icon fas fa-building"></i> <p>Department <i class="right fas fa-angle-left"></i> </p></a>
+<ul class='nav nav-treeview'>
+<li class="nav-item"><a class="nav-link " href="/hrm/department/create" ><i class="nav-icon fas fa-plus"></i> <p>Department Add  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/hrm/department/index" ><i class="nav-icon fas fa-list"></i> <p>Department List  </p></a></li>
+</ul>
+</li>
+<li class="nav-item has-treeview"><a class="nav-link " href="#" ><i class="nav-icon fas fa-user-tie"></i> <p>Designation <i class="right fas fa-angle-left"></i> </p></a>
+<ul class='nav nav-treeview'>
+<li class="nav-item"><a class="nav-link " href="/hrm/designation/create" ><i class="nav-icon fas fa-plus"></i> <p>Designation Add  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/hrm/designation/index" ><i class="nav-icon fas fa-list"></i> <p>Designation List  </p></a></li>
+</ul>
+</li>
+<li class="nav-item has-treeview"><a class="nav-link " href="#" ><i class="nav-icon fas fa-users"></i> <p>Employee Manage <i class="right fas fa-angle-left"></i> </p></a>
+<ul class='nav nav-treeview'>
+<li class="nav-item"><a class="nav-link " href="/hrm/employee/create" ><i class="nav-icon fas fa-plus"></i> <p>Employee Add  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/hrm/employee/index" ><i class="nav-icon fas fa-list"></i> <p>Employee List  </p></a></li>
+</ul>
+</li>
+<li class="nav-item has-treeview"><a class="nav-link " href="#" ><i class="nav-icon fas fa-users-cog"></i> <p>User Management <i class="right fas fa-angle-left"></i> </p></a>
+<ul class='nav nav-treeview'>
+<li class="nav-item"><a class="nav-link " href="/admin/user/index" ><i class="nav-icon fas fa-users"></i> <p>Users  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/admin/assignment/index" ><i class="nav-icon fas fa-check-double"></i> <p>Permission Assignment  </p></a></li>
+</ul>
+</li>
+<li class="nav-item has-treeview"><a class="nav-link " href="#" ><i class="nav-icon fas fa-suitcase"></i> <p>Weekend &amp; Holidays <i class="right fas fa-angle-left"></i> </p></a>
+<ul class='nav nav-treeview'>
+<li class="nav-item"><a class="nav-link " href="/hrm/weekend/index" ><i class="nav-icon fas fa-calendar-day"></i> <p>Weekend  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/hrm/public-holiday/index" ><i class="nav-icon fas fa-calendar-times"></i> <p>Public Holiday  </p></a></li>
+</ul>
+</li>
+<li class="nav-item has-treeview"><a class="nav-link " href="#" ><i class="nav-icon fas fa-suitcase"></i> <p>Shift &amp; Roster <i class="right fas fa-angle-left"></i> </p></a>
+<ul class='nav nav-treeview'>
+<li class="nav-item"><a class="nav-link " href="/hrm/shift/index" ><i class="nav-icon fas fa-calendar-plus"></i> <p>Shift List  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/hrm/department-shift/index" ><i class="nav-icon fas fa-calendar-check"></i> <p>Department Shifts  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/hrm/employee-shift/index" ><i class="nav-icon fas fa-calendar-check"></i> <p>Employee Shifts  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/hrm/roster/index" ><i class="nav-icon fas fa-calendar"></i> <p>Roster List  </p></a></li>
+</ul>
+</li>
+<li class="nav-item has-treeview"><a class="nav-link " href="#" ><i class="nav-icon fas fa-cogs"></i> <p>Leave Settings <i class="right fas fa-angle-left"></i> </p></a>
+<ul class='nav nav-treeview'>
+<li class="nav-item"><a class="nav-link " href="/hrm/leave-type/index" ><i class="nav-icon fas fa-calendar-plus"></i> <p>Leave Type  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/hrm/yearly-leave-allocation/index" ><i class="nav-icon fas fa-calendar-check"></i> <p>Yearly Allocation  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/hrm/employee-leave-allocation/index" ><i class="nav-icon fas fa-calendar-check"></i> <p>Employee Allocation  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/hrm/leave-approval-policy/index" ><i class="nav-icon fas fa-calendar"></i> <p>Approval Policy  </p></a></li>
+</ul>
+</li>
+<li class="nav-item has-treeview"><a class="nav-link " href="#" ><i class="nav-icon fas fa-cogs"></i> <p>Leave Management <i class="right fas fa-angle-left"></i> </p></a>
+<ul class='nav nav-treeview'>
+<li class="nav-item"><a class="nav-link " href="/hrm/leave-application/index" ><i class="nav-icon fas fa-calendar-plus"></i> <p>Leave Applications  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/hrm/leave-application/applied-leaves" ><i class="nav-icon fas fa-calendar-plus"></i> <p>Applied Leaves  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/hrm/leave-application/approval-history" ><i class="nav-icon fas fa-calendar-plus"></i> <p>Approval History  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/hrm/leave-application/apply" ><i class="nav-icon fas fa-calendar-check"></i> <p>Apply  </p></a></li>
+</ul>
+</li>
+<li class="nav-item has-treeview"><a class="nav-link " href="#" ><i class="nav-icon fas fa-users"></i> <p>Attendance Management <i class="right fas fa-angle-left"></i> </p></a>
+<ul class='nav nav-treeview'>
+<li class="nav-item"><a class="nav-link " href="/hrm/attendance/index" ><i class="nav-icon fas fa-calendar-plus"></i> <p>All Attendance  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/hrm/attendance/individual-attendance" ><i class="nav-icon fas fa-calendar-plus"></i> <p>Attendance  </p></a></li>
+</ul>
+</li>
+<li class="nav-item has-treeview"><a class="nav-link " href="#" ><i class="nav-icon fas fa-users"></i> <p>Payroll <i class="right fas fa-angle-left"></i> </p></a>
+<ul class='nav nav-treeview'>
+<li class="nav-item"><a class="nav-link " href="/hrm/payroll-type/index" ><i class="nav-icon fas fa-calendar-plus"></i> <p>Payroll Types  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/hrm/employee-payroll/index" ><i class="nav-icon fas fa-calendar-plus"></i> <p>Employee Payroll  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/hrm/payslip/index" ><i class="nav-icon fas fa-calendar-plus"></i> <p>Payslip  </p></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="nav-item has-treeview mb-2 rounded nav-items"><a class="nav-link " href="#" ><i class="nav-icon fas fa-truck"></i> <p>Sales Management <i class="right fas fa-angle-left"></i> </p></a>
+<ul class='nav nav-treeview'>
+<li class="nav-item has-treeview"><a class="nav-link " href="#" ><i class="nav-icon fas fa-plane"></i> <p>Flight Management <i class="right fas fa-angle-left"></i> </p></a>
+<ul class='nav nav-treeview'>
+<li class="nav-item"><a class="nav-link " href="/sale/ticket/create" ><i class="nav-icon fas fa-plus-circle"></i> <p>Add Ticket  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/sale/ticket/upload" ><i class="nav-icon fas fa-upload"></i> <p>Upload Ticket  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/sale/ticket/index" ><i class="nav-icon fas fa-list"></i> <p>Ticket List  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/sale/ticket/ticket-supplier-list" ><i class="nav-icon fas fa-list"></i> <p>Ticket Supplier List  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/sale/ticket/refund-list" ><i class="nav-icon fas fa-minus-circle"></i> <p>Refund List  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/sale/ticket/void-list" ><i class="nav-icon fas fa-circle"></i> <p>Void List  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/sale/flight-proposal/index" ><i class="nav-icon fas fa-circle"></i> <p>Flight Proposal  </p></a></li>
+</ul>
+</li>
+<li class="nav-item has-treeview"><a class="nav-link " href="#" ><i class="nav-icon fas fa-suitcase"></i> <p>Holiday Management <i class="right fas fa-angle-left"></i> </p></a>
+<ul class='nav nav-treeview'>
+<li class="nav-item"><a class="nav-link " href="/sale/holiday-category/index" ><i class="nav-icon fas fa-list"></i> <p>Category List  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/sale/holiday/create" ><i class="nav-icon fas fa-plus-circle"></i> <p>Add Holiday  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/sale/holiday/index" ><i class="nav-icon fas fa-list"></i> <p>Holiday List  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/sale/holiday/holiday-supplier-list" ><i class="nav-icon fas fa-list"></i> <p>Holiday Supplier List  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/sale/holiday/refund-list" ><i class="nav-icon fas fa-minus-circle"></i> <p>Refund List  </p></a></li>
+</ul>
+</li>
+<li class="nav-item has-treeview"><a class="nav-link " href="#" ><i class="nav-icon fas fa-hotel"></i> <p>Hotel Management <i class="right fas fa-angle-left"></i> </p></a>
+<ul class='nav nav-treeview'>
+<li class="nav-item"><a class="nav-link " href="/sale/hotel-category/index" ><i class="nav-icon fas fa-list"></i> <p>Hotel Categories  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/sale/room-type/index" ><i class="nav-icon fas fa-list"></i> <p>Room Types  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/sale/hotel/create" ><i class="nav-icon fas fa-plus-circle"></i> <p>Add Hotel  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/sale/hotel/index" ><i class="nav-icon fas fa-list"></i> <p>Hotel List  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/sale/hotel/hotel-supplier-list" ><i class="nav-icon fas fa-list"></i> <p>Hotel Supplier List  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/sale/hotel/refund-list" ><i class="nav-icon fas fa-minus-circle"></i> <p>Refund List  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/sale/hotel-proposal/index" ><i class="nav-icon fas fa-circle"></i> <p>Hotel Proposal  </p></a></li>
+</ul>
+</li>
+<li class="nav-item has-treeview"><a class="nav-link " href="#" ><i class="nav-icon fas fa-passport"></i> <p>Visa Management <i class="right fas fa-angle-left"></i> </p></a>
+<ul class='nav nav-treeview'>
+<li class="nav-item"><a class="nav-link " href="/sale/visa/create" ><i class="nav-icon fas fa-plus-circle"></i> <p>Add Visa  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/sale/visa/index" ><i class="nav-icon fas fa-list"></i> <p>Visa List  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/sale/visa/visa-supplier-list" ><i class="nav-icon fas fa-list"></i> <p>Visa Supplier List  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/sale/visa/refund-list" ><i class="nav-icon fas fa-minus-circle"></i> <p>Refund List  </p></a></li>
+</ul>
+</li>
+<li class="nav-item has-treeview"><a class="nav-link " href="#" ><i class="nav-icon fas fa-passport"></i> <p>Sales Report <i class="right fas fa-angle-left"></i> </p></a>
+<ul class='nav nav-treeview'>
+<li class="nav-item"><a class="nav-link " href="/sale/report/ticket-sales-report" ><i class="nav-icon fas fa-list"></i> <p>Flight Report  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/sale/report/holiday-sales-report" ><i class="nav-icon fas fa-list"></i> <p>Holiday Report  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/sale/report/hotel-sales-report" ><i class="nav-icon fas fa-list"></i> <p>Hotel Report  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/sale/report/visa-sales-report" ><i class="nav-icon fas fa-list"></i> <p>Visa Report  </p></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="nav-item has-treeview mb-2 rounded nav-items"><a class="nav-link " href="#" ><i class="nav-icon fas fa-file-invoice-dollar"></i> <p>Accounts Management <i class="right fas fa-angle-left"></i> </p></a>
+<ul class='nav nav-treeview'>
+<li class="nav-item"><a class="nav-link " href="/account/bank-account" ><i class="nav-icon fas fa-building"></i> <p>Bank Accounts  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/account/contra-entry" ><i class="nav-icon fas fa-arrow-right"></i> <p>Contra Entry  </p></a></li>
+<li class="nav-item has-treeview"><a class="nav-link " href="#" ><i class="nav-icon fas fa-file-invoice-dollar"></i> <p>Advance Management <i class="right fas fa-angle-left"></i> </p></a>
+<ul class='nav nav-treeview'>
+<li class="nav-item"><a class="nav-link " href="/account/advance-payment/create" ><i class="nav-icon fas fa-plus-circle"></i> <p>Add Advance Pay  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/account/advance-payment/index" ><i class="nav-icon fas fa-list"></i> <p>Customer Payments  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/account/advance-payment/supplier-advance-payment" ><i class="nav-icon fas fa-list"></i> <p>Supplier Payments  </p></a></li>
+</ul>
+</li>
+<li class="nav-item has-treeview"><a class="nav-link " href="#" ><i class="nav-icon fas fa-file-invoice-dollar"></i> <p>Invoice Management <i class="right fas fa-angle-left"></i> </p></a>
+<ul class='nav nav-treeview'>
+<li class="nav-item"><a class="nav-link " href="/account/invoice/create" ><i class="nav-icon fas fa-plus-circle"></i> <p>Create Invoice  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/account/invoice/index" ><i class="nav-icon fas fa-list"></i> <p>Invoice List  </p></a></li>
+</ul>
+</li>
+<li class="nav-item has-treeview"><a class="nav-link " href="#" ><i class="nav-icon fas fa-file-invoice-dollar"></i> <p>Bill Management <i class="right fas fa-angle-left"></i> </p></a>
+<ul class='nav nav-treeview'>
+<li class="nav-item"><a class="nav-link " href="/account/bill/create" ><i class="nav-icon fas fa-plus-circle"></i> <p>Create Bill  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/account/bill/index" ><i class="nav-icon fas fa-list"></i> <p>Bill List  </p></a></li>
+</ul>
+</li>
+<li class="nav-item"><a class="nav-link " href="/account/refund-transaction/index" ><i class="nav-icon fas fa-money-bill"></i> <p>Refund Transactions  </p></a></li>
+<li class="nav-item has-treeview"><a class="nav-link " href="#" ><i class="nav-icon fas fa-list"></i> <p>Ledger Management <i class="right fas fa-angle-left"></i> </p></a>
+<ul class='nav nav-treeview'>
+<li class="nav-item"><a class="nav-link " href="/account/ledger/customer-ledger" ><i class="nav-icon fas fa-list"></i> <p>Customer Ledger  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/account/ledger/supplier-ledger" ><i class="nav-icon fas fa-list"></i> <p>Supplier Ledger  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/account/ledger/bank-ledger" ><i class="nav-icon fas fa-list"></i> <p>Bank Ledger  </p></a></li>
+</ul>
+</li>
+<li class="nav-item has-treeview"><a class="nav-link " href="#" ><i class="nav-icon fas fa-file-invoice-dollar"></i> <p>Journal Management <i class="right fas fa-angle-left"></i> </p></a>
+<ul class='nav nav-treeview'>
+<li class="nav-item"><a class="nav-link " href="/account/account-type/index" ><i class="nav-icon fas fa-list"></i> <p>Account Type  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/account/account-group/index" ><i class="nav-icon fas fa-list"></i> <p>Account Group  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/account/chart-of-account/index" ><i class="nav-icon fas fa-list"></i> <p>Chart Of Account  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/account/journal/index" ><i class="nav-icon fas fa-list"></i> <p>Journal Entry  </p></a></li>
+</ul>
+</li>
+<li class="nav-item has-treeview"><a class="nav-link " href="#" ><i class="nav-icon fas fa-file-invoice-dollar"></i> <p>Expense Management <i class="right fas fa-angle-left"></i> </p></a>
+<ul class='nav nav-treeview'>
+<li class="nav-item"><a class="nav-link " href="/account/expense-category/index" ><i class="nav-icon fas fa-list"></i> <p>Categories  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/account/expense-sub-category/index" ><i class="nav-icon fas fa-list"></i> <p>Sub Categories  </p></a></li>
+<li class="nav-item"><a class="nav-link " href="/account/expense/index" ><i class="nav-icon fas fa-list"></i> <p>Expenses  </p></a></li>
+</ul>
+</li>
+<li class="nav-item has-treeview"><a class="nav-link " href="#" ><i class="nav-icon fas fa-file-invoice-dollar"></i> <p>Reports <i class="right fas fa-angle-left"></i> </p></a>
+<ul class='nav nav-treeview'>
+<li class="nav-item"><a class="nav-link " href="/account/account-report/profit-loss" ><i class="nav-icon fas fa-list"></i> <p>Profit Loss  </p></a></li>
+</ul>
+</li>
+</ul>
+</li></ul>
         </nav>
     </div>
 </aside>
+<script>
+    let sidebarMenu = document.getElementsByClassName("nav-items");
+    for(let i=0;i<sidebarMenu.length;i++)
+    {
+        sidebarMenu[i].addEventListener("click",function(){
+            for(let j=0;j<sidebarMenu.length;j++)
+            {
+                if(i!==j)
+                {
+                    if(sidebarMenu[j].classList.contains("menu-is-opening"))
+                    {
+                        sidebarMenu[j].classList.remove("menu-is-opening");
+                    }
+                    if(sidebarMenu[j].classList.contains("menu-open"))
+                    {
+                        sidebarMenu[j].classList.remove("menu-open");
+                    }
+                    sidebarMenu[j].children[1].style.display = "none";
+                    for(let k=0;k<sidebarMenu[i].children[1].children.length;k++)
+                    {
+                        if(sidebarMenu[i].children[1].children[k].classList.contains("has-treeview"))
+                        {
+                            if(sidebarMenu[i].children[1].children[k].classList.contains("menu-is-opening"))
+                            {
+                                sidebarMenu[i].children[1].children[k].classList.remove("menu-is-opening");
+                            }
+                            if(sidebarMenu[i].children[1].children[k].classList.contains("menu-open"))
+                            {
+                                sidebarMenu[i].children[1].children[k].classList.remove("menu-open");
+                            }
+                            sidebarMenu[i].children[1].children[k].children[1].style.display = "none";
+                        }
+                    }
+                }
+            }
+            for(let j=0;j<sidebarMenu[i].children[1].children.length;j++)
+            {
+                sidebarMenu[i].children[1].children[j].addEventListener("click",function(){
+                    for(let k=0;k<sidebarMenu[i].children[1].children.length;k++)
+                    {
+                        if(j!=k)
+                        {
+                            if(sidebarMenu[i].children[1].children[k].classList.contains("has-treeview"))
+                            {
+                                if(sidebarMenu[i].children[1].children[k].classList.contains("menu-is-opening"))
+                                {
+                                    sidebarMenu[i].children[1].children[k].classList.remove("menu-is-opening");
+                                }
+                                if(sidebarMenu[i].children[1].children[k].classList.contains("menu-open"))
+                                {
+                                    sidebarMenu[i].children[1].children[k].classList.remove("menu-open");
+                                }
+                                sidebarMenu[i].children[1].children[k].children[1].style.display = "none";
+                            }
+                        }
+                    }
+                })
+            }
+        })
+    }
+</script>
