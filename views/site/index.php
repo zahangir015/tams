@@ -43,7 +43,7 @@ $this->registerJsFile(
                 <p class="mb-0 text-dark ml-1">Loss</p>
             </div>
         </div>
-        <h4 class="text-dark text-center font-weight-normal mt-2">Sales Summary 2023</h4>
+        <h4 class="text-dark text-center font-weight-normal mt-2">Sales Summary <?= date('Y') ?></h4>
         <canvas height="100px" id="salesDueChart"></canvas>
     </div>
     <!-- Profit, loss, sales, due chart End -->
@@ -229,7 +229,7 @@ $this->registerJsFile(
                         $percentage = ($totalQuote) ? ($singleSource['quoteAmount'] * 100) / $totalQuote : 0
                         ?>
                         <div>
-                            <h5 class="text-success mb-0"><?= $percentage.'%' ?></h5>
+                            <h5 class="text-success mb-0"><?= number_format($percentage,2).'%' ?></h5>
                             <div class="d-flex align-items-center mr-2">
                                 <div class="label-box" style="background-color: <?= GlobalConstant::CHART_COLOR_CODE[$key] ?>"></div>
                                 <p class="mb-0 text-dark ml-1"><?= ServiceConstant::BOOKING_TYPE[$singleSource['bookedOnline']] ?></p>
@@ -270,28 +270,28 @@ $this->registerJsFile(
             <div class="row no-gutters align-items-center">
                 <div class="col-6">
                     <div>
-                        <h5 class="text-success mb-0"><?= $ticketPercentage . '%' ?></h5>
+                        <h5 class="text-success mb-0"><?= number_format($ticketPercentage,2).'%' ?></h5>
                         <div class="d-flex align-items-center mr-2">
                             <div class="label-box" style="background-color: <?= GlobalConstant::CHART_COLOR_CODE[1] ?>"></div>
                             <p class="mb-0 text-dark ml-1">Air Ticket</p>
                         </div>
                     </div>
                     <div class="mt-3">
-                        <h5 class="text-danger mb-0"><?= $hotelPercentage . '%' ?></h5>
+                        <h5 class="text-danger mb-0"><?= number_format($hotelPercentage,2).'%' ?></h5>
                         <div class="d-flex align-items-center mr-2">
                             <div class="label-box" style="background-color: <?= GlobalConstant::CHART_COLOR_CODE[0] ?>"></div>
                             <p class="mb-0 text-dark ml-1">Hotel</p>
                         </div>
                     </div>
                     <div class="mt-3">
-                        <h5 class="text-warning mb-0"><?= $visaPercentage . '%' ?></h5>
+                        <h5 class="text-warning mb-0"><?= number_format($visaPercentage,2).'%' ?></h5>
                         <div class="d-flex align-items-center mr-2">
                             <div class="label-box" style="background-color: <?= GlobalConstant::CHART_COLOR_CODE[2] ?>"></div>
                             <p class="mb-0 text-dark ml-1">Visa</p>
                         </div>
                     </div>
                     <div class="mt-3">
-                        <h5 class="text-primary mb-0"><?= $holidayPercentage . '%' ?></h5>
+                        <h5 class="text-primary mb-0"><?= number_format($holidayPercentage,2).'%' ?></h5>
                         <div class="d-flex align-items-center mr-2">
                             <div class="label-box" style="background-color: <?= GlobalConstant::CHART_COLOR_CODE[3] ?>"></div>
                             <p class="mb-0 text-dark ml-1">Holiday</p>
@@ -320,7 +320,7 @@ $this->registerJsFile(
                         $percentage = ($totalCost) ? ($singleSupplier['costOfSale'] * 100) / $totalCost : 0
                         ?>
                         <div class="mt-3">
-                            <h5 class="text-success mb-0"><?= $percentage.'%' ?></h5>
+                            <h5 class="text-success mb-0"><?= number_format($percentage,2).'%' ?></h5>
                             <div class="d-flex align-items-center mr-2">
                                 <div class="label-box" style="background-color: <?= GlobalConstant::CHART_COLOR_CODE[$colorCode] ?>"></div>
                                 <p class="mb-0 text-dark ml-1"><?= $key ?></p>
