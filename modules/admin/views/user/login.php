@@ -14,9 +14,6 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="card">
     <div class="card-body login-card-body shadow rounded-3">
         <?php $form = ActiveForm::begin(['id' => 'login-form']) ?>
-        <div class="col-12 mb-5">
-            <?= Html::a('Login', ['/admin/user/login'], ['class' => 'btn', 'name' => 'login-button', 'style' => 'background-color: #337abe; color: #ffffff; margin-left: 360px;']) ?>
-        </div>
         <div class="d-flex flex-row align-items-center justify-content-center justify-content-lg-start mb-4">
             <h4 class="font-weight-bold" style="color: #337abe; margin-left: auto; margin-right: auto">Welcome to MY TRAMS</h4>
         </div>
