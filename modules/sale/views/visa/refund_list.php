@@ -13,7 +13,7 @@ use kartik\grid\GridView;
 $this->title = Yii::t('app', 'Visa Refund List');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="visa-index">
+<div class="visa-index" id="visaRefund">
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
@@ -129,6 +129,11 @@ $this->params['breadcrumbs'][] = $this->title;
         'toolbar' => [
             [
                 'content' =>
+                    Html::a('<i class="fas fa-greater-than" id="icon"></i>',[''],[
+                        'title' => Yii::t('app','View More'),
+                        'class' => 'btn btn-primary',
+                        'id' => 'btnMore'
+                    ]).' '.
                     Html::a('<i class="fas fa-plus"></i>', ['/sale/visa/create'], [
                         'title' => Yii::t('app', 'Add Category'),
                         'class' => 'btn btn-success'
@@ -155,3 +160,26 @@ $this->params['breadcrumbs'][] = $this->title;
     ]); ?>
 
 </div>
+<script>
+    let visaRefund = document.getElementById("visaRefund");
+    let btn = document.getElementById("btnMore");
+    let icon = document.getElementById("icon");
+    visaRefund.style.width = "500px";
+    btn.addEventListener("click",function(e){
+        e.preventDefault();
+        if(icon.classList.contains("fa-greater-than"))
+        {
+            icon.classList.remove("fa-greater-than");
+            icon.classList.add("fa-less-than");
+            visaRefund.style.width = "auto";
+            btn.title = "View Less";
+        }
+        else if(icon.classList.contains("fa-less-than"))
+        {
+            icon.classList.remove("fa-less-than");
+            icon.classList.add("fa-greater-than");
+            visaRefund.style.width = "500px";
+            btn.title = "View More";
+        }
+    })
+</script>
