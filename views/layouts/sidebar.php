@@ -37,7 +37,7 @@ $items = [
             ],
         ],
         'options' => [
-            'class' => 'nav-item has-treeview mb-2 rounded'
+            'class' => 'nav-item has-treeview mb-2 rounded nav-items'
         ],
         'linkOptions' => ['class' => 'nav-link text-white'],
     ],
@@ -55,7 +55,7 @@ $items = [
             ],
         ],
         'options' => [
-            'class' => 'nav-item has-treeview mb-2 rounded',
+            'class' => 'nav-item has-treeview mb-2 rounded nav-items',
         ],
         'linkOptions' => ['class' => 'nav-link text-white'],
     ],
@@ -98,7 +98,7 @@ $items = [
             ],
         ],
         'options' => [
-            'class' => 'nav-item has-treeview mb-2 rounded',
+            'class' => 'nav-item has-treeview mb-2 rounded nav-items',
         ],
         'linkOptions' => ['class' => 'nav-link text-white'],
         'visible' => Helper::checkRoute('/country/') || Helper::checkRoute('/city/') || Helper::checkRoute('/company/') || Helper::checkRoute('/company/view')
@@ -122,7 +122,7 @@ $items = [
             ],
         ],
         'options' => [
-            'class' => 'nav-item has-treeview mb-2 rounded',
+            'class' => 'nav-item has-treeview mb-2 rounded nav-items',
         ],
         'linkOptions' => ['class' => 'nav-link text-white'],
         'visible' => Helper::checkRoute('/admin/')
@@ -228,7 +228,7 @@ $items = [
             ],
         ],
         'options' => [
-            'class' => 'nav-item has-treeview mb-2 rounded',
+            'class' => 'nav-item has-treeview mb-2 rounded nav-items',
         ],
         'linkOptions' => ['class' => 'nav-link text-white'],
     ],
@@ -295,7 +295,7 @@ $items = [
             ],
         ],
         'options' => [
-            'class' => 'nav-item has-treeview mb-2 rounded',
+            'class' => 'nav-item has-treeview mb-2 rounded nav-items',
         ],
         'linkOptions' => ['class' => 'nav-link text-white'],
     ],
@@ -368,7 +368,7 @@ $items = [
             ],
         ],
         'options' => [
-            'class' => 'nav-item has-treeview mb-2 rounded',
+            'class' => 'nav-item has-treeview mb-2 rounded nav-items',
         ],
         'linkOptions' => ['class' => 'nav-link text-white'],
     ],
@@ -416,3 +416,64 @@ $items = [
         </nav>
     </div>
 </aside>
+<script>
+    let sidebarMenu = document.getElementsByClassName("nav-items");
+    for(let i=0;i<sidebarMenu.length;i++)
+    {
+        sidebarMenu[i].addEventListener("click",function(){
+            for(let j=0;j<sidebarMenu.length;j++)
+            {
+                if(i!==j)
+                {
+                    if(sidebarMenu[j].classList.contains("menu-is-opening"))
+                    {
+                        sidebarMenu[j].classList.remove("menu-is-opening");
+                    }
+                    if(sidebarMenu[j].classList.contains("menu-open"))
+                    {
+                        sidebarMenu[j].classList.remove("menu-open");
+                    }
+                    sidebarMenu[j].children[1].style.display = "none";
+                    for(let k=0;k<sidebarMenu[j].children[1].children.length;k++)
+                    {
+                        if(sidebarMenu[j].children[1].children[k].classList.contains("has-treeview"))
+                        {
+                            if(sidebarMenu[j].children[1].children[k].classList.contains("menu-is-opening"))
+                            {
+                                sidebarMenu[j].children[1].children[k].classList.remove("menu-is-opening");
+                            }
+                            if(sidebarMenu[j].children[1].children[k].classList.contains("menu-open"))
+                            {
+                                sidebarMenu[j].children[1].children[k].classList.remove("menu-open");
+                            }
+                            sidebarMenu[j].children[1].children[k].children[1].style.display = "none";
+                        }
+                    }
+                }
+            }
+            for(let j=0;j<sidebarMenu[i].children[1].children.length;j++)
+            {
+                sidebarMenu[i].children[1].children[j].addEventListener("click",function(){
+                    for(let k=0;k<sidebarMenu[i].children[1].children.length;k++)
+                    {
+                        if(j!==k)
+                        {
+                            if(sidebarMenu[i].children[1].children[k].classList.contains("has-treeview"))
+                            {
+                                if(sidebarMenu[i].children[1].children[k].classList.contains("menu-is-opening"))
+                                {
+                                    sidebarMenu[i].children[1].children[k].classList.remove("menu-is-opening");
+                                }
+                                if(sidebarMenu[i].children[1].children[k].classList.contains("menu-open"))
+                                {
+                                    sidebarMenu[i].children[1].children[k].classList.remove("menu-open");
+                                }
+                                sidebarMenu[i].children[1].children[k].children[1].style.display = "none";
+                            }
+                        }
+                    }
+                })
+            }
+        })
+    }
+</script>
