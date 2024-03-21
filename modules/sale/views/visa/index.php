@@ -14,7 +14,7 @@ use kartik\grid\GridView;
 $this->title = Yii::t('app', 'Visas');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="visa-index">
+<div class="visa-index" id="visaIndex">
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
@@ -151,6 +151,11 @@ $this->params['breadcrumbs'][] = $this->title;
         'toolbar' => [
             [
                 'content' =>
+                    Html::a('<i class="fas fa-greater-than" id="icon"></i>',[''],[
+                        'title' => Yii::t('app','View More'),
+                        'class' => 'btn btn-primary',
+                        'id' => 'btnMore'
+                    ]).' '.
                     Html::a('<i class="fas fa-plus"></i>', ['/sale/visa/create'], [
                         'title' => Yii::t('app', 'Add Category'),
                         'class' => 'btn btn-success'
@@ -179,3 +184,26 @@ $this->params['breadcrumbs'][] = $this->title;
     ]); ?>
 
 </div>
+<script>
+    let visaIndex = document.getElementById("visaIndex");
+    let btn = document.getElementById("btnMore");
+    let icon = document.getElementById("icon");
+    visaIndex.style.width = "500px";
+    btn.addEventListener("click",function(e){
+        e.preventDefault();
+        if(icon.classList.contains("fa-greater-than"))
+        {
+            icon.classList.remove("fa-greater-than");
+            icon.classList.add("fa-less-than");
+            visaIndex.style.width = "auto";
+            btn.title = "View Less";
+        }
+        else if(icon.classList.contains("fa-less-than"))
+        {
+            icon.classList.remove("fa-less-than");
+            icon.classList.add("fa-greater-than");
+            visaIndex.style.width = "500px";
+            btn.title = "View More";
+        }
+    })
+</script>

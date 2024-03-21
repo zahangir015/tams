@@ -15,7 +15,7 @@ use yii\widgets\Pjax;
 $this->title = Yii::t('app', 'Visa Suppliers');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="visa-supplier-index">
+<div class="visa-supplier-index" id="visaSupplier">
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
@@ -100,6 +100,11 @@ $this->params['breadcrumbs'][] = $this->title;
         'toolbar' => [
             [
                 'content' =>
+                    Html::a('<i class="fas fa-greater-than" id="icon"></i>',[''], [
+                        'title' => Yii::t('app', 'View More'),
+                        'class' => 'btn btn-primary',
+                        'id' => 'btnMore',
+                    ]) . ' ' .       
                     Html::a('<i class="fas fa-plus"></i>', ['/sale/visa/create'], [
                         'title' => Yii::t('app', 'Add Category'),
                         'class' => 'btn btn-success'
@@ -125,3 +130,27 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]); ?>
 </div>
+<script>
+    let visaSupplier = document.getElementById("visaSupplier");
+    let btn = document.getElementById("btnMore");
+    let icon = document.getElementById("icon");
+    visaSupplier.style.width = "500px";
+    btn.addEventListener("click",function(e){
+        e.preventDefault();
+        console.log("JOY");
+        if(icon.classList.contains("fa-greater-than"))
+        {
+            icon.classList.remove("fa-greater-than");
+            icon.classList.add("fa-less-than");
+            visaSupplier.style.width = "auto";
+            btn.title = "View Less";
+        }
+        else if(icon.classList.contains("fa-less-than"))
+        {
+            icon.classList.remove("fa-less-than");
+            icon.classList.add("fa-greater-than");
+            visaSupplier.style.width = "500px";
+            btn.title = "View More";
+        }
+    })
+</script>

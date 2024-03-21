@@ -81,7 +81,7 @@ use yii\helpers\ArrayHelper;
                     ],
                     'pluginOptions' => [
                         'tags' => true,
-                        'tokenSeparators' => [',', ' '],
+                        //'tokenSeparators' => [',', ' '],
                         'maximumInputLength' => 30
                     ],
                 ]); ?>
