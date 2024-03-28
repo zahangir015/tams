@@ -68,17 +68,38 @@ class HotelInventoryController extends Controller
     public function actionCreate()
     {
         $model = new HotelInventory();
-
+        $model2 = new HotelInventoryRoomDetail();
+        $model3 = new HotelInventoryAmenity();
+        $model4 = new Amenity();
+                
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+            $requestData = Yii::$app->request->post();
+            $response = $this->proposalService->storeHotelProposal($requestData);
+            if(!$response['error'])
+            {
+                Yii::$app->session->setFlash('success',$response['message']);
+                return $this->redirect(['view', 'uid' => $response['model']->uid]);
             }
+            else
+            {
+                Yii::$app->session->setFlash('danger',$response['message']);
+            }
+            // if ($model->load($this->request->post()) && $model->save()) {
+            //     Yii::$app->session->setFlash('success','HotelInventory created successfully');
+            //     return $this->redirect(['view', 'uid' => $model->uid]);
+            // }
         } else {
             $model->loadDefaultValues();
         }
 
         return $this->render('create', [
             'model' => $model,
+            'model2' => $model2,
+            'model3' => $model3,
+            'model4' => $model4,
+            'roomDetail' => new RoomDetail(),
+            'categories' => ArrayHelper::map(HotelCategory::findAll(['status' => 1 ]),'id','name'),
+            'roomTypes' => ArrayHelper::map(RoomType::findAll(['status' => 1]),'id','name')
         ]);
     }
 
