@@ -4,6 +4,8 @@ use yii\helpers\Html;
 
 /** @var yii\web\View $this */
 /** @var app\modules\serviceInventory\models\HotelInventory $model */
+/** @var app\moduels\serviceInventory\models\HotelInventoryRoomDetail $model */
+/** @var app\moduels\serviceInventory\models\HotelInventoryAmenity $model */
 
 $this->title = Yii::t('app', 'Update Hotel Inventory: {name}', [
     'name' => $model->name,
@@ -18,6 +20,12 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 
     <?= $this->render('_form', [
         'model' => $model,
+        'model2' => $model2,
+        'model3' => $model3,
+        'model4' => $model4,
+        'roomDetail' => $roomDetail,
+        'categories' => $categories,
+        'roomTypes' => $roomTypes
     ]) ?>
 
 </div>
